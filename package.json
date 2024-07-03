@@ -1,0 +1,39 @@
+{
+  "name": "monorepo",
+  "version": "1.0.0",
+  "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MNPCMW6444/monorepo.git"
+  },
+  "author": "Michael Nusair",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MNPCMW6444/monorepo/issues"
+  },
+  "homepage": "https://github.com/MNPCMW6444/monorepo#readme",
+  "dependencies": {
+    "mongoose": "^8.4.4"
+  },
+  "devDependencies": {
+    "@nx/esbuild": "19.4.0",
+    "@nx/eslint": "19.4.0",
+    "@nx/eslint-plugin": "19.4.0",
+    "@nx/js": "19.4.0",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "@types/node": "18.16.9",
+    "@typescript-eslint/eslint-plugin": "^7.3.0",
+    "@typescript-eslint/parser": "^7.3.0",
+    "esbuild": "^0.19.2",
+    "eslint": "~8.57.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^2.6.2",
+    "typescript": "~5.4.2"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "installation": {
+    "version": "19.4.0",
+    "plugins": {
+      "@nx/esbuild": "19.4.0"
+    }
+  },
+  "targetDefaults": {
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    }
+  },
+  "plugins": [
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    }
+  ]
+}

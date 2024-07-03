@@ -1,0 +1,21 @@
+{
+  "name": "gbase-b",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/gbase-b/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/gbase-b",
+        "main": "libs/gbase-b/src/index.ts",
+        "tsConfig": "libs/gbase-b/tsconfig.lib.json",
+        "assets": ["libs/gbase-b/*.md"],
+        "generatePackageJson": true,
+        "format": ["cjs"]
+      }
+    }
+  }
+}
