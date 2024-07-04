@@ -1,8 +1,8 @@
-import { getModel } from "..";
-import { Message } from "@offisito/shared";
+import { getModel } from '../../../../gbase-b/src/schemas';
+import { Message } from '../../types/chat/chats';
 
 export default () =>
-  getModel<Message>("message", {
+  getModel<Message>('message', {
     ownerId: {
       type: String,
     },
