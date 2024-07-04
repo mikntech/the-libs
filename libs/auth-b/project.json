@@ -1,0 +1,26 @@
+{
+  "name": "auth-b",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth-b/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/auth-b",
+        "main": "libs/auth-b/src/index.ts",
+        "tsConfig": "libs/auth-b/tsconfig.lib.json",
+        "assets": [
+          "auth-b/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
