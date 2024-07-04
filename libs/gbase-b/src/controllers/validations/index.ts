@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { InvalidEnumError, InvalidInputError } from '@cube-box/shared';
+import { InvalidEnumError, InvalidInputError } from '../../exceptions';
 
 export const validateTruthy = <T = string>(value: T) => !!value;
 
@@ -11,7 +11,7 @@ export const validateInput = <T = string>(input: { [key: string]: T }) => {
 
 export const validateEnum = <T = string>(
   input: { [key: string]: T },
-  theEnum: Record<string, string | number>,
+  theEnum: Record<string, string | number>
 ) => {
   const name = validateInput({ input });
   const values: (string | number)[] = Object.values(theEnum);

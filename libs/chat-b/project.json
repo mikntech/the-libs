@@ -1,21 +1,26 @@
 {
   "name": "chat-b",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/chat-b/src",
   "projectType": "library",
-  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/libs/chat-b",
         "main": "libs/chat-b/src/index.ts",
         "tsConfig": "libs/chat-b/tsconfig.lib.json",
-        "assets": ["libs/chat-b/*.md"],
-        "generatePackageJson": true,
-        "format": ["cjs"]
+        "assets": [
+          "chat-b/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
       }
     }
-  }
+  },
+  "tags": []
 }

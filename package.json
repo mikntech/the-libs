@@ -4,8 +4,8 @@
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "clean": "rm -rf node_modules dist tmp package-lock.json ./.nx",
+    "update": "npx npm-check-updates -u"  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MNPCMW6444/monorepo.git"
