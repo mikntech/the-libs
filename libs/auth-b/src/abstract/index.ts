@@ -14,6 +14,6 @@ export const userBasicSchema = (
   },
   profilePictureUri: {
     type: String,
-    requiured: profilePictureUriRequired,
+    required: profilePictureUriRequired,
   },
 });

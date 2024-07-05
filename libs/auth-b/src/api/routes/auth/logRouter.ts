@@ -1,16 +1,16 @@
-import { AuthenticatedRequest } from '../../middleware';
-import { logIn, logOut, validateAndProtect } from '../../../controllers';
-import { highOrderHandler } from '../';
+import { AuthenticatedRequest } from 'auth-b';
 import { Router } from 'express';
+import { highOrderHandler } from 'gbase-b';
+import { logIn, logOut, validateAndProtect } from '../../../controllers';
 
 const router = Router();
 
 router.get(
   '/',
-  highOrderHandler((req: AuthenticatedRequest) => ({
+  highOrderHandler(async (req: AuthenticatedRequest) => ({
     code: 200,
     body: validateAndProtect(req.user),
-  })),
+  }))
 );
 
 router.post(
@@ -18,12 +18,12 @@ router.post(
   highOrderHandler(async (req: AuthenticatedRequest) => {
     const { email, accountType, password } = req.body;
     return logIn(email, accountType, password);
-  }),
+  })
 );
 
 router.get(
   '/out',
-  highOrderHandler((_) => logOut()),
+  highOrderHandler((_) => logOut())
 );
 
 export default router;

@@ -1,3 +1,5 @@
+export * from './logs';
+
 import { Document as MDocument, ObjectId } from 'mongoose';
 
 export interface Document extends MDocument {
@@ -5,4 +7,3 @@ export interface Document extends MDocument {
   createdAt: Date;
   updatedAt: Date;
 }
-export * from './logs';

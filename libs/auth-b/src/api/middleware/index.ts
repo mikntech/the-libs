@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { User } from '../../types';
+import { User } from 'auth-b';
 import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import user from '../../schemas/auth/user';
 

@@ -1,3 +1,6 @@
+export * from './middleware';
+export * from './routes';
+
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express, { json, Router, urlencoded } from 'express';
@@ -56,6 +59,3 @@ export default async (router: Router) => {
     throw new Error('Express setup failed: ' + JSON.stringify(e));
   }
 };
-
-export * from './middleware';
-export * from './routes';
