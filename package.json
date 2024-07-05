@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf node_modules dist tmp package-lock.json ./.nx",
-    "update": "npx npm-check-updates -u"  },
+    "update": "npx npm-check-updates -u"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MNPCMW6444/monorepo.git"
@@ -18,12 +19,14 @@
   "homepage": "https://github.com/MNPCMW6444/monorepo#readme",
   "dependencies": {
     "@mnpcmw6444/mongoose-auto-versioning": "^4.0.0",
+    "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.4.4"
+    "mongoose": "^8.4.5",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@nx/esbuild": "19.4.0",
@@ -33,11 +36,13 @@
     "@swc-node/register": "~1.10.2",
     "@swc/core": "~1.6.7",
     "@swc/helpers": "~0.5.11",
+    "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "20.14.9",
+    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
     "esbuild": "^0.23.0",

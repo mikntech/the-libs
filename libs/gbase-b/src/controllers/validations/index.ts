@@ -11,7 +11,7 @@ export const validateInput = <T = string>(input: { [key: string]: T }) => {
 
 export const validateEnum = <T = string>(
   input: { [key: string]: T },
-  theEnum: Record<string, string | number>
+  theEnum: Record<string, string>,
 ) => {
   const name = validateInput({ input });
   const values: (string | number)[] = Object.values(theEnum);

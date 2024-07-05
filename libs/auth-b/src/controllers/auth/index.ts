@@ -1,28 +1,21 @@
+import { User } from 'auth-b';
 import {
-  AccountType,
+  createDoc,
+  findDocs,
   InvalidInputError,
-  MIN_PASSWORD_STRENGTH,
-  PassResetRequest,
-  RegistrationRequest,
   UnauthorizedError,
-  User,
-} from '@cube-box/shared';
-import { validateDocument, validateEnum, validateInput } from '../validations';
-import { createDoc, findDocs } from '../data';
-import bcrypt from 'bcryptjs';
-import jsonwebtoken from 'jsonwebtoken';
-import settings from '../../config';
+  validateDocument,
+  validateEnum,
+  validateInput,
+} from 'gbase-b';
+import { compare } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
+import settings from '../../../../gbase-b/src/config';
 import { CookieOptions } from 'express';
-import passResetRequest from '../../data/auth/passResetRequest';
 import { v4 } from 'uuid';
-import { genPassResetEmail, genRegisterEmail } from '../../content';
-import { sendEmail } from '../../services/email/sendEmail';
-import zxcvbn from 'zxcvbn';
-import registrationRequest from '../../data/auth/registrationRequest';
-import { Document, Model } from 'mongoose';
-import admin from '../../data/auth/admin';
-import contractor from '../../data/auth/contractor';
-import customer from '../../data/auth/customer';
+import passResetRequest from '../../schemas/auth/passResetRequest';
+import user from '../../schemas/auth/user';
+import { Model } from 'mongoose';
 
 const JWT_COOKIE_NAME = 'jwt';
 
@@ -34,44 +27,51 @@ const protectUsersPassword = (user: User) => {
 export const validateAndProtect = (user: User) => {
   if (!validateDocument(user))
     throw new UnauthorizedError(
-      "Your are not logged in or your jwt couldn't parsed, please log in and try again"
+      "Your are not logged in or your jwt couldn't parsed, please log in and try again",
     );
   return protectUsersPassword(user);
 };
 
 const validateCorrectPassword = async (user: User, password: string) => {
-  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  const isPasswordCorrect = await compare(password, user.password);
   if (isPasswordCorrect) return true;
   else throw new UnauthorizedError('Wrong password');
 };
 
-const generateJWT = <SCHEMA extends User>(
+const generateJWT = <SCHEMA extends User = User, AccountTypeEnum = never>(
   user: SCHEMA,
-  accountType: AccountType
+  accountType?: AccountTypeEnum,
 ) =>
-  jsonwebtoken.sign(
+  sign(
     {
       id: user._id,
       accountType,
     },
-    settings.jwtSecret
+    settings.jwtSecret,
   );
 
-const getToken = async <SCHEMA extends User>(
+const getToken = async <SCHEMA extends User = User, AccountTypeEnum = never>(
   email: string,
   password: string,
-  accountType: AccountType
+  accountType?: AccountTypeEnum,
 ) => {
   validateInput({ email });
   validateInput({ password });
   const existingUser = await findDocs<SCHEMA, false>(
     getModelForAccountType(accountType).findOne({ email }),
-    true
+    true,
   );
   if (!validateDocument(existingUser))
     throw new UnauthorizedError('Please register');
+  const accountTypeParam: [AccountTypeEnum?] = accountType
+    ? [accountType as AccountTypeEnum]
+    : [];
   if (await validateCorrectPassword(existingUser, password))
-    return generateJWT<SCHEMA>(existingUser as SCHEMA, accountType);
+    return generateJWT<SCHEMA, AccountTypeEnum>(
+      existingUser as SCHEMA,
+      ...accountTypeParam,
+    );
+  throw new UnauthorizedError('Wrong password');
 };
 
 const generateSecureCookie = (name: string, val: string) => ({
@@ -84,20 +84,23 @@ const generateSecureCookie = (name: string, val: string) => ({
   } as CookieOptions,
 });
 
-export const logIn = async (
+export const logIn = async <AccountTypeEnum = never>(
   email: string,
-  accountType: AccountType,
-  password: string
+  password: string,
+  accountType?: AccountTypeEnum,
+  accountTypeEnum?: { [key: string]: string },
 ) => {
   validateInput({ email });
   validateInput({ password });
-  validateInput({ accountType });
-  validateEnum({ accountType }, AccountType);
+  accountType && validateInput({ accountType });
+  accountType &&
+    accountTypeEnum &&
+    validateEnum({ accountType }, accountTypeEnum);
   return {
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      await getToken(email, password, accountType)
+      await getToken(email, password, accountType),
     ),
   };
 };
@@ -107,45 +110,41 @@ export const logOut = async () => ({
   cookie: generateSecureCookie(JWT_COOKIE_NAME, ''),
 });
 
-const createKeyForPassReset = async (
-  email: string,
-  accountType: AccountType
-) => {
+const createKeyForPassReset = async (email: string) => {
   const key = v4();
   await createDoc(passResetRequest(), {
     email,
-    accountType,
     key,
   });
   return `${settings.clientDomain}/?reset-code=${key}`;
 };
 
-const sendEmailWithLink = (
-  email: string,
-  subject: string,
-  body: string,
-  link: string
-) =>
-  sendEmail(email, subject, body).then(
-    () =>
-      settings.stagingEnv === 'local' &&
-      console.log('tried to send email - link is: ' + link)
-  );
+const sendEmailWithLink =
+  (
+    sendEmail: (email: string, subject: string, body: string) => Promise<void>,
+  ) =>
+  (email: string, subject: string, body: string, link: string) =>
+    sendEmail(email, subject, body).then(
+      () =>
+        settings.stagingEnv === 'local' &&
+        console.log('tried to send email - link is: ' + link),
+    );
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,
-  accountType: AccountType
+  genPassResetEmail: (
+    url: string,
+  ) => Promise<{ subject: string; body: string }>,
+  sendEmail: (email: string, subject: string, body: string) => Promise<void>,
+  model: Model<SCHEMA> = user<false, false>(),
 ) => {
   validateInput({ email });
-  const userDoc = await findDocs<SCHEMA, false>(
-    getModelForAccountType(accountType).findOne({ email }),
-    true
-  );
+  const userDoc = await findDocs<SCHEMA, false>(model.findOne({ email }), true);
   if (!validateDocument(userDoc))
     throw new InvalidInputError('No user found with this email');
-  const url = await createKeyForPassReset(email, accountType);
+  const url = await createKeyForPassReset(email);
   const { subject, body } = genPassResetEmail(url);
-  await sendEmailWithLink(email, subject, body, url);
+  sendEmailWithLink(sendEmail)(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
 };
 
@@ -159,7 +158,7 @@ const validateKey = async <SCHEMA>(model: Model<SCHEMA>, key: string) => {
     model.findOne({
       key,
     }),
-    true
+    true,
   );
   if (!validateDocument(existingRequest as Document)) {
     throw new InvalidInputError('key (is wrong)');
@@ -172,7 +171,7 @@ const hashPassword = async (newPassword: string) =>
 
 const changeUsersPassword = async <SCHEMA extends User>(
   user: SCHEMA,
-  password: string
+  password: string,
 ) => {
   user.password = password;
   await user.save();
@@ -180,14 +179,14 @@ const changeUsersPassword = async <SCHEMA extends User>(
     {
       id: user._id,
     },
-    settings.jwtSecret
+    settings.jwtSecret,
   );
 };
 
 export const resetPassword = async <SCHEMA extends User>(
   key: string,
   password: string,
-  passwordAgain: string
+  passwordAgain: string,
 ) => {
   validateInput({ key });
   validateInput({ password });
@@ -197,24 +196,24 @@ export const resetPassword = async <SCHEMA extends User>(
   validatePasswordStrength(password);
   const { email, accountType } = await validateKey<PassResetRequest>(
     passResetRequest(),
-    key
+    key,
   );
   const existingUser = await findDocs<SCHEMA, false>(
     getModelForAccountType(accountType).findOne({
       email,
-    })
+    }),
   );
   return {
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      await changeUsersPassword(existingUser, await hashPassword(password))
+      await changeUsersPassword(existingUser, await hashPassword(password)),
     ),
   };
 };
 
 export const getModelForAccountType = <SCHEMA extends User>(
-  accountType: AccountType
+  accountType: AccountType,
 ): Model<SCHEMA> => {
   let model: Model<any>;
   switch (accountType) {
@@ -235,22 +234,22 @@ export const getModelForAccountType = <SCHEMA extends User>(
 
 const validateEmailNotInUse = async <SCHEMA extends User>(
   email: string,
-  accountType: AccountType
+  accountType: AccountType,
 ) => {
   const userModel = getModelForAccountType<SCHEMA>(accountType);
   const existingUser = await findDocs<SCHEMA, false>(
     userModel.findOne({ email }),
-    true
+    true,
   );
   if (existingUser)
     throw new InvalidInputError(
-      'An account with this email already exists. Please try to login instead.'
+      'An account with this email already exists. Please try to login instead.',
     );
 };
 
 const createKeyForRegistration = async (
   email: string,
-  accountType: AccountType
+  accountType: AccountType,
 ) => {
   const key = v4();
   await createDoc(registrationRequest(), {
@@ -261,12 +260,15 @@ const createKeyForRegistration = async (
   return `${settings.clientDomain}/?register-code=${key}`;
 };
 
-export const requestToRegister = async <SCHEMA extends User>(
+export const requestToRegister = async <
+  SCHEMA extends User = User,
+  AccountTypeEnum = never,
+>(
   email: string,
-  accountType: AccountType
+  accountType?: AccountTypeEnum,
 ) => {
   validateInput({ email });
-  validateEnum({ accountType }, AccountType);
+  accountType && validateEnum({ accountType }, AccountTypeEnum);
   await validateEmailNotInUse<SCHEMA>(email, accountType);
   const url = await createKeyForRegistration(email, accountType);
   const { subject, body } = genRegisterEmail(url);
@@ -279,7 +281,7 @@ const createUser = async (
   full_name: string,
   phone_number: string,
   password: string,
-  accountType: AccountType
+  accountType: AccountType,
 ) =>
   createDoc(getModelForAccountType(accountType), {
     email,
@@ -293,7 +295,7 @@ export const finishRegistration = async (
   full_name: string,
   phone_number: string,
   password: string,
-  passwordAgain: string
+  passwordAgain: string,
 ) => {
   validateInput({ key });
   validateInput({ full_name });
@@ -305,7 +307,7 @@ export const finishRegistration = async (
     throw new InvalidInputError("Passwords don't match");
   const { email, accountType } = await validateKey<RegistrationRequest>(
     registrationRequest(),
-    key
+    key,
   );
   await validateEmailNotInUse(email, accountType);
   const hashedPassword = await hashPassword(password);
@@ -314,13 +316,13 @@ export const finishRegistration = async (
     full_name,
     phone_number,
     hashedPassword,
-    accountType
+    accountType,
   );
   return {
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      generateJWT(savedUser, accountType)
+      generateJWT(savedUser, accountType),
     ),
   };
 };
