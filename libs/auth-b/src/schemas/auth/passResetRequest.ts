@@ -1,15 +1,10 @@
-import { getModel } from '..';
-import { AccountType, PassResetRequest } from '@cube-box/shared';
+import { getModel } from 'gbase-b';
+import { PassResetRequest } from '../../types';
 
 export default () =>
   getModel<PassResetRequest>('passResetRequest', {
     email: {
       type: String,
-    },
-    accountType: {
-      type: String,
-      enum: Object.values(AccountType),
-      required: true,
     },
     key: {
       type: String,

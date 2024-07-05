@@ -1,16 +1,8 @@
-import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
 import { NextFunction, Request as ExpressRequest, Response } from 'express';
 import errorLog from '../../schemas/logs/errorLog';
 import { ClientError } from '../../exceptions';
 import { TODO } from '../../types';
-import { Model } from 'mongoose';
 import { StagingEnvironment } from '../../config';
-
-type User = TODO;
-
-export interface AuthenticatedRequest extends ExpressRequest {
-  user: User | null;
-}
 
 export const serverErrorHandler =
   <SE = StagingEnvironment>(stagingEnv: SE) =>
@@ -39,73 +31,64 @@ export const serverErrorHandler =
     }
   };
 
-type AccountType = TODO;
-
-export const authorizer =
-  <SCHEMA>(jwtSecret: string, model: Model<SCHEMA>) =>
-  async (req: AuthenticatedRequest, _: Response, next: NextFunction) => {
-    try {
-      const validatedUser: JwtPayload | string = jsonwebtoken.verify(
-        req.cookies['jwt'],
-        jwtSecret
-      );
-      if (typeof validatedUser === 'string') throw new Error('Micherrro');
-      req.user = await model.findById(validatedUser['id']);
-      if (validatedUser['accountType'])
-        req.user.validatedUser = validatedUser['accountType'];
-    } catch (err) {
-      req.user = null;
-    }
-    next();
+interface Layer {
+  route?: {
+    path: string;
+    methods: { [method: string]: boolean };
   };
-
-const extractRoutes = (layers: TODO, basePath = '') => {
-  let routes: TODO[] = [];
-  layers?.forEach((layer: TODO) => {
+  handle?: { stack: Layer[] };
+  regexp?: { source: string };
+}
+const extractRoutes = (layers: Layer[], basePath: string = ''): string[] => {
+  return layers.flatMap((layer) => {
     if (layer.route) {
-      let methods = Object.keys(layer.route.methods)
-        .filter((method) => layer.route.methods[method])
+      const methods = Object.keys(layer.route.methods)
+        .filter((method) => layer.route?.methods?.[method])
         .map((method) => method.toUpperCase())
         .join(', ');
-      routes.push(`${methods} ${basePath}${layer.route.path}`);
+      return [`${methods} ${basePath}${layer.route.path}`];
+    } else if (layer.handle && layer.regexp) {
+      const routePath = formatRoutePath(layer.regexp.source);
+      return extractRoutes(layer.handle.stack, `${basePath}${routePath}`);
     } else {
-      // router middleware
-      const subRoutes = extractRoutes(
-        layer.handle.stack,
-        basePath +
-          (
-            layer.regexp.source
-              .replace('^\\/', '')
-              .replace('\\/?$', '')
-              .replace('(?:\\/(?=$))?', '')
-              .replace('\\', '') || ''
-          ).replace('?(?=\\/|$)', '')
-      );
-      routes = routes.concat(subRoutes);
+      return [];
     }
   });
-  return routes;
+};
+const formatRoutePath = (source: string): string => {
+  return (
+    source
+      .replace('^\\/', '')
+      .replace('\\/?$', '')
+      .replace('(?:\\/(?=$))?', '')
+      .replace('\\', '') ?? ''
+  );
+};
+const filterRoutes = (routes: string[], filter: string): string[] => {
+  return routes.filter((route) => {
+    const pathSegments = route.split('/');
+    pathSegments.shift(); // Remove the first element, typically empty due to leading slash
+    const final = pathSegments.join('/');
+    return final.startsWith(filter);
+  });
 };
 
 export const autoDocer = (
   req: ExpressRequest,
   res: Response,
   next: NextFunction
-) => {
-  const pathSegmentsToFilter: string[] = req.originalUrl.split('/');
-  while (pathSegmentsToFilter.findIndex((r) => r === 'api') !== -1)
+): void => {
+  const pathSegmentsToFilter = req.originalUrl.split('/');
+  while (pathSegmentsToFilter.includes('api')) {
     pathSegmentsToFilter.shift();
+  }
   const finalToFilter = pathSegmentsToFilter.join('/');
+
   if (!res.headersSent) {
-    const allRoutes = extractRoutes(req.app._router.stack).map((str) =>
-      str.replace('//', '/')
+    const allRoutes = extractRoutes((req.app as any)._router.stack).map(
+      (route) => route.replace('//', '/')
     );
-    const relevantRoutes = allRoutes.filter((route) => {
-      const pathSegments = route.split('/');
-      pathSegments.shift();
-      const final = pathSegments.join('/');
-      return final.startsWith(finalToFilter);
-    });
+    const relevantRoutes = filterRoutes(allRoutes, finalToFilter);
 
     res.status(404).json({
       message: 'Route not found',

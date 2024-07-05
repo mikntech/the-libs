@@ -1,33 +1,30 @@
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import express, { json, Router, urlencoded } from 'express';
+import express from 'express';
+import router from './routes/apiRouter';
 import settings from '../config';
-import { join } from 'path';
+import path from 'path';
 import { autoDocer, serverErrorHandler } from './middleware';
-import { TODO } from '../types';
+import { TODO } from '@cube-box/shared';
 
-const { version: Version } = require(join(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'package.json'
-));
+const { version: Version } = require(
+  path.join(__dirname, '..', '..', '..', 'package.json'),
+);
 
 const app = express();
 const { port, clientDomain, stagingEnv } = settings;
 
 const middlewares = [
   cookieParser(),
-  json({ limit: '50mb' }),
-  urlencoded({ limit: '50mb', extended: true }),
+  express.json({ limit: '50mb' }),
+  express.urlencoded({ limit: '50mb', extended: true }),
   cors({
     origin: [clientDomain],
     credentials: true,
   }),
 ];
 
-export default async (router: Router) => {
+export default async () => {
   console.log('Starting Server...');
   try {
     middlewares.forEach((middleware) => app.use(middleware));
@@ -50,12 +47,15 @@ export default async (router: Router) => {
     app.use(serverErrorHandler);
 
     app.listen(port, '0.0.0.0', () => {
-      console.log('Server is ready at ' + settings.myDomain);
+      const prefix = stagingEnv === 'preprod' ? 'pre' : '';
+      console.log(
+        'Server is ready at http' +
+          (stagingEnv === 'local'
+            ? '://localhost:' + port + '/'
+            : 's://' + prefix + 'server.offisito.com/'),
+      );
     });
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));
   }
 };
-
-export * from './middleware';
-export * from './routes';

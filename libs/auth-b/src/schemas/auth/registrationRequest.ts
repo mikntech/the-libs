@@ -1,15 +1,10 @@
-import { getModel } from '..';
-import { AccountType, RegistrationRequest } from '@cube-box/shared';
+import { getModel } from 'gbase-b';
+import { RegistrationRequest } from '../../types';
 
 export default () =>
   getModel<RegistrationRequest>('registrationRequest', {
     email: {
       type: String,
-      required: true,
-    },
-    accountType: {
-      type: String,
-      enum: Object.values(AccountType),
       required: true,
     },
     key: {
