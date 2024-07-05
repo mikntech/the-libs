@@ -1,5 +1,4 @@
-import { Response, NextFunction } from 'express';
-import { CookieOptions } from 'express-serve-static-core';
+import { Response, NextFunction, CookieOptions } from 'express';
 import { AuthenticatedRequest } from 'auth-b';
 import { ServerResponse } from 'http';
 
