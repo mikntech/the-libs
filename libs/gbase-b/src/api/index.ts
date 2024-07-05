@@ -9,13 +9,9 @@ import { join } from 'path';
 import { autoDocer, serverErrorHandler } from './middleware';
 import { TODO } from '../types';
 
-const { version: Version } = require(join(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'package.json'
-));
+const { version: Version } = require(
+  join(__dirname, '..', '..', '..', 'package.json'),
+);
 
 const app = express();
 const { port, clientDomain, stagingEnv } = settings;
