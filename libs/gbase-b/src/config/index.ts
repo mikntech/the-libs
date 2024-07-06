@@ -68,7 +68,7 @@ const settings: Settings = {
   mongoURI:
     process.env['MONGO_URI'] ||
     (isProduction ? '' : 'mongodb://localhost:27017/error'),
-  jwtSecret: process.env['JWT_SECRET'] || (isProduction ? '' : 'xxxx'),
+  jwtSecret: process.env['JWT_SECRET'] || "",
   myDomain: process.env['MY_DOMAIN'] || '0.0.0.0',
   aws: {
     keyID: process.env['AWS_KEY_ID'] || '',

@@ -1,12 +1,11 @@
 import { PassResetRequest, User } from 'auth-b';
 import { sign } from 'jsonwebtoken';
-import settings from '../../../../gbase-b/src/config';
 import {
   createDoc,
   findDocs,
   InvalidInputError,
   validateDocument,
-  validateInput,
+  validateInput,GenEmailFunction, settings
 } from 'gbase-b';
 import passResetRequest from '../../schemas/auth/passResetRequest';
 import {
@@ -16,7 +15,6 @@ import {
   validateKey,
   validatePasswordStrength,
 } from './index';
-import { GenEmailFunction } from '../../../../gbase-b/src/services';
 import { Model } from 'mongoose';
 import user from '../../schemas/auth/user';
 import { defaultGenPassResetEmail } from '../../services';
