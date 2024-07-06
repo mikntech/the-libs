@@ -8,13 +8,13 @@ import {
   InvalidInputError,
   validateDocument,
   Document,
+  sendEmail,
+  settings,
 } from 'gbase-b';
 import { hash, genSalt } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import settings from '../../../../gbase-b/src/config';
 import { CookieOptions } from 'express';
 import { Model } from 'mongoose';
-import { sendEmail } from '../../../../gbase-b/src/services';
 import zxcvbn from 'zxcvbn';
 import { MIN_PASSWORD_STRENGTH } from '../../strategy';
 

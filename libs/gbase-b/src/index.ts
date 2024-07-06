@@ -1,5 +1,5 @@
 export * from './api';
-export * from './config';
+export * as settings from './config';
 export * from './controllers';
 export * from './exceptions';
 export * from './schemas';

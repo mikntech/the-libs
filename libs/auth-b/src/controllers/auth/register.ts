@@ -1,38 +1,44 @@
 import { v4 } from 'uuid';
 import {
   createDoc,
-  findDocs,
   InvalidInputError,
   validateEnum,
   validateInput,
+  GenEmailFunction,
+  findDocs,
 } from 'gbase-b';
 import settings from '../../../../gbase-b/src/config';
-import { User } from 'auth-b';
+import {RegistrationRequest, User} from 'auth-b';
 import registrationRequest from '../../schemas/auth/registrationRequest';
+import { Model } from 'mongoose';
+import user from '../../schemas/auth/user';
+import { defaultGenRegisterEmail } from '../../services';
+import {
+  generateJWT,
+  generateSecureCookie,
+  hashPassword,
+  JWT_COOKIE_NAME, sendEmailWithLink,
+  validateKey,
+  validatePasswordStrength
+} from "./index";
 
-const validateEmailNotInUse = async <SCHEMA extends User>(
+const validateE§mailNotInUse = async <SCHEMA extends User = User>(
   email: string,
-  accountType: AccountType,
+  model: Model<SCHEMA> = user(),
 ) => {
-  const userModel = getModelForAccountType<SCHEMA>(accountType);
-  const existingUser = await findDocs<SCHEMA, false>(
-    userModel.findOne({ email }),
-    true,
-  );
-  if (existingUser)
+  if (await findDocs<SCHEMA, false>(model.findOne({ email }), true))
     throw new InvalidInputError(
       'An account with this email already exists. Please try to login instead.',
     );
 };
 
-const createKeyForRegistration = async (
+const createKeyForRegistration = async <SCHEMA extends User = User>(
   email: string,
-  accountType: AccountType,
+  model: Model<SCHEMA> = user(),
 ) => {
   const key = v4();
-  await createDoc(registrationRequest(), {
+  await createDoc(model, {
     email,
-    accountType,
     key,
   });
   return `${settings.clientDomain}/?register-code=${key}`;
@@ -43,25 +49,28 @@ export const requestToRegister = async <
   AccountTypeEnum = never,
 >(
   email: string,
+  genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
   accountType?: AccountTypeEnum,
+  accountTypeEnum?: {
+    [key: string]: string;
+  },
 ) => {
   validateInput({ email });
-  accountType && validateEnum({ accountType }, AccountTypeEnum);
-  await validateEmailNotInUse<SCHEMA>(email, accountType);
+  accountType && validateEnum({ accountType }, accountTypeEnum);
+  await validateEmailNotInUse<SCHEMA>(email);
   const url = await createKeyForRegistration(email, accountType);
   const { subject, body } = genRegisterEmail(url);
   sendEmailWithLink(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
 };
 
-const createUser = async (
+const createUser = async<SCHEMA extends User=User> (
   email: string,
   full_name: string,
   phone_number: string,
   password: string,
-  accountType: AccountType,
-) =>
-  createDoc(getModelForAccountType(accountType), {
+model:Model<SCHEMA>=user()) =>
+  createDoc((model), {
     email,
     full_name,
     phone_number,

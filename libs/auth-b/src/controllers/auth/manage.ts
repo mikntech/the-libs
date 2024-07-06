@@ -33,7 +33,7 @@ const createKeyForPassReset = async (email: string) => {
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,
-  genPassResetEmail?: GenEmailFunction,
+  genPassResetEmail: GenEmailFunction = defaultGenPassResetEmail,
   model: Model<SCHEMA> = user(),
 ) => {
   validateInput({ email });
@@ -41,7 +41,7 @@ export const requestPasswordReset = async <SCHEMA extends User>(
   if (!userDoc || !validateDocument(userDoc as SCHEMA))
     throw new InvalidInputError('No user found with this email');
   const url = await createKeyForPassReset(email);
-  const { subject, body } = genPassResetEmail || defaultGenPassResetEmail(url);
+  const { subject, body } = genPassResetEmail(url);
   sendEmailWithLink(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
 };

@@ -2,7 +2,7 @@ import { Model, QueryWithHelpers } from 'mongoose';
 import { Document } from '../../types';
 
 export const findDocs = async <
-  SCHEMA,
+  SCHEMA extends Document,
   isArray extends boolean,
   Result = SCHEMA,
 >(
