@@ -3,7 +3,12 @@ export * from './manage';
 export * from './register';
 
 import { User } from 'auth-b';
-import { findDocs, InvalidInputError, validateDocument } from 'gbase-b';
+import {
+  findDocs,
+  InvalidInputError,
+  validateDocument,
+  Document,
+} from 'gbase-b';
 import { hash, genSalt } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import settings from '../../../../gbase-b/src/config';
@@ -58,7 +63,7 @@ export const validatePasswordStrength = (password: string) => {
     throw new InvalidInputError('Password is too weak');
 };
 
-export const validateKey = async <SCHEMA>(
+export const validateKey = async <SCHEMA extends Document>(
   model: Model<SCHEMA>,
   key: string,
 ) => {
