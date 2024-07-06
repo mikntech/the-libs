@@ -54,7 +54,7 @@ const generateJWT = <SCHEMA extends User = User, AccountTypeEnum = never>(
 const getToken = async <SCHEMA extends User = User, AccountTypeEnum = never>(
   email: string,
   password: string,
-  model: Model<SCHEMA> = user<false, false>()(),
+  model: Model<SCHEMA> = user(),
   accountType?: AccountTypeEnum,
 ) => {
   validateInput({ email });
@@ -86,9 +86,13 @@ const generateSecureCookie = (name: string, val: string) => ({
   } as CookieOptions,
 });
 
-export const logIn = async <AccountTypeEnum = never>(
+export const logIn = async <
+  SCHEMA extends user = User,
+  AccountTypeEnum = never,
+>(
   email: string,
   password: string,
+  model: Model<SCHEMA> = user(),
   accountType?: AccountTypeEnum,
   accountTypeEnum?: { [key: string]: string },
 ) => {
@@ -102,7 +106,7 @@ export const logIn = async <AccountTypeEnum = never>(
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      await getToken(email, password, accountType),
+      await getToken(email, password, model, accountType),
     ),
   };
 };
@@ -136,9 +140,6 @@ const sendEmailWithLink = (
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,
-  genPassResetEmail: (
-    url: string,
-  ) => Promise<{ subject: string; body: string }>,
   model: Model<SCHEMA> = user<false, false>()(),
 ) => {
   validateInput({ email });
