@@ -1,3 +1,5 @@
+export const MIN_PASSWORD_STRENGTH = 2;
+
 export enum MultiUserType {
   SINGLE = 'single',
   MULTI_BY_ROLES = 'multi_by_role',
