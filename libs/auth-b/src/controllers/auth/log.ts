@@ -37,7 +37,7 @@ export const getToken = async <
   email: string,
   password: string,
   model: Model<SCHEMA> = user(),
-  accountType: AccountTypeEnum,
+  accountType?: AccountTypeEnum,
 ) => {
   validateInput({ email });
   validateInput({ password });
