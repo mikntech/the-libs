@@ -16,7 +16,9 @@ import { v4 } from 'uuid';
 import passResetRequest from '../../schemas/auth/passResetRequest';
 import user from '../../schemas/auth/user';
 import { Model } from 'mongoose';
-import { sendEmail } from '../../../../gbase-b/src/services';
+import { GenEmailFunction, sendEmail } from '../../../../gbase-b/src/services';
+import { defaultGenPassResetEmail } from '../../services';
+import zxcvbn from 'zxcvbn';
 
 const JWT_COOKIE_NAME = 'jwt';
 
@@ -51,12 +53,17 @@ const generateJWT = <SCHEMA extends User = User, AccountTypeEnum = never>(
     settings.jwtSecret,
   );
 
-const getToken = async <SCHEMA extends User = User, AccountTypeEnum = never>(
-  email: string,
-  password: string,
-  model: Model<SCHEMA> = user(),
-  accountType?: AccountTypeEnum,
-) => {
+const getToken = async <SCHEMA extends User = User, AccountTypeEnum = never>({
+  email,
+  password,
+  model = user<false, false>() as Model<User>,
+  accountType,
+}: {
+  email: string;
+  password: string;
+  model?: Model<SCHEMA>;
+  accountType?: AccountTypeEnum;
+}) => {
   validateInput({ email });
   validateInput({ password });
   const existingUser = await findDocs<SCHEMA, false>(
@@ -106,7 +113,12 @@ export const logIn = async <
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      await getToken(email, password, model, accountType),
+      await getToken({
+        email: email,
+        password: password,
+        model: model,
+        accountType: accountType,
+      }),
     ),
   };
 };
@@ -140,14 +152,15 @@ const sendEmailWithLink = (
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,
-  model: Model<SCHEMA> = user<false, false>()(),
+  genPassResetEmail?: GenEmailFunction,
+  model: Model<SCHEMA> = user<false, false>(),
 ) => {
   validateInput({ email });
   const userDoc = await findDocs<SCHEMA, false>(model.findOne({ email }), true);
-  if (!validateDocument(userDoc))
+  if (!userDoc || !validateDocument(userDoc))
     throw new InvalidInputError('No user found with this email');
   const url = await createKeyForPassReset(email);
-  const { subject, body } = genPassResetEmail(url);
+  const { subject, body } = genPassResetEmail || defaultGenPassResetEmail(url);
   sendEmailWithLink(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
 };
