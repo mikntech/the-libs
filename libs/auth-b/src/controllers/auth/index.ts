@@ -16,6 +16,7 @@ import { v4 } from 'uuid';
 import passResetRequest from '../../schemas/auth/passResetRequest';
 import user from '../../schemas/auth/user';
 import { Model } from 'mongoose';
+import { sendEmail } from '../../../../gbase-b/src/services';
 
 const JWT_COOKIE_NAME = 'jwt';
 
@@ -119,23 +120,24 @@ const createKeyForPassReset = async (email: string) => {
   return `${settings.clientDomain}/?reset-code=${key}`;
 };
 
-const sendEmailWithLink =
-  (
-    sendEmail: (email: string, subject: string, body: string) => Promise<void>,
-  ) =>
-  (email: string, subject: string, body: string, link: string) =>
-    sendEmail(email, subject, body).then(
-      () =>
-        settings.stagingEnv === 'local' &&
-        console.log('tried to send email - link is: ' + link),
-    );
+const sendEmailWithLink = (
+  email: string,
+  subject: string,
+  body: string,
+  link: string,
+) => {
+  sendEmail(email, subject, body).then(
+    () =>
+      settings.stagingEnv === 'local' &&
+      console.log('tried to send email - link is: ' + link),
+  );
+};
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,
   genPassResetEmail: (
     url: string,
   ) => Promise<{ subject: string; body: string }>,
-  sendEmail: (email: string, subject: string, body: string) => Promise<void>,
   model: Model<SCHEMA> = user<false, false>(),
 ) => {
   validateInput({ email });
@@ -144,7 +146,7 @@ export const requestPasswordReset = async <SCHEMA extends User>(
     throw new InvalidInputError('No user found with this email');
   const url = await createKeyForPassReset(email);
   const { subject, body } = genPassResetEmail(url);
-  sendEmailWithLink(sendEmail)(email, subject, body, url);
+  sendEmailWithLink(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
 };
 
@@ -272,7 +274,7 @@ export const requestToRegister = async <
   await validateEmailNotInUse<SCHEMA>(email, accountType);
   const url = await createKeyForRegistration(email, accountType);
   const { subject, body } = genRegisterEmail(url);
-  await sendEmailWithLink(email, subject, body, url);
+  sendEmailWithLink(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
 };
 

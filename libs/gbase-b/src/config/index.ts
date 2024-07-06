@@ -28,6 +28,8 @@ interface Settings {
   clientDomain: string;
   myDomain: string;
   aws: AWSConfig;
+  sendgridApiKey: string;
+  sendgridSender: string;
 }
 
 const validEnvs: NodeEnvironment[] = Object.values(NodeEnvironment);
@@ -51,6 +53,12 @@ const port = parseInt(process.env['PORT'] || '4050');
 const stagingEnv =
   (process.env['STAGING_ENV'] as StagingEnvironment) || defaultStagingEnv;
 
+const clientDomain = isProduction
+  ? 'https://' + stagingEnv === StagingEnvironment.prod
+    ? ''
+    : stagingEnv + process.env['CLIENT_DOMAIN']
+  : 'http://localhost:' + port;
+
 const settings: Settings = {
   nodeEnv: isProduction
     ? NodeEnvironment.production
@@ -67,11 +75,9 @@ const settings: Settings = {
     secretKey: process.env['AWS_SECRET_KEY'] || '',
     region: process.env['AWS_REGION'] || '',
   },
-  clientDomain: isProduction
-    ? 'https://' + stagingEnv === StagingEnvironment.prod
-      ? ''
-      : stagingEnv + process.env['CLIENT_DOMAIN']
-    : 'http://localhost:' + port,
+  clientDomain,
+  sendgridApiKey: process.env['SENDGRID_API_KEY'] || '',
+  sendgridSender: process.env['SENDGRID_SENDER'] || 'service@' + clientDomain,
 };
 
 if (!settings) {
