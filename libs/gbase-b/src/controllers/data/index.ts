@@ -4,18 +4,18 @@ import { Document } from '../../types';
 export const findDocs = async <
   SCHEMA,
   isArray extends boolean,
-  Result = SCHEMA
+  Result = SCHEMA,
 >(
   query: QueryWithHelpers<
-    isArray extends true ? Array<Result> : Result,
+    isArray extends true ? Array<Result> : Result | null,
     SCHEMA
   >,
-  lean: boolean = true
+  lean: boolean = true,
 ) => (lean ? query.lean() : query);
 
 export const createDoc = async <SCHEMA extends Document>(
   model: Model<SCHEMA>,
-  fields: {}
+  fields: {},
 ) =>
   new model({
     ...fields,

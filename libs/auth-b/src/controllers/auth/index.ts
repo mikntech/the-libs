@@ -54,20 +54,21 @@ const generateJWT = <SCHEMA extends User = User, AccountTypeEnum = never>(
 const getToken = async <SCHEMA extends User = User, AccountTypeEnum = never>(
   email: string,
   password: string,
+  model: Model<SCHEMA> = user<false, false>()(),
   accountType?: AccountTypeEnum,
 ) => {
   validateInput({ email });
   validateInput({ password });
   const existingUser = await findDocs<SCHEMA, false>(
-    getModelForAccountType(accountType).findOne({ email }),
+    model.findOne({ email }),
     true,
   );
-  if (!validateDocument(existingUser))
+  if (!existingUser && !validateDocument(existingUser))
     throw new UnauthorizedError('Please register');
   const accountTypeParam: [AccountTypeEnum?] = accountType
     ? [accountType as AccountTypeEnum]
     : [];
-  if (await validateCorrectPassword(existingUser, password))
+  if (existingUser && (await validateCorrectPassword(existingUser, password)))
     return generateJWT<SCHEMA, AccountTypeEnum>(
       existingUser as SCHEMA,
       ...accountTypeParam,
@@ -138,7 +139,7 @@ export const requestPasswordReset = async <SCHEMA extends User>(
   genPassResetEmail: (
     url: string,
   ) => Promise<{ subject: string; body: string }>,
-  model: Model<SCHEMA> = user<false, false>(),
+  model: Model<SCHEMA> = user<false, false>()(),
 ) => {
   validateInput({ email });
   const userDoc = await findDocs<SCHEMA, false>(model.findOne({ email }), true);
