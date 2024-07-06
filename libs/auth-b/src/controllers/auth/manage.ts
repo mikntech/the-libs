@@ -2,6 +2,7 @@ import { PassResetRequest, User } from 'auth-b';
 import { sign } from 'jsonwebtoken';
 import settings from '../../../../gbase-b/src/config';
 import {
+  createDoc,
   findDocs,
   InvalidInputError,
   validateDocument,
@@ -19,6 +20,16 @@ import { GenEmailFunction } from '../../../../gbase-b/src/services';
 import { Model } from 'mongoose';
 import user from '../../schemas/auth/user';
 import { defaultGenPassResetEmail } from '../../services';
+import { v4 } from 'uuid';
+
+const createKeyForPassReset = async (email: string) => {
+  const key = v4();
+  await createDoc(passResetRequest(), {
+    email,
+    key,
+  });
+  return `${settings.clientDomain}/?reset-code=${key}`;
+};
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,

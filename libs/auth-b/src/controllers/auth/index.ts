@@ -3,21 +3,11 @@ export * from './manage';
 export * from './register';
 
 import { User } from 'auth-b';
-import {
-  createDoc,
-  findDocs,
-  InvalidInputError,
-  UnauthorizedError,
-  validateDocument,
-  validateInput,
-} from 'gbase-b';
-import { compare, hash, genSalt } from 'bcryptjs';
+import { findDocs, InvalidInputError, validateDocument } from 'gbase-b';
+import { hash, genSalt } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import settings from '../../../../gbase-b/src/config';
 import { CookieOptions } from 'express';
-import { v4 } from 'uuid';
-import passResetRequest from '../../schemas/auth/passResetRequest';
-import user from '../../schemas/auth/user';
 import { Model } from 'mongoose';
 import { sendEmail } from '../../../../gbase-b/src/services';
 import zxcvbn from 'zxcvbn';
@@ -25,7 +15,10 @@ import { MIN_PASSWORD_STRENGTH } from '../../strategy';
 
 export const JWT_COOKIE_NAME = 'jwt';
 
-const generateJWT = <SCHEMA extends User = User, AccountTypeEnum = never>(
+export const generateJWT = <
+  SCHEMA extends User = User,
+  AccountTypeEnum = never,
+>(
   user: SCHEMA,
   accountType?: AccountTypeEnum,
 ) =>
@@ -47,16 +40,7 @@ export const generateSecureCookie = (name: string, val: string) => ({
   } as CookieOptions,
 });
 
-const createKeyForPassReset = async (email: string) => {
-  const key = v4();
-  await createDoc(passResetRequest(), {
-    email,
-    key,
-  });
-  return `${settings.clientDomain}/?reset-code=${key}`;
-};
-
-const sendEmailWithLink = (
+export const sendEmailWithLink = (
   email: string,
   subject: string,
   body: string,
@@ -84,7 +68,7 @@ export const validateKey = async <SCHEMA>(
     }),
     true,
   );
-  if (!existingRequest || !validateDocument(existingRequest)) {
+  if (!existingRequest || !validateDocument(existingRequest as SCHEMA)) {
     throw new InvalidInputError('key (is wrong)');
   }
   return existingRequest as SCHEMA | null;
