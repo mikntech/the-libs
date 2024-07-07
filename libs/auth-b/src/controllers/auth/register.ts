@@ -22,7 +22,7 @@ import {
   validatePasswordStrength
 } from "./index";
 
-const validateE§mailNotInUse = async <SCHEMA extends User = User>(
+const validateEmailNotInUse = async <SCHEMA extends User = User>(
   email: string,
   model: Model<SCHEMA> = user(),
 ) => {
@@ -92,11 +92,11 @@ export const finishRegistration = async (
   validatePasswordStrength(password);
   if (password !== passwordAgain)
     throw new InvalidInputError("Passwords don't match");
-  const { email, accountType } = await validateKey<RegistrationRequest>(
+  const { email } = await validateKey<RegistrationRequest>(
     registrationRequest(),
     key,
   );
-  await validateEmailNotInUse(email, accountType);
+  await validateEmailNotInUse(email);
   const hashedPassword = await hashPassword(password);
   const savedUser = await createUser(
     email,

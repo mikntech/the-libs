@@ -1,4 +1,3 @@
-import { PassResetRequest, User } from 'auth-b';
 import { sign } from 'jsonwebtoken';
 import {
   createDoc,
@@ -11,14 +10,15 @@ import passResetRequest from '../../schemas/auth/passResetRequest';
 import {
   generateSecureCookie,
   hashPassword,
-  JWT_COOKIE_NAME,
+  JWT_COOKIE_NAME, sendEmailWithLink,
   validateKey,
-  validatePasswordStrength,
+  validatePasswordStrength
 } from './index';
 import { Model } from 'mongoose';
 import user from '../../schemas/auth/user';
 import { defaultGenPassResetEmail } from '../../services';
 import { v4 } from 'uuid';
+import { PassResetRequest, User } from 'auth-b';
 
 const createKeyForPassReset = async (email: string) => {
   const key = v4();
