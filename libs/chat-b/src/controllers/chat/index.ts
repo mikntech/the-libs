@@ -1,14 +1,13 @@
 import { Message } from '../../types/chat';
-import message from '../../schemas/chat/message';
-import { highOrderHandler, Write } from '../../../../gbase-b/src/api/routes';
-import { AuthenticatedRequest } from '../../../../gbase-b/src/api/middleware';
-import { TODO } from '../../../../gbase-b/src/types';
+import { highOrderHandler, TODO } from 'gbase-b';
+import { AuthenticatedRequest, User, user } from 'auth-b';
+import { message } from '../../schemas/chat';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
 
 export const getNameOfUser = async (userId: string) =>
-  (await user().findById(userId))?.name;
+  (await user(false, false).findById(userId))?.full_name;
 
 export const markMessagesAsRead = async (
   messages: Message[],
@@ -44,7 +43,7 @@ export const getNumberOfUnreadMessagesInConversation = async (
 
 export const subscribeHandler = (PubSub: TODO) =>
   highOrderHandler(
-    (req: AuthenticatedRequest, write: Write) => {
+    async (req: AuthenticatedRequest, write) => {
       const token = PubSub.subscribe('chats', (_: TODO, data: TODO) =>
         write(`data: ${JSON.stringify({ message: data })}\n\n`)
       );

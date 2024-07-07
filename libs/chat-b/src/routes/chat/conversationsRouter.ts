@@ -1,18 +1,12 @@
 import { Router } from 'express';
-import highOrderHandler from '../../../../gbase-b/src/api/routes';
-import { AuthenticatedRequest } from '../../../../gbase-b/src/api/middleware';
-import {
-  InvalidEnumError,
-  InvalidInputError,
-  UnauthorizedError,
-} from '../../../../gbase-b/src/exceptions';
-import conversation from '../../schemas/chat/conversation';
+import { AuthenticatedRequest } from 'auth-b';
+import { highOrderHandler, TODO, UnauthorizedError } from 'gbase-b';
+import { conversation } from '../../schemas/chat';
 import {
   getLastMessageOfConversation,
   getNameOfUser,
-  getNumberOfUnreadMessagesInConversation,
+  getNumberOfUnreadMessagesInConversation
 } from '../../controllers/chat';
-import { TODO } from '../../../../gbase-b/src/types';
 
 const router = Router();
 
@@ -53,34 +47,36 @@ router.get(
   })
 );
 /*
+
 router.get(
   '/idByBookingId/:id',
   highOrderHandler(async (req: AuthenticatedRequest) => {
     if (!req.user) throw new UnauthorizedError('Please log in');
     if (!req.params.id) throw new InvalidInputError('No Id received');
     const User = user();
-    const booking = await booking().findById(req.params.id);
-    const user =
+    const bookingF = await booking().findById(req.params.id);
+    const userR =
       req.user.type === 'host'
-        ? await User.findById(booking.guest)
+        ? await User.findById(bookingF.guest)
         : await User.findById(
             (
               await companyModel().findById(
                 (
                   await assetModel().findById(
-                    booking ? booking.asset : req.params.id
+                    bookingF ? bookingF.asset : req.params.id
                   )
                 ).companyId
               )
             ).host
           );
     const ress = await conversation().findOne({
-      $or: [{ guestId: user._id.toString() }, { hostId: user._id.toString() }],
+      $or: [{ guestId: userR._id.toString() }, { hostId: userR._id.toString() }],
     });
     if (ress) return res.status(200).json(ress);
-    if (!user?._id?.toString()) throw new UnauthorizedError('No partner found');
-    return { code: 201, body: user._id.toString() };
+    if (!userR?._id?.toString()) throw new UnauthorizedError('No partner found');
+    return { code: 201, body: userR._id.toString() };
   })
-);*/
+);
+*/
 
 export default router;

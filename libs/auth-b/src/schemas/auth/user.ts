@@ -2,7 +2,7 @@ import { getModel } from 'gbase-b';
 import { userBasicSchema } from 'auth-b';
 import { User } from '../../types';
 
-export default <
+export const user = <
   NameRequired extends boolean = false,
   ProfilePictureUriRequired extends boolean = false
 >(

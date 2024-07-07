@@ -1,7 +1,7 @@
 import { getModel } from 'gbase-b';
 import { RegistrationRequest } from '../../types';
 
-export default () =>
+export  const registrationRequest=() =>
   getModel<RegistrationRequest>('registrationRequest', {
     email: {
       type: String,

@@ -1,7 +1,7 @@
-import { getModel } from '../../../../gbase-b/src/schemas';
-import { Conversation } from '../../types/chat/chats';
+import { getModel } from 'gbase-b';
+import { Conversation } from '../../types/chat';
 
-export default () =>
+export const conversation= () =>
   getModel<Conversation>('conversation', {
     firstId: {
       type: String,

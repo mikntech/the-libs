@@ -1,7 +1,7 @@
-import { getModel } from '../../../../gbase-b/src/schemas';
-import { Message } from '../../types/chat/chats';
+import { getModel } from 'gbase-b';
+import { Message } from '../../types/chat';
 
-export default () =>
+export const message= () =>
   getModel<Message>('message', {
     ownerId: {
       type: String,

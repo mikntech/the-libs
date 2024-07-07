@@ -1,7 +1,7 @@
 import { getModel } from 'gbase-b';
 import { PassResetRequest } from '../../types';
 
-export default () =>
+export const passResetRequest= () =>
   getModel<PassResetRequest>('passResetRequest', {
     email: {
       type: String,
