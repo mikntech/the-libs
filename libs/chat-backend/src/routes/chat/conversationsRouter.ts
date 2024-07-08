@@ -1,27 +1,27 @@
 import { Router } from 'express';
-import { AuthenticatedRequest } from 'auth-backend';
 import { highOrderHandler, TODO, UnauthorizedError } from 'base-backend';
-import { conversation } from '../../schemas/chat';
 import {
+  conversation,
   getLastMessageOfConversation,
   getNameOfUser,
   getNumberOfUnreadMessagesInConversation
-} from '../../controllers/chat';
+} from 'chat-backend';
+import { AuthenticatedRequest, User,} from "auth-backend"
 
 const router = Router();
 
 router.get(
   '/:quantity?',
-  highOrderHandler(async (req: AuthenticatedRequest) => {
-    if (!req.user) throw UnauthorizedError();
-    let quantity = parseInt(req.params.quantity);
+  (highOrderHandler(async (req: AuthenticatedRequest) => {
+    if (!(req.user as User)) throw new UnauthorizedError("not logged in");
+    let quantity:number|undefined = parseInt(req.params["quantity"]);
     if (isNaN(quantity) || quantity < 1) {
       quantity = undefined;
     }
     let query = conversation().find({
       $or: [
-        { hostId: String(req.user._id) },
-        { guestId: String(req.user._id) },
+        { hostId: String((req.user as User)._id) },
+        { guestId: String((req.user as User)._id) },
       ],
     });
     if (quantity) {
@@ -35,28 +35,28 @@ router.get(
           ...c.toObject(),
           lastMessage: await getLastMessageOfConversation(c._id.toString()),
           name: await getNameOfUser(
-            req.user.type === 'guest' ? c.hostId : c.guestId
+            (req.user as TODO).type === 'guest' ? c.hostId : c.guestId
           ),
           unReadNumber: await getNumberOfUnreadMessagesInConversation(
             c._id.toString(),
-            req.user
+            (req.user as User)
           ),
         }))
       ),
     };
-  })
+  }) as TODO)
 );
 /*
 
 router.get(
   '/idByBookingId/:id',
   highOrderHandler(async (req: AuthenticatedRequest) => {
-    if (!req.user) throw new UnauthorizedError('Please log in');
+    if (!(req.user as User)) throw new UnauthorizedError('Please log in');
     if (!req.params.id) throw new InvalidInputError('No Id received');
-    const User = user();
+    const User = user(false, false) as TODO;
     const bookingF = await booking().findById(req.params.id);
     const userR =
-      req.user.type === 'host'
+      (req.user as User).type === 'host'
         ? await User.findById(bookingF.guest)
         : await User.findById(
             (

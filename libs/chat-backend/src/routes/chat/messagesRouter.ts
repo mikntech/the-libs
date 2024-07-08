@@ -1,75 +1,43 @@
 import { Router } from "express";
-import { highOrderHandler, UnauthorizedError } from 'base-backend';
+import { highOrderHandler, TODO, UnauthorizedError } from 'base-backend';
 import { AuthenticatedRequest, User, user } from 'auth-backend';
-import { markMessagesAsRead } from '../../controllers/chat';
-import { conversation, message } from '../../schemas/chat';
+import { conversation, message, markMessagesAsRead, sendMessage } from 'chat-backend';
 
 const router = Router();
 
 router.get(
   "/conversationMessages/:id",
   highOrderHandler(
-  async (req: AuthenticatedRequest) => {
+  (async (req: AuthenticatedRequest) => {
       const Message = message();
       const Conversation = conversation();
-      const conversationR = await Conversation.findById(req.params.id);
+      const conversationR = await Conversation.findById(req.params["id"]);
       if (
-        String(req.user._id) !== conversationR.hostId &&
-        String(req.user._id) !== conversationR.guestId
+        String((req.user as User)._id) !== conversationR?.hostId &&
+        String((req.user as User)._id) !== conversationR?.guestId
       )
         throw new UnauthorizedError("You are not part of the conversation");
       const messages = await Message.find({
-        conversationRId: conversation._id.toString(),
+        conversationRId: conversationR?._id.toString(),
       });
-      await markMessagesAsRead(messages, req.user, "queried");
+      await markMessagesAsRead(messages, (req.user as User), "queried");
       return { code: 200, body:(messages)};
-  },
-));
+  } )as TODO)
+);
 
-router.post("/",      highOrderHandler(  async (req: AuthenticatedRequest) => {
-    const { conversationIdOrAddressee, message } = req.body;
-    const Message = message();
-    const Conversation = conversation();
-    let conversationR = await Conversation.findById(conversationIdOrAddressee);
-    let hostId: User | string = await user().findById(
-      conversationIdOrAddressee,
-    );
-    if (!hostId) {
-      const companyF = await company().findById(conversationIdOrAddressee);
-      hostId = companyF?.host?.toString();
-    } else hostId = (hostId as User)?._id?.toString();
-    if (hostId) {
-      conversationR = await Conversation.findOne({
-        hostId,
-        guestId: String(req.user._id),
-      });
-    }
-    if (!conversationR?._id)
-      conversationR = await new Conversation({
-        ...(req.user.type === UserType.host
-          ? { hostId: req.user._id }
-          : { guestId: req.user._id }),
-        ...(req.user.type === UserType.guest
-          ? { hostId }
-          : { guestId: hostId }),
-      }).save();
-    console.log("String(req.user._id): ", String(req.user._id));
-    console.log("conversation: ", conversationR);
-    if (
-      String(req.user._id) !== conversationR.hostId &&
-      String(req.user._id) !== conversationR.guestId
-    )
-     throw new UnauthorizedError("You are not part of the conversation");
-    const newMessage = new Message({
-      ownerId: String(req.user._id),
-      conversationId: conversationR._id,
-      message,
-    });
+enum UserType{
+  a=1,
+  b=2
+}
 
-    await newMessage.save();
+router.post("/",      (highOrderHandler(  async (req: AuthenticatedRequest) => {
+  if (!String((req.user as User)?._id))
+    throw new UnauthorizedError ("Not logged in")
+  const { conversationIdOrAddressee,message } = req.body;
 
-    return {code :201, body:("Message Sent")};
+  return sendMessage<UserType>(req.user as User,  Object.values(UserType),conversationIdOrAddressee,message )
 
-}));
+
+})) as TODO);
 
 export default router;

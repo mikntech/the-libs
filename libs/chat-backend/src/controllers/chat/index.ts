@@ -1,13 +1,13 @@
 import { Message } from '../../types/chat';
-import { highOrderHandler, TODO } from 'base-backend';
+import { highOrderHandler, TODO, UnauthorizedError } from 'base-backend';
 import { AuthenticatedRequest, User, user } from 'auth-backend';
-import { message } from '../../schemas/chat';
+import { conversation, message } from '../../schemas/chat';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
 
 export const getNameOfUser = async (userId: string) =>
-  (await user(false, false).findById(userId))?.full_name;
+  (await user(false, false) .findById(userId))?.full_name;
 
 export const markMessagesAsRead = async (
   messages: Message[],
@@ -58,3 +58,48 @@ export const subscribeHandler = (PubSub: TODO) =>
       { path: 'Connection', stat: 'keep-alive' },
     ]
   );
+
+
+export const sendMessage=async <ENUM>(userx: User, UserTypeEnum: any[], conversationIdOrAddressee: string, messagex: string)=>{
+  const Message = message();
+  const Conversation = conversation();
+  let conversationR = await Conversation.findById(conversationIdOrAddressee);
+  let hostId: /*User | string */TODO= await (user(false, false) ).findById(
+    conversationIdOrAddressee
+  );
+  if (!hostId) {
+    const companyF =/* await company().findById(conversationIdOrAddressee);*/ {host:"Asdasd"}
+    hostId = companyF?.host?.toString();
+  } else hostId = (hostId as User)?._id?.toString();
+  if (hostId) {
+    conversationR = await Conversation.findOne({
+      hostId,
+      guestId: String(userx._id),
+    });
+  }
+  if (!conversationR?._id)
+    conversationR = await new Conversation({
+      ...((userx as TODO).type === (UserTypeEnum as TODO).host
+        ? { hostId: userx._id }
+        : { guestId: userx._id }),
+      ...((userx as TODO).type === (UserTypeEnum as TODO).guest
+        ? { hostId }
+        : { guestId: hostId }),
+    }).save();
+  console.log("String(user._id): ", String(userx._id));
+  console.log("conversation: ", conversationR);
+  if (
+    String(userx._id) !== conversationR.hostId &&
+    String(userx._id) !== conversationR.guestId
+  )
+    throw new UnauthorizedError("You are not part of the conversation");
+  const newMessage = new Message({
+    ownerId: String(userx._id),
+    conversationId: conversationR._id,
+    message:messagex,
+  });
+
+  await newMessage.save();
+
+  return {code :201, body:("Message Sent")};
+}
