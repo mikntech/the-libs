@@ -1,4 +1,4 @@
-export * from './api';
+export * from './express';
 export * as settings from './config';
 export * from './controllers';
 export * from './exceptions';

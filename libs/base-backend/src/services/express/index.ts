@@ -1,13 +1,14 @@
+
 export * from './middlewares';
 export * from './routes';
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import express, { json, Router, urlencoded } from 'express';
-import settings from '../config';
 import { join } from 'path';
 import { autoHelper, serverErrorHandler } from './middlewares';
-import { TODO } from '../types';
+import { TODO } from '../../types';
+import settings from '../../config';
 
 const { version: Version } = require(
   join(__dirname, '..', '..', '..', 'package.json'),
@@ -16,7 +17,7 @@ const { version: Version } = require(
 const app = express();
 const { port, clientDomain, stagingEnv } = settings;
 
-const middlewares = [
+const defaultMiddlewares = [
   cookieParser(),
   json({ limit: '50mb' }),
   urlencoded({ limit: '50mb', extended: true }),
@@ -24,12 +25,13 @@ const middlewares = [
     origin: [clientDomain],
     credentials: true,
   }),
+  serverErrorHandler,
 ];
 
-export default async (router: Router) => {
+export const setup= async (apiRouter: Router, middlewares=[]) => {
   console.log('Starting Server...');
   try {
-    middlewares.forEach((middleware) => app.use(middleware));
+    [...defaultMiddlewares, ...middlewares].forEach((middleware:TODO) => app.use(middleware));
 
     const statusEndpointHandler = (_: TODO, res: TODO) => {
       res.status(200).json({
@@ -42,11 +44,9 @@ export default async (router: Router) => {
 
     app.get('/', statusEndpointHandler);
 
-    app.use('/api', router);
+    app.use('/api', apiRouter);
 
     settings.stagingEnv !== 'prod' && app.use(autoHelper);
-
-    app.use(serverErrorHandler);
 
     app.listen(port, '0.0.0.0', () => {
       console.log('Server is ready at ' + settings.myDomain);
