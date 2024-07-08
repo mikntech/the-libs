@@ -8,7 +8,7 @@ import express, { json, Router, urlencoded } from 'express';
 import { join } from 'path';
 import { autoHelper, serverErrorHandler } from './middlewares';
 import { TODO } from '../../types';
-import settings from '../../config';
+import { settings } from 'base-backend';
 
 const { version: Version } = require(
   join(__dirname, '..', '..', '..', 'package.json'),
