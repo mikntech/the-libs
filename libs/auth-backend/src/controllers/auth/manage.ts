@@ -4,9 +4,8 @@ import {
   findDocs,
   InvalidInputError,
   validateDocument,
-  validateInput,GenEmailFunction, settings
+  validateInput, GenEmailFunction, settings, UnauthorizedError, TODO
 } from 'base-backend';
-import passResetRequest from '../../schemas/auth/passResetRequest';
 import {
   generateSecureCookie,
   hashPassword,
@@ -15,10 +14,9 @@ import {
   validatePasswordStrength
 } from './index';
 import { Model } from 'mongoose';
-import user from '../../schemas/auth/user';
 import { defaultGenPassResetEmail } from '../../services';
 import { v4 } from 'uuid';
-import { PassResetRequest, User } from 'auth-backend';
+import { passResetRequest, PassResetRequest, user, User } from 'auth-backend';
 
 const createKeyForPassReset = async (email: string) => {
   const key = v4();
@@ -26,13 +24,13 @@ const createKeyForPassReset = async (email: string) => {
     email,
     key,
   });
-  return `${settings.clientDomain}/?reset-code=${key}`;
+  return `${(settings as TODO).clientDomain}/?reset-code=${key}`;
 };
 
 export const requestPasswordReset = async <SCHEMA extends User>(
   email: string,
   genPassResetEmail: GenEmailFunction = defaultGenPassResetEmail,
-  model: Model<SCHEMA> = user(),
+  model: Model<SCHEMA> = user(false, false) as TODO,
 ) => {
   validateInput({ email });
   const userDoc = await findDocs<SCHEMA, false>(model.findOne({ email }), true);
@@ -54,7 +52,7 @@ const changeUsersPassword = async <SCHEMA extends User>(
     {
       id: user._id,
     },
-    settings.jwtSecret,
+    (settings as TODO).jwtSecret,
   );
 };
 
@@ -62,7 +60,7 @@ export const resetPassword = async <SCHEMA extends User = User>(
   key: string,
   password: string,
   passwordAgain: string,
-  model: Model<SCHEMA> = user(),
+  model: Model<SCHEMA> = user(false, false) as TODO,
 ) => {
   validateInput({ key });
   validateInput({ password });
@@ -79,6 +77,7 @@ export const resetPassword = async <SCHEMA extends User = User>(
       email,
     }),
   );
+  if(!existingUser) throw new UnauthorizedError("what?")
   return {
     code: 200,
     cookie: generateSecureCookie(

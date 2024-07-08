@@ -5,13 +5,12 @@ import {
   validateEnum,
   validateInput,
   GenEmailFunction,
-  findDocs,
+  findDocs, UnauthorizedError, TODO
 } from 'base-backend';
 import settings from '../../../../base-backend/src/config';
 import {RegistrationRequest, User} from 'auth-backend';
-import registrationRequest from '../../schemas/auth/registrationRequest';
 import { Model } from 'mongoose';
-import user from '../../schemas/auth/user';
+import { user,registrationRequest } from 'auth-backend';
 import { defaultGenRegisterEmail } from '../../services';
 import {
   generateJWT,
@@ -24,7 +23,7 @@ import {
 
 const validateEmailNotInUse = async <SCHEMA extends User = User>(
   email: string,
-  model: Model<SCHEMA> = user(),
+  model: Model<SCHEMA> = user(false, false) as TODO,
 ) => {
   if (await findDocs<SCHEMA, false>(model.findOne({ email }), true))
     throw new InvalidInputError(
@@ -34,7 +33,7 @@ const validateEmailNotInUse = async <SCHEMA extends User = User>(
 
 const createKeyForRegistration = async <SCHEMA extends User = User>(
   email: string,
-  model: Model<SCHEMA> = user(),
+  model: Model<SCHEMA> = user(false, false) as TODO,
 ) => {
   const key = v4();
   await createDoc(model, {
@@ -50,15 +49,17 @@ export const requestToRegister = async <
 >(
   email: string,
   genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
-  accountType?: AccountTypeEnum,
+ /* accountType?: AccountTypeEnum,
   accountTypeEnum?: {
     [key: string]: string;
-  },
+  },*/
 ) => {
   validateInput({ email });
+/*
   accountType && validateEnum({ accountType }, accountTypeEnum);
+*/
   await validateEmailNotInUse<SCHEMA>(email);
-  const url = await createKeyForRegistration(email, accountType);
+  const url = await createKeyForRegistration(email);
   const { subject, body } = genRegisterEmail(url);
   sendEmailWithLink(email, subject, body, url);
   return { code: 200, body: 'email sent successfully' };
@@ -69,7 +70,7 @@ const createUser = async<SCHEMA extends User=User> (
   full_name: string,
   phone_number: string,
   password: string,
-model:Model<SCHEMA>=user()) =>
+model:Model<SCHEMA>=user(false, false)   as TODO) =>
   createDoc((model), {
     email,
     full_name,
@@ -92,24 +93,24 @@ export const finishRegistration = async (
   validatePasswordStrength(password);
   if (password !== passwordAgain)
     throw new InvalidInputError("Passwords don't match");
-  const { email } = await validateKey<RegistrationRequest>(
+  const doc = await validateKey<RegistrationRequest>(
     registrationRequest(),
     key,
   );
-  await validateEmailNotInUse(email);
+  if(!doc?.email) throw new UnauthorizedError("wrong key")
+  await validateEmailNotInUse(doc?.email);
   const hashedPassword = await hashPassword(password);
   const savedUser = await createUser(
-    email,
+    doc?.email,
     full_name,
     phone_number,
     hashedPassword,
-    accountType,
   );
   return {
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      generateJWT(savedUser, accountType),
+      generateJWT(savedUser),
     ),
   };
 };

@@ -1,29 +1,29 @@
 import { AuthenticatedRequest } from 'auth-backend';
 import { Router } from 'express';
 import { logIn, logOut, validateAndProtect } from '../../../controllers';
-import { highOrderHandler } from 'base-backend';
+import { highOrderHandler, TODO } from 'base-backend';
 
 const router = Router();
 
 router.get(
   '/',
-  highOrderHandler(async (req: AuthenticatedRequest) => ({
+  highOrderHandler((async (req: AuthenticatedRequest) => ({
     code: 200,
-    body: validateAndProtect(req.user),
-  })),
+    body: validateAndProtect(req.user as TODO) ,
+  }) )as TODO),
 );
 
 router.post(
   '/in',
-  highOrderHandler(async (req: AuthenticatedRequest) => {
+  highOrderHandler((async (req: AuthenticatedRequest) => {
     const { email, accountType, password } = req.body;
     return logIn(email, accountType, password);
-  }),
+  }) as TODO),
 );
 
 router.get(
   '/out',
-  highOrderHandler((_) => logOut()),
+  highOrderHandler(((_:AuthenticatedRequest) => logOut()) as TODO),
 );
 
 export default router;

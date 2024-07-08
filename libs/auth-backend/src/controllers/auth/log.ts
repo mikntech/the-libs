@@ -1,14 +1,13 @@
-import { User } from 'auth-backend';
+import { User,user } from 'auth-backend';
 import { Model } from 'mongoose';
-import user from '../../schemas/auth/user';
 import {
-  findDocs,
+  findDocs, TODO,
   UnauthorizedError,
   validateDocument,
   validateEnum,
-  validateInput,
+  validateInput
 } from 'base-backend';
-import { generateSecureCookie, JWT_COOKIE_NAME } from './index';
+import { generateJWT, generateSecureCookie, JWT_COOKIE_NAME } from './index';
 import { compare } from 'bcryptjs';
 
 const protectUsersPassword = (user: User) => {
@@ -36,7 +35,7 @@ export const getToken = async <
 >(
   email: string,
   password: string,
-  model: Model<SCHEMA> = user(),
+  model: Model<SCHEMA> = user(false, false) as TODO,
   accountType?: AccountTypeEnum,
 ) => {
   validateInput({ email });
@@ -45,7 +44,7 @@ export const getToken = async <
     model.findOne({ email }),
     true,
   );
-  if (!existingUser && !validateDocument(existingUser as SCHEMA))
+  if (!existingUser && !validateDocument(existingUser as unknown as SCHEMA))
     throw new UnauthorizedError('Please register');
   const accountTypeParam: [AccountTypeEnum?] = accountType
     ? [accountType as AccountTypeEnum]
@@ -64,7 +63,7 @@ export const logIn = async <
 >(
   email: string,
   password: string,
-  model: Model<SCHEMA> = user(false, false) as unknown as Model<SCHEMA>,
+  model: Model<SCHEMA> = user(false, false) as TODO,
   accountType?: AccountTypeEnum,
   accountTypeEnum?: { [key: string]: string },
 ) => {
