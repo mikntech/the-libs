@@ -1,4 +1,4 @@
-export * from './middleware';
+export * from './middlewares';
 export * from './routes';
 
 import cors from 'cors';
@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import express, { json, Router, urlencoded } from 'express';
 import settings from '../config';
 import { join } from 'path';
-import { autoHelper, serverErrorHandler } from './middleware';
+import { autoHelper, serverErrorHandler } from './middlewares';
 import { TODO } from '../types';
 
 const { version: Version } = require(

@@ -1,35 +1,5 @@
 import { NextFunction, Request as ExpressRequest, Response } from 'express';
-import errorLog from '../../schemas/logs/errorLog';
-import { ClientError } from '../../exceptions';
-import { TODO } from '../../types';
-import { StagingEnvironment } from '../../config';
 
-export const serverErrorHandler =
-  <SE = StagingEnvironment>(stagingEnv: SE) =>
-  async (
-    err: TODO,
-    _: ExpressRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<TODO> => {
-    if (err) {
-      if (err instanceof ClientError) return res.status(400).send(err);
-      try {
-        await new (errorLog())({
-          stringifiedError: err.toString(),
-        }).save();
-        console.log('Error was logged to mongo');
-         (stagingEnv === 'local') && console.log("the error: ",err);
-      } catch (e) {
-        console.log('Error logging error to mongo: ', e);
-      }
-      if (!res.headersSent) {
-        return res.status(500).send('Server error');
-      }
-    } else {
-      next(err);
-    }
-  };
 
 interface Layer {
   route?: {
@@ -39,6 +9,7 @@ interface Layer {
   handle?: { stack: Layer[] };
   regexp?: { source: string };
 }
+
 const extractRoutes = (layers: Layer[], basePath: string = ''): string[] => {
   return layers.flatMap((layer) => {
     if (layer.route) {
@@ -55,6 +26,7 @@ const extractRoutes = (layers: Layer[], basePath: string = ''): string[] => {
     }
   });
 };
+
 const formatRoutePath = (source: string): string => {
   return (
     source
@@ -64,6 +36,7 @@ const formatRoutePath = (source: string): string => {
       .replace('\\', '') ?? ''
   );
 };
+
 const filterRoutes = (routes: string[], filter: string): string[] => {
   return routes.filter((route) => {
     const pathSegments = route.split('/');

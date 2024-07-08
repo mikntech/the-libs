@@ -1,7 +1,7 @@
 import { getModel } from '../';
 import { ErrorLog } from 'base-backend';
 
-export default () =>
+export const errorLog= () =>
   getModel<ErrorLog>('errorLog', {
     stringifiedError: {
       type: String,
