@@ -49,39 +49,40 @@ if (
 const isProduction = process.env['NODE_ENV'] === 'production';
 const defaultStagingEnv = isProduction ? 'prod' : 'local';
 
-const port = parseInt(process.env['PORT'] || '4050');
+const port = parseInt(process.env['PORT'] ?? '4050');
 const stagingEnv =
   (process.env['STAGING_ENV'] as StagingEnvironment) || defaultStagingEnv;
 
+const prodDomain='https://' + stagingEnv === StagingEnvironment.prod
+  ? ''
+  : stagingEnv + process.env['CLIENT_DOMAIN']
+
 const clientDomain = isProduction
-  ? 'https://' + stagingEnv === StagingEnvironment.prod
-    ? ''
-    : stagingEnv + process.env['CLIENT_DOMAIN']
+  ? prodDomain
   : 'http://localhost:' + port;
 
-const settings: Settings = {
+export const settings: Settings = {
   nodeEnv: isProduction
     ? NodeEnvironment.production
     : NodeEnvironment.development,
   stagingEnv,
   port,
   mongoURI:
-    process.env['MONGO_URI'] ||
+    process.env['MONGO_URI'] ??
     (isProduction ? '' : 'mongodb://localhost:27017/error'),
-  jwtSecret: process.env['JWT_SECRET'] || "",
-  myDomain: process.env['MY_DOMAIN'] || '0.0.0.0',
+  jwtSecret: process.env['JWT_SECRET'] ?? "",
+  myDomain: process.env['MY_DOMAIN'] ?? '0.0.0.0',
   aws: {
-    keyID: process.env['AWS_KEY_ID'] || '',
-    secretKey: process.env['AWS_SECRET_KEY'] || '',
-    region: process.env['AWS_REGION'] || '',
+    keyID: process.env['AWS_KEY_ID'] ?? '',
+    secretKey: process.env['AWS_SECRET_KEY'] ?? '',
+    region: process.env['AWS_REGION'] ?? '',
   },
   clientDomain,
-  sendgridApiKey: process.env['SENDGRID_API_KEY'] || '',
-  sendgridSender: process.env['SENDGRID_SENDER'] || 'service@' + clientDomain,
+  sendgridApiKey: process.env['SENDGRID_API_KEY'] ?? '',
+  sendgridSender: process.env['SENDGRID_SENDER'] ?? 'service@' + clientDomain,
 };
 
 if (!settings) {
   throw new Error('Configuration settings could not be loaded');
 } else console.log('settings: ', JSON.stringify(settings));
 
-export default settings;

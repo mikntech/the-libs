@@ -1,5 +1,4 @@
-export * from './express';
-export * as settings from './config';
+export *  from './config';
 export * from './controllers';
 export * from './exceptions';
 export * from './schemas';
