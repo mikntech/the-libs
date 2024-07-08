@@ -15,9 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "auth-b": ["libs/auth-b/src/index.ts"],
-      "chat-b": ["libs/chat-b/src/index.ts"],
-      "gbase-b": ["libs/gbase-b/src/index.ts"]
+      "auth-backend": ["libs/auth-backend/src/index.ts"],
+      "chat-backend": ["libs/chat-backend/src/index.ts"],
+      "base-backend": ["libs/base-backend/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,0 +1,26 @@
+{
+  "name": "auth-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth-backend/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/auth-backend",
+        "main": "libs/auth-backend/src/index.ts",
+        "tsConfig": "libs/auth-backend/tsconfig.lib.json",
+        "assets": [
+          "auth-backend/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

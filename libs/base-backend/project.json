@@ -1,0 +1,26 @@
+{
+  "name": "base-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/base-backend/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/base-backend",
+        "main": "libs/base-backend/src/index.ts",
+        "tsConfig": "libs/base-backend/tsconfig.lib.json",
+        "assets": [
+          "base-backend/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
