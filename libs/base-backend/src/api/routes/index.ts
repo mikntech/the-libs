@@ -27,7 +27,7 @@ export const highOrderHandler =
           handler as (req: R) => Promise<APIResponse>
         )(req);
         const { code, body, cookie } = restResponse;
-        if (code >= 500) throw new Error('Internal Server Error');
+        if (code >= 500)   next(new Error('Internal Server Error'));
         const ret = res.status(code);
         if (cookie) {
           const { name, val, options } = cookie;
