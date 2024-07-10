@@ -2,24 +2,27 @@ import { v4 } from 'uuid';
 import {
   createDoc,
   InvalidInputError,
-  validateEnum,
   validateInput,
   GenEmailFunction,
-  findDocs, UnauthorizedError, TODO
+  findDocs,
+  UnauthorizedError,
+  TODO,
+  user,
+  registrationRequest,
 } from 'base-backend';
 import settings from '../../../../base-backend/src/config';
-import {RegistrationRequest, User} from 'auth-backend';
+import { RegistrationRequest, User } from 'auth-backend';
 import { Model } from 'mongoose';
-import { user,registrationRequest } from 'auth-backend';
 import { defaultGenRegisterEmail } from '../../services';
 import {
   generateJWT,
   generateSecureCookie,
   hashPassword,
-  JWT_COOKIE_NAME, sendEmailWithLink,
+  JWT_COOKIE_NAME,
+  sendEmailWithLink,
   validateKey,
-  validatePasswordStrength
-} from "./index";
+  validatePasswordStrength,
+} from './index';
 
 const validateEmailNotInUse = async <SCHEMA extends User = User>(
   email: string,
@@ -49,13 +52,13 @@ export const requestToRegister = async <
 >(
   email: string,
   genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
- /* accountType?: AccountTypeEnum,
+  /* accountType?: AccountTypeEnum,
   accountTypeEnum?: {
     [key: string]: string;
   },*/
 ) => {
   validateInput({ email });
-/*
+  /*
   accountType && validateEnum({ accountType }, accountTypeEnum);
 */
   await validateEmailNotInUse<SCHEMA>(email);
@@ -65,13 +68,14 @@ export const requestToRegister = async <
   return { code: 200, body: 'email sent successfully' };
 };
 
-const createUser = async<SCHEMA extends User=User> (
+const createUser = async <SCHEMA extends User = User>(
   email: string,
   full_name: string,
   phone_number: string,
   password: string,
-model:Model<SCHEMA>=user(false, false)   as TODO) =>
-  createDoc((model), {
+  model: Model<SCHEMA> = user(false, false) as TODO,
+) =>
+  createDoc(model, {
     email,
     full_name,
     phone_number,
@@ -97,7 +101,7 @@ export const finishRegistration = async (
     registrationRequest(),
     key,
   );
-  if(!doc?.email) throw new UnauthorizedError("wrong key")
+  if (!doc?.email) throw new UnauthorizedError('wrong key');
   await validateEmailNotInUse(doc?.email);
   const hashedPassword = await hashPassword(password);
   const savedUser = await createUser(
@@ -108,9 +112,6 @@ export const finishRegistration = async (
   );
   return {
     code: 200,
-    cookie: generateSecureCookie(
-      JWT_COOKIE_NAME,
-      generateJWT(savedUser),
-    ),
+    cookie: generateSecureCookie(JWT_COOKIE_NAME, generateJWT(savedUser)),
   };
 };

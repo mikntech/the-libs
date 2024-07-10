@@ -4,17 +4,17 @@ import {
   conversation,
   getLastMessageOfConversation,
   getNameOfUser,
-  getNumberOfUnreadMessagesInConversation
+  getNumberOfUnreadMessagesInConversation,
 } from 'chat-backend';
-import { AuthenticatedRequest, User,} from "auth-backend"
+import { AuthenticatedRequest, User } from 'auth-backend';
 
 const router = Router();
 
 router.get(
   '/:quantity?',
-  (highOrderHandler(async (req: AuthenticatedRequest) => {
-    if (!(req.user as User)) throw new UnauthorizedError("not logged in");
-    let quantity:number|undefined = parseInt(req.params["quantity"]);
+  highOrderHandler(async (req: AuthenticatedRequest) => {
+    if (!(req.user as User)) throw new UnauthorizedError('not logged in');
+    let quantity: number | undefined = parseInt(req.params['quantity']);
     if (isNaN(quantity) || quantity < 1) {
       quantity = undefined;
     }
@@ -35,16 +35,16 @@ router.get(
           ...c.toObject(),
           lastMessage: await getLastMessageOfConversation(c._id.toString()),
           name: await getNameOfUser(
-            (req.user as TODO).type === 'guest' ? c.hostId : c.guestId
+            (req.user as TODO).type === 'guest' ? c.hostId : c.guestId,
           ),
           unReadNumber: await getNumberOfUnreadMessagesInConversation(
             c._id.toString(),
-            (req.user as User)
+            req.user as User,
           ),
-        }))
+        })),
       ),
     };
-  }) as TODO)
+  }) as TODO,
 );
 /*
 

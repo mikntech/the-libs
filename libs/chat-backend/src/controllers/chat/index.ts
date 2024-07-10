@@ -7,20 +7,20 @@ export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
 
 export const getNameOfUser = async (userId: string) =>
-  (await user(false, false) .findById(userId))?.full_name;
+  (await user(false, false).findById(userId))?.full_name;
 
 export const markMessagesAsRead = async (
   messages: Message[],
   user: User,
-  level: 'queried' | 'marked'
+  level: 'queried' | 'marked',
 ) =>
   messages
     .filter(
       level === 'queried'
         ? ({ whenQueried, ownerId }) =>
-            user._id.toString() !== ownerId && !whenQueried
+            String(user._id) !== ownerId && !whenQueried
         : ({ whenMarked, ownerId }) =>
-            user._id.toString() !== ownerId && !whenMarked
+            String(user._id) !== ownerId && !whenMarked,
     )
     .forEach((message) => {
       if (level === 'queried') message.whenQueried = Date.now();
@@ -30,22 +30,21 @@ export const markMessagesAsRead = async (
 
 export const getNumberOfUnreadMessagesInConversation = async (
   conversationId: string,
-  user: User
+  user: User,
 ) =>
   (
     await message().find({
       conversationId,
     })
   ).filter(
-    ({ ownerId, whenQueried }) =>
-      ownerId !== user._id.toString() && !whenQueried
+    ({ ownerId, whenQueried }) => ownerId !== String(user._id) && !whenQueried,
   ).length;
 
 export const subscribeHandler = (PubSub: TODO) =>
   highOrderHandler(
     async (req: AuthenticatedRequest, write) => {
       const token = PubSub.subscribe('chats', (_: TODO, data: TODO) =>
-        write(`data: ${JSON.stringify({ message: data })}\n\n`)
+        write(`data: ${JSON.stringify({ message: data })}\n\n`),
       );
 
       req.on('close', () => {
@@ -56,21 +55,27 @@ export const subscribeHandler = (PubSub: TODO) =>
       { path: 'Content-Type', stat: 'text/event-stream' },
       { path: 'Cache-Control', stat: 'no-cache' },
       { path: 'Connection', stat: 'keep-alive' },
-    ]
+    ],
   );
 
-
-export const sendMessage=async <ENUM>(userx: User, UserTypeEnum: any[], conversationIdOrAddressee: string, messagex: string)=>{
+export const sendMessage = async <ENUM>(
+  userx: User,
+  UserTypeEnum: any[],
+  conversationIdOrAddressee: string,
+  messagex: string,
+) => {
   const Message = message();
   const Conversation = conversation();
   let conversationR = await Conversation.findById(conversationIdOrAddressee);
-  let hostId: /*User | string */TODO= await (user(false, false) ).findById(
-    conversationIdOrAddressee
+  let hostId: /*User | string */ TODO = await user(false, false).findById(
+    conversationIdOrAddressee,
   );
   if (!hostId) {
-    const companyF =/* await company().findById(conversationIdOrAddressee);*/ {host:"Asdasd"}
+    const companyF = /* await company().findById(conversationIdOrAddressee);*/ {
+      host: 'Asdasd',
+    };
     hostId = companyF?.host?.toString();
-  } else hostId = (hostId as User)?._id?.toString();
+  } else hostId = String((hostId as User)?._id?);
   if (hostId) {
     conversationR = await Conversation.findOne({
       hostId,
@@ -86,20 +91,20 @@ export const sendMessage=async <ENUM>(userx: User, UserTypeEnum: any[], conversa
         ? { hostId }
         : { guestId: hostId }),
     }).save();
-  console.log("String(user._id): ", String(userx._id));
-  console.log("conversation: ", conversationR);
+  console.log('String(user._id): ', String(userx._id));
+  console.log('conversation: ', conversationR);
   if (
     String(userx._id) !== conversationR.hostId &&
     String(userx._id) !== conversationR.guestId
   )
-    throw new UnauthorizedError("You are not part of the conversation");
+    throw new UnauthorizedError('You are not part of the conversation');
   const newMessage = new Message({
     ownerId: String(userx._id),
     conversationId: conversationR._id,
-    message:messagex,
+    message: messagex,
   });
 
   await newMessage.save();
 
-  return {code :201, body:("Message Sent")};
-}
+  return { code: 201, body: 'Message Sent' };
+};
