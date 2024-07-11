@@ -5,7 +5,8 @@ export const validateTruthy = <T = string>(value: T) => !!value;
 
 export const validateInput = <T = string>(input: { [key: string]: T }) => {
   const [name, value] = Object.entries(input)[0];
-  if (!validateTruthy(value)) throw new InvalidInputError(name);
+  if (!validateTruthy(value))
+    throw new InvalidInputError('didnt receive at all: ' + name);
   return name;
 };
 

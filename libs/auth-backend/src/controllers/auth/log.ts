@@ -1,11 +1,12 @@
-import { User,user } from 'auth-backend';
+import { User, user } from 'auth-backend';
 import { Model } from 'mongoose';
 import {
-  findDocs, TODO,
+  findDocs,
+  TODO,
   UnauthorizedError,
   validateDocument,
   validateEnum,
-  validateInput
+  validateInput,
 } from 'base-backend';
 import { generateJWT, generateSecureCookie, JWT_COOKIE_NAME } from './index';
 import { compare } from 'bcryptjs';
@@ -68,6 +69,7 @@ export const logIn = async <
   accountTypeEnum?: { [key: string]: string },
 ) => {
   validateInput({ email });
+  debugger;
   validateInput({ password });
   accountType && validateInput({ accountType });
   accountType &&
