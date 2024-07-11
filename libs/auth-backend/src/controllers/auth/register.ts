@@ -1,17 +1,20 @@
 import { v4 } from 'uuid';
 import {
+  baseSettings,
   createDoc,
-  InvalidInputError,
-  validateInput,
-  GenEmailFunction,
   findDocs,
-  UnauthorizedError,
+  GenEmailFunction,
+  InvalidInputError,
   TODO,
-  user,
-  registrationRequest,
+  UnauthorizedError,
+  validateInput,
 } from 'base-backend';
-import settings from '../../../../base-backend/src/config';
-import { RegistrationRequest, User } from 'auth-backend';
+import {
+  registrationRequest,
+  RegistrationRequest,
+  user,
+  User,
+} from 'auth-backend';
 import { Model } from 'mongoose';
 import { defaultGenRegisterEmail } from '../../services';
 import {
@@ -43,7 +46,7 @@ const createKeyForRegistration = async <SCHEMA extends User = User>(
     email,
     key,
   });
-  return `${settings.clientDomain}/?register-code=${key}`;
+  return `${baseSettings.clientDomain}/?register-code=${key}`;
 };
 
 export const requestToRegister = async <

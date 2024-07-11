@@ -1,23 +1,22 @@
-
-export *  from './config';
+export * from './config';
 export * from './controllers';
 export * from './exceptions';
 export * from './schemas';
 export * from './services';
 export * from './types';
 
-
-
 import { setup } from './services';
 import { connect } from './schemas';
 import { Router } from 'express';
-import { settings } from './config';
+import { baseSettings } from './config';
 
-
-
-export const start = (apiRouter= Router(), watchDB =()=>{}) => {
+export const start = (
+  apiRouter = Router(),
+  middlewares: Function[] = [],
+  watchDB = () => {},
+) => {
   console.log('Connecting to MongoDB...');
-  connect(settings.mongoURI,settings.stagingEnv,watchDB)
-    .then(() => setup(apiRouter).catch((e) => console.log(e)))
+  connect(baseSettings.mongoURI, baseSettings.stagingEnv, watchDB)
+    .then(() => setup(apiRouter, middlewares).catch((e) => console.log(e)))
     .catch((e) => console.log(e));
 };

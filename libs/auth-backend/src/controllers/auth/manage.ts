@@ -4,14 +4,19 @@ import {
   findDocs,
   InvalidInputError,
   validateDocument,
-  validateInput, GenEmailFunction, settings, UnauthorizedError, TODO
+  validateInput,
+  GenEmailFunction,
+  UnauthorizedError,
+  TODO,
+  baseSettings,
 } from 'base-backend';
 import {
   generateSecureCookie,
   hashPassword,
-  JWT_COOKIE_NAME, sendEmailWithLink,
+  JWT_COOKIE_NAME,
+  sendEmailWithLink,
   validateKey,
-  validatePasswordStrength
+  validatePasswordStrength,
 } from './index';
 import { Model } from 'mongoose';
 import { defaultGenPassResetEmail } from '../../services';
@@ -24,7 +29,7 @@ const createKeyForPassReset = async (email: string) => {
     email,
     key,
   });
-  return `${(settings as TODO).clientDomain}/?reset-code=${key}`;
+  return `${(baseSettings as TODO).clientDomain}/?reset-code=${key}`;
 };
 
 export const requestPasswordReset = async <SCHEMA extends User>(
@@ -52,7 +57,7 @@ const changeUsersPassword = async <SCHEMA extends User>(
     {
       id: user._id,
     },
-    (settings as TODO).jwtSecret,
+    (baseSettings as TODO).jwtSecret,
   );
 };
 
@@ -77,7 +82,7 @@ export const resetPassword = async <SCHEMA extends User = User>(
       email,
     }),
   );
-  if(!existingUser) throw new UnauthorizedError("what?")
+  if (!existingUser) throw new UnauthorizedError('what?');
   return {
     code: 200,
     cookie: generateSecureCookie(

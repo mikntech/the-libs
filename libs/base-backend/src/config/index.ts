@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+import * as process from 'node:process';
 
 config();
 
@@ -19,7 +20,7 @@ interface AWSConfig {
   region: string;
 }
 
-interface Settings {
+interface BaseSettings {
   nodeEnv: NodeEnvironment;
   stagingEnv: StagingEnvironment;
   port: number;
@@ -43,25 +44,39 @@ if (!validEnvs.includes(process.env['NODE_ENV'] as NodeEnvironment)) {
 if (
   !validStagingEnvs.includes(process.env['STAGING_ENV'] as StagingEnvironment)
 ) {
-  throw new Error("STAGING_ENV must be 'local', 'dev', 'preprod', or 'prod'");
+  throw new Error(
+    'STAGING_ENV must be one of these: ' + Object.values(StagingEnvironment),
+  );
 }
 
 const isProduction = process.env['NODE_ENV'] === 'production';
-const defaultStagingEnv = isProduction ? 'prod' : 'local';
+const defaultStagingEnv = isProduction
+  ? StagingEnvironment.prod
+  : StagingEnvironment.local;
 
 const port = parseInt(process.env['PORT'] ?? '4050');
 const stagingEnv =
   (process.env['STAGING_ENV'] as StagingEnvironment) || defaultStagingEnv;
 
-const prodDomain='https://' + stagingEnv === StagingEnvironment.prod
-  ? ''
-  : stagingEnv + process.env['CLIENT_DOMAIN']
+const generateFullDomain = (base: string, port: string | number) => {
+  const prodDomain =
+    'https://' + stagingEnv === StagingEnvironment.prod
+      ? ''
+      : stagingEnv + base;
+  return isProduction ? prodDomain : 'http://localhost:' + port;
+};
 
-const clientDomain = isProduction
-  ? prodDomain
-  : 'http://localhost:' + port;
+const clientDomain = generateFullDomain(
+  process.env['CLIENT_DOMAIN'] ?? 'localhost',
+  process.env['CLIENT_PORT'] ?? 4100,
+);
 
-export const settings: Settings = {
+const myDomain = generateFullDomain(
+  process.env['MY_DOMAIN'] ?? 'localhost',
+  port,
+);
+
+export const baseSettings: BaseSettings = {
   nodeEnv: isProduction
     ? NodeEnvironment.production
     : NodeEnvironment.development,
@@ -70,8 +85,8 @@ export const settings: Settings = {
   mongoURI:
     process.env['MONGO_URI'] ??
     (isProduction ? '' : 'mongodb://localhost:27017/error'),
-  jwtSecret: process.env['JWT_SECRET'] ?? "",
-  myDomain: process.env['MY_DOMAIN'] ?? '0.0.0.0',
+  jwtSecret: process.env['JWT_SECRET'] ?? '',
+  myDomain,
   aws: {
     keyID: process.env['AWS_KEY_ID'] ?? '',
     secretKey: process.env['AWS_SECRET_KEY'] ?? '',
@@ -82,7 +97,8 @@ export const settings: Settings = {
   sendgridSender: process.env['SENDGRID_SENDER'] ?? 'service@' + clientDomain,
 };
 
-if (!settings) {
-  throw new Error('Configuration settings could not be loaded');
-} else console.log('settings: ', JSON.stringify(settings));
-
+export const validateSettings = (settings: BaseSettings) => {
+  if (!baseSettings) {
+    throw new Error('Configuration settings could not be loaded');
+  } else console.log('settings: ', JSON.stringify(baseSettings));
+};

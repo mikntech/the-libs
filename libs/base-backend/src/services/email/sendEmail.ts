@@ -1,20 +1,19 @@
 import sendgrid from '@sendgrid/mail';
-import { settings } from 'base-backend';
-
+import { baseSettings } from 'base-backend';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {
-    sendgrid.setApiKey(settings.sendgridApiKey);
+    sendgrid.setApiKey(baseSettings.sendgridApiKey);
     await sendgrid.send({
       to,
-      from: settings.sendgridSender,
+      from: baseSettings.sendgridSender,
       subject,
       html,
     });
-    settings.stagingEnv === 'local' &&
+    baseSettings.stagingEnv === 'local' &&
       console.log('Successfully sent email to ' + to);
   } catch (error) {
-    settings.stagingEnv !== 'local' &&
+    baseSettings.stagingEnv !== 'local' &&
       console.log('Error sending email:', error);
   }
 };

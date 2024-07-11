@@ -9,7 +9,8 @@ import {
   validateDocument,
   Document,
   sendEmail,
-  settings, TODO
+  TODO,
+  baseSettings,
 } from 'base-backend';
 import { hash, genSalt } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
@@ -32,7 +33,7 @@ export const generateJWT = <
       id: user._id,
       accountType,
     },
-    (settings as TODO).jwtSecret,
+    (baseSettings as TODO).jwtSecret,
   );
 
 export const generateSecureCookie = (name: string, val: string) => ({
@@ -40,8 +41,8 @@ export const generateSecureCookie = (name: string, val: string) => ({
   val,
   options: {
     httpOnly: true,
-    sameSite: (settings as TODO).nodeEnv === 'development' ? 'lax' : 'none',
-    secure: (settings as TODO).nodeEnv === 'production',
+    sameSite: (baseSettings as TODO).nodeEnv === 'development' ? 'lax' : 'none',
+    secure: (baseSettings as TODO).nodeEnv === 'production',
   } as CookieOptions,
 });
 
@@ -53,7 +54,7 @@ export const sendEmailWithLink = (
 ) => {
   sendEmail(email, subject, body).then(
     () =>
-      (settings as TODO).stagingEnv === 'local' &&
+      (baseSettings as TODO).stagingEnv === 'local' &&
       console.log('tried to send email - link is: ' + link),
   );
 };
