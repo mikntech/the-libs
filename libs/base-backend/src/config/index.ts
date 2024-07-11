@@ -66,7 +66,9 @@ const generateFullDomain = (base: string, port: string | number) => {
   return isProduction ? prodDomain : "http://localhost:" + port;
 };
 
-const clientDomains = JSON.parse(process.env["CLIENT_DOMAINS"] ?? "");
+const clientDomains = JSON.parse(
+  process.env["CLIENT_DOMAINS"] ?? JSON.stringify({ single: "my.co" }),
+);
 
 Object.keys(clientDomains).forEach((key) => {
   clientDomains[key] = generateFullDomain(

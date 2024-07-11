@@ -1,14 +1,12 @@
-import { Router } from 'express';
-import conversationsRouter from './conversationsRouter';
-import messagesRouter from './messagesRouter';
-import { subscribeHandler } from '../../controllers/chat';
-import { TODO } from 'base-backend';
+import { Router } from "express";
+import conversationsRouter from "./conversationsRouter";
+import messagesRouter from "./messagesRouter";
+import { subscribeHandler } from "../../controllers/chat";
+import { TODO } from "base-backend";
 
-const router = Router();
+export const chatRouter = Router();
 
-router.use('/conversations', conversationsRouter);
-router.use('/messages', messagesRouter);
+chatRouter.use("/conversations", conversationsRouter);
+chatRouter.use("/messages", messagesRouter);
 
-router.get('/subscribe', subscribeHandler(null) as TODO);
-
-export default router;
+chatRouter.get("/subscribe", subscribeHandler(null) as TODO);

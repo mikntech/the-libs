@@ -1,4 +1,4 @@
-import { sign } from 'jsonwebtoken';
+import { sign } from "jsonwebtoken";
 import {
   createDoc,
   findDocs,
@@ -8,8 +8,8 @@ import {
   GenEmailFunction,
   UnauthorizedError,
   TODO,
-  baseSettings,
-} from 'base-backend';
+  getBaseSettings,
+} from "base-backend";
 import {
   generateSecureCookie,
   hashPassword,
@@ -17,19 +17,21 @@ import {
   sendEmailWithLink,
   validateKey,
   validatePasswordStrength,
-} from './index';
-import { Model } from 'mongoose';
-import { defaultGenPassResetEmail } from '../../services';
-import { v4 } from 'uuid';
-import { passResetRequest, PassResetRequest, user, User } from 'auth-backend';
+} from "./index";
+import { Model } from "mongoose";
+import { defaultGenPassResetEmail } from "../../services";
+import { v4 } from "uuid";
+import { passResetRequest, PassResetRequest, user, User } from "auth-backend";
 
-const createKeyForPassReset = async (email: string) => {
+const createKeyForPassReset = async <CB extends { [s: string]: string }>(
+  email: string,
+) => {
   const key = v4();
   await createDoc(passResetRequest(), {
     email,
     key,
   });
-  return `${(baseSettings as TODO).clientDomain}/?reset-code=${key}`;
+  return `${getBaseSettings<CB>().clientDomains[0]}/?reset-code=${key}`;
 };
 
 export const requestPasswordReset = async <SCHEMA extends User>(
@@ -40,11 +42,11 @@ export const requestPasswordReset = async <SCHEMA extends User>(
   validateInput({ email });
   const userDoc = await findDocs<SCHEMA, false>(model.findOne({ email }), true);
   if (!userDoc || !validateDocument(userDoc as SCHEMA))
-    throw new InvalidInputError('No user found with this email');
+    throw new InvalidInputError("No user found with this email");
   const url = await createKeyForPassReset(email);
   const { subject, body } = genPassResetEmail(url);
   sendEmailWithLink(email, subject, body, url);
-  return { code: 200, body: 'email sent successfully' };
+  return { code: 200, body: "email sent successfully" };
 };
 
 const changeUsersPassword = async <SCHEMA extends User>(
@@ -57,7 +59,7 @@ const changeUsersPassword = async <SCHEMA extends User>(
     {
       id: user._id,
     },
-    (baseSettings as TODO).jwtSecret,
+    getBaseSettings().jwtSecret,
   );
 };
 
@@ -82,7 +84,7 @@ export const resetPassword = async <SCHEMA extends User = User>(
       email,
     }),
   );
-  if (!existingUser) throw new UnauthorizedError('what?');
+  if (!existingUser) throw new UnauthorizedError("what?");
   return {
     code: 200,
     cookie: generateSecureCookie(

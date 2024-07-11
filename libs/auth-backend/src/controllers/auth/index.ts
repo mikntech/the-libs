@@ -1,25 +1,25 @@
-export * from './log';
-export * from './manage';
-export * from './register';
+import { getBaseSettings } from "base-backend";
 
-import { User } from 'auth-backend';
+export * from "./log";
+export * from "./manage";
+export * from "./register";
+
+import { User } from "auth-backend";
 import {
   findDocs,
   InvalidInputError,
   validateDocument,
   Document,
   sendEmail,
-  TODO,
-  baseSettings,
-} from 'base-backend';
-import { hash, genSalt } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import { CookieOptions } from 'express';
-import { Model } from 'mongoose';
-import zxcvbn from 'zxcvbn';
-import { MIN_PASSWORD_STRENGTH } from '../../strategy';
+} from "base-backend";
+import { hash, genSalt } from "bcryptjs";
+import { sign } from "jsonwebtoken";
+import { CookieOptions } from "express";
+import { Model } from "mongoose";
+import zxcvbn from "zxcvbn";
+import { MIN_PASSWORD_STRENGTH } from "../../strategy";
 
-export const JWT_COOKIE_NAME = 'jwt';
+export const JWT_COOKIE_NAME = "jwt";
 
 export const generateJWT = <
   SCHEMA extends User = User,
@@ -33,7 +33,7 @@ export const generateJWT = <
       id: user._id,
       accountType,
     },
-    (baseSettings as TODO).jwtSecret,
+    getBaseSettings().jwtSecret,
   );
 
 export const generateSecureCookie = (name: string, val: string) => ({
@@ -41,8 +41,8 @@ export const generateSecureCookie = (name: string, val: string) => ({
   val,
   options: {
     httpOnly: true,
-    sameSite: (baseSettings as TODO).nodeEnv === 'development' ? 'lax' : 'none',
-    secure: (baseSettings as TODO).nodeEnv === 'production',
+    sameSite: getBaseSettings().nodeEnv === "development" ? "lax" : "none",
+    secure: getBaseSettings().nodeEnv === "production",
   } as CookieOptions,
 });
 
@@ -54,14 +54,14 @@ export const sendEmailWithLink = (
 ) => {
   sendEmail(email, subject, body).then(
     () =>
-      (baseSettings as TODO).stagingEnv === 'local' &&
-      console.log('tried to send email - link is: ' + link),
+      getBaseSettings().stagingEnv === "local" &&
+      console.log("tried to send email - link is: " + link),
   );
 };
 
 export const validatePasswordStrength = (password: string) => {
   if (zxcvbn(password).score < MIN_PASSWORD_STRENGTH)
-    throw new InvalidInputError('Password is too weak');
+    throw new InvalidInputError("Password is too weak");
 };
 
 export const validateKey = async <SCHEMA extends Document>(
@@ -75,7 +75,7 @@ export const validateKey = async <SCHEMA extends Document>(
     true,
   );
   if (!existingRequest || !validateDocument(existingRequest as SCHEMA)) {
-    throw new InvalidInputError('key (is wrong)');
+    throw new InvalidInputError("key (is wrong)");
   }
   return existingRequest as SCHEMA;
 };
