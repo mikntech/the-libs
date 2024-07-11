@@ -8,6 +8,7 @@ import express, { json, Router, urlencoded } from "express";
 import { join } from "path";
 import { autoHelper, serverErrorHandler } from "./middlewares";
 import { TODO } from "../../types";
+import { errorLog } from "../../schemas/logs/errorLog";
 
 const { version: Version } = require(
   join(__dirname, "..", "..", "..", "package.json"),
@@ -31,7 +32,7 @@ export const setup = async <CB extends { [s: string]: string }>(
       origin: Object.values(clientDomains),
       credentials: true,
     }),
-    serverErrorHandler,
+    serverErrorHandler(getBaseSettings().stagingEnv, errorLog()),
   ];
 
   try {
