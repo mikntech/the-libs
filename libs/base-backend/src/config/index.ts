@@ -20,13 +20,13 @@ interface AWSConfig {
   region: string;
 }
 
-interface BaseSettings {
+export interface BaseSettings {
   nodeEnv: NodeEnvironment;
   stagingEnv: StagingEnvironment;
   port: number;
   mongoURI: string;
   jwtSecret: string;
-  clientDomain: string;
+  clientDomains: string[];
   myDomain: string;
   aws: AWSConfig;
   sendgridApiKey: string;
@@ -66,10 +66,12 @@ const generateFullDomain = (base: string, port: string | number) => {
   return isProduction ? prodDomain : 'http://localhost:' + port;
 };
 
-const clientDomain = generateFullDomain(
-  process.env['CLIENT_DOMAIN'] ?? 'localhost',
+const rawClientDomains:string[] = JSON.parse(process.env["CLIENT_DOMAINS"] ?? '');
+
+const clientDomains =rawClientDomains.map((raw)=>  generateFullDomain(
+  raw,
   process.env['CLIENT_PORT'] ?? 4100,
-);
+));
 
 const myDomain = generateFullDomain(
   process.env['MY_DOMAIN'] ?? 'localhost',
@@ -92,13 +94,13 @@ export const baseSettings: BaseSettings = {
     secretKey: process.env['AWS_SECRET_KEY'] ?? '',
     region: process.env['AWS_REGION'] ?? '',
   },
-  clientDomain,
+  clientDomains,
   sendgridApiKey: process.env['SENDGRID_API_KEY'] ?? '',
-  sendgridSender: process.env['SENDGRID_SENDER'] ?? 'service@' + clientDomain,
+  sendgridSender: process.env['SENDGRID_SENDER'] ?? 'service@' + clientDomains[0],
 };
 
 export const validateSettings = (settings: BaseSettings) => {
-  if (!baseSettings) {
+  if (!settings) {
     throw new Error('Configuration settings could not be loaded');
-  } else console.log('settings: ', JSON.stringify(baseSettings));
+  } else console.log('settings: ', JSON.stringify(settings));
 };
