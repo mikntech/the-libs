@@ -1,5 +1,5 @@
 import { getModel } from 'base-backend';
-import { userBasicSchema } from 'auth-backend';
+import { userBasicSchema } from '../../abstract';
 import { User } from '../../types';
 
 export const user = <
@@ -10,9 +10,7 @@ export const user = <
   profilePictureUriRequired: ProfilePictureUriRequired extends true
     ? true
     : false,
-) => {
-  debugger;
-  return getModel<User<NameRequired, ProfilePictureUriRequired>>('user', {
+) =>
+  getModel<User<NameRequired, ProfilePictureUriRequired>>('user', {
     ...userBasicSchema(nameRequired, profilePictureUriRequired),
   });
-};

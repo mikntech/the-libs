@@ -1,7 +1,7 @@
 import { User } from './types';
 import { Model } from 'mongoose';
-import { user } from './schemas';
 import { ZXCVBNScore } from 'zxcvbn';
+import { user } from './schemas';
 
 export enum MultiUserType {
   SINGLE = 'single',
@@ -35,8 +35,8 @@ export interface Strategy<UserType = 'single'> {
   mfa: MFA;
   externalIdentityProviders: ExternalIdentityProviders;
   modelMap: UserType extends 'single'
-    ? Model<User>
-    : { readonly [K in keyof UserType]: Model<User> };
+    ? () => Model<User>
+    : { readonly [K in keyof UserType]: () => Model<User> };
 }
 
 export const defaultStrategy: Strategy = {
@@ -46,5 +46,5 @@ export const defaultStrategy: Strategy = {
   passwordType: PasswordType.HASHED,
   mfa: MFA.OFF,
   externalIdentityProviders: ExternalIdentityProviders.OFF,
-  modelMap: user(false, false),
+  modelMap: () => user(false, false),
 };

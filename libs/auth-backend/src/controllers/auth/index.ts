@@ -20,9 +20,7 @@ export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
   const getModel = (userType?: string): Model<User> =>
     (strategy.multiUserType === MultiUserType.SINGLE
       ? strategy.modelMap
-      : strategy.modelMap[
-          userType as keyof typeof strategy.modelMap
-        ]) as unknown as Model<User>;
+      : strategy.modelMap[userType])() as unknown as Model<User>;
 
   const generateJWT = <SCHEMA extends User = User>(
     user: SCHEMA,
