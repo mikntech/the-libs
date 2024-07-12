@@ -1,33 +1,35 @@
 import { Router } from 'express';
-import { Strategy } from 'auth-backend';
+import { AuthenticatedRequest, MultiUserType, Strategy } from 'auth-backend';
 import { genRegisterControllers } from '../../../controllers/auth/register';
+import { GenEmailFunction, highOrderHandler, TODO } from 'base-backend';
 
-export const registerRouter = <S>(strategy: Strategy<S>) => {
+export const registerRouter = <S, UserType>(
+  genRegisterEmail: GenEmailFunction,
+  strategy: Strategy<S>,
+  UserTypeEnum: Record<string, string>,
+) => {
   const router = Router();
 
-  // const {} = genRegisterControllers(strategy);
-
-  /*
+  const { requestToRegister, finishRegistration } = genRegisterControllers(
+    strategy,
+    UserTypeEnum,
+  );
 
   router.post(
-    '/request' + (multi === MultiUserType.SINGLE ? '' : '/:MultiUserType'),
-    highOrderHandler((async (req: AuthenticatedRequest) => {
+    '/request' +
+      (strategy.multiUserType === MultiUserType.SINGLE ? '' : '/:userType'),
+    highOrderHandler(async (req: AuthenticatedRequest) => {
       const { email } = req.body;
-      const MultiUserType =
-        multi !== MultiUserType.SINGLE && req.params['MultiUserType'];
-      const MultiUserTypeParam: [MultiUserTypeEnum?] = MultiUserType
-        ? [MultiUserType as MultiUserTypeEnum]
-        : [];
-      return requestToRegister<User, MultiUserTypeEnum>(
-        email,
-        ...(MultiUserTypeParam as TODO),
-      );
-    }) as unknown as TODO),
+      const userType =
+        strategy.multiUserType !== MultiUserType.SINGLE &&
+        req.params['userType'];
+      return requestToRegister(email, userType, genRegisterEmail);
+    }) as TODO,
   );
 
   router.post(
     '/finish',
-    highOrderHandler((async (req: AuthenticatedRequest) => {
+    highOrderHandler(async (req: AuthenticatedRequest) => {
       const { key, full_name, phone_number, password, passwordAgain } =
         req.body;
       return finishRegistration(
@@ -37,9 +39,8 @@ export const registerRouter = <S>(strategy: Strategy<S>) => {
         password,
         passwordAgain,
       );
-    }) as unknown as TODO),
+    }) as TODO,
   );
-*/
 
   return router;
 };

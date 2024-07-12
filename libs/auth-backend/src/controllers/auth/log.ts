@@ -1,8 +1,6 @@
-import { Strategy, User, user } from 'auth-backend';
-import { Model } from 'mongoose';
+import { MultiUserType, Strategy, User } from 'auth-backend';
 import {
   findDocs,
-  TODO,
   UnauthorizedError,
   validateDocument,
   validateEnum,
@@ -12,7 +10,8 @@ import { compare } from 'bcryptjs';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
-  const { generateJWT, generateSecureCookie } = genAuthControllers(strategy);
+  const { getModel, generateJWT, generateSecureCookie } =
+    genAuthControllers(strategy);
 
   const protectUsersPassword = (user: User) => {
     user.password = 'secret';
@@ -33,53 +32,43 @@ export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
     return protectUsersPassword(user);
   };
 
-  const getToken = async <
-    SCHEMA extends User = User,
-    MultiUserTypeEnum = never,
-  >(
+  const getToken = async (
     email: string,
     password: string,
-    model: Model<SCHEMA> = user(false, false) as TODO,
-    MultiUserType?: MultiUserTypeEnum,
+    userType?: string,
   ) => {
     validateInput({ email });
     validateInput({ password });
-    const existingUser = await findDocs<SCHEMA, false>(
-      model.findOne({ email }),
+    const existingUser = await findDocs<User, false>(
+      getModel(userType).findOne({ email }),
       true,
     );
-    if (!existingUser && !validateDocument(existingUser as unknown as SCHEMA))
+    if (!existingUser && !validateDocument(existingUser as unknown as User))
       throw new UnauthorizedError('Please register');
-    const MultiUserTypeParam: [MultiUserTypeEnum?] = MultiUserType
-      ? [MultiUserType]
-      : [];
     if (existingUser && (await validateCorrectPassword(existingUser, password)))
-      return generateJWT<SCHEMA>(
-        existingUser as SCHEMA,
-        ...(MultiUserTypeParam as any),
-      );
+      return generateJWT(existingUser, userType);
     throw new UnauthorizedError('Wrong password');
   };
 
-  const logIn = async <SCHEMA extends User = User, MultiUserTypeEnum = never>(
+  const logIn = async <UserType, SCHEMA extends User = User>(
     email: string,
     password: string,
-    model: Model<SCHEMA> = user(false, false) as TODO,
-    MultiUserType?: MultiUserTypeEnum,
-    MultiUserTypeEnum?: { [key: string]: string },
+    userType?: string,
+    UserTypeEnum?: Record<string, string>,
   ) => {
     validateInput({ email });
-    debugger;
     validateInput({ password });
-    MultiUserType && validateInput({ MultiUserType });
-    MultiUserType &&
-      MultiUserTypeEnum &&
-      validateEnum({ MultiUserType }, MultiUserTypeEnum);
+    strategy.multiUserType !== MultiUserType.SINGLE &&
+      validateInput({ userType });
+    strategy.multiUserType !== MultiUserType.SINGLE &&
+      validateInput({ UserTypeEnum });
+    strategy.multiUserType !== MultiUserType.SINGLE &&
+      validateEnum({ userType }, UserTypeEnum as Record<string, string>);
     return {
       code: 200,
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
-        await getToken(email, password, model, MultiUserType),
+        await getToken(email, password, userType),
       ),
     };
   };

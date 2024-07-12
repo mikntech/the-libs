@@ -10,7 +10,7 @@ export class InvalidInputError extends ClientError {
 export class InvalidEnumError extends ClientError {
   constructor(
     public resourceName: string,
-    public enumValues: (string | number)[],
+    public enumValues: string[],
   ) {
     super(
       `${resourceName} is invalid, it must be one of these values: ${enumValues.join(', ')}`,

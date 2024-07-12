@@ -1,8 +1,8 @@
 import { getModel } from 'base-backend';
-import { PassResetRequest } from '../../types';
+import { SomeRequest } from '../../types';
 
-export const passResetRequest= () =>
-  getModel<PassResetRequest>('passResetRequest', {
+export const passResetRequest = () =>
+  getModel<SomeRequest>('passResetRequest', {
     email: {
       type: String,
     },

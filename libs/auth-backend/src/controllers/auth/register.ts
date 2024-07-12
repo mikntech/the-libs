@@ -10,13 +10,14 @@ import {
   validateInput,
   validateEnum,
 } from 'base-backend';
-import {  Strategy, user, User } from 'auth-backend';
+import { registrationRequest, Strategy, user, User } from 'auth-backend';
 import { Model } from 'mongoose';
 import { defaultGenRegisterEmail } from '../../services';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <UserType>(
   strategy: Strategy<UserType>,
+  UserTypeEnum: Record<string, string>,
 ) => {
   const {
     getModel,
@@ -28,58 +29,49 @@ export const genRegisterControllers = <UserType>(
     generateJWT,
   } = genAuthControllers(strategy);
 
-  const validateEmailNotInUse = async <SCHEMA extends User = User>(
+  const validateEmailNotInUse = async (
     email: string,
-    userType?: string,
+    userType?: string | false,
   ) => {
     if (
-      await findDocs<SCHEMA, false>(getModel(userType).findOne({ email }), true)
+      await findDocs<User, false>(getModel(userType).findOne({ email }), true)
     )
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );
   };
 
-  const createKeyForRegistration = async <
-    CB extends { [s: string]: string },
-    SCHEMA extends User = User,
-  >(
-    email: string,
-    model: Model<SCHEMA> = user(false, false) as TODO,
-  ) => {
+  const createKeyForRegistration = async <CB>(email: string) => {
     const key = v4();
-    await createDoc(model, {
+    await createDoc(registrationRequest(), {
       email,
       key,
     });
-    return `${getBaseSettings<CB>().clientDomains[0]}/?register-code=${key}`;
+    return `${(getBaseSettings<CB>() as TODO).clientDomains[0]}/?register-code=${key}`;
   };
 
-  const requestToRegister = async <SCHEMA extends User = User>(
+  const requestToRegister = async (
     email: string,
+    userType: string | false,
     genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
-    userType?: string,
-    MultiUserTypeEnum?: {
-      [key: string]: string;
-    },
   ) => {
     validateInput({ email });
-    userType &&
-      MultiUserTypeEnum &&
-      validateEnum({ userType }, MultiUserTypeEnum);
-    await validateEmailNotInUse<SCHEMA>(email, userType);
-    const url = await createKeyForRegistration(email);
+    userType && validateInput({ userType });
+    UserTypeEnum && validateInput({ UserTypeEnum });
+    validateEnum({ userType }, UserTypeEnum);
+    await validateEmailNotInUse(email, userType);
+    const url = await createKeyForRegistration<UserType>(email);
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
     return { code: 200, body: 'email sent successfully' };
   };
 
-  const createUser = async <SCHEMA extends User = User>(
+  const createUser = async (
     email: string,
     full_name: string,
     phone_number: string,
     password: string,
-    model: Model<SCHEMA> = user(false, false) as TODO,
+    model: Model<User> = user(false, false) as TODO,
   ) =>
     createDoc(model, {
       email,
@@ -94,7 +86,6 @@ export const genRegisterControllers = <UserType>(
     phone_number: string,
     password: string,
     passwordAgain: string,
-    userType?: string,
   ) => {
     validateInput({ key });
     validateInput({ full_name });
@@ -104,12 +95,12 @@ export const genRegisterControllers = <UserType>(
     validatePasswordStrength(password);
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
-    const doc = await validateKey(key, userType);
-    if (!(doc && (doc as any).email)) throw new UnauthorizedError('wrong key');
-    await validateEmailNotInUse((doc as any).email as string);
+    const doc = await validateKey(key, true);
+    if (!doc?.email) throw new UnauthorizedError('wrong key');
+    await validateEmailNotInUse(doc.email);
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(
-      (doc as any).email as string,
+      doc.email,
       full_name,
       phone_number,
       hashedPassword,
@@ -119,7 +110,6 @@ export const genRegisterControllers = <UserType>(
       cookie: generateSecureCookie(JWT_COOKIE_NAME, generateJWT(savedUser)),
     };
   };
-
   return {
     requestToRegister,
     finishRegistration,

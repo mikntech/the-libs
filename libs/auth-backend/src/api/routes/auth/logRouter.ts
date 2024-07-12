@@ -3,7 +3,10 @@ import { Router } from 'express';
 import { highOrderHandler, TODO } from 'base-backend';
 import { genLogControllers } from '../../../controllers/auth/log';
 
-export const logRouter = <S>(strategy: Strategy<S>) => {
+export const logRouter = <S, UserType>(
+  strategy: Strategy<S>,
+  UserTypeEnum: Record<string, string>,
+) => {
   const router = Router();
 
   const { validateAndProtect, logIn, logOut } = genLogControllers(strategy);
@@ -19,8 +22,8 @@ export const logRouter = <S>(strategy: Strategy<S>) => {
   router.post(
     '/in',
     highOrderHandler((async (req: AuthenticatedRequest) => {
-      const { email, MultiUserType, password } = req.body;
-      return logIn(email, MultiUserType, password);
+      const { email, password, userType } = req.body;
+      return logIn(email, password, userType, UserTypeEnum);
     }) as TODO),
   );
 

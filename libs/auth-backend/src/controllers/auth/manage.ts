@@ -13,12 +13,7 @@ import {
 import { Model } from 'mongoose';
 import { defaultGenPassResetEmail } from '../../services';
 import { v4 } from 'uuid';
-import {
-  passResetRequest,
-  Strategy,
-  user,
-  User,
-} from 'auth-backend';
+import { passResetRequest, Strategy, user, User } from 'auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genManageControllers = <UserType>(
@@ -62,10 +57,7 @@ export const genManageControllers = <UserType>(
     return { code: 200, body: 'email sent successfully' };
   };
 
-  const changeUsersPassword = async <SCHEMA extends User>(
-    user: SCHEMA,
-    password: string,
-  ) => {
+  const changeUsersPassword = async (user: User, password: string) => {
     user.password = password;
     await user.save();
     return sign(
@@ -76,7 +68,7 @@ export const genManageControllers = <UserType>(
     );
   };
 
-  const resetPassword = async <SCHEMA extends User = User>(
+  const resetPassword = async (
     key: string,
     password: string,
     passwordAgain: string,
@@ -88,10 +80,10 @@ export const genManageControllers = <UserType>(
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     validatePasswordStrength(password);
-    const { email } = (await validateKey(key, userType)) as unknown as {
+    const { email } = (await validateKey(key, false)) as unknown as {
       email: string;
     };
-    const existingUser = await findDocs<SCHEMA, false>(
+    const existingUser = await findDocs<User, false>(
       getModel(userType).findOne({
         email,
       }),

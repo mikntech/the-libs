@@ -1,14 +1,12 @@
 import { Document } from 'base-backend';
 
-
-
 type OptionalIfFalse<IsRequired extends boolean, T> = IsRequired extends true
   ? T
   : T | undefined;
 
 export interface User<
   NameRequired extends boolean = false,
-  ProfilePictureUriRequired extends boolean = false
+  ProfilePictureUriRequired extends boolean = false,
 > extends Document {
   email: string;
   password: string;
@@ -16,12 +14,7 @@ export interface User<
   profilePictureUri: OptionalIfFalse<ProfilePictureUriRequired, string>;
 }
 
-export interface RegistrationRequest extends Document {
-  email: string;
-  key: string;
-}
-
-export interface PassResetRequest extends Document {
+export interface SomeRequest extends Document {
   email: string;
   key: string;
 }

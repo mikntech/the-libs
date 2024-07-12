@@ -1,17 +1,17 @@
-import { config } from "dotenv";
-import * as process from "node:process";
+import { config } from 'dotenv';
+import * as process from 'node:process';
 
 config();
 
 export enum NodeEnvironment {
-  "development" = "development",
-  "production" = "production",
+  'development' = 'development',
+  'production' = 'production',
 }
 export enum StagingEnvironment {
-  "local" = "local",
-  "dev" = "dev",
-  "preprod" = "preprod",
-  "prod" = "prod",
+  'local' = 'local',
+  'dev' = 'dev',
+  'preprod' = 'preprod',
+  'prod' = 'prod',
 }
 
 interface AWSConfig {
@@ -37,49 +37,49 @@ const validEnvs: NodeEnvironment[] = Object.values(NodeEnvironment);
 const validStagingEnvs: StagingEnvironment[] =
   Object.values(StagingEnvironment);
 
-if (!validEnvs.includes(process.env["NODE_ENV"] as NodeEnvironment)) {
+if (!validEnvs.includes(process.env['NODE_ENV'] as NodeEnvironment)) {
   throw new Error("NODE_ENV must be 'development' or 'production'");
 }
 
 if (
-  !validStagingEnvs.includes(process.env["STAGING_ENV"] as StagingEnvironment)
+  !validStagingEnvs.includes(process.env['STAGING_ENV'] as StagingEnvironment)
 ) {
   throw new Error(
-    "STAGING_ENV must be one of these: " + Object.values(StagingEnvironment),
+    'STAGING_ENV must be one of these: ' + Object.values(StagingEnvironment),
   );
 }
 
-const isProduction = process.env["NODE_ENV"] === "production";
+const isProduction = process.env['NODE_ENV'] === 'production';
 const defaultStagingEnv = isProduction
   ? StagingEnvironment.prod
   : StagingEnvironment.local;
 
-const port = parseInt(process.env["PORT"] ?? "4050");
+const port = parseInt(process.env['PORT'] ?? '4050');
 const stagingEnv =
-  (process.env["STAGING_ENV"] as StagingEnvironment) || defaultStagingEnv;
+  (process.env['STAGING_ENV'] as StagingEnvironment) || defaultStagingEnv;
 
-const generateFullDomain = (base: string, port: string | number) => {
+const generateFullDomain = (base: string, port: string) => {
   const prodDomain =
-    "https://" + stagingEnv === StagingEnvironment.prod
-      ? ""
+    'https://' + stagingEnv === StagingEnvironment.prod
+      ? ''
       : stagingEnv + base;
-  return isProduction ? prodDomain : "http://localhost:" + port;
+  return isProduction ? prodDomain : 'http://localhost:' + port;
 };
 
 const clientDomains = JSON.parse(
-  process.env["CLIENT_DOMAINS"] ?? JSON.stringify({ single: "my.co" }),
+  process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 'my.co' }),
 );
 
 Object.keys(clientDomains).forEach((key) => {
   clientDomains[key] = generateFullDomain(
     clientDomains[key],
-    process.env["CLIENT_PORT"] ?? 4100,
+    String(process.env['CLIENT_PORT'] ?? 4100),
   );
 });
 
 const myDomain = generateFullDomain(
-  process.env["MY_DOMAIN"] ?? "localhost",
-  port,
+  process.env['MY_DOMAIN'] ?? 'localhost',
+  String(port),
 );
 
 export const getBaseSettings = <CB>(): BaseSettings<CB> => ({
@@ -89,23 +89,23 @@ export const getBaseSettings = <CB>(): BaseSettings<CB> => ({
   stagingEnv,
   port,
   mongoURI:
-    process.env["MONGO_URI"] ??
-    (isProduction ? "" : "mongodb://localhost:27017/error"),
-  jwtSecret: process.env["JWT_SECRET"] ?? "",
+    process.env['MONGO_URI'] ??
+    (isProduction ? '' : 'mongodb://localhost:27017/error'),
+  jwtSecret: process.env['JWT_SECRET'] ?? '',
   myDomain,
   aws: {
-    keyID: process.env["AWS_KEY_ID"] ?? "",
-    secretKey: process.env["AWS_SECRET_KEY"] ?? "",
-    region: process.env["AWS_REGION"] ?? "",
+    keyID: process.env['AWS_KEY_ID'] ?? '',
+    secretKey: process.env['AWS_SECRET_KEY'] ?? '',
+    region: process.env['AWS_REGION'] ?? '',
   },
   clientDomains,
-  sendgridApiKey: process.env["SENDGRID_API_KEY"] ?? "",
+  sendgridApiKey: process.env['SENDGRID_API_KEY'] ?? '',
   sendgridSender:
-    process.env["SENDGRID_SENDER"] ?? "service@" + clientDomains[0],
+    process.env['SENDGRID_SENDER'] ?? 'service@' + clientDomains[0],
 });
 
 export const validateSettings = <CB>(settings: BaseSettings<CB>) => {
   if (!settings) {
-    throw new Error("Configuration settings could not be loaded");
-  } else console.log("settings: ", JSON.stringify(settings));
+    throw new Error('Configuration settings could not be loaded');
+  } else console.log('settings: ', JSON.stringify(settings));
 };

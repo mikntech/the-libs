@@ -1,8 +1,8 @@
 import { getModel } from 'base-backend';
-import { RegistrationRequest } from '../../types';
+import { SomeRequest } from '../../types';
 
-export  const registrationRequest=() =>
-  getModel<RegistrationRequest>('registrationRequest', {
+export const registrationRequest = () =>
+  getModel<SomeRequest>('registrationRequest', {
     email: {
       type: String,
       required: true,

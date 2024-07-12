@@ -5,9 +5,17 @@ import {
   NodeEnvironment,
   sendEmail,
   StagingEnvironment,
+  TODO,
   validateDocument,
 } from 'base-backend';
-import { MultiUserType, Strategy, User } from 'auth-backend';
+import {
+  MultiUserType,
+  passResetRequest,
+  registrationRequest,
+  SomeRequest,
+  Strategy,
+  User,
+} from 'auth-backend';
 import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { CookieOptions } from 'express';
@@ -17,15 +25,14 @@ import { Model } from 'mongoose';
 export const JWT_COOKIE_NAME = 'jwt';
 
 export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
-  const getModel = (userType?: string): Model<User> =>
+  const getModel = (userType?: string | false): Model<User> =>
     (strategy.multiUserType === MultiUserType.SINGLE
       ? strategy.modelMap
-      : strategy.modelMap[userType])() as unknown as Model<User>;
+      : (strategy.modelMap as TODO)[
+          userType as unknown as keyof TODO
+        ])() as unknown as Model<User>;
 
-  const generateJWT = <SCHEMA extends User = User>(
-    user: SCHEMA,
-    userType?: string,
-  ) =>
+  const generateJWT = (user: User, userType?: string) =>
     sign(
       {
         id: user._id,
@@ -65,9 +72,9 @@ export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
       throw new InvalidInputError('Password is too weak');
   };
 
-  const validateKey = async (key: string, userType?: string) => {
-    const existingRequest = await findDocs(
-      getModel(userType).findOne({
+  const validateKey = async (key: string, register: boolean) => {
+    const existingRequest = await findDocs<SomeRequest, false>(
+      (register ? registrationRequest() : passResetRequest()).findOne({
         key,
       }),
       true,
@@ -75,7 +82,7 @@ export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
     if (!existingRequest || !validateDocument(existingRequest as any)) {
       throw new InvalidInputError('key (is wrong)');
     }
-    return existingRequest;
+    return existingRequest as SomeRequest;
   };
 
   const hashPassword = async (newPassword: string) =>
