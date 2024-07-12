@@ -32,12 +32,12 @@ export const validateAndProtect = (user: User) => {
 
 export const getToken = async <
   SCHEMA extends User = User,
-  AccountTypeEnum = never,
+  MultiUserTypeEnum = never,
 >(
   email: string,
   password: string,
   model: Model<SCHEMA> = user(false, false) as TODO,
-  accountType?: AccountTypeEnum,
+  MultiUserType?: MultiUserTypeEnum,
 ) => {
   validateInput({ email });
   validateInput({ password });
@@ -47,39 +47,39 @@ export const getToken = async <
   );
   if (!existingUser && !validateDocument(existingUser as unknown as SCHEMA))
     throw new UnauthorizedError('Please register');
-  const accountTypeParam: [AccountTypeEnum?] = accountType
-    ? [accountType as AccountTypeEnum]
+  const MultiUserTypeParam: [MultiUserTypeEnum?] = MultiUserType
+    ? [MultiUserType as MultiUserTypeEnum]
     : [];
   if (existingUser && (await validateCorrectPassword(existingUser, password)))
-    return generateJWT<SCHEMA, AccountTypeEnum>(
+    return generateJWT<SCHEMA, MultiUserTypeEnum>(
       existingUser as SCHEMA,
-      ...accountTypeParam,
+      ...MultiUserTypeParam,
     );
   throw new UnauthorizedError('Wrong password');
 };
 
 export const logIn = async <
   SCHEMA extends User = User,
-  AccountTypeEnum = never,
+  MultiUserTypeEnum = never,
 >(
   email: string,
   password: string,
   model: Model<SCHEMA> = user(false, false) as TODO,
-  accountType?: AccountTypeEnum,
-  accountTypeEnum?: { [key: string]: string },
+  MultiUserType?: MultiUserTypeEnum,
+  MultiUserTypeEnum?: { [key: string]: string },
 ) => {
   validateInput({ email });
   debugger;
   validateInput({ password });
-  accountType && validateInput({ accountType });
-  accountType &&
-    accountTypeEnum &&
-    validateEnum({ accountType }, accountTypeEnum);
+  MultiUserType && validateInput({ MultiUserType });
+  MultiUserType &&
+    MultiUserTypeEnum &&
+    validateEnum({ MultiUserType }, MultiUserTypeEnum);
   return {
     code: 200,
     cookie: generateSecureCookie(
       JWT_COOKIE_NAME,
-      await getToken(email, password, model, accountType),
+      await getToken(email, password, model, MultiUserType),
     ),
   };
 };

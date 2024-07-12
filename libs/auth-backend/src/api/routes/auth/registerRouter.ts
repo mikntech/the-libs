@@ -4,25 +4,23 @@ import { AuthenticatedRequest, User } from 'auth-backend';
 import { finishRegistration, requestToRegister } from '../../../controllers';
 import { highOrderHandler, TODO } from 'base-backend';
 
-export default <AccountTypeEnum = never>(multi: MultiUserType) => {
+export default <MultiUserTypeEnum = never>(multi: MultiUserType) => {
   const router = Router();
 
   router.post(
-    '/request' + (multi === MultiUserType.SINGLE ? '' : '/:accountType'),
-    highOrderHandler(
-      (async (req: AuthenticatedRequest) => {
-        const { email } = req.body;
-        const accountType =
-          multi !== MultiUserType.SINGLE && req.params['accountType'];
-        const accountTypeParam: [AccountTypeEnum?] = accountType
-          ? [accountType as AccountTypeEnum]
-          : [];
-        return requestToRegister<User, AccountTypeEnum>(
-          email,
-          ...accountTypeParam as TODO,
-        );
-      }) as unknown as TODO  ),
-
+    '/request' + (multi === MultiUserType.SINGLE ? '' : '/:MultiUserType'),
+    highOrderHandler((async (req: AuthenticatedRequest) => {
+      const { email } = req.body;
+      const MultiUserType =
+        multi !== MultiUserType.SINGLE && req.params['MultiUserType'];
+      const MultiUserTypeParam: [MultiUserTypeEnum?] = MultiUserType
+        ? [MultiUserType as MultiUserTypeEnum]
+        : [];
+      return requestToRegister<User, MultiUserTypeEnum>(
+        email,
+        ...(MultiUserTypeParam as TODO),
+      );
+    }) as unknown as TODO),
   );
 
   router.post(

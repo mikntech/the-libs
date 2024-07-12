@@ -9,21 +9,21 @@ router.get(
   '/',
   highOrderHandler((async (req: AuthenticatedRequest) => ({
     code: 200,
-    body: validateAndProtect(req.user as TODO) ,
-  }) )as TODO),
+    body: validateAndProtect(req.user as TODO),
+  })) as TODO),
 );
 
 router.post(
   '/in',
   highOrderHandler((async (req: AuthenticatedRequest) => {
-    const { email, accountType, password } = req.body;
-    return logIn(email, accountType, password);
+    const { email, MultiUserType, password } = req.body;
+    return logIn(email, MultiUserType, password);
   }) as TODO),
 );
 
 router.get(
   '/out',
-  highOrderHandler(((_:AuthenticatedRequest) => logOut()) as TODO),
+  highOrderHandler(((_: AuthenticatedRequest) => logOut()) as TODO),
 );
 
 export default router;
