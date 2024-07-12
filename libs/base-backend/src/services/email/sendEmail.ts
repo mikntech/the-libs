@@ -1,4 +1,4 @@
-import sendgrid from '@sendgrid/mail';
+const sendgrid = require('@sendgrid/mail');
 import { getBaseSettings } from '../../config';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
