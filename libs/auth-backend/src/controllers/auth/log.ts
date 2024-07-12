@@ -8,10 +8,12 @@ import {
   validateEnum,
   validateInput,
 } from 'base-backend';
-import { generateJWT, generateSecureCookie, JWT_COOKIE_NAME } from './index';
 import { compare } from 'bcryptjs';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
+  const { generateJWT, generateSecureCookie } = genAuthControllers(strategy);
+
   const protectUsersPassword = (user: User) => {
     user.password = 'secret';
     return user;
@@ -49,12 +51,12 @@ export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
     if (!existingUser && !validateDocument(existingUser as unknown as SCHEMA))
       throw new UnauthorizedError('Please register');
     const MultiUserTypeParam: [MultiUserTypeEnum?] = MultiUserType
-      ? [MultiUserType as MultiUserTypeEnum]
+      ? [MultiUserType]
       : [];
     if (existingUser && (await validateCorrectPassword(existingUser, password)))
-      return generateJWT<SCHEMA, MultiUserTypeEnum>(
+      return generateJWT<SCHEMA>(
         existingUser as SCHEMA,
-        ...MultiUserTypeParam,
+        ...(MultiUserTypeParam as any),
       );
     throw new UnauthorizedError('Wrong password');
   };

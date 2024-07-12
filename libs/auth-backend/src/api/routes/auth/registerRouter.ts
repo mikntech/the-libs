@@ -1,11 +1,13 @@
 import { Router } from 'express';
-import { MultiUserType } from '../../../strategy';
-import { AuthenticatedRequest, User } from 'auth-backend';
-import { finishRegistration, requestToRegister } from '../../../controllers';
-import { highOrderHandler, TODO } from 'base-backend';
+import { Strategy } from 'auth-backend';
+import { genRegisterControllers } from '../../../controllers/auth/register';
 
-export default <MultiUserTypeEnum = never>(multi: MultiUserType) => {
+export const registerRouter = <S>(strategy: Strategy<S>) => {
   const router = Router();
+
+  // const {} = genRegisterControllers(strategy);
+
+  /*
 
   router.post(
     '/request' + (multi === MultiUserType.SINGLE ? '' : '/:MultiUserType'),
@@ -37,6 +39,7 @@ export default <MultiUserTypeEnum = never>(multi: MultiUserType) => {
       );
     }) as unknown as TODO),
   );
+*/
 
   return router;
 };

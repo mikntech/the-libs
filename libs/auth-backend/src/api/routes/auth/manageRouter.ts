@@ -1,24 +1,29 @@
 import { Router } from 'express';
-import { AuthenticatedRequest } from 'auth-backend';
-import { requestPasswordReset, resetPassword } from '../../../controllers';
+import { AuthenticatedRequest, Strategy } from 'auth-backend';
 import { highOrderHandler, TODO } from 'base-backend';
+import { genManageControllers } from '../../../controllers/auth/manage';
 
-const router = Router();
+export const manageRouter = <S>(strategy: Strategy<S>) => {
+  const router = Router();
 
-router.post(
-  '/request-password-reset',
-  highOrderHandler((async (req: AuthenticatedRequest) => {
-    const { email } = req.body;
-    return requestPasswordReset(email);
-  }) as TODO),
-);
+  const { requestPasswordReset, resetPassword } =
+    genManageControllers(strategy);
 
-router.post(
-  '/reset-password',
-  highOrderHandler((async (req: AuthenticatedRequest) => {
-    const { key, password, passwordAgain } = req.body;
-    return resetPassword(key, password, passwordAgain);
-  }) as TODO),
-);
+  router.post(
+    '/request-password-reset',
+    highOrderHandler((async (req: AuthenticatedRequest) => {
+      const { email } = req.body;
+      return requestPasswordReset(email);
+    }) as TODO),
+  );
 
-export default router;
+  router.post(
+    '/reset-password',
+    highOrderHandler((async (req: AuthenticatedRequest) => {
+      const { key, password, passwordAgain } = req.body;
+      return resetPassword(key, password, passwordAgain);
+    }) as TODO),
+  );
+
+  return router;
+};

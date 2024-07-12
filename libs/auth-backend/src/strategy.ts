@@ -36,7 +36,7 @@ export interface Strategy<UserType = 'single'> {
   externalIdentityProviders: ExternalIdentityProviders;
   modelMap: UserType extends 'single'
     ? Model<User>
-    : { readonly [K in keyof UserType]: UserType[K] };
+    : { readonly [K in keyof UserType]: Model<User> };
 }
 
 export const defaultStrategy: Strategy = {

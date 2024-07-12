@@ -9,35 +9,32 @@ import {
   UnauthorizedError,
   validateInput,
   validateEnum,
-  getModel,
 } from 'base-backend';
-import {
-  registrationRequest,
-  RegistrationRequest,
-  Strategy,
-  user,
-  User,
-} from 'auth-backend';
+import {  Strategy, user, User } from 'auth-backend';
 import { Model } from 'mongoose';
 import { defaultGenRegisterEmail } from '../../services';
-import {
-  generateJWT,
-  generateSecureCookie,
-  hashPassword,
-  JWT_COOKIE_NAME,
-  sendEmailWithLink,
-  validateKey,
-  validatePasswordStrength,
-} from './index';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <UserType>(
   strategy: Strategy<UserType>,
 ) => {
+  const {
+    getModel,
+    sendEmailWithLink,
+    validatePasswordStrength,
+    validateKey,
+    hashPassword,
+    generateSecureCookie,
+    generateJWT,
+  } = genAuthControllers(strategy);
+
   const validateEmailNotInUse = async <SCHEMA extends User = User>(
     email: string,
     userType?: string,
   ) => {
-    if (await findDocs<SCHEMA, false>(getModel(Sta).findOne({ email }), true))
+    if (
+      await findDocs<SCHEMA, false>(getModel(userType).findOne({ email }), true)
+    )
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );
@@ -58,22 +55,21 @@ export const genRegisterControllers = <UserType>(
     return `${getBaseSettings<CB>().clientDomains[0]}/?register-code=${key}`;
   };
 
-  const requestToRegister = async <
-    SCHEMA extends User = User,
-    MultiUserTypeEnum = never,
-  >(
+  const requestToRegister = async <SCHEMA extends User = User>(
     email: string,
     genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
-    MultiUserType?: MultiUserTypeEnum,
+    userType?: string,
     MultiUserTypeEnum?: {
       [key: string]: string;
     },
   ) => {
     validateInput({ email });
-    MultiUserType && validateEnum({ MultiUserType }, MultiUserTypeEnum);
-    await validateEmailNotInUse<SCHEMA>(email, MultiUserType);
+    userType &&
+      MultiUserTypeEnum &&
+      validateEnum({ userType }, MultiUserTypeEnum);
+    await validateEmailNotInUse<SCHEMA>(email, userType);
     const url = await createKeyForRegistration(email);
-    const { subject, body } = genRegisterEmail(url, MultiUserType);
+    const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
     return { code: 200, body: 'email sent successfully' };
   };
@@ -98,6 +94,7 @@ export const genRegisterControllers = <UserType>(
     phone_number: string,
     password: string,
     passwordAgain: string,
+    userType?: string,
   ) => {
     validateInput({ key });
     validateInput({ full_name });
@@ -107,15 +104,12 @@ export const genRegisterControllers = <UserType>(
     validatePasswordStrength(password);
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
-    const doc = await validateKey<RegistrationRequest>(
-      registrationRequest(),
-      key,
-    );
-    if (!doc?.email) throw new UnauthorizedError('wrong key');
-    await validateEmailNotInUse(doc?.email);
+    const doc = await validateKey(key, userType);
+    if (!(doc && (doc as any).email)) throw new UnauthorizedError('wrong key');
+    await validateEmailNotInUse((doc as any).email as string);
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(
-      doc?.email,
+      (doc as any).email as string,
       full_name,
       phone_number,
       hashedPassword,

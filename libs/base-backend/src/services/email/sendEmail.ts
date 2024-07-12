@@ -1,5 +1,5 @@
-import sendgrid from "@sendgrid/mail";
-import { getBaseSettings } from "base-backend";
+const sendgrid = require('@sendgrid/mail');
+import { getBaseSettings } from 'base-backend';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {
@@ -10,10 +10,10 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
       subject,
       html,
     });
-    getBaseSettings().stagingEnv === "local" &&
-      console.log("Successfully sent email to " + to);
+    getBaseSettings().stagingEnv === 'local' &&
+      console.log('Successfully sent email to ' + to);
   } catch (error) {
-    getBaseSettings().stagingEnv !== "local" &&
-      console.log("Error sending email:", error);
+    getBaseSettings().stagingEnv !== 'local' &&
+      console.log('Error sending email:', error);
   }
 };

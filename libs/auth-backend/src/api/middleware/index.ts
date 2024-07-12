@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { User, user } from 'auth-backend';
-import jsonwebtoken, { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
+const jsonwebtoken = require('jsonwebtoken');
 
 export interface AuthenticatedRequest extends Request {
   user: User | null;
@@ -12,12 +13,12 @@ export const authorizer =
     try {
       const validatedUser = jsonwebtoken.verify(
         req.cookies['jwt'],
-        jwtSecret
+        jwtSecret,
       ) as JwtPayload;
       const { id } = validatedUser as {
         id: string;
       };
-      req.user = await user(false, false) .findById(id);
+      req.user = await user(false, false).findById(id);
     } catch (err) {
       req.user = null;
     }

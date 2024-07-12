@@ -2,9 +2,9 @@ export * from './middlewares';
 export * from './routes';
 
 import { getBaseSettings } from '../../config';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import express, { json, Router, urlencoded } from 'express';
+const cors = require('cors');
+const cookieParser = require('cookieParser');
+import { json, Router, urlencoded } from 'express';
 import { join } from 'path';
 import { autoHelper, serverErrorHandler } from './middlewares';
 import { TODO } from '../../types';
@@ -13,6 +13,7 @@ import { errorLog } from '../../schemas/logs/errorLog';
 const { version: Version } = require(
   join(__dirname, '..', '..', '..', 'package.json'),
 );
+const express = require('express');
 
 const app = express();
 

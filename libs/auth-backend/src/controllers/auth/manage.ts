@@ -10,28 +10,29 @@ import {
   TODO,
   getBaseSettings,
 } from 'base-backend';
-import {
-  generateSecureCookie,
-  hashPassword,
-  JWT_COOKIE_NAME,
-  sendEmailWithLink,
-  validateKey,
-  validatePasswordStrength,
-} from './index';
 import { Model } from 'mongoose';
 import { defaultGenPassResetEmail } from '../../services';
 import { v4 } from 'uuid';
 import {
   passResetRequest,
-  PassResetRequest,
   Strategy,
   user,
   User,
 } from 'auth-backend';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genManageControllers = <UserType>(
   strategy: Strategy<UserType>,
 ) => {
+  const {
+    getModel,
+    sendEmailWithLink,
+    validatePasswordStrength,
+    validateKey,
+    generateSecureCookie,
+    hashPassword,
+  } = genAuthControllers(strategy);
+
   const createKeyForPassReset = async <CB extends { [s: string]: string }>(
     email: string,
   ) => {
@@ -79,7 +80,7 @@ export const genManageControllers = <UserType>(
     key: string,
     password: string,
     passwordAgain: string,
-    model: Model<SCHEMA> = user(false, false) as TODO,
+    userType?: string,
   ) => {
     validateInput({ key });
     validateInput({ password });
@@ -87,12 +88,11 @@ export const genManageControllers = <UserType>(
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     validatePasswordStrength(password);
-    const { email } = await validateKey<PassResetRequest>(
-      passResetRequest(),
-      key,
-    );
+    const { email } = (await validateKey(key, userType)) as unknown as {
+      email: string;
+    };
     const existingUser = await findDocs<SCHEMA, false>(
-      model.findOne({
+      getModel(userType).findOne({
         email,
       }),
     );
