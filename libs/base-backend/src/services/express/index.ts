@@ -2,8 +2,8 @@ export * from './middlewares';
 export * from './routes';
 
 import { getBaseSettings } from '../../config';
-const cors = require('cors');
-const cookieParser = require('cookieParser');
+import cors from 'cors'
+import cookieParser from 'cookie-parser'
 import { json, Router, urlencoded } from 'express';
 import { join } from 'path';
 import { autoHelper, serverErrorHandler } from './middlewares';
