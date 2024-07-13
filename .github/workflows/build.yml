@@ -22,6 +22,6 @@ jobs:
       - name: "build"
         run: |
           npm i
-          npx nx build base:backend
-          npx nx build auth:backend
-          npx nx build chat:backend
+          npx nx build base-backend
+          npx nx build auth-backend
+          npx nx build chat-backend
