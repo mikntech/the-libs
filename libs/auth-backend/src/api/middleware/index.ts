@@ -11,7 +11,7 @@ export const authorizer =
   (jwtSecret: string) =>
   async (req: AuthenticatedRequest, _: Response, next: NextFunction) => {
     try {
-      const validatedUser = jsonwebtoken.verify(
+      const validatedUser = await jsonwebtoken.verify(
         req.cookies['jwt'],
         jwtSecret,
       ) as JwtPayload;

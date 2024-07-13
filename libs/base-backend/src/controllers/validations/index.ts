@@ -1,6 +1,5 @@
 import { Document, Types } from 'mongoose';
 import { InvalidEnumError, InvalidInputError } from '../../exceptions';
-import { TODO } from '../../types';
 
 export const validateTruthy = <T = string>(value: T) => !!value;
 
