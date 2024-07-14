@@ -17,3 +17,18 @@ export const userBasicSchema = (
     required: profilePictureUriRequired,
   },
 });
+
+
+export const requestBasicSchema = (
+  userTypeRelevant:boolean=false
+) => ({
+  email: {
+    type: String,
+    required: true,
+  },
+  userType:{type:String,required:userTypeRelevant},
+  key: {
+    type: String,
+    required: true,
+  }
+});

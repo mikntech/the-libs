@@ -73,16 +73,16 @@ export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
   };
 
   const validateKey = async (key: string, register: boolean) => {
-    const existingRequest = await findDocs<SomeRequest, false>(
+    const existingRequest = await findDocs<SomeRequest<true>, false>(
       (register ? registrationRequest() : passResetRequest()).findOne({
         key,
       }),
       true,
     );
     if (!existingRequest || !validateDocument(existingRequest as any)) {
-      throw new InvalidInputError('key (is wrong)');
+      throw new InvalidInputError('key is wrong');
     }
-    return existingRequest as SomeRequest;
+    return existingRequest as SomeRequest<true>;
   };
 
   const hashPassword = async (newPassword: string) =>

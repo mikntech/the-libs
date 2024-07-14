@@ -29,22 +29,22 @@ export const genRegisterControllers = <UserType>(
     generateJWT,
   } = genAuthControllers(strategy);
 
-  const validateEmailNotInUse = async (
-    email: string,
-    userType?: string | false,
-  ) => {
-    if (
-      await findDocs<User, false>(getModel(userType).findOne({ email }), true)
-    )
+  const validateEmailNotInUse = async (email: string, userType?: string) => {
+    const x = await findDocs(getModel(userType).findOne({ email }), true);
+    if (x)
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );
   };
 
-  const createKeyForRegistration = async <CB>(email: string) => {
+  const createKeyForRegistration = async <CB>(
+    email: string,
+    userType?: string,
+  ) => {
     const key = v4();
     await createDoc(registrationRequest(), {
       email,
+      userType,
       key,
     });
     return `${(getBaseSettings<CB>() as TODO).clientDomains[0]}/?register-code=${key}`;
@@ -59,8 +59,9 @@ export const genRegisterControllers = <UserType>(
     userType && validateInput({ userType });
     UserTypeEnum && validateInput({ UserTypeEnum });
     validateEnum({ userType }, UserTypeEnum);
-    await validateEmailNotInUse(email, userType);
-    const url = await createKeyForRegistration<UserType>(email);
+    const p = userType ? [userType] : [];
+    await validateEmailNotInUse(email, ...p);
+    const url = await createKeyForRegistration<UserType>(email, ...p);
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
     return { code: 200, body: 'email sent successfully' };
@@ -97,7 +98,7 @@ export const genRegisterControllers = <UserType>(
       throw new InvalidInputError("Passwords don't match");
     const doc = await validateKey(key, true);
     if (!doc?.email) throw new UnauthorizedError('wrong key');
-    await validateEmailNotInUse(doc.email);
+    await validateEmailNotInUse(doc.email, doc.userType);
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(
       doc.email,

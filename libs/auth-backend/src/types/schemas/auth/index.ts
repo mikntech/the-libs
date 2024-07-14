@@ -14,7 +14,8 @@ export interface User<
   profilePictureUri: OptionalIfFalse<ProfilePictureUriRequired, string>;
 }
 
-export interface SomeRequest extends Document {
+export interface SomeRequest<WithUserType extends boolean> extends Document {
   email: string;
+  userType: WithUserType extends true ? string : undefined;
   key: string;
 }
