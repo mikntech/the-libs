@@ -7,12 +7,14 @@ export const registerRouter = <S, UserType>(
   genRegisterEmail: GenEmailFunction,
   strategy: Strategy<S>,
   UserTypeEnum: Record<string, string>,
+  onCreateFields: {},
 ) => {
   const router = Router();
 
   const { requestToRegister, finishRegistration } = genRegisterControllers(
     strategy,
     UserTypeEnum,
+    onCreateFields,
   );
 
   router.post(

@@ -10,14 +10,14 @@ import {
   validateInput,
   validateEnum,
 } from 'base-backend';
-import { registrationRequest, Strategy, user, User } from 'auth-backend';
-import { Model } from 'mongoose';
+import { registrationRequest, Strategy } from 'auth-backend';
 import { defaultGenRegisterEmail } from '../../services';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <UserType>(
   strategy: Strategy<UserType>,
   UserTypeEnum: Record<string, string>,
+  onCreateFields: {},
 ) => {
   const {
     getModel,
@@ -72,13 +72,14 @@ export const genRegisterControllers = <UserType>(
     full_name: string,
     phone_number: string,
     password: string,
-    model: Model<User> = user(false, false) as TODO,
+    userType?: string,
   ) =>
-    createDoc(model, {
+    createDoc(getModel(userType), {
       email,
       full_name,
       phone_number,
       password,
+      ...onCreateFields,
     });
 
   const finishRegistration = async (
@@ -105,6 +106,7 @@ export const genRegisterControllers = <UserType>(
       full_name,
       phone_number,
       hashedPassword,
+      doc.userType,
     );
     return {
       code: 200,

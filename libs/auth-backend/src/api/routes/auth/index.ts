@@ -9,6 +9,7 @@ export const authRouter = <S, UserType = S>(
   genRegisterEmail: GenEmailFunction,
   strategy: Strategy<S>,
   UserTypeEnum: Record<string, string>,
+  onCreateFields: {},
 ) => {
   const router = Router();
 
@@ -16,7 +17,7 @@ export const authRouter = <S, UserType = S>(
   router.use('/manage', manageRouter(strategy));
   router.use(
     '/register',
-    registerRouter(genRegisterEmail, strategy, UserTypeEnum),
+    registerRouter(genRegisterEmail, strategy, UserTypeEnum, onCreateFields),
   );
 
   return router;
