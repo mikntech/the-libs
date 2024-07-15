@@ -22,8 +22,6 @@ export interface BaseSettings<CD> {
   jwtSecret: string;
   clientDomains: CD;
   myDomain: string;
-  sendgridApiKey: string;
-  sendgridSender: string;
 }
 
 const validEnvs: NodeEnvironment[] = Object.values(NodeEnvironment);
@@ -59,38 +57,39 @@ const generateFullDomain = (base: string, port: string) => {
   return isProduction ? prodDomain : 'http://localhost:' + port;
 };
 
-const clientDomains = JSON.parse(
-  process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 'my.co' }),
-);
-
-Object.keys(clientDomains).forEach((key) => {
-  clientDomains[key] = generateFullDomain(
-    clientDomains[key],
-    String(process.env['CLIENT_PORT'] ?? 4100),
-  );
-});
-
 const myDomain = generateFullDomain(
   process.env['MY_DOMAIN'] ?? 'localhost',
   String(port),
 );
 
-export const getBaseSettings = <CB>(): BaseSettings<CB> => ({
-  nodeEnv: isProduction
-    ? NodeEnvironment.production
-    : NodeEnvironment.development,
-  stagingEnv,
-  port,
-  mongoURI:
-    process.env['MONGO_URI'] ??
-    (isProduction ? '' : 'mongodb://localhost:27017/error'),
-  jwtSecret: process.env['JWT_SECRET'] ?? '',
-  myDomain,
-  clientDomains,
-  sendgridApiKey: process.env['SENDGRID_API_KEY'] ?? '',
-  sendgridSender:
-    process.env['SENDGRID_SENDER'] ?? 'service@' + clientDomains[0],
-});
+export const getBaseSettings = <
+  CB extends { [key: string]: string } = { single: string },
+>(): BaseSettings<CB> => {
+  const clientDomains: CB = JSON.parse(
+    process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 'my.co' }),
+  );
+
+  Object.keys(clientDomains).forEach((key) => {
+    (clientDomains as { [key: string]: string })[key] = generateFullDomain(
+      clientDomains[key],
+      String(process.env['CLIENT_PORT'] ?? 4100),
+    );
+  });
+
+  return {
+    nodeEnv: isProduction
+      ? NodeEnvironment.production
+      : NodeEnvironment.development,
+    stagingEnv,
+    port,
+    mongoURI:
+      process.env['MONGO_URI'] ??
+      (isProduction ? '' : 'mongodb://localhost:27017/error'),
+    jwtSecret: process.env['JWT_SECRET'] ?? '',
+    myDomain,
+    clientDomains,
+  };
+};
 
 export const validateSettings = <CB>(settings: BaseSettings<CB>) => {
   if (!settings) {
