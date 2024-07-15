@@ -13,7 +13,13 @@ import {
 import { Model } from 'mongoose';
 import { defaultGenPassResetEmail } from '../../services';
 import { v4 } from 'uuid';
-import { passResetRequest, Strategy, user, User } from 'auth-backend';
+import {
+  passResetRequest,
+  Strategy,
+  user,
+  User,
+  authSettings,
+} from 'auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genManageControllers = <UserType>(
@@ -64,7 +70,7 @@ export const genManageControllers = <UserType>(
       {
         id: user._id,
       },
-      getBaseSettings().jwtSecret,
+      authSettings.jwtSecret,
     );
   };
 

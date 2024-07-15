@@ -19,7 +19,6 @@ export interface BaseSettings<CD> {
   stagingEnv: StagingEnvironment;
   port: number;
   mongoURI: string;
-  jwtSecret: string;
   clientDomains: CD;
   myDomain: string;
 }
@@ -85,7 +84,6 @@ export const getBaseSettings = <
     mongoURI:
       process.env['MONGO_URI'] ??
       (isProduction ? '' : 'mongodb://localhost:27017/error'),
-    jwtSecret: process.env['JWT_SECRET'] ?? '',
     myDomain,
     clientDomains,
   };

@@ -15,6 +15,7 @@ import {
   SomeRequest,
   Strategy,
   User,
+  authSettings,
 } from 'auth-backend';
 import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
@@ -38,7 +39,7 @@ export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
         id: user._id,
         userType,
       },
-      getBaseSettings().jwtSecret,
+      authSettings.jwtSecret,
     );
 
   const generateSecureCookie = (name: string, val: string) => ({
