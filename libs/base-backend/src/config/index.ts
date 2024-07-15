@@ -14,12 +14,6 @@ export enum StagingEnvironment {
   'prod' = 'prod',
 }
 
-interface AWSConfig {
-  keyID: string;
-  secretKey: string;
-  region: string;
-}
-
 export interface BaseSettings<CD> {
   nodeEnv: NodeEnvironment;
   stagingEnv: StagingEnvironment;
@@ -28,7 +22,6 @@ export interface BaseSettings<CD> {
   jwtSecret: string;
   clientDomains: CD;
   myDomain: string;
-  aws: AWSConfig;
   sendgridApiKey: string;
   sendgridSender: string;
 }
@@ -93,11 +86,6 @@ export const getBaseSettings = <CB>(): BaseSettings<CB> => ({
     (isProduction ? '' : 'mongodb://localhost:27017/error'),
   jwtSecret: process.env['JWT_SECRET'] ?? '',
   myDomain,
-  aws: {
-    keyID: process.env['AWS_KEY_ID'] ?? '',
-    secretKey: process.env['AWS_SECRET_KEY'] ?? '',
-    region: process.env['AWS_REGION'] ?? '',
-  },
   clientDomains,
   sendgridApiKey: process.env['SENDGRID_API_KEY'] ?? '',
   sendgridSender:

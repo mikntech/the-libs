@@ -1,1 +1,2 @@
-export * from './lib/s3-backend';
+export * from "./config"
+export * from "./services"
