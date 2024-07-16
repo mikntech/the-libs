@@ -11,7 +11,6 @@ import {
   getBaseSettings,
 } from 'base-backend';
 import { Model } from 'mongoose';
-import { defaultGenPassResetEmail } from '../../services';
 import { v4 } from 'uuid';
 import {
   passResetRequest,
