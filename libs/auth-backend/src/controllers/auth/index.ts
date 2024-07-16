@@ -3,7 +3,6 @@ import {
   getBaseSettings,
   InvalidInputError,
   NodeEnvironment,
-  sendEmail,
   StagingEnvironment,
   TODO,
   validateDocument,
@@ -22,6 +21,7 @@ import { sign } from 'jsonwebtoken';
 import { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
 import { Model } from 'mongoose';
+import { sendEmail } from 'email-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';
 

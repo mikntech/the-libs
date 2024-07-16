@@ -1,7 +1,8 @@
 import { Router } from 'express';
 import { AuthenticatedRequest, MultiUserType, Strategy } from 'auth-backend';
 import { genRegisterControllers } from '../../../controllers/auth/register';
-import { GenEmailFunction, highOrderHandler, TODO } from 'base-backend';
+import { highOrderHandler, TODO } from 'base-backend';
+import { GenEmailFunction } from 'email-backend';
 
 export const registerRouter = <S, UserType>(
   genRegisterEmail: GenEmailFunction,

@@ -1,12 +1,13 @@
 import mongoose, { Model, SchemaDefinition } from 'mongoose';
 import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
+import { TODO } from '../types';
 
 const connection: { instance?: mongoose.Connection } = {};
 
 export const connect = async <SE = string>(
   mongoURI: string,
   stagingEnv: SE = 'production' as SE,
-  watchDB?: () => void
+  watchDB?: () => void,
 ) => {
   stagingEnv === 'local' && mongoose.set('debug', true);
   try {
@@ -25,25 +26,30 @@ const initModel = <Interface>(
     instance?: mongoose.Connection;
   },
   name: string,
-  schema: mongoose.Schema
+  schema: mongoose.Schema,
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
   return connection.instance.model<Interface>(
     name,
-    schema.plugin(versioning, { collection: name + 's.history', mongoose })
+    schema.plugin(versioning, { collection: name + 's.history', mongoose }),
   );
 };
 
 export const getModel = <Interface>(
   name: string,
   schemaDefinition: SchemaDefinition,
-  extraIndex = undefined
+  chainToSchema: { name: TODO; params: TODO[] }[] = [],
+  extraIndex = undefined,
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
   let model: Model<Interface>;
   const schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
   });
+  type CHAINABLE = unknown;
+  chainToSchema.forEach(({ name, params }) =>
+    (schema as CHAINABLE as TODO)[name](...params),
+  );
   extraIndex && schema.index(extraIndex);
   if (mongoose.models[name]) {
     model = connection.instance.model<Interface>(name);

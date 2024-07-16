@@ -3,7 +3,7 @@ import { logRouter } from './logRouter';
 import { manageRouter } from './manageRouter';
 import { registerRouter } from './registerRouter';
 import { Strategy } from '../../../strategy';
-import { GenEmailFunction } from 'base-backend';
+import { GenEmailFunction } from 'email-backend';
 
 export const authRouter = <S, UserType = S>(
   genRegisterEmail: GenEmailFunction,

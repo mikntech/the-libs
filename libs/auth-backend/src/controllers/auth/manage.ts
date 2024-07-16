@@ -5,19 +5,20 @@ import {
   InvalidInputError,
   validateDocument,
   validateInput,
-  GenEmailFunction,
   UnauthorizedError,
   TODO,
   getBaseSettings,
 } from 'base-backend';
 import { Model } from 'mongoose';
 import { v4 } from 'uuid';
+import { GenEmailFunction } from 'email-backend';
 import {
   passResetRequest,
   Strategy,
   user,
   User,
   authSettings,
+  defaultGenPassResetEmail,
 } from 'auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 

@@ -3,15 +3,18 @@ import {
   getBaseSettings,
   createDoc,
   findDocs,
-  GenEmailFunction,
   InvalidInputError,
   TODO,
   UnauthorizedError,
   validateInput,
   validateEnum,
 } from 'base-backend';
-import { registrationRequest, Strategy } from 'auth-backend';
-import { defaultGenRegisterEmail } from '../../services';
+import { GenEmailFunction } from 'email-backend';
+import {
+  defaultGenRegisterEmail,
+  registrationRequest,
+  Strategy,
+} from 'auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <UserType>(
@@ -37,7 +40,9 @@ export const genRegisterControllers = <UserType>(
       );
   };
 
-  const createKeyForRegistration = async <CB>(
+  const createKeyForRegistration = async <
+    CB extends { [key: string]: string } = {},
+  >(
     email: string,
     userType?: string,
   ) => {
@@ -61,7 +66,7 @@ export const genRegisterControllers = <UserType>(
     validateEnum({ userType }, UserTypeEnum);
     const p = userType ? [userType] : [];
     await validateEmailNotInUse(email, ...p);
-    const url = await createKeyForRegistration<UserType>(email, ...p);
+    const url = await createKeyForRegistration<any>(email, ...p);
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
     return { code: 200, body: 'email sent successfully' };
