@@ -1,6 +1,6 @@
 {
   "name": "monorepo",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
   "main": "index.js",
   "scripts": {
