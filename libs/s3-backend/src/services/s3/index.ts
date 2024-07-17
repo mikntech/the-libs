@@ -15,7 +15,7 @@ export const s3Client = new S3Client({
   },
 });
 
-const bucketName = `${getBaseSettings().stagingEnv}-${s3Settings.s3BucketName}`;
+export const bucketName = `${getBaseSettings().stagingEnv}-${s3Settings.s3BucketName}`;
 
 export const uploadFile = async (
   key: string,
