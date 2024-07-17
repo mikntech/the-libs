@@ -1,4 +1,4 @@
-import { sign } from 'jsonwebtoken';
+import { sign } from "jsonwebtoken";
 import {
   createDoc,
   findDocs,
@@ -8,10 +8,10 @@ import {
   UnauthorizedError,
   TODO,
   getBaseSettings,
-} from 'base-backend';
-import { Model } from 'mongoose';
-import { v4 } from 'uuid';
-import { GenEmailFunction } from 'email-backend';
+} from "base-backend";
+import { Model } from "mongoose";
+import { v4 } from "uuid";
+import { GenEmailFunction } from "email-backend";
 import {
   passResetRequest,
   Strategy,
@@ -19,8 +19,8 @@ import {
   User,
   authSettings,
   defaultGenPassResetEmail,
-} from 'auth-backend';
-import { genAuthControllers, JWT_COOKIE_NAME } from './index';
+} from "auth-backend";
+import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
 
 export const genManageControllers = <UserType>(
   strategy: Strategy<UserType>,
@@ -42,7 +42,7 @@ export const genManageControllers = <UserType>(
       email,
       key,
     });
-    return `${getBaseSettings<CB>().clientDomains[0]}/?reset-code=${key}`;
+    return `${getBaseSettings<CB>().clientDomains[0]}/?reset-code=${key}&email=${email}`;
   };
 
   const requestPasswordReset = async <SCHEMA extends User>(
@@ -56,11 +56,11 @@ export const genManageControllers = <UserType>(
       true,
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
-      throw new InvalidInputError('No user found with this email');
+      throw new InvalidInputError("No user found with this email");
     const url = await createKeyForPassReset(email);
     const { subject, body } = genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: 'email sent successfully' };
+    return { code: 200, body: "email sent successfully" };
   };
 
   const changeUsersPassword = async (user: User, password: string) => {
@@ -94,7 +94,7 @@ export const genManageControllers = <UserType>(
         email,
       }),
     );
-    if (!existingUser) throw new UnauthorizedError('what?');
+    if (!existingUser) throw new UnauthorizedError("what?");
     return {
       code: 200,
       cookie: generateSecureCookie(

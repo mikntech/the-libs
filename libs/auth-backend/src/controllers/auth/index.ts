@@ -23,15 +23,28 @@ const zxcvbn = require('zxcvbn');
 import { Model } from 'mongoose';
 import { sendEmail } from 'email-backend';
 
+
+
+
 export const JWT_COOKIE_NAME = 'jwt';
 
 export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
   const getModel = (userType?: string | false): Model<User> =>
-    (strategy.multiUserType === MultiUserType.SINGLE
-      ? strategy.modelMap
-      : (strategy.modelMap as TODO)[
-          userType as unknown as keyof TODO
-        ])() as unknown as Model<User>;
+  ((  strategy.multiUserType === MultiUserType.MULTI_COLLECTION
+      ? ((strategy.modelMap as TODO)[
+        userType as unknown as keyof TODO
+        ] ): strategy.modelMap)()   as unknown as Model<User>
+)
+
+
+  
+
+
+
+
+
+
+
 
   const generateJWT = (user: User, userType?: string) =>
     sign(
