@@ -1,4 +1,5 @@
 import { NextFunction, Request as ExpressRequest, Response } from 'express';
+import { TODO } from '../../../types';
 
 interface Layer {
   route?: {
@@ -55,10 +56,10 @@ export const autoHelper = (
 ): void => {
   if (!res.headersSent) {
     const basePath = req.baseUrl;
-    const allRoutes = extractRoutes((req.app as any)._router.stack).map(
+    const allRoutes = extractRoutes((req.app as TODO)._router.stack).map(
       (route) => {
         const cleanedRoute = formatRoutePath(route);
-        return `${cleanedRoute}`.replace(/\/\/+/g, '/'); // Clean up any unintended double slashes
+        return `${cleanedRoute}`.replace(/\/\/+/g, '/');
       },
     );
 

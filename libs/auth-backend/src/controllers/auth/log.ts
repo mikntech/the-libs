@@ -1,15 +1,19 @@
 import { MultiUserType, Strategy, User } from 'auth-backend';
 import {
   findDocs,
+  SomeEnum,
   UnauthorizedError,
   validateDocument,
   validateEnum,
   validateInput,
+  TODO,
 } from 'base-backend';
 import { compare } from 'bcryptjs';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
-export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
+export const genLogControllers = <UserType extends SomeEnum<UserType>>(
+  strategy: Strategy<UserType, boolean>,
+) => {
   const { getModel, generateJWT, generateSecureCookie } =
     genAuthControllers(strategy);
 
@@ -35,7 +39,7 @@ export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
   const getToken = async (
     email: string,
     password: string,
-    userType?: string,
+    userType: UserType,
   ) => {
     validateInput({ email });
     validateInput({ password });
@@ -50,25 +54,28 @@ export const genLogControllers = <UserType>(strategy: Strategy<UserType>) => {
     throw new UnauthorizedError('Wrong password');
   };
 
-  const logIn = async <UserType, SCHEMA extends User = User>(
+  const logIn = async <
+    UserType extends SomeEnum<UserType>,
+    SCHEMA extends User = User,
+  >(
     email: string,
     password: string,
-    userType?: string,
-    UserTypeEnum?: Record<string, string>,
+    userType: UserType,
+    enumValues: UserType[],
   ) => {
     validateInput({ email });
     validateInput({ password });
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
     strategy.multiUserType !== MultiUserType.SINGLE &&
-      validateInput({ UserTypeEnum });
+      validateInput({ enumValues });
     strategy.multiUserType !== MultiUserType.SINGLE &&
-      validateEnum({ userType }, UserTypeEnum as Record<string, string>);
+      validateEnum<UserType>(userType, enumValues);
     return {
       code: 200,
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
-        await getToken(email, password, userType),
+        await getToken(email, password, userType as TODO),
       ),
     };
   };

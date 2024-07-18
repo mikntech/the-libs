@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { ServerResponse } from 'http';
+import { TODO } from '../../../types';
 
 interface APIResponse {
   code: number;
@@ -21,13 +22,13 @@ export const highOrderHandler =
     try {
       if (wsHeaders) {
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
-        await handler(req, res.write as any);
+        await handler(req, res.write as TODO);
       } else {
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>
         )(req);
         const { code, body, cookie } = restResponse;
-        if (code >= 500)   next(new Error('Internal Server Error'));
+        if (code >= 500) next(new Error('Internal Server Error'));
         const ret = res.status(code);
         if (cookie) {
           const { name, val, options } = cookie;

@@ -3,9 +3,10 @@ import {
   getBaseSettings,
   InvalidInputError,
   NodeEnvironment,
+  SomeEnum,
   StagingEnvironment,
-  TODO,
   validateDocument,
+  TODO,
 } from 'base-backend';
 import {
   MultiUserType,
@@ -23,33 +24,20 @@ const zxcvbn = require('zxcvbn');
 import { Model } from 'mongoose';
 import { sendEmail } from 'email-backend';
 
-
-
-
 export const JWT_COOKIE_NAME = 'jwt';
 
-export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
-  const getModel = (userType?: string | false): Model<User> =>
-  ((  strategy.multiUserType === MultiUserType.MULTI_COLLECTION
-      ? ((strategy.modelMap as TODO)[
-        userType as unknown as keyof TODO
-        ] ): strategy.modelMap)()   as unknown as Model<User>
-)
+export const genAuthControllers = <UserType extends SomeEnum<UserType>>(
+  strategy: Strategy<UserType, boolean>,
+) => {
+  const getModel = (userType: UserType): Model<User> =>
+    (strategy.multiUserType === MultiUserType.MULTI_COLLECTION
+      ? (strategy.modelMap as TODO)[userType]
+      : strategy.modelMap)();
 
-
-  
-
-
-
-
-
-
-
-
-  const generateJWT = (user: User, userType?: string) =>
+  const generateJWT = ({ _id }: User, userType: UserType) =>
     sign(
       {
-        id: user._id,
+        _id,
         userType,
       },
       authSettings.jwtSecret,
@@ -93,7 +81,7 @@ export const genAuthControllers = <UserType>(strategy: Strategy<UserType>) => {
       }),
       true,
     );
-    if (!existingRequest || !validateDocument(existingRequest as any)) {
+    if (!existingRequest || !validateDocument(existingRequest as TODO)) {
       throw new InvalidInputError('key is wrong');
     }
     return existingRequest as SomeRequest<true>;

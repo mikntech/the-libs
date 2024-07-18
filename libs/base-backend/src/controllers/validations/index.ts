@@ -1,5 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { InvalidEnumError, InvalidInputError } from '../../exceptions';
+import { SomeEnum } from '../../types';
 
 export const validateTruthy = <T = string>(value: T) => !!value;
 
@@ -10,14 +11,16 @@ export const validateInput = <T = string>(input: { [key: string]: T }) => {
   return value;
 };
 
-export const validateEnum = <T = string>(
-  input: { [key: string]: T },
-  theEnum: Record<string, string>,
+export const validateEnum = <ENUM extends SomeEnum<ENUM>>(
+  input: ENUM,
+  enumValues: ENUM[],
 ) => {
   const name = validateInput({ input });
-  const values: string[] = Object.values(theEnum);
-  if (!values.some((value) => value === Object.entries(input)[0][1]))
-    throw new InvalidEnumError(Object.keys(name)[0], values);
+  if (!enumValues.some((value) => value === input))
+    throw new InvalidEnumError(
+      Object.keys(name)[0],
+      enumValues.map((x) => String(x)),
+    );
 };
 
 export const validateDocument = <DOC extends Document>(doc: DOC): boolean => {

@@ -1,29 +1,32 @@
-import { sign } from "jsonwebtoken";
+import { sign } from 'jsonwebtoken';
 import {
   createDoc,
   findDocs,
-  InvalidInputError,
-  validateDocument,
-  validateInput,
-  UnauthorizedError,
-  TODO,
   getBaseSettings,
-} from "base-backend";
-import { Model } from "mongoose";
-import { v4 } from "uuid";
-import { GenEmailFunction } from "email-backend";
+  InvalidInputError,
+  SomeEnum,
+  TODO,
+  UnauthorizedError,
+  validateDocument,
+  validateEnum,
+  validateInput,
+} from 'base-backend';
+import { Model } from 'mongoose';
+import { v4 } from 'uuid';
+import { GenEmailFunction } from 'email-backend';
 import {
-  passResetRequest,
-  Strategy,
-  user,
-  User,
   authSettings,
   defaultGenPassResetEmail,
-} from "auth-backend";
-import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
+  MultiUserType,
+  passResetRequest,
+  Strategy,
+  User,
+  user,
+} from 'auth-backend';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
-export const genManageControllers = <UserType>(
-  strategy: Strategy<UserType>,
+export const genManageControllers = <UserType extends SomeEnum<UserType>>(
+  strategy: Strategy<UserType, boolean>,
 ) => {
   const {
     getModel,
@@ -56,11 +59,11 @@ export const genManageControllers = <UserType>(
       true,
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
-      throw new InvalidInputError("No user found with this email");
+      throw new InvalidInputError('No user found with this email');
     const url = await createKeyForPassReset(email);
     const { subject, body } = genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: "email sent successfully" };
+    return { code: 200, body: 'email sent successfully' };
   };
 
   const changeUsersPassword = async (user: User, password: string) => {
@@ -78,11 +81,15 @@ export const genManageControllers = <UserType>(
     key: string,
     password: string,
     passwordAgain: string,
-    userType?: string,
+    userType: UserType,
   ) => {
     validateInput({ key });
     validateInput({ password });
     validateInput({ passwordAgain });
+    strategy.multiUserType === MultiUserType.MULTI_COLLECTION &&
+      validateInput({ userType });
+    strategy.multiUserType === MultiUserType.MULTI_COLLECTION &&
+      validateEnum(userType, Object.values(userType));
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     validatePasswordStrength(password);
@@ -94,7 +101,7 @@ export const genManageControllers = <UserType>(
         email,
       }),
     );
-    if (!existingUser) throw new UnauthorizedError("what?");
+    if (!existingUser) throw new UnauthorizedError('what?');
     return {
       code: 200,
       cookie: generateSecureCookie(

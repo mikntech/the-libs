@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import { AuthenticatedRequest, Strategy } from 'auth-backend';
-import { highOrderHandler, TODO } from 'base-backend';
+import { highOrderHandler, SomeEnum, TODO } from 'base-backend';
 import { genManageControllers } from '../../../controllers/auth/manage';
 
-export const manageRouter = <S>(strategy: Strategy<S>) => {
+export const manageRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
+  strategy: Strategy<UserTypeEnum, boolean>,
+) => {
   const router = Router();
 
   const { requestPasswordReset, resetPassword } =
@@ -20,8 +22,8 @@ export const manageRouter = <S>(strategy: Strategy<S>) => {
   router.post(
     '/reset-password',
     highOrderHandler((async (req: AuthenticatedRequest) => {
-      const { key, password, passwordAgain } = req.body;
-      return resetPassword(key, password, passwordAgain);
+      const { key, password, passwordAgain, userType } = req.body;
+      return resetPassword(key, password, passwordAgain, userType);
     }) as TODO),
   );
 

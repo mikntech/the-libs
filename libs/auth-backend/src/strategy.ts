@@ -2,6 +2,7 @@ import { User } from './types';
 import { Model } from 'mongoose';
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './schemas';
+import { SomeEnum, TODO } from 'base-backend';
 
 export enum MultiUserType {
   SINGLE = 'single',
@@ -31,19 +32,35 @@ enum defaultUserType {
   'singe' = 'singe',
 }
 
-export interface Strategy<UserEnum = defaultUserType> {
+export interface Strategy<
+  UserEnum extends SomeEnum<UserEnum>,
+  multiUserType_is_MULTI_COLLECTION extends boolean,
+> {
   MIN_PASSWORD_STRENGTH: ZXCVBNScore;
   multiUserType: MultiUserType;
   verifiedContactMethod: VerifiedContactMethod;
   passwordType: PasswordType;
   mfa: MFA;
   externalIdentityProviders: ExternalIdentityProviders;
-  modelMap: MultiUserType extends MultiUserType.MULTI_COLLECTION
-    ? { readonly [K in keyof UserEnum]: () => Model<User> }
+  modelMap: multiUserType_is_MULTI_COLLECTION extends true
+    ? {
+        [Key in keyof UserEnum as UserEnum[Key]]: () => Model<User>;
+      }
     : () => Model<User>;
 }
 
-export const defaultStrategy: Strategy<defaultUserType> = {
+export function createStrategy<
+  UserEnum extends SomeEnum<UserEnum>,
+  MultiCollection extends boolean,
+>(
+  config: Omit<Strategy<UserEnum, MultiCollection>, 'modelMap'> & {
+    modelMap: TODO;
+  },
+): Strategy<UserEnum, MultiCollection> {
+  return config as Strategy<UserEnum, MultiCollection>;
+}
+
+export const defaultStrategy = createStrategy({
   MIN_PASSWORD_STRENGTH: 2,
   multiUserType: MultiUserType.SINGLE,
   verifiedContactMethod: VerifiedContactMethod.EMAIL,
@@ -51,4 +68,4 @@ export const defaultStrategy: Strategy<defaultUserType> = {
   mfa: MFA.OFF,
   externalIdentityProviders: ExternalIdentityProviders.OFF,
   modelMap: () => user(false, false),
-};
+});

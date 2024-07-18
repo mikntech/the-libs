@@ -1,20 +1,20 @@
 import { Router } from 'express';
 import { AuthenticatedRequest, MultiUserType, Strategy } from 'auth-backend';
 import { genRegisterControllers } from '../../../controllers/auth/register';
-import { highOrderHandler, TODO } from 'base-backend';
+import { highOrderHandler, SomeEnum, TODO } from 'base-backend';
 import { GenEmailFunction } from 'email-backend';
 
-export const registerRouter = <S, UserType>(
+export const registerRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
   genRegisterEmail: GenEmailFunction,
-  strategy: Strategy<S>,
-  UserTypeEnum: Record<string, string>,
+  strategy: Strategy<UserTypeEnum, boolean>,
+  enumValues: UserTypeEnum[],
   onCreateFields: {},
 ) => {
   const router = Router();
 
   const { requestToRegister, finishRegistration } = genRegisterControllers(
     strategy,
-    UserTypeEnum,
+    enumValues,
     onCreateFields,
   );
 
@@ -23,9 +23,7 @@ export const registerRouter = <S, UserType>(
       (strategy.multiUserType === MultiUserType.SINGLE ? '' : '/:userType'),
     highOrderHandler(async (req: AuthenticatedRequest) => {
       const { email } = req.body;
-      const userType =
-        strategy.multiUserType !== MultiUserType.SINGLE &&
-        req.params['userType'];
+      const userType = req.params['userType'] as unknown as UserTypeEnum;
       return requestToRegister(email, userType, genRegisterEmail);
     }) as TODO,
   );

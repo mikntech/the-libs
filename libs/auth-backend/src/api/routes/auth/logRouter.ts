@@ -1,11 +1,11 @@
 import { AuthenticatedRequest, Strategy } from 'auth-backend';
 import { Router } from 'express';
-import { highOrderHandler, TODO } from 'base-backend';
+import { highOrderHandler, SomeEnum, TODO } from 'base-backend';
 import { genLogControllers } from '../../../controllers/auth/log';
 
-export const logRouter = <S, UserType>(
-  strategy: Strategy<S>,
-  UserTypeEnum: Record<string, string>,
+export const logRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
+  strategy: Strategy<UserTypeEnum, boolean>,
+  enumValues: UserTypeEnum[],
 ) => {
   const router = Router();
 
@@ -23,7 +23,7 @@ export const logRouter = <S, UserType>(
     '/in',
     highOrderHandler((async (req: AuthenticatedRequest) => {
       const { email, password, userType } = req.body;
-      return logIn(email, password, userType, UserTypeEnum);
+      return logIn(email, password, userType, enumValues);
     }) as TODO),
   );
 

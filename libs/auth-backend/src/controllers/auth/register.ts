@@ -1,4 +1,4 @@
-import { v4 } from "uuid";
+import { v4 } from 'uuid';
 import {
   getBaseSettings,
   createDoc,
@@ -8,18 +8,20 @@ import {
   UnauthorizedError,
   validateInput,
   validateEnum,
-} from "base-backend";
-import { GenEmailFunction } from "email-backend";
+  SomeEnum,
+} from 'base-backend';
+import { GenEmailFunction } from 'email-backend';
 import {
   defaultGenRegisterEmail,
+  MultiUserType,
   registrationRequest,
   Strategy,
-} from "auth-backend";
-import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
+} from 'auth-backend';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
-export const genRegisterControllers = <UserType>(
-  strategy: Strategy<UserType>,
-  UserTypeEnum: Record<string, string>,
+export const genRegisterControllers = <UserType extends SomeEnum<UserType>>(
+  strategy: Strategy<UserType, boolean>,
+  enumValues: UserType[],
   onCreateFields: {},
 ) => {
   const {
@@ -32,11 +34,11 @@ export const genRegisterControllers = <UserType>(
     generateJWT,
   } = genAuthControllers(strategy);
 
-  const validateEmailNotInUse = async (email: string, userType?: string) => {
+  const validateEmailNotInUse = async (email: string, userType: UserType) => {
     const x = await findDocs(getModel(userType).findOne({ email }), true);
     if (x)
       throw new InvalidInputError(
-        "An account with this email already exists. Please try to login instead.",
+        'An account with this email already exists. Please try to login instead.',
       );
   };
 
@@ -44,7 +46,7 @@ export const genRegisterControllers = <UserType>(
     CB extends { [key: string]: string } = {},
   >(
     email: string,
-    userType?: string,
+    userType: UserType,
   ) => {
     const key = v4();
     await createDoc(registrationRequest(), {
@@ -57,19 +59,19 @@ export const genRegisterControllers = <UserType>(
 
   const requestToRegister = async (
     email: string,
-    userType: string | false,
+    userType: UserType,
     genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
   ) => {
     validateInput({ email });
-    userType && validateInput({ userType });
-    UserTypeEnum && validateInput({ UserTypeEnum });
-    validateEnum({ userType }, UserTypeEnum);
-    const p = userType ? [userType] : [];
-    await validateEmailNotInUse(email, ...p);
-    const url = await createKeyForRegistration<any>(email, ...p);
+    strategy.multiUserType !== MultiUserType.SINGLE &&
+      validateInput({ userType });
+    strategy.multiUserType !== MultiUserType.SINGLE &&
+      validateEnum<UserType>(userType, enumValues);
+    await validateEmailNotInUse(email, userType);
+    const url = await createKeyForRegistration<any>(email, userType);
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: "email sent successfully" };
+    return { code: 200, body: 'email sent successfully' };
   };
 
   const createUser = async (
@@ -77,7 +79,7 @@ export const genRegisterControllers = <UserType>(
     full_name: string,
     phone_number: string,
     password: string,
-    userType?: string,
+    userType: UserType,
   ) =>
     createDoc(getModel(userType), {
       email,
@@ -103,19 +105,22 @@ export const genRegisterControllers = <UserType>(
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     const doc = await validateKey(key, true);
-    if (!doc?.email) throw new UnauthorizedError("wrong key");
-    await validateEmailNotInUse(doc.email, doc.userType);
+    if (!doc?.email) throw new UnauthorizedError('wrong key');
+    await validateEmailNotInUse(doc.email, doc.userType as unknown as UserType);
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(
       doc.email,
       full_name,
       phone_number,
       hashedPassword,
-      doc.userType,
+      doc.userType as unknown as UserType,
     );
     return {
       code: 200,
-      cookie: generateSecureCookie(JWT_COOKIE_NAME, generateJWT(savedUser)),
+      cookie: generateSecureCookie(
+        JWT_COOKIE_NAME,
+        generateJWT(savedUser, doc.userType as unknown as UserType),
+      ),
     };
   };
   return {
