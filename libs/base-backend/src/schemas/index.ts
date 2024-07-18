@@ -8,8 +8,9 @@ export const connect = async <SE = string>(
   mongoURI: string,
   stagingEnv: SE = 'production' as SE,
   watchDB?: () => void,
+  logMongoToConsole: boolean = true,
 ) => {
-  stagingEnv === 'local' && mongoose.set('debug', true);
+  stagingEnv === 'local' && mongoose.set('debug', logMongoToConsole);
   try {
     await mongoose.connect(mongoURI);
     console.log('Mongo DB connected successfully');

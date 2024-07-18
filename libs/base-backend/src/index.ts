@@ -15,9 +15,15 @@ export const start = <CB extends { [s: string]: string }>(
   preMiddlewares: Function[] = [],
   postMiddlewares: Function[] = [],
   watchDB = () => {},
+  logMongoToConsole: boolean = true,
 ) => {
   console.log('Connecting to MongoDB...');
-  connect(getBaseSettings().mongoURI, getBaseSettings().stagingEnv, watchDB)
+  connect(
+    getBaseSettings().mongoURI,
+    getBaseSettings().stagingEnv,
+    watchDB,
+    logMongoToConsole,
+  )
     .then(() =>
       setup<CB>(apiRouter, preMiddlewares, postMiddlewares).catch((e) =>
         console.log(e),
