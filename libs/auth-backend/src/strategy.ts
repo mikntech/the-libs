@@ -27,19 +27,23 @@ export enum ExternalIdentityProviders {
   OFF = 'off',
 }
 
-export interface Strategy<UserType = 'single'> {
+enum defaultUserType {
+  'singe' = 'singe',
+}
+
+export interface Strategy<UserEnum = defaultUserType> {
   MIN_PASSWORD_STRENGTH: ZXCVBNScore;
   multiUserType: MultiUserType;
   verifiedContactMethod: VerifiedContactMethod;
   passwordType: PasswordType;
   mfa: MFA;
   externalIdentityProviders: ExternalIdentityProviders;
-  modelMap: UserType extends 'single'
-    ? () => Model<User>
-    : { readonly [K in keyof UserType]: () => Model<User> };
+  modelMap: MultiUserType extends MultiUserType.MULTI_COLLECTION
+    ? { readonly [K in keyof UserEnum]: () => Model<User> }
+    : () => Model<User>;
 }
 
-export const defaultStrategy: Strategy = {
+export const defaultStrategy: Strategy<defaultUserType> = {
   MIN_PASSWORD_STRENGTH: 2,
   multiUserType: MultiUserType.SINGLE,
   verifiedContactMethod: VerifiedContactMethod.EMAIL,
