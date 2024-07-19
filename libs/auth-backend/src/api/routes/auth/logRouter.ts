@@ -1,12 +1,12 @@
-import { AuthenticatedRequest, Strategy } from 'auth-backend';
-import { Router } from 'express';
-import { highOrderHandler, SomeEnum, TODO } from 'base-backend';
-import { genLogControllers } from '../../../controllers/auth/log';
+import { AuthenticatedRequest, Strategy } from "auth-backend";
+import { Router } from "express";
+import { highOrderHandler, SomeEnum, TODO } from "base-backend";
+import { genLogControllers } from "../../../controllers/auth/log";
 
 export const logRouter = <
   UserTypeEnum extends SomeEnum<UserTypeEnum>,
-  RequiredFields = {},
-  OptionalFields = {},
+  RequiredFields extends {},
+  OptionalFields extends {},
 >(
   strategy: Strategy<
     RequiredFields,
@@ -21,7 +21,7 @@ export const logRouter = <
   const { validateAndProtect, logIn, logOut } = genLogControllers(strategy);
 
   router.get(
-    '/',
+    "/",
     highOrderHandler((async (req: AuthenticatedRequest) => ({
       code: 200,
       body: validateAndProtect(req.user as TODO),
@@ -29,7 +29,7 @@ export const logRouter = <
   );
 
   router.post(
-    '/in',
+    "/in",
     highOrderHandler((async (req: AuthenticatedRequest) => {
       const { email, password, userType } = req.body;
       return logIn(email, password, userType);
@@ -37,7 +37,7 @@ export const logRouter = <
   );
 
   router.get(
-    '/out',
+    "/out",
     highOrderHandler(((_: AuthenticatedRequest) => logOut()) as TODO),
   );
 

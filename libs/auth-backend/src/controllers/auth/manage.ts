@@ -1,4 +1,4 @@
-import { sign } from 'jsonwebtoken';
+import { sign } from "jsonwebtoken";
 import {
   createDoc,
   findDocs,
@@ -10,10 +10,10 @@ import {
   validateDocument,
   validateEnum,
   validateInput,
-} from 'base-backend';
-import { Model } from 'mongoose';
-import { v4 } from 'uuid';
-import { GenEmailFunction } from 'email-backend';
+} from "base-backend";
+import { Model } from "mongoose";
+import { v4 } from "uuid";
+import { GenEmailFunction } from "email-backend";
 import {
   authSettings,
   defaultGenPassResetEmail,
@@ -22,13 +22,13 @@ import {
   Strategy,
   User,
   user,
-} from 'auth-backend';
-import { genAuthControllers, JWT_COOKIE_NAME } from './index';
+} from "auth-backend";
+import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
 
 export const genManageControllers = <
   UserType extends SomeEnum<UserType>,
-  RequiredFields = {},
-  OptionalFields = {},
+  RequiredFields extends {},
+  OptionalFields extends {},
 >(
   strategy: Strategy<
     RequiredFields,
@@ -69,11 +69,11 @@ export const genManageControllers = <
       true,
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
-      throw new InvalidInputError('No user found with this email');
+      throw new InvalidInputError("No user found with this email");
     const url = await createKeyForPassReset(email);
     const { subject, body } = genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: 'email sent successfully' };
+    return { code: 200, body: "email sent successfully" };
   };
 
   const changeUsersPassword = async (user: User, password: string) => {
@@ -111,7 +111,7 @@ export const genManageControllers = <
         email,
       }),
     );
-    if (!existingUser) throw new UnauthorizedError('what?');
+    if (!existingUser) throw new UnauthorizedError("what?");
     return {
       code: 200,
       cookie: generateSecureCookie(

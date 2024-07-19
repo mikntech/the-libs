@@ -1,26 +1,29 @@
-import { NextFunction, Request, Response } from 'express';
-import { User, user } from 'auth-backend';
-import { JwtPayload } from 'jsonwebtoken';
-const jsonwebtoken = require('jsonwebtoken');
+import { NextFunction, Request, Response } from "express";
+import { authSettings, User, user } from "auth-backend";
+import { JwtPayload } from "jsonwebtoken";
+import { ObjectId } from "mongoose";
+const jsonwebtoken = require("jsonwebtoken");
 
 export interface AuthenticatedRequest extends Request {
   user: User | null;
 }
 
-export const authorizer =
-  (jwtSecret: string) =>
-  async (req: AuthenticatedRequest, _: Response, next: NextFunction) => {
-    try {
-      const validatedUser = await jsonwebtoken.verify(
-        req.cookies['jwt'],
-        jwtSecret,
-      ) as JwtPayload;
-      const { id } = validatedUser as {
-        id: string;
-      };
-      req.user = await user(false, false).findById(id);
-    } catch (err) {
-      req.user = null;
-    }
-    next();
-  };
+export const authorizer = async (
+  req: AuthenticatedRequest,
+  _: Response,
+  next: NextFunction,
+) => {
+  try {
+    const validatedUser = (await jsonwebtoken.verify(
+      req.cookies["jwt"],
+      authSettings.jwtSecret,
+    )) as JwtPayload;
+    const { _id } = validatedUser as {
+      _id: ObjectId;
+    };
+    req.user = await user(false, false).findById(String(_id));
+  } catch (err) {
+    req.user = null;
+  }
+  next();
+};

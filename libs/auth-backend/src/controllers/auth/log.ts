@@ -1,4 +1,4 @@
-import { MultiUserType, Strategy, User } from 'auth-backend';
+import { MultiUserType, Strategy, User } from "auth-backend";
 import {
   findDocs,
   SomeEnum,
@@ -7,14 +7,14 @@ import {
   validateEnum,
   validateInput,
   TODO,
-} from 'base-backend';
-import { compare } from 'bcryptjs';
-import { genAuthControllers, JWT_COOKIE_NAME } from './index';
+} from "base-backend";
+import { compare } from "bcryptjs";
+import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
 
 export const genLogControllers = <
   UserType extends SomeEnum<UserType>,
-  RequiredFields = {},
-  OptionalFields = {},
+  RequiredFields extends {},
+  OptionalFields extends {},
 >(
   strategy: Strategy<
     RequiredFields,
@@ -28,14 +28,14 @@ export const genLogControllers = <
     genAuthControllers(strategy);
 
   const protectUsersPassword = (user: User) => {
-    user.password = 'secret';
+    user.password = "secret";
     return user;
   };
 
   const validateCorrectPassword = async (user: User, password: string) => {
     const isPasswordCorrect = await compare(password, user.password);
     if (isPasswordCorrect) return true;
-    else throw new UnauthorizedError('Wrong password');
+    else throw new UnauthorizedError("Wrong password");
   };
 
   const validateAndProtect = (user: User) => {
@@ -58,10 +58,10 @@ export const genLogControllers = <
       true,
     );
     if (!existingUser && !validateDocument(existingUser as unknown as User))
-      throw new UnauthorizedError('Please register');
+      throw new UnauthorizedError("Please register");
     if (existingUser && (await validateCorrectPassword(existingUser, password)))
       return generateJWT(existingUser, userType);
-    throw new UnauthorizedError('Wrong password');
+    throw new UnauthorizedError("Wrong password");
   };
 
   const logIn = async <
@@ -91,7 +91,7 @@ export const genLogControllers = <
 
   const logOut = async () => ({
     code: 200,
-    cookie: generateSecureCookie(JWT_COOKIE_NAME, ''),
+    cookie: generateSecureCookie(JWT_COOKIE_NAME, ""),
   });
 
   return {
