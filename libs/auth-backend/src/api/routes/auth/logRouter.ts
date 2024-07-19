@@ -3,9 +3,18 @@ import { Router } from 'express';
 import { highOrderHandler, SomeEnum, TODO } from 'base-backend';
 import { genLogControllers } from '../../../controllers/auth/log';
 
-export const logRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
-  strategy: Strategy<UserTypeEnum, boolean>,
-  enumValues: UserTypeEnum[],
+export const logRouter = <
+  UserTypeEnum extends SomeEnum<UserTypeEnum>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserTypeEnum,
+    boolean,
+    boolean
+  >,
 ) => {
   const router = Router();
 
@@ -23,7 +32,7 @@ export const logRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
     '/in',
     highOrderHandler((async (req: AuthenticatedRequest) => {
       const { email, password, userType } = req.body;
-      return logIn(email, password, userType, enumValues);
+      return logIn(email, password, userType);
     }) as TODO),
   );
 

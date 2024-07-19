@@ -25,8 +25,18 @@ import {
 } from 'auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
-export const genManageControllers = <UserType extends SomeEnum<UserType>>(
-  strategy: Strategy<UserType, boolean>,
+export const genManageControllers = <
+  UserType extends SomeEnum<UserType>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserType,
+    boolean,
+    boolean
+  >,
 ) => {
   const {
     getModel,

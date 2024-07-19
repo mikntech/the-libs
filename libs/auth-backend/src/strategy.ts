@@ -3,6 +3,8 @@ import { Model } from 'mongoose';
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './schemas';
 import { SomeEnum, TODO } from 'base-backend';
+import { GenEmailFunction } from 'email-backend';
+import { defaultGenRegisterEmail } from './services';
 
 export enum MultiUserType {
   SINGLE = 'single',
@@ -33,8 +35,11 @@ enum defaultUserType {
 }
 
 export interface Strategy<
-  UserEnum extends SomeEnum<UserEnum>,
-  multiUserType_is_MULTI_COLLECTION extends boolean,
+  RequiredFields = {},
+  OptionalFields = {},
+  UserEnum extends SomeEnum<UserEnum> = null,
+  multiUserType_is_MULTI_COLLECTION extends boolean = false,
+  multiUserType_is_SINGLE extends boolean = true,
 > {
   MIN_PASSWORD_STRENGTH: ZXCVBNScore;
   multiUserType: MultiUserType;
@@ -47,20 +52,64 @@ export interface Strategy<
         [Key in keyof UserEnum as UserEnum[Key]]: () => Model<User>;
       }
     : () => Model<User>;
+  requiredFields: (keyof RequiredFields)[];
+  requiredEnums: (keyof RequiredFields)[];
+  optionalFields: (keyof OptionalFields)[];
+  onCreateFields?: Partial<RequiredFields | OptionalFields>;
+  genRegisterEmail: GenEmailFunction;
+  enumValues: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
 }
 
-export function createStrategy<
-  UserEnum extends SomeEnum<UserEnum>,
-  MultiCollection extends boolean,
+export const createStrategy = <
+  RequiredFields = {},
+  OptionalFields = {},
+  UserEnum extends SomeEnum<UserEnum> = null,
+  multiUserType_is_MULTI_COLLECTION extends boolean = false,
+  multiUserType_is_SINGLE extends boolean = true,
 >(
-  config: Omit<Strategy<UserEnum, MultiCollection>, 'modelMap'> & {
+  config: Omit<
+    multiUserType_is_SINGLE extends true
+      ? Omit<
+          Strategy<
+            RequiredFields,
+            OptionalFields,
+            UserEnum,
+            multiUserType_is_MULTI_COLLECTION,
+            multiUserType_is_SINGLE
+          >,
+          'enumValues'
+        >
+      : Strategy<
+          RequiredFields,
+          OptionalFields,
+          UserEnum,
+          multiUserType_is_MULTI_COLLECTION,
+          multiUserType_is_SINGLE
+        >,
+    'modelMap'
+  > & {
     modelMap: TODO;
   },
-): Strategy<UserEnum, MultiCollection> {
-  return config as Strategy<UserEnum, MultiCollection>;
-}
+): Strategy<
+  RequiredFields,
+  OptionalFields,
+  UserEnum,
+  multiUserType_is_MULTI_COLLECTION,
+  multiUserType_is_SINGLE
+> =>
+  config as unknown as Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserEnum,
+    multiUserType_is_MULTI_COLLECTION,
+    multiUserType_is_SINGLE
+  >;
 
 export const defaultStrategy = createStrategy({
+  genRegisterEmail: defaultGenRegisterEmail,
+  optionalFields: [],
+  requiredEnums: [],
+  requiredFields: [],
   MIN_PASSWORD_STRENGTH: 2,
   multiUserType: MultiUserType.SINGLE,
   verifiedContactMethod: VerifiedContactMethod.EMAIL,

@@ -11,8 +11,18 @@ import {
 import { compare } from 'bcryptjs';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
-export const genLogControllers = <UserType extends SomeEnum<UserType>>(
-  strategy: Strategy<UserType, boolean>,
+export const genLogControllers = <
+  UserType extends SomeEnum<UserType>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserType,
+    boolean,
+    boolean
+  >,
 ) => {
   const { getModel, generateJWT, generateSecureCookie } =
     genAuthControllers(strategy);
@@ -61,16 +71,15 @@ export const genLogControllers = <UserType extends SomeEnum<UserType>>(
     email: string,
     password: string,
     userType: UserType,
-    enumValues: UserType[],
   ) => {
     validateInput({ email });
     validateInput({ password });
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
+    if (!strategy?.enumValues)
+      throw new Error("Problem with strategy ('enumValues' is falsy)");
     strategy.multiUserType !== MultiUserType.SINGLE &&
-      validateInput({ enumValues });
-    strategy.multiUserType !== MultiUserType.SINGLE &&
-      validateEnum<UserType>(userType, enumValues);
+      validateEnum<UserType>(userType, strategy.enumValues as unknown as TODO);
     return {
       code: 200,
       cookie: generateSecureCookie(

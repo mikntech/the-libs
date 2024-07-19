@@ -6,20 +6,24 @@ import { Strategy } from '../../../strategy';
 import { GenEmailFunction } from 'email-backend';
 import { SomeEnum } from 'base-backend';
 
-export const authRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
-  genRegisterEmail: GenEmailFunction,
-  strategy: Strategy<UserTypeEnum, boolean>,
-  enumValues: UserTypeEnum[],
-  onCreateFields: {},
+export const authRouter = <
+  UserTypeEnum extends SomeEnum<UserTypeEnum>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserTypeEnum,
+    boolean,
+    boolean
+  >,
 ) => {
   const router = Router();
 
-  router.use('/log', logRouter(strategy, enumValues));
+  router.use('/log', logRouter(strategy));
   router.use('/manage', manageRouter(strategy));
-  router.use(
-    '/register',
-    registerRouter(genRegisterEmail, strategy, enumValues, onCreateFields),
-  );
+  router.use('/register', registerRouter(strategy));
 
   return router;
 };

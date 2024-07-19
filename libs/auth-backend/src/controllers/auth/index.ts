@@ -26,8 +26,18 @@ import { sendEmail } from 'email-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';
 
-export const genAuthControllers = <UserType extends SomeEnum<UserType>>(
-  strategy: Strategy<UserType, boolean>,
+export const genAuthControllers = <
+  UserType extends SomeEnum<UserType>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserType,
+    boolean,
+    boolean
+  >,
 ) => {
   const getModel = (userType: UserType): Model<User> =>
     (strategy.multiUserType === MultiUserType.MULTI_COLLECTION

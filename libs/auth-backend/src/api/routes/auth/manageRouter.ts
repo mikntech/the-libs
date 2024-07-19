@@ -3,8 +3,18 @@ import { AuthenticatedRequest, Strategy } from 'auth-backend';
 import { highOrderHandler, SomeEnum, TODO } from 'base-backend';
 import { genManageControllers } from '../../../controllers/auth/manage';
 
-export const manageRouter = <UserTypeEnum extends SomeEnum<UserTypeEnum>>(
-  strategy: Strategy<UserTypeEnum, boolean>,
+export const manageRouter = <
+  UserTypeEnum extends SomeEnum<UserTypeEnum>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserTypeEnum,
+    boolean,
+    boolean
+  >,
 ) => {
   const router = Router();
 

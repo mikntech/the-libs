@@ -1,4 +1,4 @@
-import { v4 } from "uuid";
+import { v4 } from 'uuid';
 import {
   getBaseSettings,
   createDoc,
@@ -9,20 +9,28 @@ import {
   validateInput,
   validateEnum,
   SomeEnum,
-} from "base-backend";
-import { GenEmailFunction } from "email-backend";
+} from 'base-backend';
+import { GenEmailFunction } from 'email-backend';
 import {
   defaultGenRegisterEmail,
   MultiUserType,
   registrationRequest,
   Strategy,
-} from "auth-backend";
-import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
+} from 'auth-backend';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
-export const genRegisterControllers = <UserType extends SomeEnum<UserType>>(
-  strategy: Strategy<UserType, boolean>,
-  enumValues: UserType[],
-  onCreateFields: {},
+export const genRegisterControllers = <
+  UserType extends SomeEnum<UserType>,
+  RequiredFields = {},
+  OptionalFields = {},
+>(
+  strategy: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserType,
+    boolean,
+    boolean
+  >,
 ) => {
   const {
     getModel,
@@ -38,7 +46,7 @@ export const genRegisterControllers = <UserType extends SomeEnum<UserType>>(
     const x = await findDocs(getModel(userType).findOne({ email }), true);
     if (x)
       throw new InvalidInputError(
-        "An account with this email already exists. Please try to login instead.",
+        'An account with this email already exists. Please try to login instead.',
       );
   };
 
@@ -66,12 +74,12 @@ export const genRegisterControllers = <UserType extends SomeEnum<UserType>>(
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
     strategy.multiUserType !== MultiUserType.SINGLE &&
-      validateEnum<UserType>(userType, enumValues);
+      validateEnum<UserType>(userType, strategy.enumValues);
     await validateEmailNotInUse(email, userType);
     const url = await createKeyForRegistration<any>(email, userType);
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: "email sent successfully" };
+    return { code: 200, body: 'email sent successfully' };
   };
 
   const createUser = async (
@@ -86,7 +94,7 @@ export const genRegisterControllers = <UserType extends SomeEnum<UserType>>(
       full_name,
       phone_number,
       password,
-      ...onCreateFields,
+      ...(strategy.onCreateFields || {}),
     });
 
   const finishRegistration = async (
@@ -95,18 +103,21 @@ export const genRegisterControllers = <UserType extends SomeEnum<UserType>>(
     phone_number: string,
     password: string,
     passwordAgain: string,
-    requiredFields,
+    requiredFields: RequiredFields,
   ) => {
     validateInput({ key });
     validateInput({ full_name });
     validateInput({ phone_number });
     validateInput({ password });
     validateInput({ passwordAgain });
+    Object.keys(requiredFields).forEach((key) =>
+      validateInput({ [key]: requiredFields[key] }, 'requiredFields'),
+    );
     validatePasswordStrength(password);
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     const doc = await validateKey(key, true);
-    if (!doc?.email) throw new UnauthorizedError("wrong key");
+    if (!doc?.email) throw new UnauthorizedError('wrong key');
     await validateEmailNotInUse(doc.email, doc.userType as unknown as UserType);
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(

@@ -4,10 +4,17 @@ import { SomeEnum } from '../../types';
 
 export const validateTruthy = <T = string>(value: T) => !!value;
 
-export const validateInput = <T = string>(input: { [key: string]: T }) => {
+export const validateInput = <T = string>(
+  input: { [key: string]: T },
+  extraPath: string = '',
+) => {
   const [name, value] = Object.entries(input)[0];
   if (!validateTruthy(value))
-    throw new InvalidInputError('didnt receive at all: ' + name);
+    throw new InvalidInputError(
+      'didnt receive at all: ' +
+        name +
+        (extraPath && ' (under: ' + extraPath + ')'),
+    );
   return value;
 };
 
