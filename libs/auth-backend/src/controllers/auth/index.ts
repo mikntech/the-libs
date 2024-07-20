@@ -59,10 +59,10 @@ export const genAuthControllers = <
     options: {
       httpOnly: true,
       sameSite:
-        getBaseSettings().nodeEnv === NodeEnvironment.development
+        getBaseSettings().nodeEnv === NodeEnvironment.Development
           ? "lax"
           : "none",
-      secure: getBaseSettings().nodeEnv === NodeEnvironment.production,
+      secure: getBaseSettings().nodeEnv === NodeEnvironment.Production,
     } as CookieOptions,
   });
 
@@ -74,7 +74,7 @@ export const genAuthControllers = <
   ) => {
     sendEmail(email, subject, body).then(
       () =>
-        getBaseSettings().stagingEnv === StagingEnvironment.local &&
+        getBaseSettings().stagingEnv === StagingEnvironment.Local &&
         console.log("tried to send email - link is: " + link),
     );
   };
