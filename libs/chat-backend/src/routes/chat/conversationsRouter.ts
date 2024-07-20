@@ -1,20 +1,20 @@
-import { Router } from 'express';
-import { highOrderHandler, TODO, UnauthorizedError } from 'base-backend';
+import { Router } from "express";
+import { highOrderHandler, TODO, UnauthorizedError } from "base-backend";
 import {
   conversation,
   getLastMessageOfConversation,
   getNameOfUser,
   getNumberOfUnreadMessagesInConversation,
-} from 'chat-backend';
-import { AuthenticatedRequest, User } from 'auth-backend';
+} from "chat-backend";
+import { AuthenticatedRequest, User } from "auth-backend";
 
 const router = Router();
 
 router.get(
-  '/:quantity?',
+  "/:quantity?",
   highOrderHandler(async (req: AuthenticatedRequest) => {
-    if (!(req.user as User)) throw new UnauthorizedError('not logged in');
-    let quantity: number | undefined = parseInt(req.params['quantity']);
+    if (!(req.user as User)) throw new UnauthorizedError("not logged in");
+    let quantity: number | undefined = parseInt(req.params["quantity"]);
     if (isNaN(quantity) || quantity < 1) {
       quantity = undefined;
     }
@@ -29,13 +29,13 @@ router.get(
     }
     const conversations = await query;
     return {
-      code: 200,
+      statusCode: 200,
       body: await Promise.all(
         conversations.map(async (c: TODO) => ({
           ...c.toObject(),
           lastMessage: await getLastMessageOfConversation(c._id.toString()),
           name: await getNameOfUser(
-            (req.user as TODO).type === 'guest' ? c.hostId : c.guestId,
+            (req.user as TODO).type === "guest" ? c.hostId : c.guestId,
           ),
           unReadNumber: await getNumberOfUnreadMessagesInConversation(
             c._id.toString(),
@@ -74,7 +74,7 @@ router.get(
     });
     if (results) return res.status(200).json(results);
     if (!userR?._id?.toString()) throw new UnauthorizedError('No partner found');
-    return { code: 201, body: userR._id.toString() };
+    return { statusCode: 201, body: userR._id.toString() };
   })
 );
 */

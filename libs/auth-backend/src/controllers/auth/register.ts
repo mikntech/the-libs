@@ -50,17 +50,14 @@ export const genRegisterControllers = <
       );
   };
 
-  const createKeyForRegistration = async (
-    email: string,
-    userType: UserType,
-  ) => {
+  const createKeyForRegistration = async (email: string, userType: string) => {
     const key = v4();
     await createDoc(registrationRequest(), {
       email,
-      userType,
+      userType: userType as unknown as UserType,
       key,
     });
-    return `${getBaseSettings().clientDomains.single}/?register-code=${key}&email=${email}`;
+    return `${strategy.multiUserType === MultiUserType.SINGLE ? getBaseSettings().clientDomains.single : getBaseSettings<{ [key: string]: string }>().clientDomains[userType]}/?register-code=${key}&email=${email}`;
   };
 
   const requestToRegister = async (
@@ -74,10 +71,13 @@ export const genRegisterControllers = <
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateEnum<UserType>(userType, strategy.enumValues as UserType[]);
     await validateEmailNotInUse(email, userType);
-    const url = await createKeyForRegistration(email, userType);
+    const url = await createKeyForRegistration(
+      email,
+      userType as unknown as string,
+    );
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: "email sent successfully" };
+    return { statusCode: 200, body: "email sent successfully" };
   };
 
   const createUser = async (
@@ -124,7 +124,7 @@ export const genRegisterControllers = <
       doc.userType as unknown as UserType,
     );
     return {
-      code: 200,
+      statusCode: 200,
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         generateJWT(savedUser, doc.userType as unknown as UserType),

@@ -63,17 +63,24 @@ export const getBaseSettings = <
   CB extends { [key: string]: string } = { single: string },
 >(): BaseSettings<CB> => {
   const clientDomains: CB = JSON.parse(
-    process.env["CLIENT_DOMAINS"] ?? JSON.stringify({ single: "my.co" }),
+    isProduction
+      ? (process.env["CLIENT_DOMAINS"] ?? JSON.stringify({ single: 4000 }))
+      : (process.env["CLIENT_PORTS"] ?? JSON.stringify({ single: "my.co" })),
   );
 
   const mutableClientDomains = clientDomains as { [key: string]: string };
 
-  Object.keys(mutableClientDomains).forEach((key) => {
-    mutableClientDomains[key] = generateFullDomain(
-      mutableClientDomains[key],
-      String(process.env["CLIENT_PORT"] ?? 4100),
-    );
-  });
+  isProduction
+    ? Object.keys(mutableClientDomains).forEach((key) => {
+        mutableClientDomains[key] = generateFullDomain(
+          mutableClientDomains[key],
+          String(process.env["CLIENT_PORT"] ?? 4100),
+        );
+      })
+    : Object.keys(mutableClientDomains).forEach((key) => {
+        mutableClientDomains[key] =
+          "http://localhost:" + mutableClientDomains[key];
+      });
 
   return {
     nodeEnv: isProduction

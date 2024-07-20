@@ -23,7 +23,7 @@ export const logRouter = <
   router.get(
     "/",
     highOrderHandler((async (req: AuthenticatedRequest) => ({
-      code: 200,
+      statusCode: 200,
       body: validateAndProtect(req.user as TODO),
     })) as TODO),
   );

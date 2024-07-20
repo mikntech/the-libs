@@ -81,7 +81,7 @@ export const genLogControllers = <
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateEnum<UserType>(userType, strategy.enumValues as unknown as TODO);
     return {
-      code: 200,
+      statusCode: 200,
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         await getToken(email, password, userType as TODO),
@@ -90,7 +90,7 @@ export const genLogControllers = <
   };
 
   const logOut = async () => ({
-    code: 200,
+    statusCode: 200,
     cookie: generateSecureCookie(JWT_COOKIE_NAME, ""),
   });
 

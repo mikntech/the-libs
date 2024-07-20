@@ -73,7 +73,7 @@ export const genManageControllers = <
     const url = await createKeyForPassReset(email);
     const { subject, body } = genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
-    return { code: 200, body: "email sent successfully" };
+    return { statusCode: 200, body: "email sent successfully" };
   };
 
   const changeUsersPassword = async (user: User, password: string) => {
@@ -113,7 +113,7 @@ export const genManageControllers = <
     );
     if (!existingUser) throw new UnauthorizedError("what?");
     return {
-      code: 200,
+      statusCode: 200,
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         await changeUsersPassword(existingUser, await hashPassword(password)),
