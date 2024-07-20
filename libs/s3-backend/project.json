@@ -13,7 +13,6 @@
         "main": "libs/s3-backend/src/index.ts",
         "tsConfig": "libs/s3-backend/tsconfig.lib.json",
         "assets": ["libs/s3-backend/*.md"],
-        "generatePackageJson": true,
         "format": ["cjs"]
       }
     }
