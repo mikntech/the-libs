@@ -45,46 +45,50 @@ export const genManageControllers = <
     validateKey,
     generateSecureCookie,
     hashPassword,
+    generateURLWithParams,
+    generateJWT,
   } = genAuthControllers(strategy);
 
   const createKeyForPassReset = async <CB extends { [s: string]: string }>(
     email: string,
+    userType: UserType,
   ) => {
     const key = v4();
     await createDoc(passResetRequest(), {
       email,
       key,
     });
-    return `${getBaseSettings<CB>().clientDomains[0]}/?reset-code=${key}&email=${email}`;
+    return generateURLWithParams(
+      `reset-code=${key}&email=${email}`,
+      userType as unknown as string,
+    );
   };
 
   const requestPasswordReset = async <SCHEMA extends User>(
     email: string,
-    genPassResetEmail: GenEmailFunction = defaultGenPassResetEmail,
-    model: Model<SCHEMA> = user(false, false) as TODO,
+    userType: UserType,
   ) => {
     validateInput({ email });
     const userDoc = await findDocs<SCHEMA, false>(
-      model.findOne({ email }),
+      getModel(userType).findOne({ email }),
       true,
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
       throw new InvalidInputError("No user found with this email");
-    const url = await createKeyForPassReset(email);
-    const { subject, body } = genPassResetEmail(url);
+    debugger;
+    const url = await createKeyForPassReset(email, (userDoc as TODO).userType);
+    const { subject, body } = strategy.genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
     return { statusCode: 200, body: "email sent successfully" };
   };
 
-  const changeUsersPassword = async (user: User, password: string) => {
+  const changeUsersPassword = async (
+    user: User<boolean, boolean, false>,
+    password: string,
+  ) => {
     user.password = password;
     await user.save();
-    return sign(
-      {
-        id: user._id,
-      },
-      authSettings.jwtSecret,
-    );
+    return generateJWT(user, (user as TODO).userType);
   };
 
   const resetPassword = async (
@@ -106,17 +110,25 @@ export const genManageControllers = <
     const { email } = (await validateKey(key, false)) as unknown as {
       email: string;
     };
-    const existingUser = await findDocs<User, false>(
+    const existingUser = await findDocs<
+      User<false, false, true, UserType>,
+      false
+    >(
       getModel(userType).findOne({
         email,
       }),
+      false,
     );
     if (!existingUser) throw new UnauthorizedError("what?");
     return {
       statusCode: 200,
+      body: "Password changed successfully. use your new password from now and you are logged in.",
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
-        await changeUsersPassword(existingUser, await hashPassword(password)),
+        await changeUsersPassword(
+          existingUser as TODO,
+          await hashPassword(password),
+        ),
       ),
     };
   };

@@ -4,7 +4,7 @@ import { ZXCVBNScore } from "zxcvbn";
 import { user } from "./schemas";
 import { SomeEnum, TODO } from "base-backend";
 import { GenEmailFunction } from "email-backend";
-import { defaultGenRegisterEmail } from "./services";
+import { defaultGenPassResetEmail, defaultGenRegisterEmail } from "./services";
 
 export enum MultiUserType {
   SINGLE = "single",
@@ -57,6 +57,7 @@ export interface Strategy<
   optionalFields: (keyof OptionalFields)[];
   onCreateFields?: Partial<RequiredFields | OptionalFields>;
   genRegisterEmail: GenEmailFunction;
+  genPassResetEmail: GenEmailFunction;
   enumValues: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
 }
 
@@ -107,6 +108,7 @@ export const createStrategy = <
 
 export const defaultStrategy = createStrategy({
   genRegisterEmail: defaultGenRegisterEmail,
+  genPassResetEmail: defaultGenPassResetEmail,
   optionalFields: [],
   requiredEnums: [],
   requiredFields: [],
@@ -116,5 +118,5 @@ export const defaultStrategy = createStrategy({
   passwordType: PasswordType.HASHED,
   mfa: MFA.OFF,
   externalIdentityProviders: ExternalIdentityProviders.OFF,
-  modelMap: () => user(false, false),
+  modelMap: () => user(false, false, false),
 });

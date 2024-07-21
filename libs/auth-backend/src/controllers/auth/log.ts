@@ -59,8 +59,11 @@ export const genLogControllers = <
     );
     if (!existingUser && !validateDocument(existingUser as unknown as User))
       throw new UnauthorizedError("Please register");
-    if (existingUser && (await validateCorrectPassword(existingUser, password)))
-      return generateJWT(existingUser, userType);
+    if (
+      existingUser &&
+      (await validateCorrectPassword(existingUser as TODO, password))
+    )
+      return generateJWT(existingUser as TODO, userType);
     throw new UnauthorizedError("Wrong password");
   };
 

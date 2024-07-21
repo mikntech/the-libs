@@ -7,7 +7,7 @@ export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
 
 export const getNameOfUser = async (userId: string) =>
-  (await user(false, false).findById(userId))?.full_name;
+  (await user(false, false, false).findById(userId))?.full_name;
 
 export const markMessagesAsRead = async (
   messages: Message[],
@@ -67,9 +67,11 @@ export const sendMessage = async <ENUM>(
   const Message = message();
   const Conversation = conversation();
   let conversationR = await Conversation.findById(conversationIdOrAddressee);
-  let hostId: /*User | string */ TODO = await user(false, false).findById(
-    conversationIdOrAddressee,
-  );
+  let hostId: /*User | string */ TODO = await user(
+    false,
+    false,
+    false,
+  ).findById(conversationIdOrAddressee);
   if (!hostId) {
     const companyF = /* await company().findById(conversationIdOrAddressee);*/ {
       host: "Asdasd",

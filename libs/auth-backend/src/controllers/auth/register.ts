@@ -40,6 +40,7 @@ export const genRegisterControllers = <
     hashPassword,
     generateSecureCookie,
     generateJWT,
+    generateURLWithParams,
   } = genAuthControllers(strategy);
 
   const validateEmailNotInUse = async (email: string, userType: UserType) => {
@@ -57,7 +58,10 @@ export const genRegisterControllers = <
       userType: userType as unknown as UserType,
       key,
     });
-    return `${strategy.multiUserType === MultiUserType.SINGLE ? getBaseSettings().clientDomains.single : getBaseSettings<{ [key: string]: string }>().clientDomains[userType]}/?register-code=${key}&email=${email}`;
+    return generateURLWithParams(
+      `register-code=${key}&email=${email}`,
+      userType,
+    );
   };
 
   const requestToRegister = async (
@@ -89,6 +93,7 @@ export const genRegisterControllers = <
     createDoc(getModel(userType), {
       email,
       full_name,
+      userType,
       password,
       ...(strategy.onCreateFields || {}),
     });

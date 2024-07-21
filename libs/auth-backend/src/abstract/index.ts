@@ -1,6 +1,8 @@
+import { MultiUserType } from "../strategy";
+
 export const userBasicSchema = (
   nameRequired: boolean = false,
-  profilePictureUriRequired: boolean = false
+  profilePictureUriRequired: boolean = false,
 ) => ({
   email: {
     type: String,
@@ -18,17 +20,14 @@ export const userBasicSchema = (
   },
 });
 
-
-export const requestBasicSchema = (
-  userTypeRelevant:boolean=false
-) => ({
+export const requestBasicSchema = (userTypeRelevant: boolean = false) => ({
   email: {
     type: String,
     required: true,
   },
-  userType:{type:String,required:userTypeRelevant},
+  userType: { type: String, required: userTypeRelevant },
   key: {
     type: String,
     required: true,
-  }
+  },
 });

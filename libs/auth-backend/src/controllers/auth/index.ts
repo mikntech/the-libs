@@ -42,7 +42,15 @@ export const genAuthControllers = <
   const getModel = (userType: UserType): Model<User> =>
     (strategy.multiUserType === MultiUserType.MULTI_COLLECTION
       ? (strategy.modelMap as TODO)[userType]
-      : strategy.modelMap)();
+      : strategy.modelMap)(
+      ...(strategy.multiUserType === MultiUserType.MULTI_BY_ROLES
+        ? [true]
+        : []),
+    );
+
+  const generateURLWithParams = (params: string, userType: string) =>
+    `${strategy.multiUserType === MultiUserType.SINGLE ? getBaseSettings().clientDomains.single : getBaseSettings<{ [key: string]: string }>().clientDomains[userType]}/?` +
+    params;
 
   const generateJWT = ({ _id }: User, userType: UserType) =>
     sign(
@@ -108,5 +116,6 @@ export const genAuthControllers = <
     sendEmailWithLink,
     generateSecureCookie,
     generateJWT,
+    generateURLWithParams,
   };
 };

@@ -53,7 +53,7 @@ router.get(
   highOrderHandler(async (req: AuthenticatedRequest) => {
     if (!(req.user as User)) throw new UnauthorizedError('Please log in');
     if (!req.params.id) throw new InvalidInputError('No Id received');
-    const User = user(false, false) as TODO;
+    const User = user(false, false,false) as TODO;
     const bookingF = await booking().findById(req.params.id);
     const userR =
       (req.user as User).type === 'host'

@@ -24,8 +24,8 @@ export const manageRouter = <
   router.post(
     "/request-password-reset",
     highOrderHandler((async (req: AuthenticatedRequest) => {
-      const { email } = req.body;
-      return requestPasswordReset(email);
+      const { email, userType } = req.body;
+      return requestPasswordReset(email, userType);
     }) as TODO),
   );
 

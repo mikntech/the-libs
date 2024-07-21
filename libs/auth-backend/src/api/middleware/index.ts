@@ -21,7 +21,7 @@ export const authorizer = async (
     const { _id } = validatedUser as {
       _id: ObjectId;
     };
-    req.user = await user(false, false).findById(String(_id));
+    req.user = await user(false, false, false).findById(String(_id));
   } catch (err) {
     req.user = null;
   }
