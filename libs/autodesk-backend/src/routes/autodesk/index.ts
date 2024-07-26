@@ -1,23 +1,29 @@
-import { getForgeToken } from '../../controllers/autodesk';
+import { getAutodeskToken } from '../../controllers/autodesk';
 import { highOrderHandler, TODO } from 'base-backend';
 import { Router } from 'express';
-import { AuthenticatedRequest } from 'auth-backend';
+import axios from 'axios';
+import { stringify } from 'qs';
 
 export const autodeskRouter = Router();
 
-let forgeToken = '';
-
 autodeskRouter.get(
   '/getToken',
-  highOrderHandler((async (req: AuthenticatedRequest) => {
+  highOrderHandler((async () => {
     try {
-      if (!forgeToken) {
-        forgeToken = await getForgeToken(
-          String(req.query['code']),
-          String(req.query['redirectUri']),
+      const credentials = await getAutodeskToken();
+      if (credentials) {
+        const response = await axios.post(
+          credentials.Authentication ?? '',
+          stringify(credentials.credentials),
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+          },
         );
+
+        return { statusCode: 200, body: { access_token: response.data } };
       }
-      return { statusCode: 200, body: { access_token: forgeToken } };
     } catch (error) {
       throw new Error('Failed to authenticate with Autodesk');
     }

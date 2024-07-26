@@ -1,20 +1,34 @@
-import axios from 'axios';
 import { autodeskSettings } from '../../config';
 
-export const getForgeToken = async (code: string, redirectUri: string) => {
+interface Credentials {
+  credentials: {
+    client_id: any;
+    client_secret: any;
+    grant_type: string;
+    scope: string;
+  };
+  BaseUrl: string;
+  Version: string;
+  Authentication?: string;
+}
+
+export const getAutodeskToken = async () => {
   try {
-    const response = await axios.post(
-      'https://developer.api.autodesk.com/authentication/v2/authorize',
-      {
+    const credentials: Credentials = {
+      credentials: {
         client_id: autodeskSettings.AUTODESK_CLIENT_ID,
         client_secret: autodeskSettings.AUTODESK_CLIENT_SECRET,
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: redirectUri,
+        grant_type: 'client_credentials',
+        scope: 'data:read',
       },
-    );
-    return response.data.access_token;
+      // Autodesk Forge base url
+      BaseUrl: 'https://developer.api.autodesk.com',
+      Version: 'v2',
+    };
+    credentials.Authentication = `${credentials.BaseUrl}/authentication/${credentials.Version}/token`;
+    return credentials;
   } catch (error) {
     console.error('Error getting token:', error);
+    return null;
   }
 };
