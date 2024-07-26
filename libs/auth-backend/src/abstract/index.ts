@@ -1,5 +1,3 @@
-import { MultiUserType } from "../strategy";
-
 export const userBasicSchema = (
   nameRequired: boolean = false,
   profilePictureUriRequired: boolean = false,

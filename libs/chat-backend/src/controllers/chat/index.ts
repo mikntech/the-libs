@@ -1,7 +1,7 @@
-import { Message } from "../../types/chat";
-import { highOrderHandler, TODO, UnauthorizedError } from "base-backend";
-import { AuthenticatedRequest, User, user } from "auth-backend";
-import { conversation, message } from "../../schemas/chat";
+import { Message } from '../../types/chat';
+import { highOrderHandler, TODO, UnauthorizedError } from 'base-backend';
+import { AuthenticatedRequest, User, user } from 'auth-backend';
+import { conversation, message } from '../../schemas/chat';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
@@ -12,18 +12,18 @@ export const getNameOfUser = async (userId: string) =>
 export const markMessagesAsRead = async (
   messages: Message[],
   user: User,
-  level: "queried" | "marked",
+  level: 'queried' | 'marked',
 ) =>
   messages
     .filter(
-      level === "queried"
+      level === 'queried'
         ? ({ whenQueried, ownerId }) =>
             String(user._id) !== ownerId && !whenQueried
         : ({ whenMarked, ownerId }) =>
             String(user._id) !== ownerId && !whenMarked,
     )
     .forEach((message) => {
-      if (level === "queried") message.whenQueried = Date.now();
+      if (level === 'queried') message.whenQueried = Date.now();
       else message.whenMarked = Date.now();
       message.save();
     });
@@ -43,18 +43,18 @@ export const getNumberOfUnreadMessagesInConversation = async (
 export const subscribeHandler = (PubSub: TODO) =>
   highOrderHandler(
     async (req: AuthenticatedRequest, write) => {
-      const token = PubSub.subscribe("chats", (_: TODO, data: TODO) =>
+      const token = PubSub.subscribe('chats', (_: TODO, data: TODO) =>
         write(`data: ${JSON.stringify({ message: data })}\n\n`),
       );
 
-      req.on("close", () => {
+      req.on('close', () => {
         PubSub.unsubscribe(token);
       });
     },
     [
-      { path: "Content-Type", stat: "text/event-stream" },
-      { path: "Cache-Control", stat: "no-cache" },
-      { path: "Connection", stat: "keep-alive" },
+      { path: 'Content-Type', stat: 'text/event-stream' },
+      { path: 'Cache-Control', stat: 'no-cache' },
+      { path: 'Connection', stat: 'keep-alive' },
     ],
   );
 
@@ -74,7 +74,7 @@ export const sendMessage = async <ENUM>(
   ).findById(conversationIdOrAddressee);
   if (!hostId) {
     const companyF = /* await company().findById(conversationIdOrAddressee);*/ {
-      host: "Asdasd",
+      host: 'Asdasd',
     };
     hostId = companyF?.host?.toString();
   } else hostId = String((hostId as User)?._id);
@@ -93,13 +93,13 @@ export const sendMessage = async <ENUM>(
         ? { hostId }
         : { guestId: hostId }),
     }).save();
-  console.log("String(user._id): ", String(userx._id));
-  console.log("conversation: ", conversationR);
+  console.log('String(user._id): ', String(userx._id));
+  console.log('conversation: ', conversationR);
   if (
     String(userx._id) !== conversationR.hostId &&
     String(userx._id) !== conversationR.guestId
   )
-    throw new UnauthorizedError("You are not part of the conversation");
+    throw new UnauthorizedError('You are not part of the conversation');
   const newMessage = new Message({
     ownerId: String(userx._id),
     conversationId: conversationR._id,
@@ -108,5 +108,5 @@ export const sendMessage = async <ENUM>(
 
   await newMessage.save();
 
-  return { statusCode: 201, body: "Message Sent" };
+  return { statusCode: 201, body: 'Message Sent' };
 };

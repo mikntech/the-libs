@@ -13,8 +13,8 @@ autodeskRouter.get(
     try {
       if (!forgeToken) {
         forgeToken = await getForgeToken(
-          String(req.query.code),
-          String(req.query.redirectUri),
+          String(req.query['code']),
+          String(req.query['redirectUri']),
         );
       }
       return { statusCode: 200, body: { access_token: forgeToken } };
