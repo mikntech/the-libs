@@ -85,7 +85,7 @@ export const sendMessage = async <ENUM>(
     });
   }
   if (!conversationR?._id) {
-    const d = new Conversation({
+    conversationR = new Conversation({
       ...((userx as TODO).type === (UserTypeEnum as TODO).host
         ? { hostId: userx._id }
         : { guestId: userx._id }),
@@ -93,7 +93,7 @@ export const sendMessage = async <ENUM>(
         ? { hostId }
         : { guestId: hostId }),
     });
-    conversationR = await d.save();
+    await conversationR.save();
   }
   console.log('String(user._id): ', String(userx._id));
   console.log('conversation: ', conversationR);
