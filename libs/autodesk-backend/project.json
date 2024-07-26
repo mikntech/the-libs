@@ -1,0 +1,26 @@
+{
+  "name": "autodesk-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/autodesk-backend/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/autodesk-backend",
+        "main": "libs/autodesk-backend/src/index.ts",
+        "tsConfig": "libs/autodesk-backend/tsconfig.lib.json",
+        "assets": [
+          "autodesk-backend/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
+      }
+    }
+  },
+  "tags": []
+}
