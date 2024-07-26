@@ -17,6 +17,7 @@
     "paths": {
       "auth-backend": ["libs/auth-backend/src/index.ts"],
       "base-backend": ["libs/base-backend/src/index.ts"],
+      "autodesk-backend": ["libs/autodesk-backend/src/index.ts"],
       "chat-backend": ["libs/chat-backend/src/index.ts"],
       "email-backend": ["libs/email-backend/src/index.ts"],
       "s3-backend": ["libs/s3-backend/src/index.ts"]
