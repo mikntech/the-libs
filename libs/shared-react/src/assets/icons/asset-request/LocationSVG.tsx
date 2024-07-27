@@ -1,0 +1,15 @@
+interface LocationProp {
+    outerColor: string;
+    innerColor: string;
+}
+
+export const LocationSVG = ({ outerColor,innerColor }: LocationProp) => {
+    return (
+        <svg width="18" height="22" viewBox="0 0 18 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="Location">
+        <path id="Ellipse 41" d="M17 9.41667C17 14.8445 10.6 20.5 9 20.5C7.4 20.5 1 14.8445 1 9.41667C1 5.04441 4.58172 1.5 9 1.5C13.4183 1.5 17 5.04441 17 9.41667Z" stroke={outerColor} stroke-width="1.5"/>
+        <circle id="Ellipse 33" opacity="0.3" cx="3" cy="3" r="3" transform="matrix(-1 0 0 1 12 6)" stroke={innerColor} stroke-width="1.5"/>
+        </g>
+        </svg>
+    );
+}

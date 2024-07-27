@@ -1,0 +1,35 @@
+.rdp {
+  /* Size of the day cells. */
+  /* --rdp-cell-size: 48px; */
+
+  /* Font size for the caption labels. */
+  /* --rdp-caption-font-size: 18px;  */
+
+  /* Accent color for the background of selected days. */
+  /* --rdp-accent-color: #005FAF; */
+
+  /* Background color for the hovered/focused elements. */
+  /* --rdp-background-color: #e7edff;  */
+
+  /* Background color for the hovered/focused elements (to use in dark-mode). */
+  /* --rdp-background-color-dark: #180270;  */
+
+  /* Outline border for focused elements */
+  /* --rdp-outline: 2px solid var(--rdp-accent-color);  */
+
+  /* Outline border for focused _and_ selected elements */
+  /* --rdp-outline-selected: 3px solid var(--rdp-accent-color);  */
+
+  /* Color of selected day text */
+  /* --rdp-selected-color: #fff; */
+
+}
+
+/* .booked:not(.booking_start, .booking_end) {
+  border-radius: 0;
+} */
+
+/* .rdp-cell {
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+} */
