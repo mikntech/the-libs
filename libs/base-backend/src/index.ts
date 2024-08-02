@@ -1,14 +1,15 @@
-export * from './config';
-export * from './controllers';
-export * from './exceptions';
-export * from './schemas';
-export * from './services';
-export * from './types';
+export * from "./config";
+export * from "./controllers";
+export * from "./exceptions";
+export * from "./schemas";
+export * from "./services";
+export * from "./types";
+export * from "./utils";
 
-import { setup } from './services';
-import { connect } from './schemas';
-import { Router } from 'express';
-import { getBaseSettings } from './config';
+import { setup } from "./services";
+import { connect } from "./schemas";
+import { Router } from "express";
+import { getBaseSettings } from "./config";
 
 export const start = <CB extends { [s: string]: string }>(
   apiRouter = Router(),
@@ -17,7 +18,7 @@ export const start = <CB extends { [s: string]: string }>(
   watchDB = () => {},
   logMongoToConsole: boolean = true,
 ) => {
-  console.log('Connecting to MongoDB...');
+  console.log("Connecting to MongoDB...");
   connect(
     getBaseSettings().mongoURI,
     getBaseSettings().stagingEnv,

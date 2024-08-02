@@ -12,6 +12,7 @@ export const highOrderHandler =
   <R extends Request>(
     handler:
       | ((req: R) => Promise<APIResponse>)
+      | ((req: R) => APIResponse)
       | ((req: R, write: ServerResponse["write"]) => Promise<void>),
     wsHeaders?: {
       path: string;
