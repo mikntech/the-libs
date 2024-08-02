@@ -7,7 +7,7 @@ import {
   StagingEnvironment,
   validateDocument,
   TODO,
-} from "base-backend";
+} from 'base-backend';
 import {
   MultiUserType,
   passResetRequest,
@@ -16,15 +16,16 @@ import {
   Strategy,
   User,
   authSettings,
-} from "auth-backend";
-import { genSalt, hash } from "bcryptjs";
-import { sign } from "jsonwebtoken";
-import { CookieOptions } from "express";
-const zxcvbn = require("zxcvbn");
-import { Model } from "mongoose";
-import { sendEmail } from "email-backend";
+  MultiClientType,
+} from 'auth-backend';
+import { genSalt, hash } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
+import { CookieOptions } from 'express';
+const zxcvbn = require('zxcvbn');
+import { Model } from 'mongoose';
+import { sendEmail } from 'email-backend';
 
-export const JWT_COOKIE_NAME = "jwt";
+export const JWT_COOKIE_NAME = 'jwt';
 
 export const genAuthControllers = <
   UserType extends SomeEnum<UserType>,
@@ -49,8 +50,13 @@ export const genAuthControllers = <
     );
 
   const generateURLWithParams = (params: string, userType: string) =>
-    `${strategy.multiUserType === MultiUserType.SINGLE ? getBaseSettings().clientDomains.single : getBaseSettings<{ [key: string]: string }>().clientDomains[userType]}/?` +
-    params;
+    `${
+      strategy.multiClientType === MultiClientType.SINGLE
+        ? getBaseSettings().clientDomains[0]
+        : getBaseSettings<{
+            [key: string]: string;
+          }>().clientDomains[userType]
+    }/?` + params;
 
   const generateJWT = ({ _id }: User, userType: UserType) =>
     sign(
@@ -68,8 +74,8 @@ export const genAuthControllers = <
       httpOnly: true,
       sameSite:
         getBaseSettings().nodeEnv === NodeEnvironment.Development
-          ? "lax"
-          : "none",
+          ? 'lax'
+          : 'none',
       secure: getBaseSettings().nodeEnv === NodeEnvironment.Production,
     } as CookieOptions,
   });
@@ -83,13 +89,13 @@ export const genAuthControllers = <
     sendEmail(email, subject, body).then(
       () =>
         getBaseSettings().stagingEnv === StagingEnvironment.Local &&
-        console.log("tried to send email - link is: " + link),
+        console.log('tried to send email - link is: ' + link),
     );
   };
 
   const validatePasswordStrength = (password: string) => {
     if (zxcvbn(password).score < strategy.MIN_PASSWORD_STRENGTH)
-      throw new InvalidInputError("Password is too weak");
+      throw new InvalidInputError('Password is too weak');
   };
 
   const validateKey = async (key: string, register: boolean) => {
@@ -100,7 +106,7 @@ export const genAuthControllers = <
       true,
     );
     if (!existingRequest || !validateDocument(existingRequest as TODO)) {
-      throw new InvalidInputError("key is wrong");
+      throw new InvalidInputError('key is wrong');
     }
     return existingRequest as SomeRequest<true>;
   };

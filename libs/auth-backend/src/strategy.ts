@@ -12,6 +12,11 @@ export enum MultiUserType {
   MULTI_COLLECTION = 'multi_collection',
 }
 
+export enum MultiClientType {
+  SINGLE = 'single',
+  MULTI = 'muti',
+}
+
 export enum VerifiedContactMethod {
   EMAIL = 'e-mail',
   SMS = 'sms',
@@ -43,6 +48,7 @@ export interface Strategy<
 > {
   MIN_PASSWORD_STRENGTH: ZXCVBNScore;
   multiUserType: MultiUserType;
+  multiClientType: MultiClientType;
   verifiedContactMethod: VerifiedContactMethod;
   passwordType: PasswordType;
   mfa: MFA;
@@ -114,6 +120,7 @@ export const defaultStrategy = createStrategy({
   requiredFields: [],
   MIN_PASSWORD_STRENGTH: 2,
   multiUserType: MultiUserType.SINGLE,
+  multiClientType: MultiClientType.SINGLE,
   verifiedContactMethod: VerifiedContactMethod.EMAIL,
   passwordType: PasswordType.HASHED,
   mfa: MFA.OFF,

@@ -21,11 +21,11 @@ autodeskRouter.get(
             },
           },
         );
-
         return { statusCode: 200, body: { access_token: response.data } };
       }
     } catch (error) {
       throw new Error('Failed to authenticate with Autodesk');
     }
+    return null;
   }) as TODO),
 );

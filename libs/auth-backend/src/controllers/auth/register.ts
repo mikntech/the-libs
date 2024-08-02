@@ -87,12 +87,14 @@ export const genRegisterControllers = <
     full_name: string,
     password: string,
     userType: UserType,
+    requiredFields: RequiredFields,
   ) =>
     createDoc(getModel(userType), {
       email,
       full_name,
       userType,
       password,
+      ...requiredFields,
       ...(strategy.onCreateFields || {}),
     });
 
@@ -101,15 +103,15 @@ export const genRegisterControllers = <
     full_name: string,
     password: string,
     passwordAgain: string,
-    requiredFields: RequiredFields = {} as RequiredFields,
+    requiredFields: RequiredFields,
   ) => {
     validateInput({ key });
     validateInput({ full_name });
     validateInput({ password });
     validateInput({ passwordAgain });
-    Object.keys(requiredFields).forEach((key: string) =>
+    strategy.requiredFields.forEach((key) =>
       validateInput(
-        { [key]: requiredFields[key as keyof RequiredFields] },
+        { [key]: requiredFields?.[key as keyof RequiredFields] },
         'requiredFields',
       ),
     );
@@ -125,6 +127,7 @@ export const genRegisterControllers = <
       full_name,
       hashedPassword,
       doc.userType as unknown as UserType,
+      requiredFields,
     );
     return {
       statusCode: 200,
