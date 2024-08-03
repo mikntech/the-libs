@@ -10,42 +10,32 @@ import { ServerContext } from "./index";
 import { Typography } from "@mui/material";
 import { User } from "auth-backend";
 
-interface AuthContextProps<UserType> {
+interface AuthContextProps {
   children: ReactNode;
-  client: UserType;
-  tenum: { admin: UserType };
   MainMessage: (props: { text: string }) => ReactNode;
 }
 
-interface AuthContextType<UserType> {
+interface AuthContextType {
   user?: User;
   profilePictureUrl?: string;
   refreshUserData: () => Promise<void>;
   logout: () => Promise<void>;
-  client: UserType;
 }
 
-export const AuthContext = <UserType,>(
-  tenum: { admin: UserType },
-  client: UserType,
-) =>
-  createContext<AuthContextType<UserType>>({
-    user: undefined,
-    refreshUserData: async () => {
-      return;
-    },
-    logout: async () => {
-      return;
-    },
-    client,
-  });
+export const AuthContext = createContext<AuthContextType>({
+  user: undefined,
+  refreshUserData: async () => {
+    return;
+  },
+  logout: async () => {
+    return;
+  },
+});
 
-export const AuthContextProvider = <UserType,>({
+export const AuthContextProvider = ({
   children,
-  client,
-  tenum,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
-}: AuthContextProps<UserType>) => {
+}: AuthContextProps) => {
   const [user, setUser] = useState<User>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
 
@@ -92,16 +82,13 @@ export const AuthContextProvider = <UserType,>({
     initializeData().then();
   }, [refreshUserData]);
 
-  const AuthContextP = AuthContext(tenum, client);
-
   return (
-    <AuthContextP.Provider
+    <AuthContext.Provider
       value={{
         user,
         refreshUserData,
         logout,
         profilePictureUrl,
-        client,
       }}
     >
       {loading ? (
@@ -109,6 +96,6 @@ export const AuthContextProvider = <UserType,>({
       ) : (
         children
       )}
-    </AuthContextP.Provider>
+    </AuthContext.Provider>
   );
 };

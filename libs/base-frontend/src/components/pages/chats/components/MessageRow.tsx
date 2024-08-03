@@ -47,7 +47,7 @@ interface MessageRowProps {
 }
 
 const MessageRow = ({ message, tenum }: MessageRowProps) => {
-  const { user } = useContext(AuthContext(tenum));
+  const { user } = useContext(AuthContext);
 
   return (
     <Container>

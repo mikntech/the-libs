@@ -94,7 +94,7 @@ export const AuthPage = <UserType,>({
   const [buttonLabel, setButtonLabel] = useState<keyof LabelsConstants>("IDLE");
   const [step, setStep] = useState<Step>(Step.init);
   const [emailReason, setEmailReason] = useState<boolean>(true);
-  const { refreshUserData } = useContext(AuthContext<UserType>(tenum, client));
+  const { refreshUserData } = useContext(AuthContext);
   const [minPassStrength, setMinPassStrength] = useState(1);
 
   const setMinPassStrengthFromServer = () =>
