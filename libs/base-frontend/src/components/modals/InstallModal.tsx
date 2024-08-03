@@ -1,5 +1,5 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
-import { TODO } from "base-backend";
+import { TODO } from "base-shared";
 
 interface InstallModalProps {
   onInstallClicked: TODO;

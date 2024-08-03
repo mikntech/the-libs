@@ -11,7 +11,7 @@ import {
 import { Document } from "mongoose";
 import { ServerContext } from "../../context";
 import { Add } from "@mui/icons-material";
-import { TODO, guessValueType } from "base-backend";
+import { TODO, guessValueType } from "base-shared";
 import { axiosErrorToaster, IconColorer, OFAB } from "base-frontend";
 
 type ActionModal<D> = (

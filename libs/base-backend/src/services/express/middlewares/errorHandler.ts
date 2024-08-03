@@ -1,7 +1,7 @@
-import { ClientError, ErrorLog, TODO, StagingEnvironment } from "base-backend";
 import { NextFunction, Request as ExpressRequest, Response } from "express";
 import { Model } from "mongoose";
-import { errorLog } from "../../../schemas/logs/errorLog";
+import { StagingEnvironment } from "../../../config";
+import { ClientError, ErrorLog, errorLog, TODO } from "base-shared";
 
 export const serverErrorHandler =
   <SCHEMA = ErrorLog, SE = StagingEnvironment>(

@@ -42,6 +42,7 @@ jobs:
           npx nx build auth-backend
           npx nx build autodesk-backend
           npx nx build base-backend
+          npx nx build base-shared
           npx nx build base-frontend
           npx nx build chat-backend
           npx nx build email-backend

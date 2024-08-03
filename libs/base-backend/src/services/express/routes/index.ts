@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, CookieOptions } from "express";
 import { ServerResponse } from "http";
-import { TODO } from "../../../types";
+import { TODO } from "base-shared";
 
 interface APIResponse {
   statusCode: number;

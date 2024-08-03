@@ -1,5 +1,5 @@
 import { FormControlLabel, Grid, Switch, Typography } from "@mui/material";
-import { TODO } from "base-backend";
+import { TODO } from "base-shared";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
 interface Options {

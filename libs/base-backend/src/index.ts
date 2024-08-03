@@ -1,13 +1,10 @@
+import { connect } from "base-shared";
+
 export * from "./config";
 export * from "./controllers";
-export * from "./exceptions";
-export * from "./schemas";
 export * from "./services";
-export * from "./types";
-export * from "./utils";
 
 import { setup } from "./services";
-import { connect } from "./schemas";
 import { Router } from "express";
 import { getBaseSettings } from "./config";
 

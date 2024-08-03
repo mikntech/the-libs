@@ -1,8 +1,8 @@
-import { getModel } from 'base-backend';
-import { Conversation } from '../../types/chat';
+import { getModel } from "base-shared";
+import { Conversation } from "../../types/chat";
 
-export const conversation= () =>
-  getModel<Conversation>('conversation', {
+export const conversation = () =>
+  getModel<Conversation>("conversation", {
     firstId: {
       type: String,
     },

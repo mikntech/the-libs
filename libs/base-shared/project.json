@@ -1,0 +1,26 @@
+{
+  "name": "base-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/base-shared/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/base-shared",
+        "main": "libs/base-shared/src/index.ts",
+        "tsConfig": "libs/base-shared/tsconfig.lib.json",
+        "assets": [
+          "base-shared/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

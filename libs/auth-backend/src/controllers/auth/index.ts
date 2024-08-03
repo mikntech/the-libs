@@ -1,13 +1,11 @@
 import {
   findDocs,
   getBaseSettings,
-  InvalidInputError,
   NodeEnvironment,
-  SomeEnum,
   StagingEnvironment,
   validateDocument,
-  TODO,
-} from 'base-backend';
+} from "base-backend";
+import { InvalidInputError, TODO, SomeEnum } from "base-shared";
 import {
   MultiUserType,
   passResetRequest,
@@ -17,15 +15,15 @@ import {
   User,
   authSettings,
   MultiClientType,
-} from 'auth-backend';
-import { genSalt, hash } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
-import { CookieOptions } from 'express';
-const zxcvbn = require('zxcvbn');
-import { Model } from 'mongoose';
-import { sendEmail } from 'email-backend';
+} from "auth-backend";
+import { genSalt, hash } from "bcryptjs";
+import { sign } from "jsonwebtoken";
+import { CookieOptions } from "express";
+const zxcvbn = require("zxcvbn");
+import { Model } from "mongoose";
+import { sendEmail } from "email-backend";
 
-export const JWT_COOKIE_NAME = 'jwt';
+export const JWT_COOKIE_NAME = "jwt";
 
 export const genAuthControllers = <
   UserType extends SomeEnum<UserType>,
@@ -74,8 +72,8 @@ export const genAuthControllers = <
       httpOnly: true,
       sameSite:
         getBaseSettings().nodeEnv === NodeEnvironment.Development
-          ? 'lax'
-          : 'none',
+          ? "lax"
+          : "none",
       secure: getBaseSettings().nodeEnv === NodeEnvironment.Production,
     } as CookieOptions,
   });
@@ -89,13 +87,13 @@ export const genAuthControllers = <
     sendEmail(email, subject, body).then(
       () =>
         getBaseSettings().stagingEnv === StagingEnvironment.Local &&
-        console.log('tried to send email - link is: ' + link),
+        console.log("tried to send email - link is: " + link),
     );
   };
 
   const validatePasswordStrength = (password: string) => {
     if (zxcvbn(password).score < strategy.MIN_PASSWORD_STRENGTH)
-      throw new InvalidInputError('Password is too weak');
+      throw new InvalidInputError("Password is too weak");
   };
 
   const validateKey = async (key: string, register: boolean) => {
@@ -106,7 +104,7 @@ export const genAuthControllers = <
       true,
     );
     if (!existingRequest || !validateDocument(existingRequest as TODO)) {
-      throw new InvalidInputError('key is wrong');
+      throw new InvalidInputError("key is wrong");
     }
     return existingRequest as SomeRequest<true>;
   };

@@ -1,5 +1,5 @@
-import { Model, QueryWithHelpers } from 'mongoose';
-import { Document } from '../../types';
+import { Model, QueryWithHelpers } from "mongoose";
+import { Document } from "base-shared";
 
 export const findDocs = async <
   SCHEMA extends Document,

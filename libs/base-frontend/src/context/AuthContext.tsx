@@ -17,14 +17,19 @@ interface AuthContextProps<UserType> {
   MainMessage: (props: { text: string }) => ReactNode;
 }
 
-export const AuthContext = <UserType,>(tenum: { admin: UserType }) =>
-  createContext<{
-    user?: User;
-    profilePictureUrl?: string;
-    refreshUserData: () => Promise<void>;
-    logout: () => Promise<void>;
-    client: UserType;
-  }>({
+interface AuthContextType<UserType> {
+  user?: User;
+  profilePictureUrl?: string;
+  refreshUserData: () => Promise<void>;
+  logout: () => Promise<void>;
+  client: UserType;
+}
+
+export const AuthContext = <UserType,>(
+  tenum: { admin: UserType },
+  client: UserType,
+) =>
+  createContext<AuthContextType<UserType>>({
     user: undefined,
     refreshUserData: async () => {
       return;
@@ -32,7 +37,7 @@ export const AuthContext = <UserType,>(tenum: { admin: UserType }) =>
     logout: async () => {
       return;
     },
-    client: tenum.admin,
+    client,
   });
 
 export const AuthContextProvider = <UserType,>({
@@ -87,10 +92,10 @@ export const AuthContextProvider = <UserType,>({
     initializeData().then();
   }, [refreshUserData]);
 
-  const LAuthContext = AuthContext(tenum);
+  const AuthContextP = AuthContext(tenum, client);
 
   return (
-    <LAuthContext.Provider
+    <AuthContextP.Provider
       value={{
         user,
         refreshUserData,
@@ -104,6 +109,6 @@ export const AuthContextProvider = <UserType,>({
       ) : (
         children
       )}
-    </LAuthContext.Provider>
+    </AuthContextP.Provider>
   );
 };

@@ -1,5 +1,6 @@
 import { Router } from "express";
-import { highOrderHandler, TODO, UnauthorizedError } from "base-backend";
+import { highOrderHandler } from "base-backend";
+import { TODO, UnauthorizedError } from "base-shared";
 import { AuthenticatedRequest, User } from "auth-backend";
 import {
   conversation,

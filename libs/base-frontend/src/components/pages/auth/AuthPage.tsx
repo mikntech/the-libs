@@ -13,7 +13,7 @@ import { useLocation } from "react-router-dom";
 import zxcvbn from "zxcvbn";
 import { Flag } from "@mui/icons-material";
 import { useResponsiveness } from "../../../hooks";
-import { TODO } from "base-backend";
+import { TODO } from "base-shared";
 import { axiosErrorToaster } from "../../../utils";
 import { useIsNight } from "../../../themes";
 
@@ -62,6 +62,7 @@ interface AuthPageProps<UserType> {
   nightLogoTextOnly: string;
   dayLogoTextOnly: string;
   tenum: TODO;
+  client: UserType;
   customComponents?: {
     Btn?: TODO;
     PrimaryText?: TODO;
@@ -74,6 +75,7 @@ export const AuthPage = <UserType,>({
   nightLogoTextOnly,
   dayLogoTextOnly,
   tenum,
+  client,
   customComponents = {
     Btn: Button,
     PrimaryText: Typography,
@@ -92,9 +94,7 @@ export const AuthPage = <UserType,>({
   const [buttonLabel, setButtonLabel] = useState<keyof LabelsConstants>("IDLE");
   const [step, setStep] = useState<Step>(Step.init);
   const [emailReason, setEmailReason] = useState<boolean>(true);
-  const { refreshUserData, client } = useContext(
-    AuthContext<UserType>(tenum as { admin: UserType }),
-  );
+  const { refreshUserData } = useContext(AuthContext<UserType>(tenum, client));
   const [minPassStrength, setMinPassStrength] = useState(1);
 
   const setMinPassStrengthFromServer = () =>

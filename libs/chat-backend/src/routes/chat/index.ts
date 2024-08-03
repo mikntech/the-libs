@@ -2,7 +2,7 @@ import { Router } from "express";
 import conversationsRouter from "./conversationsRouter";
 import messagesRouter from "./messagesRouter";
 import { subscribeHandler } from "../../controllers/chat";
-import { TODO } from "base-backend";
+import { TODO } from "base-shared";
 
 export const chatRouter = Router();
 
