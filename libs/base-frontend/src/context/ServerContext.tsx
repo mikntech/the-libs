@@ -93,7 +93,7 @@ export const ServerProvider = ({
       }
     };
 
-    checkStatus();
+    checkStatus().then();
   }, [axiosInstance, tryInterval]);
 
   if (status === GOOD_STATUS) {

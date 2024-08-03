@@ -104,7 +104,7 @@ export const AuthPage = <UserType,>({
       .catch((e) => axiosErrorToaster(e));
 
   useEffect(() => {
-    setMinPassStrengthFromServer();
+    setMinPassStrengthFromServer()?.then();
   }, []);
 
   const { isMobileOrTabl } = useResponsiveness(

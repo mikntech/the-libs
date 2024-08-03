@@ -1,5 +1,4 @@
 import { ThemeOptions } from '@mui/material';
-import { frontendSettings } from '../context';
 import { useEffect, useMemo, useState } from 'react';
 import { findMe, getSunTimes } from '../utils';
 

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { authSettings, Strategy, User, user } from 'auth-backend';
+import { authSettings, Strategy, User } from 'auth-backend';
 import { JwtPayload } from 'jsonwebtoken';
 import { ObjectId } from 'mongoose';
 import { genAuthControllers } from '../../controllers';
