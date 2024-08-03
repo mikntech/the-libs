@@ -4,16 +4,16 @@ import {
   validateDocument,
   validateEnum,
   validateInput,
-} from "base-backend";
+} from 'base-backend';
 import {
   UnauthorizedError,
   InvalidInputError,
   SomeEnum,
   TODO,
-} from "base-shared";
-import { v4 } from "uuid";
-import { MultiUserType, passResetRequest, Strategy, User } from "auth-backend";
-import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
+} from 'base-shared';
+import { v4 } from 'uuid';
+import { MultiUserType, passResetRequest, Strategy, User } from 'auth-backend';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genManageControllers = <
   UserType extends SomeEnum<UserType>,
@@ -64,12 +64,12 @@ export const genManageControllers = <
       true,
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
-      throw new InvalidInputError("No user found with this email");
+      throw new InvalidInputError('No user found with this email');
 
     const url = await createKeyForPassReset(email, (userDoc as TODO).userType);
     const { subject, body } = strategy.genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
-    return { statusCode: 200, body: "email sent successfully" };
+    return { statusCode: 200, body: 'email sent successfully' };
   };
 
   const changeUsersPassword = async (
@@ -109,10 +109,10 @@ export const genManageControllers = <
       }),
       false,
     );
-    if (!existingUser) throw new UnauthorizedError("what?");
+    if (!existingUser) throw new UnauthorizedError('what?');
     return {
       statusCode: 200,
-      body: "Password changed successfully. use your new password from now and you are logged in.",
+      body: 'Password changed successfully. use your new password from now and you are logged in.',
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         await changeUsersPassword(

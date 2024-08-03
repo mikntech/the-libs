@@ -1,18 +1,18 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 export const useLoadBundle = () => {
   useEffect(() => {
-    const loader: HTMLDivElement | null = document.querySelector(".bndloader");
+    const loader: HTMLDivElement | null = document.querySelector('.bndloader');
     if (loader) {
-      loader.style.display = "none";
+      loader.style.display = 'none';
     }
   }, []);
 };
 
 export const loadFonts = () => {
-  const link = document.createElement("link");
+  const link = document.createElement('link');
   link.href =
-    "https://fonts.googleapis.com/css?family=Open+Sans:400,700|Inter:400,500,700&display=swap";
-  link.rel = "stylesheet";
+    'https://fonts.googleapis.com/css?family=Open+Sans:400,700|Inter:400,500,700&display=swap';
+  link.rel = 'stylesheet';
   document.head.appendChild(link);
 };

@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction, CookieOptions } from "express";
-import { ServerResponse } from "http";
-import { TODO } from "base-shared";
+import { Request, Response, NextFunction, CookieOptions } from 'express';
+import { ServerResponse } from 'http';
+import { TODO } from 'base-shared';
 
 interface APIResponse {
   statusCode: number;
@@ -13,7 +13,7 @@ export const highOrderHandler =
     handler:
       | ((req: R) => Promise<APIResponse>)
       | ((req: R) => APIResponse)
-      | ((req: R, write: ServerResponse["write"]) => Promise<void>),
+      | ((req: R, write: ServerResponse['write']) => Promise<void>),
     wsHeaders?: {
       path: string;
       stat: string;
@@ -29,13 +29,13 @@ export const highOrderHandler =
           handler as (req: R) => Promise<APIResponse>
         )(req);
         const { statusCode, body, cookie } = restResponse;
-        if (statusCode >= 500) next(new Error("Internal Server Error"));
+        if (statusCode >= 500) next(new Error('Internal Server Error'));
         const ret = res.status(statusCode);
         if (cookie) {
           const { name, val, options } = cookie;
           ret.cookie(name, val, options);
         }
-        typeof body === "string" || body === undefined
+        typeof body === 'string' || body === undefined
           ? ret.send(body)
           : ret.json(body);
       }

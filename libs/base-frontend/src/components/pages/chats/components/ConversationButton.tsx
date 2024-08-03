@@ -1,8 +1,8 @@
-import { Avatar, Badge, Grid, Typography } from "@mui/material";
-import { Dispatch, SetStateAction } from "react";
-import { useIsNight } from "../../../../";
-import { TODO } from "base-shared";
-import { Conversation } from "chat-backend";
+import { Avatar, Badge, Grid, Typography } from '@mui/material';
+import { Dispatch, SetStateAction } from 'react';
+import { useIsNight } from '../../../../';
+import { TODO } from 'base-shared';
+import { Conversation } from 'chat-backend';
 
 interface ConversationButtonProps {
   conversation: Conversation;
@@ -29,18 +29,18 @@ export const ConversationButton = ({
     <Grid
       container
       onClick={() => setSelectedConversation(conversation)}
-      sx={{ cursor: "pointer" }}
+      sx={{ cursor: 'pointer' }}
       wrap="nowrap"
-      width={isTheSelectedConversation ? "calc(100% - 0.1vw)" : "100%"}
+      width={isTheSelectedConversation ? 'calc(100% - 0.1vw)' : '100%'}
       border={
         isTheSelectedConversation
-          ? `0.2vw solid ${isNight ? "white" : "black"}`
-          : ""
+          ? `0.2vw solid ${isNight ? 'white' : 'black'}`
+          : ''
       }
       justifyContent="center"
       alignItems="center"
       columnSpacing={1}
-      marginLeft={isTheSelectedConversation ? "0.1vw" : "0vw"}
+      marginLeft={isTheSelectedConversation ? '0.1vw' : '0vw'}
     >
       <Grid item>
         {!wide && conversation.unReadNumber !== 0 ? (
@@ -72,7 +72,7 @@ export const ConversationButton = ({
                 <PrimaryText>
                   {conversation.name.length > MAX_NAME_LENGTH
                     ? conversation.name.substring(0, MAX_NAME_LENGTH - 3) +
-                      "..."
+                      '...'
                     : conversation.name}
                 </PrimaryText>
               </Grid>
@@ -109,13 +109,13 @@ export const ConversationButton = ({
                     ? conversation.lastMessage.message.substring(
                         0,
                         MAX_LAST_MESSAGE_LENGTH - 3,
-                      ) + "..."
+                      ) + '...'
                     : conversation.lastMessage.message}
                 </PrimaryText>
               </Grid>
               <Grid item>
                 <PrimaryText>
-                  {`${new Date(conversation.lastMessage.createdAt).getHours().toString().padStart(2, "0")}:${new Date(conversation.lastMessage.createdAt).getMinutes().toString().padStart(2, "0")}`}
+                  {`${new Date(conversation.lastMessage.createdAt).getHours().toString().padStart(2, '0')}:${new Date(conversation.lastMessage.createdAt).getMinutes().toString().padStart(2, '0')}`}
                 </PrimaryText>
               </Grid>
               <Grid item>

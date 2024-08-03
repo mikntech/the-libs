@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { AuthenticatedRequest, Strategy } from "auth-backend";
-import { highOrderHandler } from "base-backend";
-import { SomeEnum, TODO } from "base-shared";
-import { genManageControllers } from "../../../controllers/auth/manage";
+import { Router } from 'express';
+import { AuthenticatedRequest, Strategy } from 'auth-backend';
+import { highOrderHandler } from 'base-backend';
+import { SomeEnum, TODO } from 'base-shared';
+import { genManageControllers } from '../../../controllers/auth/manage';
 
 export const manageRouter = <
   UserTypeEnum extends SomeEnum<UserTypeEnum>,
@@ -23,7 +23,7 @@ export const manageRouter = <
     genManageControllers(strategy);
 
   router.post(
-    "/request-password-reset",
+    '/request-password-reset',
     highOrderHandler((async (req: AuthenticatedRequest) => {
       const { email, userType } = req.body;
       return requestPasswordReset(email, userType);
@@ -31,7 +31,7 @@ export const manageRouter = <
   );
 
   router.post(
-    "/reset-password",
+    '/reset-password',
     highOrderHandler((async (req: AuthenticatedRequest) => {
       const { key, password, passwordAgain, userType } = req.body;
       return resetPassword(key, password, passwordAgain, userType);

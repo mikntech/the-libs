@@ -1,16 +1,16 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import ConversationView from "./components/ConversationView";
+import { Button, Grid, Typography } from '@mui/material';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import ConversationView from './components/ConversationView';
 import {
   ChatContext,
   ConversationButton,
   ServerContext,
   useResponsiveness,
-} from "../../../";
-import { useLocation } from "react-router-dom";
-import SendMessageForm from "../../forms/SendMessageForm";
-import { TODO } from "base-shared";
-import { Conversation } from "chat-backend";
+} from '../../../';
+import { useLocation } from 'react-router-dom';
+import SendMessageForm from '../../forms/SendMessageForm';
+import { TODO } from 'base-shared';
+import { Conversation } from 'chat-backend';
 
 interface ChatsPageProps {
   isGuest?: boolean;
@@ -48,7 +48,7 @@ export const ChatsPage = ({
   const [open, setOpen] = useState<boolean>(true);
 
   const [sendMessage, setSendMessage] = useState(false);
-  const [newId, setNewId] = useState("");
+  const [newId, setNewId] = useState('');
 
   const wide = true; // open || !isMobile;
 
@@ -67,9 +67,9 @@ export const ChatsPage = ({
   const getConverationIDbyBookingId = useCallback(
     async (id: string) => {
       const res = await server?.axiosInstance.get(
-        "api/chat/conversations/idByBookingId/" + id,
+        'api/chat/conversations/idByBookingId/' + id,
       );
-      if (typeof res?.data === "string") {
+      if (typeof res?.data === 'string') {
         setSendMessage(true);
         setNewId(res.data);
       } else
@@ -79,7 +79,7 @@ export const ChatsPage = ({
   );
 
   useEffect(() => {
-    const id = query.get("chatId");
+    const id = query.get('chatId');
     if (id) {
       getConverationIDbyBookingId(id);
     } else setSendMessage(false);
@@ -96,7 +96,7 @@ export const ChatsPage = ({
     <Grid height="100%" container wrap="nowrap">
       {!(selectedConversation && isMobile) && (
         <Grid
-          width={wide ? "250px" : totalUnReadCounter !== 0 ? "70px" : "50px"}
+          width={wide ? '250px' : totalUnReadCounter !== 0 ? '70px' : '50px'}
           height="100%"
           item
           container

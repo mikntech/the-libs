@@ -6,19 +6,13 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/autodesk-backend",
         "main": "libs/autodesk-backend/src/index.ts",
         "tsConfig": "libs/autodesk-backend/tsconfig.lib.json",
-        "assets": [
-          "autodesk-backend/*.md"
-        ],
-        "format": [
-          "cjs"
-        ]
+        "assets": ["autodesk-backend/*.md"],
+        "format": ["cjs"]
       }
     }
   },

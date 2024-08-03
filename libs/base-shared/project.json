@@ -6,19 +6,13 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/base-shared",
         "main": "libs/base-shared/src/index.ts",
         "tsConfig": "libs/base-shared/tsconfig.lib.json",
-        "assets": [
-          "base-shared/*.md"
-        ],
-        "format": [
-          "cjs"
-        ]
+        "assets": ["base-shared/*.md"],
+        "format": ["cjs"]
       }
     }
   },

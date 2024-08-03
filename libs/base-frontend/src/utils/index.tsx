@@ -1,6 +1,6 @@
-import axios from "axios";
-import { TODO } from "base-shared";
-import toast from "react-hot-toast";
+import axios from 'axios';
+import { TODO } from 'base-shared';
+import toast from 'react-hot-toast';
 import {
   Box,
   BoxProps,
@@ -10,9 +10,9 @@ import {
   Grid,
   Typography,
   useTheme,
-} from "@mui/material";
-import { cloneElement, forwardRef, FC, useState } from "react";
-import { useResponsiveness } from "../hooks";
+} from '@mui/material';
+import { cloneElement, forwardRef, FC, useState } from 'react';
+import { useResponsiveness } from '../hooks';
 
 export const findMe = (): Promise<null | { lat: number; lng: number }> => {
   return new Promise((resolve) => {
@@ -37,14 +37,14 @@ export const findMe = (): Promise<null | { lat: number; lng: number }> => {
 
 export const axiosErrorToaster = (e: TODO) =>
   toast.error(
-    typeof e?.response?.data === "object"
+    typeof e?.response?.data === 'object'
       ? e?.response?.data?.message ||
           e?.response?.data?.error ||
           JSON.stringify(e?.response?.data)
       : e?.response?.data ||
           (e?.response?.status
-            ? "Error code " + e?.response?.status
-            : "Unknown Error"),
+            ? 'Error code ' + e?.response?.status
+            : 'Unknown Error'),
   );
 
 export const getSunTimes = async (
@@ -58,7 +58,7 @@ export const getSunTimes = async (
     const { data } = await axios.get(
       `https://api.sunrise-sunset.org/json?lat=${location.lat}&lng=${location.lng}&formatted=0`,
     );
-    if (data.status === "OK") {
+    if (data.status === 'OK') {
       return {
         sunset: new Date(data.results.sunset),
         sunrise: new Date(data.results.sunrise),
@@ -70,25 +70,25 @@ export const getSunTimes = async (
 };
 
 export const registerSW = () => {
-  if ("serviceWorker" in navigator) {
+  if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register("/sw.js")
+      .register('/sw.js')
       .then((registration) =>
         console.log(
-          "Service Worker registered with scope:",
+          'Service Worker registered with scope:',
           registration.scope,
         ),
       )
       .catch((error) =>
-        console.log("Service Worker registration failed:", error),
+        console.log('Service Worker registration failed:', error),
       );
   }
 
-  if ("serviceWorker" in navigator) {
-    axios.get("/version").then((v) => {
+  if ('serviceWorker' in navigator) {
+    axios.get('/version').then((v) => {
       navigator.serviceWorker.ready.then((registration: TODO) => {
         registration.active.postMessage({
-          action: "setVersion",
+          action: 'setVersion',
           version: v.data,
         });
       });
@@ -130,10 +130,10 @@ export const Img = forwardRef<TODO, ImgProps>((props, ref) => {
 
   const backgroundStyle: React.CSSProperties = props.bg
     ? {
-        width: "100%",
-        height: "100%", // Ensures the image covers the full height of its container
-        objectFit: "cover", // Ensures the image covers the area without distorting aspect ratio
-        objectPosition: "center", // Centers the image in the container
+        width: '100%',
+        height: '100%', // Ensures the image covers the full height of its container
+        objectFit: 'cover', // Ensures the image covers the area without distorting aspect ratio
+        objectPosition: 'center', // Centers the image in the container
       }
     : {};
 
@@ -152,10 +152,10 @@ export const Img = forwardRef<TODO, ImgProps>((props, ref) => {
         <CircularProgress
           size={24}
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
           }}
         />
       )}
@@ -178,7 +178,7 @@ export const Img = forwardRef<TODO, ImgProps>((props, ref) => {
           onLoad={handleImageLoad}
           onError={handleImageError}
           style={{
-            display: isLoading ? "none" : "inline",
+            display: isLoading ? 'none' : 'inline',
             ...backgroundStyle,
             ...props.style,
           }}
@@ -202,9 +202,9 @@ export const OFAB = (props: FabProps & { isGuest?: boolean }) => {
   return (
     <Fab
       sx={{
-        position: "fixed",
-        bottom: "10%",
-        right: isMobileOrTabl ? "5%" : "calc(5% + (100vw - 1000px) / 2)",
+        position: 'fixed',
+        bottom: '10%',
+        right: isMobileOrTabl ? '5%' : 'calc(5% + (100vw - 1000px) / 2)',
       }}
       onClick={props.onClick}
     >

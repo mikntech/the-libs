@@ -1,7 +1,7 @@
-import { NextFunction, Request as ExpressRequest, Response } from "express";
-import { Model } from "mongoose";
-import { StagingEnvironment } from "../../../config";
-import { ClientError, ErrorLog, errorLog, TODO } from "base-shared";
+import { NextFunction, Request as ExpressRequest, Response } from 'express';
+import { Model } from 'mongoose';
+import { StagingEnvironment } from '../../../config';
+import { ClientError, ErrorLog, errorLog, TODO } from 'base-shared';
 
 export const serverErrorHandler =
   <SCHEMA = ErrorLog, SE = StagingEnvironment>(
@@ -21,13 +21,13 @@ export const serverErrorHandler =
         await new errorLogModel({
           stringifiedError: err.toString(),
         }).save();
-        console.log("Error was logged to mongo");
-        stagingEnv === "local" && console.log("the error: ", err);
+        console.log('Error was logged to mongo');
+        stagingEnv === 'local' && console.log('the error: ', err);
       } catch (e) {
-        console.log("Error logging error to mongo: ", e);
+        console.log('Error logging error to mongo: ', e);
       }
       if (!res.headersSent) {
-        return res.status(500).send("Server error");
+        return res.status(500).send('Server error');
       }
     } else {
       next(err);

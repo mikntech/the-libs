@@ -1,10 +1,10 @@
-import { ThemeOptions } from "@mui/material";
-import { frontendSettings } from "../context";
-import { useEffect, useMemo, useState } from "react";
-import { findMe, getSunTimes } from "../utils";
+import { ThemeOptions } from '@mui/material';
+import { frontendSettings } from '../context';
+import { useEffect, useMemo, useState } from 'react';
+import { findMe, getSunTimes } from '../utils';
 
-export const backGroundColor = "#FFFFFF";
-export const themeColor = "#005FAF";
+export const backGroundColor = '#FFFFFF';
+export const themeColor = '#005FAF';
 
 export const useIsNight = () => {
   const calculateIsNight = async () => {
@@ -12,7 +12,7 @@ export const useIsNight = () => {
     const todayat18 = new Date(Date.now()).setHours(18, 0, 0, 0);
     const sunTimes = await getSunTimes(await findMe());
     return window.matchMedia
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? window.matchMedia('(prefers-color-scheme: dark)').matches
       : new Date().getTime() <
           (sunTimes?.sunrise?.getTime
             ? sunTimes?.sunrise?.getTime()
@@ -34,38 +34,38 @@ export const useThemeForMVP = () => {
     () =>
       ({
         palette: {
-          mode: isNight ? "dark" : "light",
+          mode: isNight ? 'dark' : 'light',
           primary: {
-            main: isNight ? "#42A5F5" : themeColor,
-            contrastText: isNight ? "#FFFFFF" : "#171C1E",
+            main: isNight ? '#42A5F5' : themeColor,
+            contrastText: isNight ? '#FFFFFF' : '#171C1E',
           },
           secondary: {
-            main: isNight ? "#FFB77E" : "#F69337",
-            contrastText: isNight ? "#ffffff" : "#696F71",
+            main: isNight ? '#FFB77E' : '#F69337',
+            contrastText: isNight ? '#ffffff' : '#696F71',
           },
           error: {
-            main: isNight ? "#FFB4AB": "#BA1A1A",
-            contrastText: isNight ? "#690005": "#FFFFFF",
+            main: isNight ? '#FFB4AB' : '#BA1A1A',
+            contrastText: isNight ? '#690005' : '#FFFFFF',
           },
           warning: {
-            main: isNight? "#FFCA28":"#FFC107",
-            contrastText:  isNight? "#6B4F00": "#FFFFFF",
+            main: isNight ? '#FFCA28' : '#FFC107',
+            contrastText: isNight ? '#6B4F00' : '#FFFFFF',
           },
           info: {
-            main: isNight? "#90CAF9": "#2196F3",
-            contrastText:isNight? "#00396B": "#FFFFFF",
+            main: isNight ? '#90CAF9' : '#2196F3',
+            contrastText: isNight ? '#00396B' : '#FFFFFF',
           },
           success: {
-            main: isNight? "#A5D6A7": "#4CAF50",
-            contrastText:isNight? "#015f06": "#FFFFFF",
+            main: isNight ? '#A5D6A7' : '#4CAF50',
+            contrastText: isNight ? '#015f06' : '#FFFFFF',
           },
           text: {
-            primary: isNight ? "#FFFFFF" : "#000000",
-            secondary: isNight ? "#FFFFFF" : "#696F71",
+            primary: isNight ? '#FFFFFF' : '#000000',
+            secondary: isNight ? '#FFFFFF' : '#696F71',
           },
           background: {
-            default: isNight ? "#171C1E" : "#FFFFFF",
-            paper: isNight ? "#373D3E" : backGroundColor,
+            default: isNight ? '#171C1E' : '#FFFFFF',
+            paper: isNight ? '#373D3E' : backGroundColor,
           },
         },
         typography: {
@@ -73,48 +73,48 @@ export const useThemeForMVP = () => {
           h1: {
             fontFamily: '"Roboto", "Arial", sans-serif',
             fontWeight: 700,
-            fontSize: "2.25rem",
+            fontSize: '2.25rem',
           },
           h2: {
             fontFamily: '"Roboto", "Arial", sans-serif',
             fontWeight: 700,
-            fontSize: "2rem",
+            fontSize: '2rem',
           },
           h3: {
             fontFamily: '"Roboto", "Arial", sans-serif',
             fontWeight: 700,
-            fontSize: "1.75rem",
+            fontSize: '1.75rem',
           },
           h4: {
             fontFamily: '"Roboto", "Arial", sans-serif',
             fontWeight: 700,
-            fontSize: "1.5rem",
+            fontSize: '1.5rem',
           },
           h5: {
             fontFamily: '"Roboto", "Arial", sans-serif',
             fontWeight: 700,
-            fontSize: "1.25rem",
+            fontSize: '1.25rem',
           },
           h6: {
             fontFamily: '"Roboto", "Arial", sans-serif',
             fontWeight: 700,
-            fontSize: "1rem",
+            fontSize: '1rem',
           },
           subtitle1: {
             fontFamily: '"Roboto", "Arial", sans-serif',
-            fontSize: "0.875rem",
+            fontSize: '0.875rem',
           },
           subtitle2: {
             fontFamily: '"Roboto", "Arial", sans-serif',
-            fontSize: "0.875rem",
+            fontSize: '0.875rem',
           },
           body1: {
             fontFamily: '"Roboto", "Arial", sans-serif',
-            fontSize: "1rem",
+            fontSize: '1rem',
           },
           body2: {
             fontFamily: '"Roboto", "Arial", sans-serif',
-            fontSize: "0.875rem",
+            fontSize: '0.875rem',
           },
         },
       }) as ThemeOptions,

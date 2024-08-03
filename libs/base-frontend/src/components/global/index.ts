@@ -1,3 +1,3 @@
-export * from "./GenericTable";
-export * from "./EnvBorder";
-export * from "./NavBar";
+export * from './GenericTable';
+export * from './EnvBorder';
+export * from './NavBar';

@@ -1,8 +1,8 @@
-import { Button, Grid, Modal, Typography } from "@mui/material";
-import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { renderTextField, sendMessage, ServerContext } from "base-frontend";
-import { TODO } from "base-shared";
+import { Button, Grid, Modal, Typography } from '@mui/material';
+import { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { renderTextField, sendMessage, ServerContext } from 'base-frontend';
+import { TODO } from 'base-shared';
 
 interface SendMessageFormProps {
   id: string;
@@ -33,7 +33,7 @@ const SendMessageForm = ({
   if (!customComponents.PrimaryText) customComponents.PrimaryText = Typography;
   if (!customComponents.CloseButton) customComponents.CloseButton = Button;
 
-  const [message, setMessage] = useState<{ msg: string }>({ msg: "" });
+  const [message, setMessage] = useState<{ msg: string }>({ msg: '' });
   const server = useContext(ServerContext);
   const navigate = useNavigate();
 
@@ -66,8 +66,8 @@ const SendMessageForm = ({
           {renderTextField(
             message,
             (_, value) => setMessage({ msg: value as string }),
-            ["msg"],
-            { multiline: true, label: "Message:" },
+            ['msg'],
+            { multiline: true, label: 'Message:' },
           )}
         </Grid>
         <Grid item>
@@ -75,7 +75,7 @@ const SendMessageForm = ({
             onClick={() =>
               server &&
               sendMessage(server.axiosInstance, id, message.msg, () =>
-                amIaGuest ? navigate("/chats?chatId=" + spaceId) : close(),
+                amIaGuest ? navigate('/chats?chatId=' + spaceId) : close(),
               )
             }
           >

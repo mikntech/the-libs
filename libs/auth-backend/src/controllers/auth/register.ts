@@ -1,14 +1,14 @@
-import { v4 } from "uuid";
-import { createDoc, findDocs, validateInput, validateEnum } from "base-backend";
-import { SomeEnum, InvalidInputError, UnauthorizedError } from "base-shared";
-import { GenEmailFunction } from "email-backend";
+import { v4 } from 'uuid';
+import { createDoc, findDocs, validateInput, validateEnum } from 'base-backend';
+import { SomeEnum, InvalidInputError, UnauthorizedError } from 'base-shared';
+import { GenEmailFunction } from 'email-backend';
 import {
   defaultGenRegisterEmail,
   MultiUserType,
   registrationRequest,
   Strategy,
-} from "auth-backend";
-import { genAuthControllers, JWT_COOKIE_NAME } from "./index";
+} from 'auth-backend';
+import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <
   UserType extends SomeEnum<UserType>,
@@ -38,7 +38,7 @@ export const genRegisterControllers = <
     const x = await findDocs(getModel(userType).findOne({ email }), true);
     if (x)
       throw new InvalidInputError(
-        "An account with this email already exists. Please try to login instead.",
+        'An account with this email already exists. Please try to login instead.',
       );
   };
 
@@ -72,7 +72,7 @@ export const genRegisterControllers = <
     );
     const { subject, body } = genRegisterEmail(url, userType);
     sendEmailWithLink(email, subject, body, url);
-    return { statusCode: 200, body: "email sent successfully" };
+    return { statusCode: 200, body: 'email sent successfully' };
   };
 
   const createUser = async (
@@ -105,14 +105,14 @@ export const genRegisterControllers = <
     strategy.requiredFields.forEach((key) =>
       validateInput(
         { [key]: requiredFields?.[key as keyof RequiredFields] },
-        "requiredFields",
+        'requiredFields',
       ),
     );
     validatePasswordStrength(password);
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     const doc = await validateKey(key, true);
-    if (!doc?.email) throw new UnauthorizedError("wrong key");
+    if (!doc?.email) throw new UnauthorizedError('wrong key');
     await validateEmailNotInUse(doc.email, doc.userType as unknown as UserType);
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(

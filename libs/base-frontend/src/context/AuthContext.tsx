@@ -5,10 +5,10 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
-import { ServerContext } from "./index";
-import { Typography } from "@mui/material";
-import { User } from "auth-backend";
+} from 'react';
+import { ServerContext } from './index';
+import { Typography } from '@mui/material';
+import { User } from 'auth-backend';
 
 interface AuthContextProps {
   children: ReactNode;
@@ -46,7 +46,7 @@ export const AuthContextProvider = ({
   const refreshUserData = useCallback(async () => {
     try {
       const response = await server?.axiosInstance.get<User>(
-        "api/auth/log/" /* + client*/,
+        'api/auth/log/' /* + client*/,
       );
       response?.data && setUser(response?.data);
     } catch {
@@ -54,7 +54,7 @@ export const AuthContextProvider = ({
     } finally {
       try {
         const urlResponse = await server?.axiosInstance.get(
-          "api/auth/get-signed-profile-picture/128",
+          'api/auth/get-signed-profile-picture/128',
         );
         urlResponse?.data && setProfilePictureUrl(urlResponse.data);
       } catch {
@@ -65,10 +65,10 @@ export const AuthContextProvider = ({
 
   const logout = async () => {
     try {
-      await server?.axiosInstance.get<undefined>("api/auth/log/out");
+      await server?.axiosInstance.get<undefined>('api/auth/log/out');
       setUser(undefined);
     } catch (error) {
-      console.log("Error during sign out", error);
+      console.log('Error during sign out', error);
     }
     refreshUserData();
   };

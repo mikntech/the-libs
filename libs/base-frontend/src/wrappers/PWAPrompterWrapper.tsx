@@ -1,6 +1,6 @@
-import { InstallModal } from "base-frontend";
-import { ReactNode, useEffect, useState } from "react";
-import { TODO } from "base-shared";
+import { InstallModal } from 'base-frontend';
+import { ReactNode, useEffect, useState } from 'react';
+import { TODO } from 'base-shared';
 
 interface PWAPrompterWrapperProps {
   children: ReactNode;
@@ -12,7 +12,7 @@ export const PWAPrompterWrapper = ({ children }: PWAPrompterWrapperProps) => {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    window.addEventListener("appinstalled", () => {
+    window.addEventListener('appinstalled', () => {
       setIsAppInstalled(true);
     });
   }, []);
@@ -24,10 +24,10 @@ export const PWAPrompterWrapper = ({ children }: PWAPrompterWrapperProps) => {
         setInstallPrompt(e);
       }
     };
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     return () => {
       window.removeEventListener(
-        "beforeinstallprompt",
+        'beforeinstallprompt',
         handleBeforeInstallPrompt,
       );
     };
@@ -36,10 +36,10 @@ export const PWAPrompterWrapper = ({ children }: PWAPrompterWrapperProps) => {
   const showInstallPrompt = () => {
     installPrompt.prompt();
     installPrompt.userChoice.then((choiceResult: TODO) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the install prompt");
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
       } else {
-        console.log("User dismissed the install prompt");
+        console.log('User dismissed the install prompt');
       }
       setInstallPrompt(null);
     });

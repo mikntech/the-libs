@@ -1,4 +1,4 @@
-import { Document } from "base-shared";
+import { Document } from 'base-shared';
 
 type OptionalIfFalse<IsRequired extends boolean, T> = IsRequired extends true
   ? T
