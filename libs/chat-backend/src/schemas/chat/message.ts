@@ -1,8 +1,8 @@
-import { getModel } from "base-shared";
-import { Message } from "../../types/chat";
+import { getModel } from 'base-shared';
+import { Message } from '../../types/chat';
 
 export const message = () =>
-  getModel<Message>("message", {
+  getModel<Message>('message', {
     ownerId: {
       type: String,
     },

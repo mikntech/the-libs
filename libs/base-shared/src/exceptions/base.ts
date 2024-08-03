@@ -4,7 +4,7 @@ export class ClientError extends Error {
     public statusCode: number,
   ) {
     super(message);
-    this.name = "ClientError";
+    this.name = 'ClientError';
     this.statusCode = statusCode;
   }
 }

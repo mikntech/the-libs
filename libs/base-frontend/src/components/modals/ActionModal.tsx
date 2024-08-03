@@ -1,16 +1,16 @@
-import { Button, Grid, Modal, Typography } from "@mui/material";
-import { ReactNode, useContext, useState } from "react";
-import { ServerContext } from "../../context";
-import toast from "react-hot-toast";
-import { TODO } from "base-shared";
-import { axiosErrorToaster } from "../../utils";
+import { Button, Grid, Modal, Typography } from '@mui/material';
+import { ReactNode, useContext, useState } from 'react';
+import { ServerContext } from '../../context';
+import toast from 'react-hot-toast';
+import { TODO } from 'base-shared';
+import { axiosErrorToaster } from '../../utils';
 
 interface ActionModalProps<B> {
   closeModal: () => void;
   endpoint: string | (() => void);
   name: string | ReactNode;
   doingName: string;
-  method: "post" | "put" | "patch" | "delete";
+  method: 'post' | 'put' | 'patch' | 'delete';
   PrimaryText?: TODO;
   Btn?: TODO;
   body?: B;
@@ -34,7 +34,7 @@ export const ActionModal = <B = TODO,>({
   const handleAction = async () => {
     setDeleting(true);
     try {
-      if (typeof endpoint === "string") {
+      if (typeof endpoint === 'string') {
         const config = {
           method: method,
           url: endpoint,
@@ -42,7 +42,7 @@ export const ActionModal = <B = TODO,>({
           ...(body ? { data: body } : {}),
         };
         await server?.axiosInstance?.request(config);
-        toast.success("Success");
+        toast.success('Success');
       } else endpoint();
     } catch (error) {
       axiosErrorToaster(error);

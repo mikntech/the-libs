@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { frontendSettings } from "../../../context";
+import { useEffect } from 'react';
+import { frontendSettings } from '../../../context';
 
 // Make sure to update your types globally or locally as needed
 declare global {
@@ -24,7 +24,7 @@ const GoogleSignIn = ({
 
     const handleCredentialResponse = (response: any) => {
       // This function is called when the Google API successfully authenticates a user
-      console.log("Encoded JWT ID token: ", response.credential);
+      console.log('Encoded JWT ID token: ', response.credential);
       onLoginSuccess(response);
     };
 
@@ -36,8 +36,8 @@ const GoogleSignIn = ({
         });
 
         window.google.accounts.id.renderButton(
-          document.getElementById("google-sign-in-btn"),
-          { theme: "outline", size: "large" }, // Customize according to your needs
+          document.getElementById('google-sign-in-btn'),
+          { theme: 'outline', size: 'large' }, // Customize according to your needs
         );
 
         window.google.accounts.id.prompt(); // Display the One Tap sign-in prompt

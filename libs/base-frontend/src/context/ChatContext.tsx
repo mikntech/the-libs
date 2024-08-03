@@ -5,10 +5,10 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
-import { Conversation } from "chat-backend";
-import { axiosErrorToaster, ServerContext, useSubscribe } from "../";
-import { Typography } from "@mui/material";
+} from 'react';
+import { Conversation } from 'chat-backend';
+import { axiosErrorToaster, ServerContext, useSubscribe } from '../';
+import { Typography } from '@mui/material';
 
 interface ChatContextProps {
   children: ReactNode;
@@ -33,11 +33,11 @@ export const ChatContextProvider = ({
   const server = useContext(ServerContext);
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
-  const { res } = useSubscribe(domain, "api/chat/subscribe");
+  const { res } = useSubscribe(domain, 'api/chat/subscribe');
 
   const fetchConversations = useCallback(async () => {
     try {
-      const res = await server?.axiosInstance.get("api/chat/conversations");
+      const res = await server?.axiosInstance.get('api/chat/conversations');
       res?.data && setConversations(res?.data);
       setLoading(false);
     } catch (e) {

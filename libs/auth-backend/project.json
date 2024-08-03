@@ -6,19 +6,13 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/auth-backend",
         "main": "libs/auth-backend/src/index.ts",
         "tsConfig": "libs/auth-backend/tsconfig.lib.json",
-        "assets": [
-          "auth-backend/*.md"
-        ],
-        "format": [
-          "cjs"
-        ]
+        "assets": ["auth-backend/*.md"],
+        "format": ["cjs"]
       }
     }
   },

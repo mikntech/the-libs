@@ -1,9 +1,9 @@
-import { ChangeEvent, useState } from "react";
-import { Grid, IconButton, TextField, Typography } from "@mui/material";
-import { Add, Edit, Save } from "@mui/icons-material";
-import { ActionHandler } from "../../types";
-import { TODO } from "base-shared";
-import { axiosErrorToaster, IconColorer } from "../../utils";
+import { ChangeEvent, useState } from 'react';
+import { Grid, IconButton, TextField, Typography } from '@mui/material';
+import { Add, Edit, Save } from '@mui/icons-material';
+import { ActionHandler } from '../../types';
+import { TODO } from 'base-shared';
+import { axiosErrorToaster, IconColorer } from '../../utils';
 
 export interface EditableFieldProps<R> {
   name: string;
@@ -27,7 +27,7 @@ export const EditableField = <R,>({
   return editing !== undefined ? (
     <Grid container columnSpacing={2} alignItems="center">
       <Grid item>
-        <PrimaryText>{plus ? "+" : ""}</PrimaryText>
+        <PrimaryText>{plus ? '+' : ''}</PrimaryText>
       </Grid>
       <Grid item>
         <TextField
@@ -42,7 +42,7 @@ export const EditableField = <R,>({
       <Grid item>
         <IconButton
           onClick={() =>
-            action("", editing)
+            action('', editing)
               .then(() => {
                 setEditing(undefined);
                 cb();
@@ -60,12 +60,12 @@ export const EditableField = <R,>({
     <Grid container alignItems="center" columnSpacing={2}>
       <Grid item>
         <PrimaryText variant="subtitle1" gutterBottom>
-          <strong>{name}: </strong> {plus ? "+" : ""}
+          <strong>{name}: </strong> {plus ? '+' : ''}
           {value}
         </PrimaryText>
       </Grid>
       <Grid item>
-        <IconButton onClick={() => setEditing(value || "")}>
+        <IconButton onClick={() => setEditing(value || '')}>
           <IconColorer>{value ? <Edit /> : <Add />}</IconColorer>
         </IconButton>
       </Grid>

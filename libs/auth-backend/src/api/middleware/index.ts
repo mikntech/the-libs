@@ -1,10 +1,10 @@
-import { NextFunction, Request, Response } from "express";
-import { authSettings, Strategy, User, user } from "auth-backend";
-import { JwtPayload } from "jsonwebtoken";
-import { ObjectId } from "mongoose";
-import { genAuthControllers } from "../../controllers";
-import { SomeEnum } from "base-shared";
-const jsonwebtoken = require("jsonwebtoken");
+import { NextFunction, Request, Response } from 'express';
+import { authSettings, Strategy, User, user } from 'auth-backend';
+import { JwtPayload } from 'jsonwebtoken';
+import { ObjectId } from 'mongoose';
+import { genAuthControllers } from '../../controllers';
+import { SomeEnum } from 'base-shared';
+const jsonwebtoken = require('jsonwebtoken');
 
 export interface AuthenticatedRequest extends Request {
   user: User | null;
@@ -27,7 +27,7 @@ export const authorizer =
   async (req: AuthenticatedRequest, _: Response, next: NextFunction) => {
     try {
       const validatedUser = (await jsonwebtoken.verify(
-        req.cookies["jwt"],
+        req.cookies['jwt'],
         authSettings.jwtSecret,
       )) as JwtPayload;
       const { _id, userType } = validatedUser as {

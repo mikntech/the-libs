@@ -1,8 +1,8 @@
-import { useResponsiveness } from "base-frontend";
-import styled from "@emotion/styled";
-import { ReactNode } from "react";
-import { Box, Grid, Typography } from "@mui/material";
-import { TODO } from "base-shared";
+import { useResponsiveness } from 'base-frontend';
+import styled from '@emotion/styled';
+import { ReactNode } from 'react';
+import { Box, Grid, Typography } from '@mui/material';
+import { TODO } from 'base-shared';
 
 const MobileContainer = styled(Box)`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);

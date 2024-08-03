@@ -1,6 +1,6 @@
-import { FormControlLabel, Grid, Switch, Typography } from "@mui/material";
-import { TODO } from "base-shared";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { FormControlLabel, Grid, Switch, Typography } from '@mui/material';
+import { TODO } from 'base-shared';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 interface Options {
   label?: { truthy: string; falsy?: string };

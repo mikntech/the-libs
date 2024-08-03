@@ -1,5 +1,5 @@
-import { BottomNavigation, BottomNavigationAction, Box } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { BottomNavigation, BottomNavigationAction, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 interface NavBarProps {
   buttons: { navPath: string; iconSrc: string }[];

@@ -1,5 +1,5 @@
-import { Modal, Box, Typography, Button } from "@mui/material";
-import { TODO } from "base-shared";
+import { Modal, Box, Typography, Button } from '@mui/material';
+import { TODO } from 'base-shared';
 
 interface InstallModalProps {
   onInstallClicked: TODO;
@@ -18,17 +18,17 @@ export const InstallModal = ({
     <Modal open={true}>
       <Box
         sx={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
           width: 300,
-          bgcolor: "background.paper",
+          bgcolor: 'background.paper',
           boxShadow: 24,
           p: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <PrimaryText variant="h6" sx={{ mb: 2 }}>
@@ -37,11 +37,11 @@ export const InstallModal = ({
         <PrimaryText sx={{ mb: 2 }} textAlign="center">
           Add this application to your home screen for a better experience.
         </PrimaryText>
-        <Btn onClick={onInstallClicked} sx={{ fontSize: "115%" }}>
+        <Btn onClick={onInstallClicked} sx={{ fontSize: '115%' }}>
           Install
         </Btn>
         <br />
-        <Btn onClick={dismiss} sx={{ fontSize: "50%" }} color="error">
+        <Btn onClick={dismiss} sx={{ fontSize: '50%' }} color="error">
           I'll do this later
         </Btn>
       </Box>

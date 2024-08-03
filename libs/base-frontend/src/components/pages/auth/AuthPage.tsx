@@ -1,21 +1,21 @@
-import { useContext, useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
+import { useContext, useEffect, useState } from 'react';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import {
   Button,
   Grid,
   LinearProgress,
   Tooltip,
   Typography,
-} from "@mui/material";
-import { AuthContext, ServerContext } from "../../../context";
-import { useLocation } from "react-router-dom";
-import zxcvbn from "zxcvbn";
-import { Flag } from "@mui/icons-material";
-import { useResponsiveness } from "../../../hooks";
-import { TODO } from "base-shared";
-import { axiosErrorToaster } from "../../../utils";
-import { useIsNight } from "../../../themes";
+} from '@mui/material';
+import { AuthContext, ServerContext } from '../../../context';
+import { useLocation } from 'react-router-dom';
+import zxcvbn from 'zxcvbn';
+import { Flag } from '@mui/icons-material';
+import { useResponsiveness } from '../../../hooks';
+import { TODO } from 'base-shared';
+import { axiosErrorToaster } from '../../../utils';
+import { useIsNight } from '../../../themes';
 
 enum Step {
   init,
@@ -38,22 +38,22 @@ interface LabelsConstants {
 
 export const LABELS: LabelsConstants = {
   IDLE: {
-    [Step.init]: "Continiue",
-    [Step.login]: "Login",
-    [Step.registerReq]: "Send me a Link",
-    [Step.registerFin]: "Register",
-    [Step.passResetReq]: "Send Email",
-    [Step.passResetFin]: "Change Password",
-    [Step.checkEmail]: "",
+    [Step.init]: 'Continiue',
+    [Step.login]: 'Login',
+    [Step.registerReq]: 'Send me a Link',
+    [Step.registerFin]: 'Register',
+    [Step.passResetReq]: 'Send Email',
+    [Step.passResetFin]: 'Change Password',
+    [Step.checkEmail]: '',
   },
   DOING: {
-    [Step.init]: "Please wait...",
-    [Step.login]: "Checking password...",
-    [Step.registerReq]: "Sending email...",
-    [Step.registerFin]: "Registering...",
-    [Step.passResetReq]: "Sending Email...",
-    [Step.passResetFin]: "Saving Your Password...",
-    [Step.checkEmail]: "",
+    [Step.init]: 'Please wait...',
+    [Step.login]: 'Checking password...',
+    [Step.registerReq]: 'Sending email...',
+    [Step.registerFin]: 'Registering...',
+    [Step.passResetReq]: 'Sending Email...',
+    [Step.passResetFin]: 'Saving Your Password...',
+    [Step.checkEmail]: '',
   },
 };
 
@@ -85,13 +85,13 @@ export const AuthPage = <UserType,>({
   if (!customComponents.Btn) customComponents.Btn = Button;
   if (!customComponents.PrimaryText) customComponents.PrimaryText = Typography;
   if (!customComponents.Img) customComponents.Img = Box;
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordAgain, setPasswordAgain] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [passwordAgain, setPasswordAgain] = useState<string>('');
   const [key, setKey] = useState<string>();
-  const [firstName, setFirstName] = useState<string>("");
-  const [lastName, setLastName] = useState<string>("");
-  const [buttonLabel, setButtonLabel] = useState<keyof LabelsConstants>("IDLE");
+  const [firstName, setFirstName] = useState<string>('');
+  const [lastName, setLastName] = useState<string>('');
+  const [buttonLabel, setButtonLabel] = useState<keyof LabelsConstants>('IDLE');
   const [step, setStep] = useState<Step>(Step.init);
   const [emailReason, setEmailReason] = useState<boolean>(true);
   const { refreshUserData } = useContext(AuthContext);
@@ -99,8 +99,8 @@ export const AuthPage = <UserType,>({
 
   const setMinPassStrengthFromServer = () =>
     server?.axiosInstance
-      .get("api/auth/ZXCVBNDifficulty")
-      .then((res) => setMinPassStrength(parseInt(res?.data || "1")))
+      .get('api/auth/ZXCVBNDifficulty')
+      .then((res) => setMinPassStrength(parseInt(res?.data || '1')))
       .catch((e) => axiosErrorToaster(e));
 
   useEffect(() => {
@@ -123,9 +123,9 @@ export const AuthPage = <UserType,>({
   const query = useQuery();
 
   useEffect(() => {
-    const emaililing = query.get("email");
-    const registerKey = query.get("register-code");
-    const resetKey = query.get("reset-code");
+    const emaililing = query.get('email');
+    const registerKey = query.get('register-code');
+    const resetKey = query.get('reset-code');
     const key = registerKey || resetKey;
     if (key) {
       setKey(key);
@@ -169,18 +169,18 @@ export const AuthPage = <UserType,>({
   // Helper function to display error messages
   const getErrorMessage = (field: string) => {
     switch (field) {
-      case "email":
-        return "Email is required.";
-      case "password":
+      case 'email':
+        return 'Email is required.';
+      case 'password':
         return step !== Step.login
-          ? "Password is too weak."
-          : "Password is required.";
-      case "passwordAgain":
-        return "Passwords do not match.";
-      case "full_name":
-        return "Full name is required.";
+          ? 'Password is too weak.'
+          : 'Password is required.';
+      case 'passwordAgain':
+        return 'Passwords do not match.';
+      case 'full_name':
+        return 'Full name is required.';
       default:
-        return "";
+        return '';
     }
   };
 
@@ -203,93 +203,93 @@ export const AuthPage = <UserType,>({
 
   // Determine the color of the progress bar based on password strength
   const progressBarColor =
-    passwordStrength < minPassStrength ? "error" : "primary";
+    passwordStrength < minPassStrength ? 'error' : 'primary';
 
   const mainClickHandler: TODO = (customStep: Step | undefined) => {
-    if (buttonLabel === "IDLE")
+    if (buttonLabel === 'IDLE')
       switch (customStep || step) {
         case Step.init:
           return () => {
-            setButtonLabel("DOING");
+            setButtonLabel('DOING');
             axiosInstance
-              ?.post("api/auth/log/in", {
+              ?.post('api/auth/log/in', {
                 email,
                 userType: client,
-                password: "lilush",
+                password: 'lilush',
               })
               .catch((error) =>
                 setStep(
-                  error?.response?.data?.customMessage === "Please register"
+                  error?.response?.data?.customMessage === 'Please register'
                     ? Step.registerReq
                     : Step.login,
                 ),
               )
-              .finally(() => setButtonLabel("IDLE"));
+              .finally(() => setButtonLabel('IDLE'));
           };
         case Step.login:
           return () => {
-            setButtonLabel("DOING");
+            setButtonLabel('DOING');
             axiosInstance &&
               axiosInstance
-                .post("api/auth/log/in", {
+                .post('api/auth/log/in', {
                   email,
                   password,
                   userType: client,
                 })
                 .then(() => refreshUserData())
                 .catch((error) => axiosErrorToaster(error))
-                .finally(() => setButtonLabel("IDLE"));
+                .finally(() => setButtonLabel('IDLE'));
           };
         case Step.registerReq:
           return () => {
-            setButtonLabel("DOING");
+            setButtonLabel('DOING');
             axiosInstance &&
               axiosInstance
-                .post("api/auth/register/request/" + client, { email })
+                .post('api/auth/register/request/' + client, { email })
                 .then(() => setStep(Step.checkEmail))
                 .catch((error) => axiosErrorToaster(error))
-                .finally(() => setButtonLabel("IDLE"));
+                .finally(() => setButtonLabel('IDLE'));
           };
         case Step.registerFin:
           return () => {
-            if (buttonLabel === "IDLE" && key) {
-              setButtonLabel("DOING");
+            if (buttonLabel === 'IDLE' && key) {
+              setButtonLabel('DOING');
               axiosInstance &&
                 axiosInstance
-                  .post("api/auth/register/finish", {
+                  .post('api/auth/register/finish', {
                     key,
                     password,
                     passwordAgain,
-                    full_name: firstName + " " + lastName,
+                    full_name: firstName + ' ' + lastName,
                     firstName,
                     lastName,
                     type: client,
                   })
                   .then(() => refreshUserData())
                   .catch((error) => axiosErrorToaster(error))
-                  .finally(() => setButtonLabel("IDLE"));
+                  .finally(() => setButtonLabel('IDLE'));
             }
           };
         case Step.passResetReq:
           return () => {
-            setButtonLabel("DOING");
+            setButtonLabel('DOING');
             axiosInstance &&
               axiosInstance
-                .post("api/auth/manage/request-password-reset", {
+                .post('api/auth/manage/request-password-reset', {
                   email,
                   userType: client,
                 })
                 .then(() => setStep(Step.checkEmail))
                 .catch((error) => axiosErrorToaster(error))
-                .finally(() => setButtonLabel("IDLE"));
+                .finally(() => setButtonLabel('IDLE'));
           };
         case Step.passResetFin:
           return () => {
-            if (buttonLabel === "IDLE" && key) {
-              setButtonLabel("DOING");
+            if (buttonLabel === 'IDLE' && key) {
+              setButtonLabel('DOING');
               axiosInstance &&
                 axiosInstance
-                  .post("api/auth/manage/reset-password", {
+                  .post('api/auth/manage/reset-password', {
                     key,
                     password,
                     passwordAgain,
@@ -297,7 +297,7 @@ export const AuthPage = <UserType,>({
                   })
                   .then(() => refreshUserData())
                   .catch((error) => axiosErrorToaster(error))
-                  .finally(() => setButtonLabel("IDLE"));
+                  .finally(() => setButtonLabel('IDLE'));
             }
           };
       }
@@ -327,17 +327,17 @@ export const AuthPage = <UserType,>({
       case Step.login:
         navigateButton.exists = false;
         navigateButton.clickHandler = () => setStep(Step.registerReq);
-        navigateButton.label = "Register";
+        navigateButton.label = 'Register';
         resetButton.exists = true;
         resetButton.clickHandler = () => setStep(Step.passResetReq);
-        resetButton.label = "Forgot Password?";
+        resetButton.label = 'Forgot Password?';
         break;
       case Step.registerReq:
         navigateButton.exists = false;
         navigateButton.clickHandler = () => setStep(Step.login);
-        navigateButton.label = "Login";
+        navigateButton.label = 'Login';
         resetButton.exists = false;
-        resetButton.label = "Forgot Password?";
+        resetButton.label = 'Forgot Password?';
         resetButton.clickHandler = () => setStep(Step.passResetReq);
         break;
       case Step.registerFin:
@@ -347,7 +347,7 @@ export const AuthPage = <UserType,>({
       case Step.passResetReq:
         navigateButton.exists = false;
         navigateButton.clickHandler = () => setStep(Step.login);
-        navigateButton.label = "Back to Login";
+        navigateButton.label = 'Back to Login';
         resetButton.exists = false;
         break;
       case Step.passResetFin:
@@ -415,11 +415,11 @@ export const AuthPage = <UserType,>({
   };
 
   const handleLoginFailure = (error: TODO) => {
-    console.error("Failed to login with Google:", error);
+    console.error('Failed to login with Google:', error);
   };
 
   const authJSX = (
-    <Box sx={{ padding: "20px", width: "75%" }}>
+    <Box sx={{ padding: '20px', width: '75%' }}>
       <Grid container direction="column" alignItems="center" rowSpacing={2}>
         <Grid item>
           <customComponents.PrimaryText variant="h5">
@@ -446,11 +446,11 @@ export const AuthPage = <UserType,>({
           {step === Step.checkEmail ? (
             <customComponents.PrimaryText
               textAlign="center"
-              sx={{ wordBreak: "break-word" }}
+              sx={{ wordBreak: 'break-word' }}
             >
               We sent {email} a link to
-              {" " +
-                (emailReason ? "activate your account" : "reset your password")}
+              {' ' +
+                (emailReason ? 'activate your account' : 'reset your password')}
               !
             </customComponents.PrimaryText>
           ) : (
@@ -467,8 +467,8 @@ export const AuthPage = <UserType,>({
                     margin="dense"
                     label="Email"
                     type="email"
-                    sx={{ width: "100%" }}
-                    helperText={!validations.email && getErrorMessage("email")}
+                    sx={{ width: '100%' }}
+                    helperText={!validations.email && getErrorMessage('email')}
                     variant="standard"
                     value={email}
                     error={!validations.email}
@@ -481,9 +481,9 @@ export const AuthPage = <UserType,>({
                   <TextField
                     margin="dense"
                     label="First Name"
-                    sx={{ width: "100%" }}
+                    sx={{ width: '100%' }}
                     helperText={
-                      !validations.firstName && getErrorMessage(" firstName")
+                      !validations.firstName && getErrorMessage(' firstName')
                     }
                     variant="standard"
                     value={firstName}
@@ -493,9 +493,9 @@ export const AuthPage = <UserType,>({
                   <TextField
                     margin="dense"
                     label="Last Name"
-                    sx={{ width: "100%" }}
+                    sx={{ width: '100%' }}
                     helperText={
-                      !validations.lastName && getErrorMessage(" lastName")
+                      !validations.lastName && getErrorMessage(' lastName')
                     }
                     variant="standard"
                     value={lastName}
@@ -512,9 +512,9 @@ export const AuthPage = <UserType,>({
                     margin="dense"
                     label="Password"
                     type="password"
-                    sx={{ width: "100%" }}
+                    sx={{ width: '100%' }}
                     helperText={
-                      !validations.password && getErrorMessage("password")
+                      !validations.password && getErrorMessage('password')
                     }
                     variant="standard"
                     value={password}
@@ -534,7 +534,7 @@ export const AuthPage = <UserType,>({
                           variant="determinate"
                           value={getStrengthBarValue(passwordStrength)}
                           color={progressBarColor}
-                          style={{ width: "100%" }}
+                          style={{ width: '100%' }}
                         />
                         <Box
                           position="absolute"
@@ -565,10 +565,10 @@ export const AuthPage = <UserType,>({
                     margin="dense"
                     label="Re-enter password"
                     type="password"
-                    sx={{ width: "100%" }}
+                    sx={{ width: '100%' }}
                     helperText={
                       !validations.passwordAgain &&
-                      getErrorMessage(" passwordAgain")
+                      getErrorMessage(' passwordAgain')
                     }
                     variant="standard"
                     value={passwordAgain}
@@ -610,9 +610,9 @@ export const AuthPage = <UserType,>({
         item
         container
         width={
-          isMobileOrTabl || client === "guest" || client === "host"
-            ? "100%"
-            : "40%"
+          isMobileOrTabl || client === 'guest' || client === 'host'
+            ? '100%'
+            : '40%'
         }
         height="100%"
         justifyContent="center"
@@ -620,7 +620,7 @@ export const AuthPage = <UserType,>({
       >
         {authJSX}
       </Grid>
-      {client === "host" && !isMobileOrTabl && (
+      {client === 'host' && !isMobileOrTabl && (
         <Grid item width="60%" height="100%">
           <customComponents.Img src={backgroundPicture} bg />
         </Grid>

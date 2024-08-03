@@ -1,4 +1,4 @@
-import { ReactNode, createContext } from "react";
+import { ReactNode, createContext } from 'react';
 
 interface AppContextProps<UserType> {
   children: ReactNode;

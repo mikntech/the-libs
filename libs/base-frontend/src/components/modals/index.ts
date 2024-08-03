@@ -1,2 +1,2 @@
-export * from "./ActionModal";
-export * from "./InstallModal";
+export * from './ActionModal';
+export * from './InstallModal';

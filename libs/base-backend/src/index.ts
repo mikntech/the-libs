@@ -1,12 +1,12 @@
-import { connect } from "base-shared";
+import { connect } from 'base-shared';
 
-export * from "./config";
-export * from "./controllers";
-export * from "./services";
+export * from './config';
+export * from './controllers';
+export * from './services';
 
-import { setup } from "./services";
-import { Router } from "express";
-import { getBaseSettings } from "./config";
+import { setup } from './services';
+import { Router } from 'express';
+import { getBaseSettings } from './config';
 
 export const start = <CB extends { [s: string]: string }>(
   apiRouter = Router(),
@@ -15,7 +15,7 @@ export const start = <CB extends { [s: string]: string }>(
   watchDB = () => {},
   logMongoToConsole: boolean = true,
 ) => {
-  console.log("Connecting to MongoDB...");
+  console.log('Connecting to MongoDB...');
   connect(
     getBaseSettings().mongoURI,
     getBaseSettings().stagingEnv,

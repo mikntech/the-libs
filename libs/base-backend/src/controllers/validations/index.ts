@@ -1,18 +1,18 @@
-import { Document, Types } from "mongoose";
-import { InvalidEnumError, InvalidInputError, SomeEnum } from "base-shared";
+import { Document, Types } from 'mongoose';
+import { InvalidEnumError, InvalidInputError, SomeEnum } from 'base-shared';
 
 export const validateTruthy = <T = string>(value: T) => !!value;
 
 export const validateInput = <T = string>(
   input: { [key: string]: T },
-  extraPath: string = "",
+  extraPath: string = '',
 ) => {
   const [name, value] = Object.entries(input)[0];
   if (!validateTruthy(value))
     throw new InvalidInputError(
-      "didnt receive at all: " +
+      'didnt receive at all: ' +
         name +
-        (extraPath && " (under: " + extraPath + ")"),
+        (extraPath && ' (under: ' + extraPath + ')'),
     );
   return value;
 };

@@ -1,6 +1,6 @@
-import { getModel, SomeEnum } from "base-shared";
-import { userBasicSchema } from "../../abstract";
-import { User } from "../../types";
+import { getModel, SomeEnum } from 'base-shared';
+import { userBasicSchema } from '../../abstract';
+import { User } from '../../types';
 
 export const user = <
   NameRequired extends boolean = false,
@@ -14,7 +14,7 @@ export const user = <
     : false,
   enumValues: TheEnum[] = [],
 ) =>
-  getModel<User<NameRequired, ProfilePictureUriRequired>>("user", {
+  getModel<User<NameRequired, ProfilePictureUriRequired>>('user', {
     ...userBasicSchema(nameRequired, profilePictureUriRequired),
     ...(multiUserTypeIsByRole
       ? {

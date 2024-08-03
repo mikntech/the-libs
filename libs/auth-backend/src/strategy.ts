@@ -1,42 +1,42 @@
-import { User } from "./types";
-import { Model } from "mongoose";
-import { ZXCVBNScore } from "zxcvbn";
-import { user } from "./schemas";
-import { SomeEnum, TODO } from "base-shared";
-import { GenEmailFunction } from "email-backend";
-import { defaultGenPassResetEmail, defaultGenRegisterEmail } from "./services";
+import { User } from './types';
+import { Model } from 'mongoose';
+import { ZXCVBNScore } from 'zxcvbn';
+import { user } from './schemas';
+import { SomeEnum, TODO } from 'base-shared';
+import { GenEmailFunction } from 'email-backend';
+import { defaultGenPassResetEmail, defaultGenRegisterEmail } from './services';
 
 export enum MultiUserType {
-  SINGLE = "single",
-  MULTI_BY_ROLES = "multi_by_role",
-  MULTI_COLLECTION = "multi_collection",
+  SINGLE = 'single',
+  MULTI_BY_ROLES = 'multi_by_role',
+  MULTI_COLLECTION = 'multi_collection',
 }
 
 export enum MultiClientType {
-  SINGLE = "single",
-  MULTI = "muti",
+  SINGLE = 'single',
+  MULTI = 'muti',
 }
 
 export enum VerifiedContactMethod {
-  EMAIL = "e-mail",
-  SMS = "sms",
+  EMAIL = 'e-mail',
+  SMS = 'sms',
 }
 
 export enum PasswordType {
-  HASHED = "hashed",
-  OTP = "one_time",
+  HASHED = 'hashed',
+  OTP = 'one_time',
 }
 
 export enum MFA {
-  OFF = "off",
+  OFF = 'off',
 }
 
 export enum ExternalIdentityProviders {
-  OFF = "off",
+  OFF = 'off',
 }
 
 export enum defaultUserType {
-  "singe" = "singe",
+  'singe' = 'singe',
 }
 
 export interface Strategy<
@@ -84,7 +84,7 @@ export const createStrategy = <
             multiUserType_is_MULTI_COLLECTION,
             multiUserType_is_SINGLE
           >,
-          "enumValues"
+          'enumValues'
         >
       : Strategy<
           RequiredFields,
@@ -93,7 +93,7 @@ export const createStrategy = <
           multiUserType_is_MULTI_COLLECTION,
           multiUserType_is_SINGLE
         >,
-    "modelMap"
+    'modelMap'
   > & {
     modelMap: TODO;
   },

@@ -1,7 +1,7 @@
-import { TextField } from "@mui/material";
-import { TODO } from "base-shared";
-import { ChangeEvent } from "react";
-import { format } from "base-shared";
+import { TextField } from '@mui/material';
+import { TODO } from 'base-shared';
+import { ChangeEvent } from 'react';
+import { format } from 'base-shared';
 
 interface Options {
   label: string;
@@ -50,12 +50,12 @@ export const renderTextField = <T,>(
       minRows={options.multiline ? options.customMinRows : undefined}
       variant="outlined"
       label={options.label}
-      value={formState ? value : ""}
+      value={formState ? value : ''}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
         handleChange(path, e.target.value);
       }}
       name={finalKey}
-      type={options.number ? "number" : undefined}
+      type={options.number ? 'number' : undefined}
     />
   );
 };

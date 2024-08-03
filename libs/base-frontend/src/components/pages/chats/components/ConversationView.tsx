@@ -5,8 +5,8 @@ import {
   IconButton,
   TextField,
   Typography,
-} from "@mui/material";
-import MessageRow from "./MessageRow";
+} from '@mui/material';
+import MessageRow from './MessageRow';
 import {
   Dispatch,
   ElementRef,
@@ -17,14 +17,14 @@ import {
   useEffect,
   useRef,
   useState,
-} from "react";
-import { ArrowBackIosOutlined, Send } from "@mui/icons-material";
-import { AxiosInstance } from "axios";
-import { ServerContext } from "../../../../context";
-import { Conversation, Message } from "chat-backend";
-import { TODO } from "base-shared";
-import { useResponsiveness, useSubscribe } from "../../../../hooks";
-import { axiosErrorToaster } from "../../../../utils";
+} from 'react';
+import { ArrowBackIosOutlined, Send } from '@mui/icons-material';
+import { AxiosInstance } from 'axios';
+import { ServerContext } from '../../../../context';
+import { Conversation, Message } from 'chat-backend';
+import { TODO } from 'base-shared';
+import { useResponsiveness, useSubscribe } from '../../../../hooks';
+import { axiosErrorToaster } from '../../../../utils';
 
 interface ConversationViewProps {
   conversation: Conversation;
@@ -40,11 +40,11 @@ export const sendMessage = (
   axiosInstance: AxiosInstance | undefined,
   conversationIdOrAddressee: string,
   message: string,
-  cb: () => void = () => console.log("no cb :)"),
+  cb: () => void = () => console.log('no cb :)'),
 ) => {
   axiosInstance &&
     axiosInstance
-      .post("api/chat/messages", {
+      .post('api/chat/messages', {
         conversationIdOrAddressee,
         message,
       })
@@ -62,16 +62,16 @@ const ConversationView = ({
 }: ConversationViewProps) => {
   const server = useContext(ServerContext);
 
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<null | Message[]>(null);
   const [scrolled, setScrolled] = useState<boolean>(false);
 
-  const { res } = useSubscribe(domain, "api/chat/subscribe");
+  const { res } = useSubscribe(domain, 'api/chat/subscribe');
 
   const fetchConversationMessages = useCallback(async () => {
     try {
       const res = await server?.axiosInstance.get(
-        "api/chat/messages/conversationMessages/" + conversation._id,
+        'api/chat/messages/conversationMessages/' + conversation._id,
       );
       res?.data && setMessages(res.data);
     } catch (e) {
@@ -89,7 +89,7 @@ const ConversationView = ({
     messages &&
       messages.length > 0 &&
       !scrolled &&
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     messagesEndRef.current && setScrolled(false);
   }, [messages, scrolled, res]);
 
@@ -160,7 +160,7 @@ const ConversationView = ({
                   message,
                   () => fetchConversationMessages(),
                 );
-                setMessage("");
+                setMessage('');
               }}
             >
               <Send />

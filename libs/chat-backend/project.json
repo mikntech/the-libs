@@ -6,19 +6,13 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/chat-backend",
         "main": "libs/chat-backend/src/index.ts",
         "tsConfig": "libs/chat-backend/tsconfig.lib.json",
-        "assets": [
-          "chat-backend/*.md"
-        ],
-        "format": [
-          "cjs"
-        ]
+        "assets": ["chat-backend/*.md"],
+        "format": ["cjs"]
       }
     }
   },

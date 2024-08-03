@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useContext, useEffect, useState } from "react";
+import { ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 import {
   Box,
   IconButton,
@@ -7,12 +7,12 @@ import {
   TableCell,
   TableHead,
   TableRow,
-} from "@mui/material";
-import { Document } from "mongoose";
-import { ServerContext } from "../../context";
-import { Add } from "@mui/icons-material";
-import { TODO, guessValueType } from "base-shared";
-import { axiosErrorToaster, IconColorer, OFAB } from "base-frontend";
+} from '@mui/material';
+import { Document } from 'mongoose';
+import { ServerContext } from '../../context';
+import { Add } from '@mui/icons-material';
+import { TODO, guessValueType } from 'base-shared';
+import { axiosErrorToaster, IconColorer, OFAB } from 'base-frontend';
 
 type ActionModal<D> = (
   closeModal: () => void,
@@ -52,7 +52,7 @@ export const GenericTable = <D extends Document>({
   const [data, setData] = useState<D[]>([]);
   const server = useContext(ServerContext);
   const [openModal, setOpenModal] = useState<number>();
-  const [selectedId, setSelectedId] = useState("");
+  const [selectedId, setSelectedId] = useState('');
 
   const fetchData = useCallback(async () => {
     try {
@@ -122,7 +122,7 @@ export const GenericTable = <D extends Document>({
                   <TableCell key={`${i}-${j}`}>
                     {(Array.isArray(value) ? value : [value])
                       .map((item) => guessValueType(item))
-                      .join(", ")}
+                      .join(', ')}
                   </TableCell>
                 ))}
               {actions.map(({ icon }, i) => (
@@ -131,7 +131,7 @@ export const GenericTable = <D extends Document>({
                     onClick={() => {
                       setOpenModal(i);
                       setSelectedId(
-                        (row as TODO)[customRowId || "_id"].toString(),
+                        (row as TODO)[customRowId || '_id'].toString(),
                       );
                     }}
                   >
