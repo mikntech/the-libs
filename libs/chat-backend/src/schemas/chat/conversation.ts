@@ -3,10 +3,10 @@ import { Conversation } from '../../types/chat';
 
 export const conversation = () =>
   getModel<Conversation>('conversation', {
-    firstId: {
+    guestId: {
       type: String,
     },
-    secondId: {
+    hostId: {
       type: String,
     },
     hiddenFor: [{ type: String }],

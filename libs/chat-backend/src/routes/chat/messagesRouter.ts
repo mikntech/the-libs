@@ -31,8 +31,9 @@ router.get(
 );
 
 enum UserType {
-  a = 1,
-  b = 2,
+  'admin' = 'admin',
+  'host' = 'host',
+  'guest' = 'guest',
 }
 
 router.post(
@@ -44,7 +45,7 @@ router.post(
 
     return sendMessage<UserType>(
       req.user as User,
-      Object.values(UserType),
+      UserType,
       conversationIdOrAddressee,
       message,
     );

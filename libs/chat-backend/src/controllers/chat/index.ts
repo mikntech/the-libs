@@ -3,6 +3,7 @@ import { highOrderHandler } from 'base-backend';
 import { TODO, UnauthorizedError } from 'base-shared';
 import { AuthenticatedRequest, User, user } from 'auth-backend';
 import { conversation, message } from '../../schemas/chat';
+import companyModel from '../../schemas/assets/companyModel';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
@@ -61,7 +62,7 @@ export const subscribeHandler = (PubSub: TODO) =>
 
 export const sendMessage = async <ENUM>(
   userx: User,
-  UserTypeEnum: TODO[],
+  UserTypeEnum: { [key: string]: ENUM },
   conversationIdOrAddressee: string,
   messagex: string,
 ) => {
@@ -74,10 +75,8 @@ export const sendMessage = async <ENUM>(
     false,
   ).findById(conversationIdOrAddressee);
   if (!hostId) {
-    const companyF = /* await company().findById(conversationIdOrAddressee);*/ {
-      host: 'Asdasd',
-    };
-    hostId = companyF?.host?.toString();
+    const company = await companyModel().findById(conversationIdOrAddressee);
+    hostId = company?.host?.toString();
   } else hostId = String((hostId as User)?._id);
   if (hostId) {
     conversationR = await Conversation.findOne({
@@ -87,10 +86,10 @@ export const sendMessage = async <ENUM>(
   }
   if (!conversationR?._id) {
     conversationR = new Conversation({
-      ...((userx as TODO).type === (UserTypeEnum as TODO).host
+      ...((userx as TODO).userType === (UserTypeEnum as TODO).host
         ? { hostId: userx._id }
         : { guestId: userx._id }),
-      ...((userx as TODO).type === (UserTypeEnum as TODO).guest
+      ...((userx as TODO).userType === (UserTypeEnum as TODO).guest
         ? { hostId }
         : { guestId: hostId }),
     });

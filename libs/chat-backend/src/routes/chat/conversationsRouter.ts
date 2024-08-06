@@ -1,13 +1,17 @@
 import { Router } from 'express';
 import { highOrderHandler } from 'base-backend';
-import { TODO, UnauthorizedError } from 'base-shared';
+import { InvalidInputError, TODO, UnauthorizedError } from 'base-shared';
 import {
   conversation,
   getLastMessageOfConversation,
   getNameOfUser,
   getNumberOfUnreadMessagesInConversation,
 } from 'chat-backend';
-import { AuthenticatedRequest, User } from 'auth-backend';
+import { AuthenticatedRequest, user, User } from 'auth-backend';
+import { UserType } from 'offisito-backend';
+import bookingModel from '../../schemas/bookings/bookingModel';
+import companyModel from '../../schemas/assets/companyModel';
+import assetModel from '../../schemas/assets/assetModel';
 
 const router = Router();
 
@@ -47,37 +51,40 @@ router.get(
     };
   }) as TODO,
 );
-/*
 
 router.get(
   '/idByBookingId/:id',
-  highOrderHandler(async (req: AuthenticatedRequest) => {
+  highOrderHandler((async (req: AuthenticatedRequest) => {
     if (!(req.user as User)) throw new UnauthorizedError('Please log in');
-    if (!req.params.id) throw new InvalidInputError('No Id received');
-    const User = user(false, false,false) as TODO;
-    const bookingF = await booking().findById(req.params.id);
+    if (!req.params['id']) throw new InvalidInputError('No Id received');
+    const User = user<true>(true, true, false);
+    const booking = await bookingModel().findById(req.params['id']);
     const userR =
-      (req.user as User).type === 'host'
-        ? await User.findById(bookingF.guest)
+      (req.user as User).userType === UserType.host
+        ? await User.findById(booking?.guest)
         : await User.findById(
             (
               await companyModel().findById(
                 (
                   await assetModel().findById(
-                    bookingF ? bookingF.asset : req.params.id
+                    booking ? booking.asset : req.params['id'],
                   )
-                ).companyId
+                )?.companyId,
               )
-            ).host
+            )?.host,
           );
     const results = await conversation().findOne({
-      $or: [{ guestId: userR._id.toString() }, { hostId: userR._id.toString() }],
+      $or: [
+        { guestId: userR?._id.toString() },
+        { hostId: userR?._id.toString() },
+      ],
     });
-    if (results) return res.status(200).json(results);
-    if (!userR?._id?.toString()) throw new UnauthorizedError('No partner found');
+
+    if (results) return { statusCode: 200, body: results };
+    if (!userR?._id?.toString())
+      throw new UnauthorizedError('No partner found');
     return { statusCode: 201, body: userR._id.toString() };
-  })
+  }) as TODO),
 );
-*/
 
 export default router;
