@@ -8,10 +8,6 @@ import {
   getNumberOfUnreadMessagesInConversation,
 } from 'chat-backend';
 import { AuthenticatedRequest, user, User } from 'auth-backend';
-import { UserType } from 'offisito-backend';
-import bookingModel from '../../schemas/bookings/bookingModel';
-import companyModel from '../../schemas/assets/companyModel';
-import assetModel from '../../schemas/assets/assetModel';
 
 const router = Router();
 
