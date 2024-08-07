@@ -1,5 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { InvalidEnumError, InvalidInputError, SomeEnum } from 'base-shared';
+import { InvalidEnumError, InvalidInputError, SomeEnum } from '@base-shared';
 
 export const validateTruthy = <T = string>(value: T) => !!value;
 

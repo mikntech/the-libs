@@ -1,4 +1,4 @@
-import { getModel } from 'base-shared';
+import { getModel } from '@base-shared';
 import { SomeRequest } from '../../types';
 import { requestBasicSchema } from '../../abstract';
 

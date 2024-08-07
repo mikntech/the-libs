@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 import { json, Router, urlencoded } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
-import { errorLog, TODO } from 'base-shared';
+import { errorLog, TODO } from '@base-shared';
 
 const { version: Version } = require(
   path.join(__dirname, '..', '..', '..', 'package.json'),

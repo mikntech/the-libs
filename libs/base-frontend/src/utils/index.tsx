@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TODO } from 'base-shared';
+import { TODO } from '@base-shared';
 import toast from 'react-hot-toast';
 import {
   Box,

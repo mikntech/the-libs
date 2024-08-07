@@ -2,7 +2,7 @@ import { Button, Grid, Modal, Typography } from '@mui/material';
 import { ReactNode, useContext, useState } from 'react';
 import { ServerContext } from '../../context';
 import toast from 'react-hot-toast';
-import { TODO } from 'base-shared';
+import { TODO } from '@base-shared';
 import { axiosErrorToaster } from '../../utils';
 
 interface ActionModalProps<B> {

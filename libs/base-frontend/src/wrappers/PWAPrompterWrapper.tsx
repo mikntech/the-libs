@@ -1,6 +1,6 @@
-import { InstallModal } from 'base-frontend';
+import { InstallModal } from '@base-frontend';
 import { ReactNode, useEffect, useState } from 'react';
-import { TODO } from 'base-shared';
+import { TODO } from '@base-shared';
 
 interface PWAPrompterWrapperProps {
   children: ReactNode;

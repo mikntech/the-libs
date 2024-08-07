@@ -1,11 +1,11 @@
-import { MultiUserType, Strategy, User } from 'auth-backend';
+import { MultiUserType, Strategy, User } from '@auth-backend';
 import {
   findDocs,
   validateEnum,
   validateInput,
   validateDocument,
-} from 'base-backend';
-import { TODO, UnauthorizedError, SomeEnum } from 'base-shared';
+} from '@base-backend';
+import { TODO, UnauthorizedError, SomeEnum } from '@base-shared';
 import { compare } from 'bcryptjs';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 

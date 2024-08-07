@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction, CookieOptions } from 'express';
 import { ServerResponse } from 'http';
-import { TODO } from 'base-shared';
 
 interface APIResponse {
   statusCode: number;
@@ -23,7 +22,7 @@ export const highOrderHandler =
     try {
       if (wsHeaders) {
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
-        await handler(req, res.write as TODO);
+        await handler(req, res.write.bind(res));
       } else {
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>

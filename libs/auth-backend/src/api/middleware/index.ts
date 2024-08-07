@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
-import { authSettings, Strategy, User } from 'auth-backend';
+import { authSettings, Strategy, User } from '@auth-backend';
 import { JwtPayload } from 'jsonwebtoken';
 import { ObjectId } from 'mongoose';
 import { genAuthControllers } from '../../controllers';
-import { SomeEnum } from 'base-shared';
+import { SomeEnum } from '@base-shared';
 const jsonwebtoken = require('jsonwebtoken');
 
 export interface AuthenticatedRequest extends Request {

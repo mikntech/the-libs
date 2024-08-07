@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import * as process from 'node:process';
-import { getBaseSettings } from 'base-backend';
+import { getBaseSettings } from '@base-backend';
 
 config();
 

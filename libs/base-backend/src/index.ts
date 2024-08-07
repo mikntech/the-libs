@@ -1,4 +1,4 @@
-import { connect } from 'base-shared';
+import { connect } from '@base-shared';
 
 export * from './config';
 export * from './controllers';

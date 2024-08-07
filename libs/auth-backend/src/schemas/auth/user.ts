@@ -1,4 +1,4 @@
-import { getModel, SomeEnum } from 'base-shared';
+import { getModel, SomeEnum } from '@base-shared';
 import { userBasicSchema } from '../../abstract';
 import { User } from '../../types';
 

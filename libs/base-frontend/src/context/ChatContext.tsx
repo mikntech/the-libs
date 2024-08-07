@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Conversation } from 'chat-backend';
+import { Conversation } from '@chat-backend';
 import { axiosErrorToaster, ServerContext, useSubscribe } from '../';
 import { Typography } from '@mui/material';
 

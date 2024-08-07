@@ -1,8 +1,8 @@
 import { Avatar, Badge, Grid, Typography } from '@mui/material';
 import { Dispatch, SetStateAction } from 'react';
 import { useIsNight } from '../../../../';
-import { TODO } from 'base-shared';
-import { Conversation } from 'chat-backend';
+import { TODO } from '@base-shared';
+import { Conversation } from '@chat-backend';
 
 interface ConversationButtonProps {
   conversation: Conversation;

@@ -1,55 +1,38 @@
 import { Router } from 'express';
-import { highOrderHandler } from 'base-backend';
-import { TODO, UnauthorizedError } from 'base-shared';
-import { AuthenticatedRequest, User } from 'auth-backend';
+import { findDocs, highOrderHandler } from '@base-backend';
+import { TODO, UnauthorizedError } from '@base-shared';
+import { AuthenticatedRequest, user, User } from '@auth-backend';
 import {
   conversation,
   message,
   markMessagesAsRead,
-  sendMessage,
-} from 'chat-backend';
+  Conversation,
+} from '@chat-backend';
 
-const router = Router();
+export const generateMessageRouter = (side1Name: string, side2Name: string) => {
+  const messageRouter = Router();
 
-router.get(
-  '/conversationMessages/:id',
-  highOrderHandler((async (req: AuthenticatedRequest) => {
-    const Message = message();
-    const Conversation = conversation();
-    const conversationR = await Conversation.findById(req.params['id']);
-    if (
-      String((req.user as User)._id) !== conversationR?.hostId &&
-      String((req.user as User)._id) !== conversationR?.guestId
-    )
-      throw new UnauthorizedError('You are not part of the conversation');
-    const messages = await Message.find({
-      conversationRId: String(conversationR?._id),
-    });
-    await markMessagesAsRead(messages, req.user as User, 'queried');
-    return { statusCode: 200, body: messages };
-  }) as TODO),
-);
+  messageRouter.get(
+    '/conversationMessages/:id',
+    highOrderHandler((async (req: AuthenticatedRequest) => {
+      const MessageModel = message();
+      const ConversationModel = conversation(side1Name, side2Name);
+      const conversationDoc = await findDocs<
+        Conversation<typeof side1Name, typeof side2Name>,
+        false
+      >(ConversationModel.findById(req.params['id']));
+      if (
+        String(req.user?._id) !== conversationDoc?.[side1Name] &&
+        String(req.user?._id) !== conversationDoc?.[side2Name]
+      )
+        throw new UnauthorizedError('You are not part of the conversation');
+      const messages = await MessageModel.find({
+        conversationId: String(conversationDoc?._id),
+      });
+      await markMessagesAsRead(messages, req.user as User, 'queried');
+      return { statusCode: 200, body: messages };
+    }) as TODO),
+  );
 
-enum UserType {
-  'admin' = 'admin',
-  'host' = 'host',
-  'guest' = 'guest',
-}
-
-router.post(
-  '/',
-  highOrderHandler(async (req: AuthenticatedRequest) => {
-    if (!String((req.user as User)?._id))
-      throw new UnauthorizedError('Not logged in');
-    const { conversationIdOrAddressee, message } = req.body;
-
-    return sendMessage<UserType>(
-      req.user as User,
-      UserType,
-      conversationIdOrAddressee,
-      message,
-    );
-  }) as TODO,
-);
-
-export default router;
+  return messageRouter;
+};

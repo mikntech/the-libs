@@ -21,8 +21,8 @@ import {
 import { ArrowBackIosOutlined, Send } from '@mui/icons-material';
 import { AxiosInstance } from 'axios';
 import { ServerContext } from '../../../../context';
-import { Conversation, Message } from 'chat-backend';
-import { TODO } from 'base-shared';
+import { Conversation, Message } from '@chat-backend';
+import { TODO } from '@base-shared';
 import { useResponsiveness, useSubscribe } from '../../../../hooks';
 import { axiosErrorToaster } from '../../../../utils';
 

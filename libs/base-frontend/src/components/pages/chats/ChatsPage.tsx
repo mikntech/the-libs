@@ -9,8 +9,8 @@ import {
 } from '../../../';
 import { useLocation } from 'react-router-dom';
 import SendMessageForm from '../../forms/SendMessageForm';
-import { TODO } from 'base-shared';
-import { Conversation } from 'chat-backend';
+import { TODO } from '@base-shared';
+import { Conversation } from '@chat-backend';
 
 interface ChatsPageProps {
   isGuest?: boolean;

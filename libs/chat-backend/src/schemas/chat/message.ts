@@ -1,4 +1,4 @@
-import { getModel } from 'base-shared';
+import { getModel } from '@base-shared';
 import { Message } from '../../types/chat';
 
 export const message = () =>
@@ -10,6 +10,7 @@ export const message = () =>
     message: {
       type: String,
     },
+    attachments: { type: [String] },
     whenQueried: Number,
     whenMarked: Number,
   });
