@@ -18,8 +18,8 @@ export const generateMessageRouter = (side1Name: string, side2Name: string) => {
       const MessageModel = message();
       const ConversationModel = conversation(side1Name, side2Name);
       const conversationDoc = await findDocs<
-        Conversation<typeof side1Name, typeof side2Name>,
-        false
+        false,
+        Conversation<typeof side1Name, typeof side2Name>
       >(ConversationModel.findById(req.params['id']));
       if (
         String(req.user?._id) !== conversationDoc?.[side1Name] &&

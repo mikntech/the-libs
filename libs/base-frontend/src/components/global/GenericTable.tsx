@@ -8,11 +8,11 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { Document } from 'mongoose';
 import { ServerContext } from '../../context';
 import { Add } from '@mui/icons-material';
 import { TODO, guessValueType } from '@base-shared';
-import { axiosErrorToaster, IconColorer, OFAB } from '@base-frontend';
+import { axiosErrorToaster, IconColorer, OFAB } from '../../utils';
+import { Document as MDocument, Types } from 'mongoose';
 
 type ActionModal<D> = (
   closeModal: () => void,
@@ -41,7 +41,7 @@ const autoSumColumn = (dataArray: TODO[]) => {
   return [...res];
 };
 
-export const GenericTable = <D extends Document>({
+export const GenericTable = <D extends MDocument<Types.ObjectId>>({
   endpoint,
   readyData,
   customColumns,

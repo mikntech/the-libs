@@ -41,11 +41,7 @@ export const genAuthControllers = <
   const getModel = (userType: UserType): Model<User> =>
     (strategy.multiUserType === MultiUserType.MULTI_COLLECTION
       ? (strategy.modelMap as TODO)[userType]
-      : strategy.modelMap)(
-      ...(strategy.multiUserType === MultiUserType.MULTI_BY_ROLES
-        ? [true]
-        : []),
-    );
+      : strategy.modelMap)();
 
   const generateURLWithParams = (params: string, userType: string) =>
     `${
@@ -65,7 +61,11 @@ export const genAuthControllers = <
       authSettings.jwtSecret,
     );
 
-  const generateSecureCookie = (name: string, val: string) => ({
+  const generateSecureCookie = (
+    name: string,
+    val: string,
+    expirationDate?: Date,
+  ) => ({
     name,
     val,
     options: {
@@ -75,6 +75,7 @@ export const genAuthControllers = <
           ? 'lax'
           : 'none',
       secure: getBaseSettings().nodeEnv === NodeEnvironment.Production,
+      ...(expirationDate ? { expires: expirationDate } : {}),
     } as CookieOptions,
   });
 
@@ -97,7 +98,7 @@ export const genAuthControllers = <
   };
 
   const validateKey = async (key: string, register: boolean) => {
-    const existingRequest = await findDocs<SomeRequest<true>, false>(
+    const existingRequest = await findDocs<false, SomeRequest<true>>(
       (register ? registrationRequest() : passResetRequest()).findOne({
         key,
       }),

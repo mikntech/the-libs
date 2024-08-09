@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { authSettings, Strategy, User } from '@auth-backend';
 import { JwtPayload } from 'jsonwebtoken';
-import { ObjectId } from 'mongoose';
+import { Types } from 'mongoose';
 import { genAuthControllers } from '../../controllers';
-import { SomeEnum } from '@base-shared';
+import { SomeEnum, TODO } from '@base-shared';
+import { findDocs } from '@base-backend';
 const jsonwebtoken = require('jsonwebtoken');
 
 export interface AuthenticatedRequest extends Request {
@@ -31,11 +32,13 @@ export const authorizer =
         authSettings.jwtSecret,
       )) as JwtPayload;
       const { _id, userType } = validatedUser as {
-        _id: ObjectId;
+        _id: Types.ObjectId;
         userType: UserType;
       };
       const { getModel } = genAuthControllers(strategy);
-      req.user = await getModel(userType).findById(String(_id));
+      req.user = await findDocs<false, TODO>(
+        getModel(userType).findById(String(_id)),
+      );
     } catch (err) {
       req.user = null;
     }

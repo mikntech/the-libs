@@ -1,6 +1,6 @@
 export * from './logs/errorLog';
 
-import mongoose, { Model, SchemaDefinition } from 'mongoose';
+import mongoose from 'mongoose';
 import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
 import { TODO } from '../types';
 
@@ -40,12 +40,12 @@ const initModel = <Interface>(
 
 export const getModel = <Interface>(
   name: string,
-  schemaDefinition: SchemaDefinition,
+  schemaDefinition: mongoose.SchemaDefinition,
   chainToSchema: { name: TODO; params: TODO[] }[] = [],
   extraIndex = undefined,
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
-  let model: Model<Interface>;
+  let model: mongoose.Model<Interface>;
   const schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
   });

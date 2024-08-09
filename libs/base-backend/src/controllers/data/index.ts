@@ -1,19 +1,22 @@
-import { Model, QueryWithHelpers } from 'mongoose';
-import { Document } from '@base-shared';
+import {
+  Model,
+  QueryWithHelpers,
+  Types,
+  Document as MDocument,
+} from 'mongoose';
 
 export const findDocs = async <
-  SCHEMA extends Document,
   isArray extends boolean,
-  Result = SCHEMA,
+  SCHEMA extends MDocument<Types.ObjectId> = MDocument<Types.ObjectId>,
 >(
   query: QueryWithHelpers<
-    isArray extends true ? Array<Result> : Result | null,
+    isArray extends true ? Array<SCHEMA> : SCHEMA | null,
     SCHEMA
   >,
   lean: boolean = true,
 ) => (lean ? query.lean() : query);
 
-export const createDoc = async <SCHEMA extends Document>(
+export const createDoc = async <SCHEMA extends MDocument<Types.ObjectId>>(
   model: Model<SCHEMA>,
   fields: {},
 ) =>

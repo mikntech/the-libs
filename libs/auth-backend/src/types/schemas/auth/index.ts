@@ -1,4 +1,4 @@
-import { Document } from '@base-shared';
+import { Document as MDocument, Types } from 'mongoose';
 
 type OptionalIfFalse<IsRequired extends boolean, T> = IsRequired extends true
   ? T
@@ -9,16 +9,21 @@ export interface User<
   ProfilePictureUriRequired extends boolean = false,
   MultyByRole extends boolean = false,
   USERTYPE = undefined,
-> extends Document {
+> extends MDocument<Types.ObjectId> {
   email: string;
   password: string;
   full_name: OptionalIfFalse<NameRequired, string>;
   profilePictureUri: OptionalIfFalse<ProfilePictureUriRequired, string>;
   userType: OptionalIfFalse<MultyByRole, USERTYPE>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface SomeRequest<WithUserType extends boolean> extends Document {
+export interface SomeRequest<WithUserType extends boolean>
+  extends MDocument<Types.ObjectId> {
   email: string;
   userType: WithUserType extends true ? string : undefined;
   key: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

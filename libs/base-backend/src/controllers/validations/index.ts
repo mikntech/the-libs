@@ -1,14 +1,23 @@
-import { Document, Types } from 'mongoose';
-import { InvalidEnumError, InvalidInputError, SomeEnum } from '@base-shared';
-
-export const validateTruthy = <T = string>(value: T) => !!value;
+import {
+  QueryWithHelpers,
+  isValidObjectId,
+  Types,
+  Document as MDocument,
+} from 'mongoose';
+import {
+  InvalidEnumError,
+  InvalidInputError,
+  ResourceNotFoundError,
+  SomeEnum,
+} from '@base-shared';
+import { findDocs } from '../data';
 
 export const validateInput = <T = string>(
   input: { [key: string]: T },
   extraPath: string = '',
 ) => {
   const [name, value] = Object.entries(input)[0];
-  if (!validateTruthy(value))
+  if (!value)
     throw new InvalidInputError(
       'didnt receive at all: ' +
         name +
@@ -29,10 +38,28 @@ export const validateEnum = <ENUM extends SomeEnum<ENUM>>(
     );
 };
 
-export const validateDocument = <DOC extends Document>(doc: DOC): boolean => {
-  return (
-    validateTruthy(doc) &&
-    validateTruthy(doc._id) &&
-    Types.ObjectId.isValid(doc._id as Types.ObjectId)
-  );
+export const validateDocument = (doc: { _id?: Types.ObjectId }): boolean =>
+  doc && !!doc._id && isValidObjectId(doc._id);
+
+export const findAndValidate = async <
+  isArray extends boolean,
+  SCHEMA extends MDocument<Types.ObjectId> = MDocument<Types.ObjectId>,
+>(
+  query: QueryWithHelpers<
+    isArray extends true ? Array<SCHEMA> : SCHEMA | null,
+    SCHEMA
+  >,
+  customDescription: string,
+  lean: boolean = true,
+) => {
+  try {
+    const res = await findDocs<isArray, SCHEMA>(query, lean);
+    if (
+      Array.isArray(res)
+        ? !res.some((doc) => !validateDocument(doc))
+        : res && validateDocument(res)
+    )
+      return res;
+  } catch {}
+  throw new ResourceNotFoundError(customDescription);
 };

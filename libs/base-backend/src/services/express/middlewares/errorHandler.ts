@@ -4,9 +4,9 @@ import { StagingEnvironment } from '../../../config';
 import { ClientError, ErrorLog, errorLog, TODO } from '@base-shared';
 
 export const serverErrorHandler =
-  <SCHEMA = ErrorLog, SE = StagingEnvironment>(
+  <DocI = ErrorLog, SE = StagingEnvironment>(
     stagingEnv: SE,
-    errorLogModel: Model<SCHEMA> = errorLog() as unknown as Model<SCHEMA>,
+    errorLogModel: Model<DocI> = errorLog() as unknown as Model<DocI>,
   ) =>
   async (
     err: Error,

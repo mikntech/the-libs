@@ -59,13 +59,13 @@ export const genManageControllers = <
     userType: UserType,
   ) => {
     validateInput({ email });
-    const userDoc = await findDocs<SCHEMA, false>(
+    strategy.multiUserType !== MultiUserType.SINGLE &&
+      validateInput({ userType });
+    const userDoc = await findDocs<false, SCHEMA>(
       getModel(userType).findOne({ email }),
-      true,
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
       throw new InvalidInputError('No user found with this email');
-
     const url = await createKeyForPassReset(email, (userDoc as TODO).userType);
     const { subject, body } = strategy.genPassResetEmail(url);
     sendEmailWithLink(email, subject, body, url);
@@ -93,7 +93,7 @@ export const genManageControllers = <
     strategy.multiUserType === MultiUserType.MULTI_COLLECTION &&
       validateInput({ userType });
     strategy.multiUserType === MultiUserType.MULTI_COLLECTION &&
-      validateEnum(userType, Object.values(userType));
+      validateEnum(userType, strategy.enumValues as UserType[]);
     if (password !== passwordAgain)
       throw new InvalidInputError("Passwords don't match");
     validatePasswordStrength(password);
@@ -101,8 +101,8 @@ export const genManageControllers = <
       email: string;
     };
     const existingUser = await findDocs<
-      User<false, false, true, UserType>,
-      false
+      false,
+      User<false, false, true, UserType>
     >(
       getModel(userType).findOne({
         email,

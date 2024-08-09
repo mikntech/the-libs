@@ -51,7 +51,7 @@ export const genLogControllers = <
   ) => {
     validateInput({ email });
     validateInput({ password });
-    const existingUser = await findDocs<User, false>(
+    const existingUser = await findDocs<false, User>(
       getModel(userType).findOne({ email }),
       true,
     );
@@ -92,7 +92,7 @@ export const genLogControllers = <
 
   const logOut = async () => ({
     statusCode: 200,
-    cookie: generateSecureCookie(JWT_COOKIE_NAME, ''),
+    cookie: generateSecureCookie(JWT_COOKIE_NAME, '', new Date(0)),
   });
 
   return {
