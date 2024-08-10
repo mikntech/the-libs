@@ -7,17 +7,17 @@ import {
 
 export const findDocs = async <
   isArray extends boolean,
-  SCHEMA extends MDocument<Types.ObjectId> = MDocument<Types.ObjectId>,
+  DocI extends MDocument = MDocument,
 >(
   query: QueryWithHelpers<
-    isArray extends true ? Array<SCHEMA> : SCHEMA | null,
-    SCHEMA
+    isArray extends true ? Array<DocI> : DocI | null,
+    DocI
   >,
   lean: boolean = true,
 ) => (lean ? query.lean() : query);
 
-export const createDoc = async <SCHEMA extends MDocument<Types.ObjectId>>(
-  model: Model<SCHEMA>,
+export const createDoc = async <DocI extends MDocument>(
+  model: Model<DocI>,
   fields: {},
 ) =>
   new model({

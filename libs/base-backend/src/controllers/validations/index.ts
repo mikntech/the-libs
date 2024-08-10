@@ -38,22 +38,22 @@ export const validateEnum = <ENUM extends SomeEnum<ENUM>>(
     );
 };
 
-export const validateDocument = (doc: { _id?: Types.ObjectId }): boolean =>
+export const validateDocument = (doc: MDocument): boolean =>
   doc && !!doc._id && isValidObjectId(doc._id);
 
 export const findAndValidate = async <
   isArray extends boolean,
-  SCHEMA extends MDocument<Types.ObjectId> = MDocument<Types.ObjectId>,
+  DocI extends MDocument = MDocument,
 >(
   query: QueryWithHelpers<
-    isArray extends true ? Array<SCHEMA> : SCHEMA | null,
-    SCHEMA
+    isArray extends true ? Array<DocI> : DocI | null,
+    DocI
   >,
   customDescription: string,
   lean: boolean = true,
 ) => {
   try {
-    const res = await findDocs<isArray, SCHEMA>(query, lean);
+    const res = await findDocs<isArray, DocI>(query, lean);
     if (
       Array.isArray(res)
         ? !res.some((doc) => !validateDocument(doc))

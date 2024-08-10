@@ -9,7 +9,8 @@ export interface User<
   ProfilePictureUriRequired extends boolean = false,
   MultyByRole extends boolean = false,
   USERTYPE = undefined,
-> extends MDocument<Types.ObjectId> {
+> extends MDocument {
+  _id: Types.ObjectId;
   email: string;
   password: string;
   full_name: OptionalIfFalse<NameRequired, string>;
@@ -19,8 +20,8 @@ export interface User<
   updatedAt: Date;
 }
 
-export interface SomeRequest<WithUserType extends boolean>
-  extends MDocument<Types.ObjectId> {
+export interface SomeRequest<WithUserType extends boolean> extends MDocument {
+  _id: Types.ObjectId;
   email: string;
   userType: WithUserType extends true ? string : undefined;
   key: string;

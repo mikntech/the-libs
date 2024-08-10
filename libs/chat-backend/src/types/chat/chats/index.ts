@@ -14,7 +14,8 @@ export type Conversation<
   unReadNumber: number;
 };
 
-export interface Message extends MDocument<Types.ObjectId> {
+export interface Message extends MDocument {
+  _id: Types.ObjectId;
   ownerId: string;
   conversationId: string;
   message: string;
