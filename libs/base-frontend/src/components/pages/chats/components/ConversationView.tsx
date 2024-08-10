@@ -127,7 +127,7 @@ const ConversationView = ({
               ref={i === messages.length - 1 ? messagesEndRef : null}
             >
               <MessageRow
-                key={message._id.toString()}
+                key={message._id?.toString()}
                 message={message}
                 tenum={tenum}
               />
@@ -156,7 +156,7 @@ const ConversationView = ({
               onClick={() => {
                 sendMessage(
                   server?.axiosInstance,
-                  conversation._id.toString(),
+                  conversation._id?.toString() || '',
                   message,
                   () => fetchConversationMessages(),
                 );

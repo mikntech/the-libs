@@ -110,10 +110,10 @@ export const ChatsPage = ({
         >
           {conversations.length > 0 ? (
             conversations.map((conversation) => (
-              <Grid key={conversation._id.toString()} item>
+              <Grid key={conversation._id?.toString()} item>
                 <br />
                 <ConversationButton
-                  key={conversation._id.toString()}
+                  key={conversation._id?.toString()}
                   wide={wide}
                   conversation={conversation}
                   isTheSelectedConversation={

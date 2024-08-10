@@ -20,4 +20,5 @@ export interface Message extends MDocument<Types.ObjectId> {
   message: string;
   whenQueried?: number;
   whenMarked?: number;
+  createdAt: Date;
 }
