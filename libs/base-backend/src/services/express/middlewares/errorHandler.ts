@@ -16,7 +16,7 @@ export const serverErrorHandler =
   ): Promise<TODO> => {
     if (err) {
       if (err instanceof ClientError)
-        return res.status(err.statusCode).send(err);
+        return res.status(err.statusCode).send(err.message || String(err));
       try {
         await new errorLogModel({
           stringifiedError: err.toString(),
