@@ -9,7 +9,7 @@ import {
 } from '@chat-backend';
 import { AuthenticatedRequest, User } from '@auth-backend';
 
-export const generateConversationRouter = (
+export const generateConversationRouter = <UserType>(
   side1Name: string,
   side2Name: string,
 ) => {

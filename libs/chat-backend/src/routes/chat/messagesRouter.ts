@@ -9,7 +9,10 @@ import {
   Conversation,
 } from '@chat-backend';
 
-export const generateMessageRouter = (side1Name: string, side2Name: string) => {
+export const generateMessageRouter = <UserType>(
+  side1Name: string,
+  side2Name: string,
+) => {
   const messageRouter = Router();
 
   messageRouter.get(
