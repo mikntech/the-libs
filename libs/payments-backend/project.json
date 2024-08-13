@@ -1,0 +1,20 @@
+{
+  "name": "payments-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/payments-backend/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/payments-backend",
+        "main": "libs/payments-backend/src/index.ts",
+        "tsConfig": "libs/payments-backend/tsconfig.lib.json",
+        "assets": ["payments-backend/*.md"],
+        "format": ["cjs"]
+      }
+    }
+  },
+  "tags": []
+}

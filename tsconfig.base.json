@@ -22,6 +22,7 @@
       "@base-shared": ["libs/base-shared/src/index.ts"],
       "@chat-backend": ["libs/chat-backend/src/index.ts"],
       "@email-backend": ["libs/email-backend/src/index.ts"],
+      "@payments-backend": ["libs/payments-backend/src/index.ts"],
       "@s3-backend": ["libs/s3-backend/src/index.ts"]
     }
   },
