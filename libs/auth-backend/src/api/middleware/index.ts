@@ -7,8 +7,12 @@ import { SomeEnum, TODO } from '@base-shared';
 import { findDocs } from '@base-backend';
 const jsonwebtoken = require('jsonwebtoken');
 
-export interface AuthenticatedRequest extends Request {
-  user: User | null;
+export interface AuthenticatedRequest<
+  UserType = string,
+  UserI extends User = User,
+> extends Request {
+  user: UserI | null;
+  userType: UserType;
 }
 
 export const authorizer =
@@ -16,6 +20,7 @@ export const authorizer =
     UserType extends SomeEnum<UserType>,
     RequiredFields extends {},
     OptionalFields extends {},
+    UserI extends User,
   >(
     strategy: Strategy<
       RequiredFields,
@@ -25,7 +30,11 @@ export const authorizer =
       boolean
     >,
   ) =>
-  async (req: AuthenticatedRequest, _: Response, next: NextFunction) => {
+  async (
+    req: AuthenticatedRequest<UserType, UserI>,
+    _: Response,
+    next: NextFunction,
+  ) => {
     try {
       const validatedUser = (await jsonwebtoken.verify(
         req.cookies['jwt'],
@@ -39,6 +48,7 @@ export const authorizer =
       req.user = await findDocs<false, TODO>(
         getModel(userType).findById(String(_id)),
       );
+      req.userType = userType;
     } catch (err) {
       req.user = null;
     }

@@ -17,7 +17,7 @@ export const generateConversationRouter = (
 
   conversationRouter.get(
     '/:quantity?',
-    highOrderHandler(async (req: AuthenticatedRequest) => {
+    highOrderHandler(async (req: AuthenticatedRequest<UserType>) => {
       if (!(req.user as User)) throw new UnauthorizedError('not logged in');
       let quantity: number | undefined = parseInt(req.params['quantity']);
       if (isNaN(quantity) || quantity < 1) {

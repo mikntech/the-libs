@@ -23,7 +23,7 @@ export const logRouter = <
 
   router.get(
     '/',
-    highOrderHandler((async (req: AuthenticatedRequest) => ({
+    highOrderHandler((async (req: AuthenticatedRequest<UserTypeEnum>) => ({
       statusCode: 200,
       body: validateAndProtect(req.user as TODO),
     })) as TODO),
@@ -31,7 +31,7 @@ export const logRouter = <
 
   router.post(
     '/in',
-    highOrderHandler((async (req: AuthenticatedRequest) => {
+    highOrderHandler((async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { email, password, userType } = req.body;
       return logIn(email, password, userType);
     }) as TODO),
@@ -39,7 +39,8 @@ export const logRouter = <
 
   router.get(
     '/out',
-    highOrderHandler(((_: AuthenticatedRequest) => logOut()) as TODO),
+    highOrderHandler(((_: AuthenticatedRequest<UserTypeEnum>) =>
+      logOut()) as TODO),
   );
 
   return router;

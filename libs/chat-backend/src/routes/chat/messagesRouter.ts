@@ -14,7 +14,7 @@ export const generateMessageRouter = (side1Name: string, side2Name: string) => {
 
   messageRouter.get(
     '/conversationMessages/:id',
-    highOrderHandler((async (req: AuthenticatedRequest) => {
+    highOrderHandler((async (req: AuthenticatedRequest<UserType>) => {
       const MessageModel = message();
       const ConversationModel = conversation(side1Name, side2Name);
       const conversationDoc = await findDocs<

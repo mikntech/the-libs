@@ -24,7 +24,7 @@ export const manageRouter = <
 
   router.post(
     '/request-password-reset',
-    highOrderHandler((async (req: AuthenticatedRequest) => {
+    highOrderHandler((async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { email, userType } = req.body;
       return requestPasswordReset(email, userType);
     }) as TODO),
@@ -32,7 +32,7 @@ export const manageRouter = <
 
   router.post(
     '/reset-password',
-    highOrderHandler((async (req: AuthenticatedRequest) => {
+    highOrderHandler((async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { key, password, passwordAgain, userType } = req.body;
       return resetPassword(key, password, passwordAgain, userType);
     }) as TODO),

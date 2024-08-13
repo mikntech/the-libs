@@ -1,0 +1,26 @@
+{
+  "name": "cubebox-shared",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/cubebox-shared/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/cubebox-shared",
+        "main": "libs/cubebox-shared/src/index.ts",
+        "tsConfig": "libs/cubebox-shared/tsconfig.lib.json",
+        "assets": [
+          "cubebox-shared/*.md"
+        ],
+        "format": [
+          "cjs"
+        ]
+      }
+    }
+  },
+  "tags": []
+}

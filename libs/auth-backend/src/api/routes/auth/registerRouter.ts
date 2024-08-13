@@ -24,7 +24,7 @@ export const registerRouter = <
   router.post(
     '/request' +
       (strategy.multiUserType === MultiUserType.SINGLE ? '' : '/:userType'),
-    highOrderHandler(async (req: AuthenticatedRequest) => {
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { email } = req.body;
       const userType = req.params['userType'] as unknown as UserTypeEnum;
       return requestToRegister(email, userType, strategy.genRegisterEmail);
@@ -33,7 +33,7 @@ export const registerRouter = <
 
   router.post(
     '/finish',
-    highOrderHandler(async (req: AuthenticatedRequest) => {
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { key, full_name, password, passwordAgain, requiredFields } =
         req.body;
       return finishRegistration(
