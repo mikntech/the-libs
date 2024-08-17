@@ -1,8 +1,12 @@
-import { Avatar, Badge, Grid, Typography } from '@mui/material';
+import { Avatar, Badge ,Card, CardActions, CardContent, IconButton, Typography } from "@mui/material";
 import { Dispatch, SetStateAction } from 'react';
-import { useIsNight } from '../../../../';
+import Box from '@mui/material/Box';
+import { themeColor, useIsNight } from '../../../../';
 import { TODO } from '@base-shared';
 import { Conversation } from '@chat-backend';
+import{extactNameInitials} from '../../../../utils/index'
+import { sourceMapsEnabled } from 'process';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 interface ConversationButtonProps {
   conversation: Conversation;
@@ -12,123 +16,91 @@ interface ConversationButtonProps {
   PrimaryText?: TODO;
 }
 
+
 export const ConversationButton = ({
   conversation,
   isTheSelectedConversation,
   setSelectedConversation,
   wide,
-  PrimaryText = Typography,
 }: ConversationButtonProps) => {
   const isNight = useIsNight();
-  const MAX_NAME_LENGTH = conversation.unReadNumber ? 20 : 22;
-  const MAX_LAST_MESSAGE_LENGTH = 18;
+  const MAX_NAME_LENGTH = 18;
+  const MAX_LAST_MESSAGE_LENGTH = 32;
 
-  const avatar = <Avatar />;
+
+
+  const randomHexNumberGenerator = () => {
+    
+    
+    //const color = Math.floor(Math.random() * 16777215).toString(16);
+    const color = "555555"
+    return '#' + color;
+  }
+  const truncateString = (originalString: string, maxLength: number): string => {
+    return originalString.length > maxLength ?
+      originalString.slice(0, maxLength - 3) + '...' :
+      originalString;
+  }
+
+  const formatHourAndMinutes = (date: Date): string => {
+    const hour = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hour}:${minutes}`;
+  }
+
 
   return (
-    <Grid
-      container
-      onClick={() => setSelectedConversation(conversation)}
-      sx={{ cursor: 'pointer' }}
-      wrap="nowrap"
-      width={isTheSelectedConversation ? 'calc(100% - 0.1vw)' : '100%'}
-      border={
-        isTheSelectedConversation
-          ? `0.2vw solid ${isNight ? 'white' : 'black'}`
-          : ''
-      }
-      justifyContent="center"
-      alignItems="center"
-      columnSpacing={1}
-      marginLeft={isTheSelectedConversation ? '0.1vw' : '0vw'}
+    <Card
+      sx={{
+      borderRadius: 0,
+      marginLeft:isTheSelectedConversation ? '0.1vw' : '0vw',
+      borderBottom: 2,
+      borderColor: "#CAC4D0",
+      boxShadow: 0,
+    }}
     >
-      <Grid item>
-        {!wide && conversation.unReadNumber !== 0 ? (
+      <CardContent sx={{
+        display: 'flex',
+        px: '0px',
+        py:"12px",
+        "&:last-child": { paddingBottom: "12px" }
+      }}>
+        <Box>
+          {conversation.unReadNumber !== 0 ? (
           <Badge badgeContent={conversation.unReadNumber} color="error">
-            {avatar}
+          <Avatar sx={{bgcolor:randomHexNumberGenerator()}}  >{extactNameInitials(conversation.name)} </Avatar>
           </Badge>
-        ) : (
-          avatar
-        )}
-      </Grid>
-      {wide ? (
-        <Grid
-          item
-          container
-          direction="column"
-          justifyContent="center"
-          alignItems="center"
-          rowSpacing={1}
-        >
-          {conversation.name && (
-            <Grid
-              item
-              container
-              justifyContent="space-between"
-              alignItems="center"
-              columnSpacing={1}
-            >
-              <Grid item>
-                <PrimaryText>
-                  {conversation.name.length > MAX_NAME_LENGTH
-                    ? conversation.name.substring(0, MAX_NAME_LENGTH - 3) +
-                      '...'
-                    : conversation.name}
-                </PrimaryText>
-              </Grid>
-              {conversation.unReadNumber != 0 && (
-                <Grid item>
-                  <PrimaryText
-                    paddingLeft="3px"
-                    paddingRight="3px"
-                    bgcolor="red"
-                    borderRadius="80px"
-                    color="white"
-                  >
-                    {conversation.unReadNumber}
-                  </PrimaryText>
-                </Grid>
-              )}
-              <Grid item>
-                <PrimaryText> </PrimaryText>
-              </Grid>
-            </Grid>
+          ) : (
+          <Avatar sx={{bgcolor:randomHexNumberGenerator()}} >{extactNameInitials(conversation.name)} </Avatar>
           )}
-          {conversation.lastMessage && (
-            <Grid
-              item
-              container
-              justifyContent="space-between"
-              alignItems="center"
-              columnSpacing={1}
-            >
-              <Grid item>
-                <PrimaryText>
-                  {conversation.lastMessage.message.length >
-                  MAX_LAST_MESSAGE_LENGTH
-                    ? conversation.lastMessage.message.substring(
-                        0,
-                        MAX_LAST_MESSAGE_LENGTH - 3,
-                      ) + '...'
-                    : conversation.lastMessage.message}
-                </PrimaryText>
-              </Grid>
-              <Grid item>
-                <PrimaryText>
-                  {`${new Date(conversation.lastMessage.createdAt).getHours().toString().padStart(2, '0')}:${new Date(conversation.lastMessage.createdAt).getMinutes().toString().padStart(2, '0')}`}
-                </PrimaryText>
-              </Grid>
-              <Grid item>
-                <PrimaryText></PrimaryText>
-              </Grid>
-            </Grid>
-          )}
-        </Grid>
-      ) : (
-        <Grid item>
-          <PrimaryText></PrimaryText>
-        </Grid>
-      )}
-    </Grid>
+        </Box>
+
+
+        <Box sx={{marginLeft:'15px', marginTop:"-5px"}}>
+          <Typography>
+            {truncateString(conversation.name, MAX_NAME_LENGTH)}
+          </Typography>
+          {conversation.lastMessage &&
+          <Box sx={{display:'flex', alignItems:'center', gap:1}}>
+            <Typography color='secondary.contrastText' sx={{fontSize:'12px', width:'fit-content'}}>
+              {formatHourAndMinutes(new Date(conversation.lastMessage.createdAt))} -
+            </Typography>
+
+            <Typography  sx={{fontSize:'12px', width:'fit-content'}}>
+              {truncateString(conversation.lastMessage.message, MAX_LAST_MESSAGE_LENGTH)}
+            </Typography>
+            
+          </Box>
+          }
+        </Box>
+
+        <CardActions   disableSpacing  sx={{p:0, ml:'auto'}} >
+          <IconButton  onClick={() => setSelectedConversation(conversation)} sx={{marginLeft:'auto'}} aria-label="display graph">
+              <KeyboardArrowRightIcon  sx={{color:"text.secondary"}}/>
+          </IconButton>
+        </CardActions>
+
+      </CardContent>
+    </Card>
   );
 };

@@ -33,6 +33,7 @@ export const generateConversationRouter = <UserType>(
         query = query.limit(quantity);
       }
       const conversations = await query;
+
       return {
         statusCode: 200,
         body: await Promise.all(
@@ -40,7 +41,7 @@ export const generateConversationRouter = <UserType>(
             ...c.toObject(),
             lastMessage: await getLastMessageOfConversation(c._id.toString()),
             name: await getNameOfUser(
-              (req.user as TODO).type === 'guest' ? c.hostId : c.guestId,
+              (req.user as TODO).userType === 'guest' ? c.hostId : c.guestId,
             ),
             unReadNumber: await getNumberOfUnreadMessagesInConversation(
               c._id.toString(),

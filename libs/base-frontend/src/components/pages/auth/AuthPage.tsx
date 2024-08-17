@@ -219,7 +219,7 @@ export const AuthPage = <UserType,>({
               })
               .catch((error) =>
                 setStep(
-                  error?.response?.data?.customMessage === 'Please register'
+                  error?.response?.data === 'Please register'
                     ? Step.registerReq
                     : Step.login,
                 ),

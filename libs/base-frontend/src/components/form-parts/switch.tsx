@@ -16,9 +16,16 @@ export const renderSwitch = <T,>(
   options: Options,
 ) => {
   let val: TODO = formState;
+
   path.forEach((key) => {
-    val = val[key];
+    if (val === true || val === false || val === undefined) return;
+    if (Array.isArray(val)) {
+      val = val.includes(key);
+    } else {
+      val = val[key];
+    }
   });
+
   const value = options.customValue === undefined ? !!val : options.customValue;
   return (
     <FormControlLabel

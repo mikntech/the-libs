@@ -34,7 +34,7 @@ export const highOrderHandler = <R extends Request>(
           const { name, val, options } = cookie;
           ret.cookie(name, val, options);
         }
-        typeof body === 'object' ? ret.json(body) : ret.send(body);
+        typeof body === 'string' ? ret.send(body) : ret.json(body);
       }
     } catch (err) {
       next(err);

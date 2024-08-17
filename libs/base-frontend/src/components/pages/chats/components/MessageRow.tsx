@@ -21,8 +21,8 @@ const Balloon = styled(Typography, {
     isMe === 'yes' ? theme.palette.primary.main : theme.palette.secondary.main,
   color:
     isMe === 'yes'
-      ? theme.palette.secondary.contrastText
-      : theme.palette.secondary.contrastText,
+      ? theme.palette.primary.contrastText
+      : theme.palette.primary.contrastText,
   borderRadius: '20px',
   padding: '10px 16px',
   maxWidth: '80%', // Limits the width, but allows height to expand

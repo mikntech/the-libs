@@ -12,6 +12,7 @@ import SendMessageForm from '../../forms/SendMessageForm';
 import { TODO } from '@base-shared';
 import { Conversation } from '@chat-backend';
 
+
 interface ChatsPageProps {
   isGuest?: boolean;
   PrimaryText?: TODO;
@@ -60,6 +61,7 @@ export const ChatsPage = ({
     );
   };
 
+
   const server = useContext(ServerContext);
 
   const query = useQuery();
@@ -93,10 +95,14 @@ export const ChatsPage = ({
       customComponents={customComponents}
     />
   ) : (
-    <Grid height="100%" container wrap="nowrap">
+    <Grid width={'auto'}  height="100%" marginX="10px" container wrap="nowrap" flexDirection={'column'}>
+      <Typography color="primary.contrastText" variant='h1' marginTop={"20px"} marginBottom={"10px"} > 
+        Inbox 
+      </Typography>
+
       {!(selectedConversation && isMobile) && (
         <Grid
-          width={wide ? '250px' : totalUnReadCounter !== 0 ? '70px' : '50px'}
+          // width={wide ? '100%' : totalUnReadCounter !== 0 ? '70px' : '50px'}
           height="100%"
           item
           container

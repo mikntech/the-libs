@@ -24,7 +24,7 @@ export const useIsNight = () => {
     calculateIsNight().then((isNight) => setIsNight(isNight));
   }, []);
 
-  return isNight;
+  return isNight;;
 };
 
 export const useThemeForMVP = () => {

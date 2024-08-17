@@ -212,3 +212,17 @@ export const OFAB = (props: FabProps & { isGuest?: boolean }) => {
     </Fab>
   );
 };
+
+export const extactNameInitials = (name: string) => {
+  const names = name.split(' ');
+  let initals=''
+  if (names.length > 1)
+  {
+    initals= names[0][0] + names[1][0];
+  }
+  else
+  {
+    initals= names[0][0]
+  }
+  return initals;
+}
