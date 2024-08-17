@@ -1,7 +1,13 @@
-import { getModel } from '@base-shared';
+import { getModel } from '@base-backend';
 import { StripeEvent } from '../../types';
+import { baseEvent } from '../abstract';
 
 export const stripeEvent = () =>
-  getModel<StripeEvent>('stripeEvent', {
-    stripeEvent: { type: String, required: true },
-  });
+  getModel<StripeEvent>(
+    'stripeEvent',
+    {
+      ...baseEvent,
+      stringifiedStripeEvent: { type: String, required: true },
+    },
+    { extraIndexs: [{ fields: { createdAt: 1 } }] },
+  );

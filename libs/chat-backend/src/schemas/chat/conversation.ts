@@ -1,4 +1,4 @@
-import { getModel } from '@base-shared';
+import { getModel } from '@base-backend';
 import { Conversation } from '../../types/chat';
 
 export const conversation = (side1Name: string, side2Name: string) =>

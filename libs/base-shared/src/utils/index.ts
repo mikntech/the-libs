@@ -1,5 +1,8 @@
 import { Address, TODO } from '../types';
 
+export const JSONParseWithType = <I>(theString: string & { __type__: I }) =>
+  JSON.parse(theString) as I;
+
 export const format = (str: string): string =>
   str
     .replace(/([a-z])([A-Z])/g, '$1 $2')

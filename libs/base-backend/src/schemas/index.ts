@@ -1,15 +1,21 @@
+import { WatchDB } from '../watch';
+
 export * from './logs/errorLog';
 
-import mongoose from 'mongoose';
+import mongoose, {
+  IndexDefinition,
+  IndexOptions,
+  Model,
+  Schema,
+} from 'mongoose';
 import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
-import { TODO } from '../types';
+import { TODO } from '@base-shared';
 
 const connection: { instance?: mongoose.Connection } = {};
 
 export const connect = async <SE = string>(
   mongoURI: string,
   stagingEnv: SE = 'production' as SE,
-  watchDB?: () => void,
   logMongoToConsole: boolean = true,
 ) => {
   stagingEnv === 'local' && mongoose.set('debug', logMongoToConsole);
@@ -17,7 +23,7 @@ export const connect = async <SE = string>(
     await mongoose.connect(mongoURI);
     console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
-    watchDB && watchDB();
+    WatchDB.start();
   } catch (err) {
     console.log('mongo connection error:' + err);
     throw new Error(String(err));
@@ -38,11 +44,16 @@ const initModel = <Interface>(
   );
 };
 
+interface Optional<T> {
+  chainToSchema?: { name: TODO; params: TODO[] }[];
+  extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
+  pres?: ((schema: Schema) => (model: Model<T>) => Schema)[];
+}
+
 export const getModel = <Interface>(
   name: string,
   schemaDefinition: mongoose.SchemaDefinition,
-  chainToSchema: { name: TODO; params: TODO[] }[] = [],
-  extraIndex = undefined,
+  { chainToSchema, extraIndexs, pres }: Optional<Interface> = {},
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
   let model: mongoose.Model<Interface>;
@@ -50,14 +61,24 @@ export const getModel = <Interface>(
     timestamps: true,
   });
   type CHAINABLE = unknown;
-  chainToSchema.forEach(({ name, params }) =>
+  chainToSchema?.forEach(({ name, params }) =>
     (schema as CHAINABLE as TODO)[name](...params),
   );
-  extraIndex && schema.index(extraIndex);
+  extraIndexs?.forEach((extraIndex) =>
+    schema.index(extraIndex.fields, extraIndex.options),
+  );
+
+  const funcs = pres?.map((fnc) => fnc(schema));
+
   if (mongoose.models[name]) {
     model = connection.instance.model<Interface>(name);
   } else {
     model = initModel(connection, name, schema);
   }
+
+  funcs?.map((fnc) => {
+    model = initModel(connection, name, fnc(model));
+  });
+
   return model;
 };

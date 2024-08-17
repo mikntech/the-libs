@@ -10,27 +10,24 @@ interface Layer {
   regexp?: { source: string };
 }
 
-const extractRoutes = (layers?: Layer[], basePath: string = ''): string[] => {
-  return (
-    layers?.flatMap((layer) => {
-      if (layer.route) {
-        const methods = Object.keys(layer.route.methods)
-          .filter((method) => layer.route?.methods?.[method])
-          .map((method) => method.toUpperCase())
-          .join(', ');
-        return [`${methods} ${basePath}${layer.route.path}`];
-      } else if (layer.handle && layer.regexp) {
-        const routePath = formatRoutePath(layer.regexp.source);
-        return extractRoutes(layer.handle.stack, `${basePath}${routePath}`);
-      } else {
-        return [];
-      }
-    }) ?? []
-  );
-};
+const extractRoutes = (layers?: Layer[], basePath: string = ''): string[] =>
+  layers?.flatMap((layer) => {
+    if (layer.route) {
+      const methods = Object.keys(layer.route.methods)
+        .filter((method) => layer.route?.methods?.[method])
+        .map((method) => method.toUpperCase())
+        .join(', ');
+      return [`${methods} ${basePath}${layer.route.path}`];
+    } else if (layer.handle && layer.regexp) {
+      const routePath = formatRoutePath(layer.regexp.source);
+      return extractRoutes(layer.handle.stack, `${basePath}${routePath}`);
+    } else {
+      return [];
+    }
+  }) ?? [];
 
-const formatRoutePath = (source: string): string => {
-  return source
+const formatRoutePath = (source: string): string =>
+  source
     .replace(/^\^\\/, '') // Remove the leading ^\ which marks the start of the string
     .replace(/\\\/\?\$?/g, '') // Remove optional trailing slash
     .replace(/\(\?\:.*?\)/g, '') // Remove non-capturing groups
@@ -38,7 +35,6 @@ const formatRoutePath = (source: string): string => {
     .replace(/\?/g, '') // Remove remaining ? used for optional characters
     .replace(/\\/g, '') // Remove backslashes used for escaping
     .replace(/\/+$/, ''); // Remove any trailing slashes
-};
 
 const filterRoutes = (routes: string[], filter: string): string[] => {
   return routes.filter((route) => {

@@ -1,8 +1,8 @@
-import { Document, Types } from 'mongoose';
+import { Stripe } from 'stripe';
+import { BaseEvent } from '../';
 
-export interface StripeEvent extends Document {
-  _id: Types.ObjectId;
-  stripeEvent: string;
-  createdAt: Date;
-  updatedAt: Date;
+export type RawStripeEvent = Stripe.Event;
+
+export interface StripeEvent extends BaseEvent {
+  stringifiedStripeEvent: string & { __type__: RawStripeEvent };
 }

@@ -1,3 +1,5 @@
+import { errorLog } from '../../schemas';
+
 export * from './middlewares';
 export * from './routes';
 
@@ -7,14 +9,14 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 import { json, Router, urlencoded } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
-import { errorLog, TODO } from '@base-shared';
+import { TODO } from '@base-shared';
 
 const { version: Version } = require(
   path.join(__dirname, '..', '..', '..', 'package.json'),
 );
 const express = require('express');
 
-const app = express();
+export const expressApp = express();
 
 export const setup = async <CB extends { [s: string]: string }>(
   apiRouter: Router,
@@ -22,7 +24,6 @@ export const setup = async <CB extends { [s: string]: string }>(
   postMiddlewares: Function[] = [],
 ) => {
   console.log('Starting Server...');
-
   const { port, clientDomains, stagingEnv } = getBaseSettings<CB>();
 
   const defaultPreMiddlewares = [
@@ -41,7 +42,7 @@ export const setup = async <CB extends { [s: string]: string }>(
 
   try {
     [...defaultPreMiddlewares, ...preMiddlewares].forEach((middleware: TODO) =>
-      app.use(middleware),
+      expressApp.use(middleware),
     );
 
     const statusEndpointHandler = (_: TODO, res: TODO) =>
@@ -52,17 +53,17 @@ export const setup = async <CB extends { [s: string]: string }>(
         message: 'call "/api" to start',
       });
 
-    app.get('/', statusEndpointHandler);
+    expressApp.get('/', statusEndpointHandler);
 
-    app.use('/api', apiRouter);
+    expressApp.use('/api', apiRouter);
 
-    getBaseSettings().stagingEnv !== 'prod' && app.use(autoHelper);
+    getBaseSettings().stagingEnv !== 'prod' && expressApp.use(autoHelper);
 
     [...defaultPostMiddlewares, ...postMiddlewares].forEach(
-      (middleware: TODO) => app.use(middleware),
+      (middleware: TODO) => expressApp.use(middleware),
     );
 
-    app.listen(port, '0.0.0.0', () => {
+    expressApp.listen(port, '0.0.0.0', () => {
       console.log('Server is ready at ' + getBaseSettings().myDomain);
     });
   } catch (e) {

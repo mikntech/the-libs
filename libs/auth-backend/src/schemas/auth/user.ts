@@ -1,6 +1,7 @@
-import { getModel, SomeEnum } from '@base-shared';
-import { userBasicSchema } from '../../abstract';
+import { SomeEnum } from '@base-shared';
+import { userBasicSchema } from './abstract';
 import { User } from '../../types';
+import { getModel } from '@base-backend';
 
 export const user = <
   NameRequired extends boolean = false,

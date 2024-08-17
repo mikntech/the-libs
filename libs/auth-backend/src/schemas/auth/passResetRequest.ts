@@ -1,6 +1,6 @@
-import { getModel } from '@base-shared';
+import { getModel } from '@base-backend';
 import { SomeRequest } from '../../types';
-import { requestBasicSchema } from '../../abstract';
+import { requestBasicSchema } from '.';
 
 export const passResetRequest = (userTypeRelevant: boolean = false) =>
   getModel<SomeRequest<true>>(

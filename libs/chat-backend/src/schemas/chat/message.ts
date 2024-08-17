@@ -1,4 +1,4 @@
-import { getModel } from '@base-shared';
+import { getModel } from '@base-backend';
 import { Message } from '../../types/chat';
 
 export const message = () =>
