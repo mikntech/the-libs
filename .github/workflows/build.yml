@@ -47,4 +47,5 @@ jobs:
           npx nx build chat-backend
           npx nx build email-backend
           npx nx build payments-backend
+          npx nx build redis-backend
           npx nx build s3-backend
