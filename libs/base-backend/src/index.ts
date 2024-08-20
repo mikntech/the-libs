@@ -1,15 +1,15 @@
+import { startExpress } from './api';
+
+export * from './api/express';
 export * from './config';
 export * from './controllers';
-export * from './schemas';
-export * from './services';
-export * from './watch';
+export * from './db/mongo';
 
-import { setup } from './services';
 import { Router } from 'express';
 import { getBaseSettings } from './config';
-import { connect } from './schemas';
+import { connect } from './db/mongo';
 
-export const start = <CB extends { [s: string]: string }>(
+export const startMongoAndExpress = <CB extends { [s: string]: string }>(
   apiRouter = Router(),
   preMiddlewares: Function[] = [],
   postMiddlewares: Function[] = [],
@@ -22,7 +22,7 @@ export const start = <CB extends { [s: string]: string }>(
     logMongoToConsole,
   )
     .then(() =>
-      setup<CB>(apiRouter, preMiddlewares, postMiddlewares).catch((e) =>
+      startExpress<CB>(apiRouter, preMiddlewares, postMiddlewares).catch((e) =>
         console.log(e),
       ),
     )

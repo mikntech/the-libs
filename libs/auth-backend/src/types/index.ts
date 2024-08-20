@@ -1,1 +1,1 @@
-export * from './schemas';
+export * from './db/mongo/schemas';

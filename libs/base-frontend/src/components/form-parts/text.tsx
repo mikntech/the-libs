@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material';
 import { TODO } from '@base-shared';
 import { ChangeEvent } from 'react';
-import { format } from '@base-shared';
+import { formatTextNicely } from '@base-shared';
 
 interface Options {
   label: string;
@@ -34,7 +34,7 @@ export const renderTextField = <T,>(
 
   const options = {
     ...{
-      label: format(finalKey),
+      label: formatTextNicely(finalKey),
       multiline: false,
       number: false,
       customMinRows: 2,

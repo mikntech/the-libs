@@ -1,8 +1,8 @@
-import { Message } from '../../types/chat';
 import { highOrderHandler } from '@base-backend';
 import { TODO } from '@base-shared';
 import { AuthenticatedRequest, User, user } from '@auth-backend';
-import { message } from '../../schemas/chat';
+import { message } from '../../db/mongo/schemas/chat';
+import { Message } from '@chat-backend';
 const pubSubInstance = require('pubsub-js');
 
 export const getLastMessageOfConversation = async (conversationId: string) =>

@@ -1,4 +1,4 @@
-export * from './routes/chat';
+export * from './api/express/routes/chat';
 export * from './controllers/chat';
-export * from './schemas/chat';
-export * from './types/chat';
+export * from './db/mongo/schemas/chat';
+export * from './types/db/mongo/schemas/chat';

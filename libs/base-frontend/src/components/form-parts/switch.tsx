@@ -1,4 +1,12 @@
-import { FormControlLabel, Grid, Switch, Typography } from '@mui/material';
+import {
+  FormControlLabel,
+  Grid,
+  styled,
+  Switch,
+  ToggleButton,
+  toggleButtonClasses,
+  Typography,
+} from '@mui/material';
 import { TODO } from '@base-shared';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 
@@ -8,6 +16,63 @@ interface Options {
   customValue?: boolean;
   disable?: boolean;
 }
+
+export const renderToggleButton = <T,>(
+  formState: T,
+  handleChange: (path: string[], value: string | Date | boolean) => void,
+  path: string[],
+  options: Options,
+) => {
+  let val: TODO = formState;
+
+  path.forEach((key) => {
+    if (val === true || val === false || val === undefined) return;
+    if (Array.isArray(val)) {
+      val = val.includes(key);
+    } else {
+      val = val[key];
+    }
+  });
+
+  const StyledToggleButton = styled(ToggleButton)(({ theme }) => ({
+    [`&.${toggleButtonClasses.root}`]: {
+      borderRadius: '30px',
+      fontFamily: 'Open Sans',
+      fontSize: '12px',
+      lineHeight: '20px',
+      fontWeight: '600',
+      letterSpacing: '0.1px',
+      fontStyle: 'normal',
+      paddingBlock: '8px',
+      paddingInline: '10.5px',
+      backgroundColor: '#76777A',
+    },
+    [`&.${toggleButtonClasses.selected}`]: {
+      backgroundColor: '#005FAF',
+    },
+  }));
+
+  const value = options.customValue === undefined ? !!val : options.customValue;
+  return (
+    <StyledToggleButton
+      value={path[path.length - 1]}
+      selected={options?.negative ? !value : value}
+      onChange={(e: TODO) => {
+        handleChange(
+          path,
+          options?.negative
+            ? e.target.ariaPressed === 'true'
+            : e.target.ariaPressed !== 'true',
+        );
+      }}
+    >
+      <span>
+        {(value ? options?.label?.truthy : options?.label?.falsy) ||
+          options?.label?.truthy}
+      </span>
+    </StyledToggleButton>
+  );
+};
 
 export const renderSwitch = <T,>(
   formState: T,

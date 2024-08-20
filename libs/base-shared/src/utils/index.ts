@@ -1,22 +1,12 @@
-import { Address, TODO } from '../types';
+export * from './format-text';
 
-export const JSONParseWithType = <I>(theString: string & { __type__: I }) =>
+import { TODO } from '../types';
+import { formatTextNicely } from './format-text';
+
+export const parseJSONWithType = <I>(theString: string & { __type__: I }) =>
   JSON.parse(theString) as I;
 
-export const format = (str: string): string =>
-  str
-    .replace(/([a-z])([A-Z])/g, '$1 $2')
-    .replace(/_/g, ' ')
-    .toLowerCase()
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
-
-export const formatAddress = (address: Address) =>
-  Object.keys(address)
-    .filter((name) => name !== '_id')
-    .map((key) => (address ? address[key as keyof typeof address] : []))
-    .join(', ');
-
-const looksLikeDate = (str: string): boolean => {
+const doesLooksLikeDate = (str: string): boolean => {
   // Regular expression to match common date formats (e.g., YYYY-MM-DD, MM/DD/YYYY)
   const datePattern = /^(?:\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4})$/;
   return datePattern.test(str);
@@ -28,13 +18,13 @@ export const guessValueType = (item: TODO) =>
       ? 'Yes'
       : 'No'
     : typeof item === 'string'
-      ? looksLikeDate(item) &&
+      ? doesLooksLikeDate(item) &&
         !isNaN(Date.parse(item)) &&
         new Date(item).getFullYear() !== 2001
         ? new Date(item).toString()
-        : format(item)
+        : formatTextNicely(item)
       : item instanceof Date
         ? item.toLocaleDateString()
         : typeof item === 'object' && item !== null
           ? JSON.stringify(item)
-          : format(String(item));
+          : formatTextNicely(String(item));

@@ -1,1 +1,1 @@
-export * from './routes/autodesk';
+export * from './api/express/routes/autodesk';
