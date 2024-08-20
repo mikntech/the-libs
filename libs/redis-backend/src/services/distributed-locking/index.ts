@@ -1,8 +1,7 @@
-import { RedisType } from '../redis-client';
-import { TODO } from '@base-shared';
+import { Redis } from 'ioredis';
 
-export const runSingleTask = <CBR = any>(
-  redis: RedisType,
+export const runTask = <CBR = any>(
+  redis: Redis,
   LOCK_KEY: string,
   LOCK_TIMEOUT: number,
   task: (...args: any) => CBR,
