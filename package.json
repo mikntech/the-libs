@@ -50,7 +50,7 @@
     "stripe": "^16.8.0",
     "uuid": "^10.0.0",
     "vite": "^5.4.1",
-    "vite-plugin-dts": "~4.0.3",
+    "vite-plugin-dts": "~3.9.1",
     "vitest": "^2.0.5",
     "zxcvbn": "^4.4.2"
   },
