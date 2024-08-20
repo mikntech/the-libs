@@ -1,4 +1,15 @@
 import RedisClientClass from 'ioredis';
 import { redisSettings } from '../..';
 
-export const redisClient = new RedisClientClass(redisSettings.uri);
+export type RedisType = RedisClientClass;
+
+export const createRedisInstance = () => {
+  try {
+    return new RedisClientClass(redisSettings.uri);
+  } catch (e) {
+    console.log(e);
+  }
+  return null;
+};
+
+export const redisClient = createRedisInstance();

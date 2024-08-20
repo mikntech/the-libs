@@ -3,7 +3,7 @@ import { TODO } from '@base-shared';
 import { AuthenticatedRequest, User, user } from '@auth-backend';
 import { message } from '../../db/mongo/schemas/chat';
 import { Message } from '@chat-backend';
-const pubSubInstance = require('pubsub-js');
+import { subscriber } from '@redis-backend';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
@@ -45,12 +45,14 @@ export const getNumberOfUnreadMessagesInConversation = async (
 export const subscribeHandler = () =>
   highOrderHandler(
     async (req: AuthenticatedRequest, write) => {
-      const token = pubSubInstance.subscribe('chats', (_: TODO, data: TODO) =>
-        write(`data: ${JSON.stringify({ message: data })}\n\n`),
-      );
+      const token = (await subscriber.subscribe(
+        'chats',
+        (_: TODO, data: TODO) =>
+          write(`data: ${JSON.stringify({ message: data })}\n\n`),
+      )) as string;
 
       req.on('close', () => {
-        pubSubInstance.unsubscribe(token);
+        subscriber.unsubscribe(token);
       });
     },
     [
