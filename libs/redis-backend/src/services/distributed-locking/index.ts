@@ -1,7 +1,8 @@
-import { Redis } from 'ioredis';
+import { RedisType } from '../redis-client';
+import { TODO } from '@base-shared';
 
 export const runTask = <CBR = any>(
-  redis: Redis,
+  redis: RedisType,
   LOCK_KEY: string,
   LOCK_TIMEOUT: number,
   task: (...args: any) => CBR,
@@ -11,9 +12,9 @@ export const runTask = <CBR = any>(
     const result = await redis.set(
       LOCK_KEY,
       'locked',
-      'NX',
-      'EX',
-      LOCK_TIMEOUT,
+      'NX' as TODO,
+      'EX' as TODO,
+      LOCK_TIMEOUT as TODO,
     );
     return result === 'OK';
   };
