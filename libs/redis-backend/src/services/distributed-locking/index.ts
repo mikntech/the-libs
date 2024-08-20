@@ -1,7 +1,7 @@
 import { RedisType } from '../redis-client';
 import { TODO } from '@base-shared';
 
-export const doSingleTime = <CBR = any>(
+export const runSingleTask = <CBR = any>(
   redis: RedisType,
   LOCK_KEY: string,
   LOCK_TIMEOUT: number,
@@ -12,16 +12,16 @@ export const doSingleTime = <CBR = any>(
     const result = await redis.set(
       LOCK_KEY,
       'locked',
-      'NX' as TODO,
-      'EX' as TODO,
-      LOCK_TIMEOUT as TODO,
+      'NX',
+      'EX',
+      LOCK_TIMEOUT,
     );
     return result === 'OK';
   };
 
   const releaseLock = async () => redis.del(LOCK_KEY);
 
-  const runPeriodicTask = async () => {
+  const runTask = async () => {
     const lockAcquired = await acquireLock();
     if (!lockAcquired) {
       console.log('Another instance is already running the task.');
@@ -38,7 +38,5 @@ export const doSingleTime = <CBR = any>(
     return ret;
   };
 
-  interval
-    ? setInterval(runPeriodicTask, interval)
-    : setTimeout(runPeriodicTask, 0);
+  interval ? setInterval(runTask, interval) : setTimeout(runTask, 0);
 };
