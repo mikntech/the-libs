@@ -29,8 +29,10 @@ const Balloon = styled(Typography, {
   wordWrap: 'break-word', // Ensures text wraps within the balloon
   alignSelf: isMe === 'yes' ? 'flex-end' : 'flex-start',
   boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)',
-  margin: '5px 0',
+  margin: '10px 0',
+  display: 'flex',
   flex: '0 0 auto',
+  position: 'relative',
   '&:after': {
     content: read === 'yes' ? '"\\2713\\2713"' : '""',
     display: read === 'yes' ? 'block' : 'none',
@@ -41,10 +43,14 @@ const Balloon = styled(Typography, {
   },
 }));
 
+
 interface MessageRowProps {
   message: Message;
   tenum: { admin: string };
 }
+const formatDate = (date: string): string => {
+  return new Date(date).toLocaleTimeString("en-GB",{ hour: "2-digit", minute: "2-digit" })
+};
 
 const MessageRow = ({ message, tenum }: MessageRowProps) => {
   const { user } = useContext(AuthContext);
@@ -55,10 +61,29 @@ const MessageRow = ({ message, tenum }: MessageRowProps) => {
         {String(user?._id) === message.ownerId && (
           <Balloon read={message.whenQueried ? 'yes' : 'no'} isMe="yes">
             {message.message}
+            <Typography sx={{ width:"42px",
+                            height:"20px",
+                            position: 'absolute',
+                            bottom: "-20px",
+                            right: "5px"
+                           }}>
+              {formatDate(message.createdAt as any)}
+              </Typography>
           </Balloon>
         )}
         {String(user?._id) !== message.ownerId && (
-          <Balloon>{message.message}</Balloon>
+          // <Box>
+          <Balloon>{message.message}
+          <Typography sx={{ width:"42px",
+                            height:"20px",
+                            position: 'absolute',
+                            bottom: "-20px",
+                            left: "0px"}}>
+            {formatDate(message.createdAt as any)}
+            </Typography>
+          </Balloon>
+        
+          // </Box>
         )}
       </Box>
     </Container>

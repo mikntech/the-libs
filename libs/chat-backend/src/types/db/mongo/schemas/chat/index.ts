@@ -3,15 +3,18 @@ import { Document as MDocument, Types } from 'mongoose';
 export type Conversation<
   side1Name extends string = 'side1',
   side2Name extends string = 'side2',
-> = MDocument<Types.ObjectId> & {
+> = MDocument & {
   [key in side1Name]: string;
 } & {
   [key in side2Name]: string;
 } & {
+  _id: Types.ObjectId;
   name: string;
   hiddenFor?: string[];
   lastMessage?: Message;
   unReadNumber: number;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 export interface Message extends MDocument {
@@ -22,4 +25,5 @@ export interface Message extends MDocument {
   whenQueried?: number;
   whenMarked?: number;
   createdAt: Date;
+  updatedAt: Date;
 }

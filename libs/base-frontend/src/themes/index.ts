@@ -5,12 +5,12 @@ import { findMe, getSunTimes } from '../utils';
 export const backGroundColor = '#FFFFFF';
 export const themeColor = '#005FAF';
 
-export const useIsNight = () => {
+export const useIsNight = (disableDarkMode = false) => {
   const calculateIsNight = async () => {
     const todayat6 = new Date(Date.now()).setHours(6, 0, 0, 0);
     const todayat18 = new Date(Date.now()).setHours(18, 0, 0, 0);
     const sunTimes = await getSunTimes(await findMe());
-    return window.matchMedia
+    return !disableDarkMode && window.matchMedia
       ? window.matchMedia('(prefers-color-scheme: dark)').matches
       : new Date().getTime() <
           (sunTimes?.sunrise?.getTime
@@ -24,11 +24,11 @@ export const useIsNight = () => {
     calculateIsNight().then((isNight) => setIsNight(isNight));
   }, []);
 
-  return isNight;;
+  return isNight;
 };
 
-export const useThemeForMVP = () => {
-  const isNight = useIsNight();
+export const useThemeForMVP = (disableDarkMode = false) => {
+  const isNight = useIsNight(disableDarkMode);
   const theme = useMemo(
     () =>
       ({

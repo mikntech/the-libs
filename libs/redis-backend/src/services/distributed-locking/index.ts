@@ -1,7 +1,7 @@
 import { RedisType } from '../redis-client';
 import { TODO } from '@base-shared';
 
-export const runTask = <CBR = any>(
+export const runTaskWithLock = <CBR = any>(
   redis: RedisType,
   LOCK_KEY: string,
   LOCK_TIMEOUT: number,

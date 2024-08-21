@@ -5,6 +5,7 @@ import {
   IconButton,
   TextField,
   Typography,
+  Avatar,
 } from '@mui/material';
 import MessageRow from './MessageRow';
 import {
@@ -25,13 +26,14 @@ import { Conversation, Message } from '@chat-backend';
 import { TODO } from '@base-shared';
 import { useResponsiveness, useSubscribe } from '../../../../hooks';
 import { axiosErrorToaster } from '../../../../utils';
+import { extactNameInitials } from '../../../../utils/index';
 
 interface ConversationViewProps {
   conversation: Conversation;
   setSelectedConversation: Dispatch<SetStateAction<Conversation | undefined>>;
   domain: string;
   tenum: { admin: string };
-  isGuest?: boolean;
+  isMobillized?: boolean;
   PrimaryText?: FC<TODO>;
   Btn?: FC<TODO>;
 }
@@ -54,7 +56,7 @@ export const sendMessage = (
 const ConversationView = ({
   conversation,
   setSelectedConversation,
-  isGuest,
+  isMobillized,
   domain,
   tenum,
   PrimaryText = Typography,
@@ -93,27 +95,74 @@ const ConversationView = ({
     messagesEndRef.current && setScrolled(false);
   }, [messages, scrolled, res]);
 
-  const { isMobile } = useResponsiveness(!!isGuest);
+  const formatDate = (date: string): string => {
+    return new Date(date)
+      .toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+      })
+      .toUpperCase();
+  };
+
+  const renderMessages = () => {
+    let lastMessageDate: string | null = null;
+
+    return (
+      messages?.map((message, i) => {
+        const formattedDate = formatDate(message.createdAt as any);
+        const shouldRenderDate = lastMessageDate !== formattedDate;
+
+        if (shouldRenderDate) {
+          lastMessageDate = formattedDate;
+        }
+
+        return (
+          <Box key={i} ref={i === messages.length - 1 ? messagesEndRef : null}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', my: '4px' }}>
+              {shouldRenderDate && (
+                <Typography color="secondary.contrastText">
+                  {formattedDate}
+                </Typography>
+              )}
+            </Box>
+            <MessageRow
+              key={message._id?.toString()}
+              message={message}
+              tenum={tenum}
+            />
+          </Box>
+        );
+      }) || <PrimaryText padded>Loading Messages...</PrimaryText>
+    );
+  };
+
+  const { isMobile } = useResponsiveness(!!isMobillized);
 
   return (
     <>
-      {isMobile && (
-        <Grid
-          width="100%"
-          height="50px"
-          container
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Grid item>
-            <IconButton onClick={() => setSelectedConversation(undefined)}>
-              <ArrowBackIosOutlined />
-            </IconButton>
-          </Grid>
-          <Grid item></Grid>
-          <Grid item></Grid>
+      <Grid
+        width="100%"
+        height="50px"
+        container
+        justifyContent="space-between"
+        alignItems="center"
+        marginBottom={4}
+      >
+        <Grid item>
+          <IconButton onClick={() => setSelectedConversation(undefined)}>
+            <ArrowBackIosOutlined />
+          </IconButton>
         </Grid>
-      )}
+        <Grid item>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Avatar>{extactNameInitials(conversation.name)} </Avatar>
+            <Typography color="primary.contrastText" fontWeight={700}>
+              {conversation.name}
+            </Typography>
+          </Box>
+        </Grid>
+        <Grid item></Grid>
+      </Grid>
       <Grid
         container
         width="100%"
@@ -121,7 +170,8 @@ const ConversationView = ({
         justifyContent="space-between"
       >
         <Grid item width="100%" height="calc(100% - 80px)" overflow="scroll">
-          {messages?.map((message, i) => (
+          {renderMessages()}
+          {/* {messages?.map((message, i) => (
             <Box
               key={i}
               ref={i === messages.length - 1 ? messagesEndRef : null}
@@ -132,7 +182,7 @@ const ConversationView = ({
                 tenum={tenum}
               />
             </Box>
-          )) || <PrimaryText padded>Loading Messages...</PrimaryText>}
+          )) || <PrimaryText padded>Loading Messages...</PrimaryText>} */}
         </Grid>
         <Grid
           item

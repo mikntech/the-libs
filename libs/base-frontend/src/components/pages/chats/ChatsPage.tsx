@@ -12,12 +12,12 @@ import SendMessageForm from '../../forms/SendMessageForm';
 import { TODO } from '@base-shared';
 import { Conversation } from '@chat-backend';
 
-
 interface ChatsPageProps {
-  isGuest?: boolean;
+  isMobillized?: boolean;
   PrimaryText?: TODO;
   tenum: { guest: string; host: string; admin: string };
   domain: string;
+  disableDarkMode?: boolean;
   customComponents?: {
     Btn?: TODO;
     PrimaryText?: TODO;
@@ -26,10 +26,11 @@ interface ChatsPageProps {
 }
 
 export const ChatsPage = ({
-  isGuest,
+  isMobillized,
   PrimaryText = Typography,
   tenum,
   domain,
+  disableDarkMode,
   customComponents = {
     Btn: Button,
     PrimaryText: Typography,
@@ -44,7 +45,7 @@ export const ChatsPage = ({
     useState<Conversation>();
   const { conversations, totalUnReadCounter } = useContext(ChatContext);
 
-  const { isMobile } = useResponsiveness(!!isGuest);
+  const { isMobile } = useResponsiveness(!!isMobillized);
 
   const [open, setOpen] = useState<boolean>(true);
 
@@ -60,7 +61,6 @@ export const ChatsPage = ({
       [location.search],
     );
   };
-
 
   const server = useContext(ServerContext);
 
@@ -95,12 +95,26 @@ export const ChatsPage = ({
       customComponents={customComponents}
     />
   ) : (
-    <Grid width={'auto'}  height="100%" marginX="10px" container wrap="nowrap" flexDirection={'column'}>
-      <Typography color="primary.contrastText" variant='h1' marginTop={"20px"} marginBottom={"10px"} > 
-        Inbox 
-      </Typography>
+    <Grid
+      width={'auto'}
+      height="100%"
+      marginX="10px"
+      container
+      wrap="nowrap"
+      flexDirection={'column'}
+    >
+      {!selectedConversation && (
+        <Typography
+          color="primary.contrastText"
+          variant="h1"
+          marginTop={'20px'}
+          marginBottom={'10px'}
+        >
+          Inbox
+        </Typography>
+      )}
 
-      {!(selectedConversation && isMobile) && (
+      {!selectedConversation && (
         <Grid
           // width={wide ? '100%' : totalUnReadCounter !== 0 ? '70px' : '50px'}
           height="100%"
@@ -122,10 +136,9 @@ export const ChatsPage = ({
                   key={conversation._id?.toString()}
                   wide={wide}
                   conversation={conversation}
-                  isTheSelectedConversation={
-                    conversation._id === selectedConversation?._id
-                  }
+                  isTheSelectedConversation={false}
                   setSelectedConversation={setSelectedConversation}
+                  disableDarkMode
                 />
               </Grid>
             ))
@@ -147,7 +160,7 @@ export const ChatsPage = ({
           <ConversationView
             conversation={selectedConversation}
             setSelectedConversation={setSelectedConversation}
-            isGuest={isGuest}
+            isMobillized={isMobillized}
             domain={domain}
             tenum={tenum}
           />

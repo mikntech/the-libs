@@ -63,6 +63,7 @@ interface AuthPageProps<UserType> {
   dayLogoTextOnly: string;
   tenum: TODO;
   client: UserType;
+  disableDarkMode?: boolean;
   customComponents?: {
     Btn?: TODO;
     PrimaryText?: TODO;
@@ -76,6 +77,7 @@ export const AuthPage = <UserType,>({
   dayLogoTextOnly,
   tenum,
   client,
+  disableDarkMode,
   customComponents = {
     Btn: Button,
     PrimaryText: Typography,
@@ -402,7 +404,7 @@ export const AuthPage = <UserType,>({
     );
   };
 
-  const isNight = useIsNight();
+  const isNight = useIsNight(disableDarkMode);
 
   const handleLoginSuccess = (googleUser: TODO) => {
     const profile = googleUser.getBasicProfile();

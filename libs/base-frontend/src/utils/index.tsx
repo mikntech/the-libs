@@ -197,8 +197,8 @@ export const IconColorer = ({ children }: TODO) => {
   return styledChild;
 };
 
-export const OFAB = (props: FabProps & { isGuest?: boolean }) => {
-  const { isMobileOrTabl } = useResponsiveness(!!props.isGuest);
+export const OFAB = (props: FabProps & { isMobillized?: boolean }) => {
+  const { isMobileOrTabl } = useResponsiveness(!!props.isMobillized);
   return (
     <Fab
       sx={{
@@ -215,14 +215,11 @@ export const OFAB = (props: FabProps & { isGuest?: boolean }) => {
 
 export const extactNameInitials = (name: string) => {
   const names = name.split(' ');
-  let initals=''
-  if (names.length > 1)
-  {
-    initals= names[0][0] + names[1][0];
-  }
-  else
-  {
-    initals= names[0][0]
+  let initals = '';
+  if (names.length > 1) {
+    initals = names[0][0] + names[1][0];
+  } else {
+    initals = names[0][0];
   }
   return initals;
-}
+};
