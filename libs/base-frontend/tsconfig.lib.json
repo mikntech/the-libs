@@ -1,19 +1,28 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
+    "module": "ES2020",
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false,
     "sourceMap": true,
     "outDir": "../../dist/libs/base-frontend",
-    "strict": true,
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "types": [
+      "node",
+      "@nx/react/typings/cssmodule.d.ts",
+      "@nx/react/typings/image.d.ts",
+      "vite/client"
+    ]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist"]
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/*.spec.tsx",
+    "**/*.test.tsx",
+    "**/*.spec.js",
+    "**/*.test.js",
+    "**/*.spec.jsx",
+    "**/*.test.jsx"
+  ],
+  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }
