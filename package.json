@@ -1,6 +1,6 @@
 {
   "name": "the-libs",
-  "version": "1.0.83",
+  "version": "1.0.84",
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
   "main": "index.js",
   "scripts": {
