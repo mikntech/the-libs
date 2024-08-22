@@ -9,7 +9,7 @@
     "sync-versions": "node sync-version-script.js",
     "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
     "postbuild": "for d in dist/libs/*/ ; do mv dist/libs/$(basename $d)/libs/$(basename $d)/* dist/libs/$(basename $d)/ && rm -rf dist/libs/$(basename $d)/libs ; done",
-    "publish-all": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish) ; done",
+    "publish-all": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish --access public) ; done",
     "build-and-publish": "npm i && npm run sync-versions && npm run build && npm run postbuild && npm run publish-all"
   },
   "repository": {
