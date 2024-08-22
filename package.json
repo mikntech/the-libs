@@ -1,14 +1,12 @@
 {
   "name": "the-libs",
-  "version": "1.0.82",
+  "version": "1.0.83",
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf node_modules dist tmp package-lock.json ./.nx",
     "x": "mv dist/libs/auth-backend/libs/auth-backend/* dist/libs/auth-backend/ && rm -rf dist/libs/auth-backend/libs",
     "update": "npx npm-check-updates -u"
-    
-
   },
   "repository": {
     "type": "git",
