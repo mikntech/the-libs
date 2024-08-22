@@ -3,16 +3,35 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth-backend/src",
   "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/auth-backend",
-        "main": "libs/auth-backend/src/index.ts",
         "tsConfig": "libs/auth-backend/tsconfig.lib.json",
-        "assets": ["auth-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/auth-backend/package.json",
+        "entryFile": "libs/auth-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/auth-backend/src",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
       }
     }
   },

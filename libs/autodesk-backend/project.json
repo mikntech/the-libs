@@ -3,6 +3,14 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/autodesk-backend/src",
   "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
@@ -13,6 +21,11 @@
         "tsConfig": "libs/autodesk-backend/tsconfig.lib.json",
         "assets": ["autodesk-backend/*.md"],
         "format": ["cjs"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
       }
     }
   },

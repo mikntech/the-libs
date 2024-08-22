@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "clean": "rm -rf node_modules dist tmp package-lock.json ./.nx",
+    "x": "mv dist/libs/auth-backend/libs/auth-backend/* dist/libs/auth-backend/ && rm -rf dist/libs/auth-backend/libs",
     "update": "npx npm-check-updates -u"
+    
+
   },
   "repository": {
     "type": "git",
