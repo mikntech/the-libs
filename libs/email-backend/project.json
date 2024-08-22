@@ -11,17 +11,22 @@
       }
     }
   },
-  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/email-backend",
-        "main": "libs/email-backend/src/index.ts",
         "tsConfig": "libs/email-backend/tsconfig.lib.json",
-        "assets": ["libs/email-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/email-backend/package.json",
+        "entryFile": "libs/email-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/email-backend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {
@@ -29,5 +34,6 @@
         "packageRoot": "dist/{projectRoot}"
       }
     }
-  }
+  },
+  "tags": []
 }

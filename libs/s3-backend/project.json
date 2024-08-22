@@ -11,17 +11,22 @@
       }
     }
   },
-  "tags": [],
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/s3-backend",
-        "main": "libs/s3-backend/src/index.ts",
         "tsConfig": "libs/s3-backend/tsconfig.lib.json",
-        "assets": ["libs/s3-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/s3-backend/package.json",
+        "entryFile": "libs/s3-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/s3-backend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {
@@ -29,5 +34,6 @@
         "packageRoot": "dist/{projectRoot}"
       }
     }
-  }
+  },
+  "tags": []
 }

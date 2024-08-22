@@ -17,10 +17,16 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/autodesk-backend",
-        "main": "libs/autodesk-backend/src/index.ts",
         "tsConfig": "libs/autodesk-backend/tsconfig.lib.json",
-        "assets": ["autodesk-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/autodesk-backend/package.json",
+        "entryFile": "libs/autodesk-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/autodesk-backend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {

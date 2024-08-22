@@ -17,10 +17,16 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/payments-backend",
-        "main": "libs/payments-backend/src/index.ts",
         "tsConfig": "libs/payments-backend/tsconfig.lib.json",
-        "assets": ["payments-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/payments-backend/package.json",
+        "entryFile": "libs/payments-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/payments-backend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {

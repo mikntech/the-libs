@@ -17,10 +17,16 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/base-backend",
-        "main": "libs/base-backend/src/index.ts",
         "tsConfig": "libs/base-backend/tsconfig.lib.json",
-        "assets": ["base-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/base-backend/package.json",
+        "entryFile": "libs/base-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/base-backend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {

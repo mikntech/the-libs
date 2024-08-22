@@ -17,10 +17,16 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/base-shared",
-        "main": "libs/base-shared/src/index.ts",
         "tsConfig": "libs/base-shared/tsconfig.lib.json",
-        "assets": ["base-shared/*.md"],
-        "format": ["cjs"]
+        "project": "libs/base-shared/package.json",
+        "entryFile": "libs/base-shared/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/base-shared/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {

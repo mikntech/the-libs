@@ -11,26 +11,22 @@
       }
     }
   },
-  "tags": [],
   "targets": {
-    "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
-    },
     "build": {
-      "executor": "@nx/vite:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/libs/base-frontend"
-      },
-      "configurations": {
-        "development": {
-          "mode": "development"
-        },
-        "production": {
-          "mode": "production"
-        }
+        "outputPath": "dist/libs/base-frontend",
+        "tsConfig": "libs/base-frontend/tsconfig.lib.json",
+        "project": "libs/base-frontend/package.json",
+        "entryFile": "libs/base-frontend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/base-frontend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {
@@ -38,5 +34,6 @@
         "packageRoot": "dist/{projectRoot}"
       }
     }
-  }
+  },
+  "tags": []
 }

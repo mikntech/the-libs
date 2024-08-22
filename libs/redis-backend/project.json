@@ -17,10 +17,16 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/redis-backend",
-        "main": "libs/redis-backend/src/index.ts",
         "tsConfig": "libs/redis-backend/tsconfig.lib.json",
-        "assets": ["redis-backend/*.md"],
-        "format": ["cjs"]
+        "project": "libs/redis-backend/package.json",
+        "entryFile": "libs/redis-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/redis-backend/src",
+            "output": "."
+          }
+        ]
       }
     },
     "nx-release-publish": {

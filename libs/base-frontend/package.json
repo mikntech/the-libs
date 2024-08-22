@@ -1,8 +1,11 @@
 {
-  "name": "mpb",
-  "version": "0.0.1",
+  "name": "@the-libs/base-frontend",
+  "version": "0.0.11",
   "dependencies": {},
   "type": "commonjs",
-  "main": "./index.cjs",
-  "private": true
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
 }
