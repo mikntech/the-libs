@@ -8,7 +8,7 @@
     "update": "npx npm-check-updates -u",
     "sync-versions": "node scripts/sync-versions.js",
     "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
-    "postbuild": "for d in dist/libs/*/ ; do mv \"$d/libs/$(basename $d)/*\" \"$d\" && rm -rf \"$d/libs\" ; done",
+    "postbuild": "for d in dist/libs/*/ ; do mv dist/libs/$(basename $d)/libs/$(basename $d)/* dist/libs/$(basename $d)/ && rm -rf dist/libs/$(basename $d)/libs ; done",
     "publish": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish) ; done",
     "build-and-publish": "npm i && npm run build && npm run publish && npm run publish"
   },
@@ -35,6 +35,7 @@
     "@nx/vite": "^19.6.1",
     "@sendgrid/mail": "^8.1.3",
     "bcryptjs": "^2.4.3",
+    "bull": "^4.16.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dayjs": "^1.11.12",
