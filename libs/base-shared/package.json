@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/base-shared",
-  "version": "1.0.89",
+  "version": "1.0.91",
   "dependencies": {},
   "type": "commonjs",
   "main": "./index.js",
