@@ -9,7 +9,7 @@
     "sync-versions": "node scripts/sync-versions.js"
     "build": "for d in dist/libs/*/ ; do nx build $(basename $d) ; done",
     "postbuild": "for d in dist/libs/*/ ; do mv \"$d/libs/$(basename $d)/*\" \"$d\" && rm -rf \"$d/libs\" ; done",
-    "publish": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish) ; done",
+    "publish": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish) ; done"
   },
   "repository": {
     "type": "git",
