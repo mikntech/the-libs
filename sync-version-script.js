@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const rootPackageJsonPath = path.join(__dirname, '../package.json');
+const rootPackageJsonPath = path.join(__dirname, './package.json');
 const rootPackageJson = require(rootPackageJsonPath);
 const rootVersion = rootPackageJson.version;
 
@@ -10,7 +10,7 @@ if (!rootVersion) {
   process.exit(1);
 }
 
-const libsPath = path.join(__dirname, '../dist/libs');
+const libsPath = path.join(__dirname, './libs');
 
 try {
   const subfolders = fs.readdirSync(libsPath).filter((subfolder) => {
