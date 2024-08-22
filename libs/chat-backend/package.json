@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/chat-backend",
-  "version": "0.0.11",
+  "version": "1.0.89",
   "dependencies": {},
   "type": "commonjs",
   "main": "./index.js",
