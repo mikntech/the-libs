@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/base-backend",
-  "version": "1.0.93",
+  "version": "1.0.95",
   "type": "commonjs",
   "main": "./cjs/index.js",
   "module": "./esm/index.js",
