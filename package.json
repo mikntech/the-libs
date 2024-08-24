@@ -7,10 +7,12 @@
     "clean": "rm -rf node_modules dist tmp package-lock.json ./.nx",
     "update": "npx npm-check-updates -u",
     "sync-versions": "node sync-version-script.js",
-    "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
+    "build:cjs": "for d in libs/*/ ; do nx build:cjs $(basename $d) ; done",
+    "build:esm": "for d in libs/*/ ; do nx build:esm $(basename $d) ; done",
+    "build:all": "npm run build:cjs && npm run build:esm",
     "postbuild": "for d in dist/libs/*/ ; do mv dist/libs/$(basename $d)/libs/$(basename $d)/* dist/libs/$(basename $d)/ && rm -rf dist/libs/$(basename $d)/libs ; done",
     "publish-all": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish --access public) ; done",
-    "build-and-publish": "npm i && npm run sync-versions && npm run build && npm run postbuild && npm run publish-all"
+    "build-and-publish": "npm i && npm run sync-versions && npm run build:all && npm run postbuild && npm run publish-all"
   },
   "repository": {
     "type": "git",
@@ -65,6 +67,7 @@
     "@nx/eslint": "19.6.1",
     "@nx/eslint-plugin": "19.6.1",
     "@nx/js": "19.6.1",
+    "@nx/workspace": "^19.6.2",
     "@swc-node/register": "~1.10.9",
     "@swc/core": "~1.7.14",
     "@swc/helpers": "~0.5.12",

@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/s3-backend",
-  "version": "1.0.91",
+  "version": "1.0.93",
   "dependencies": {},
   "type": "commonjs",
   "main": "./index.js",
