@@ -12,29 +12,12 @@
     }
   },
   "targets": {
-    "build:cjs": {
+    "build": {
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/base-backend/cjs",
-        "tsConfig": "libs/base-backend/tsconfig.cjs.json",
-        "project": "libs/base-backend/package.json",
-        "entryFile": "libs/base-backend/src/index.ts",
-        "assets": [
-          {
-            "glob": "**/*.json",
-            "input": "libs/base-backend/src",
-            "output": "."
-          }
-        ]
-      }
-    },
-    "build:esm": {
-      "executor": "@nx/esbuild:esbuild",
-      "outputs": ["{options.outputPath}"],
-      "options": {
-        "outputPath": "dist/libs/base-backend/esm",
-        "tsConfig": "libs/base-backend/tsconfig.esm.json",
+        "outputPath": "dist/libs/base-backend",
+        "tsConfig": "libs/base-backend/tsconfig.lib.json",
         "project": "libs/base-backend/package.json",
         "entryFile": "libs/base-backend/src/index.ts",
         "assets": [
