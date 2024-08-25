@@ -1,6 +1,6 @@
 {
   "name": "the-libs",
-  "version": "1.0.107",
+  "version": "1.0.115",
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
   "main": "index.js",
   "scripts": {
@@ -60,10 +60,14 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-typescript": "^7.24.7",
     "@nx/esbuild": "19.6.1",
     "@nx/eslint": "19.6.1",
     "@nx/eslint-plugin": "19.6.1",
     "@nx/js": "19.6.1",
+    "@nx/web": "^19.6.2",
     "@swc-node/register": "~1.10.9",
     "@swc/core": "~1.7.14",
     "@swc/helpers": "~0.5.12",
@@ -78,6 +82,7 @@
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
     "@typescript-eslint/parser": "^8.2.0",
+    "babel-cli": "^6.26.0",
     "esbuild": "^0.23.1",
     "eslint": "~9.9.0",
     "eslint-config-prettier": "^9.1.0",

@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import * as process from 'node:process';
+const process = require('process');
 import { getBaseSettings } from '@base-backend';
 
 config();

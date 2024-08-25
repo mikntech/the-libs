@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/auth-backend",
-  "version": "1.0.105",
+  "version": "1.0.111",
   "dependencies": {},
   "type": "commonjs",
   "main": "./index.js",

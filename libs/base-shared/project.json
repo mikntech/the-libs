@@ -27,6 +27,19 @@
             "output": "."
           }
         ]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
+    },
+    "postbuild": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "if [ -d dist/libs/base-shared ]; then babel dist/libs/base-shared --out-dir dist/libs/base-shared --extensions \".js,.ts\"; fi"
+
       }
     },
     "nx-release-publish": {

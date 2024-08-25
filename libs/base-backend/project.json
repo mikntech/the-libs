@@ -27,6 +27,18 @@
             "output": "."
           }
         ]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
+    },
+    "postbuild": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "if [ -d dist/libs/base-backend ]; then babel dist/libs/base-backend --out-dir dist/libs/base-backend --extensions \".js,.ts\"; fi"
       }
     },
     "nx-release-publish": {
