@@ -38,7 +38,7 @@
     "postbuild": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if [ -d dist/libs/base-shared ]; then babel dist/libs/base-shared --out-dir dist/libs/base-shared --extensions \".js,.ts\"; fi"
+        "command": "if [ -d dist/libs/base-backend ]; then babel dist/libs/base-backend --out-dir dist/libs/base-backend --extensions \".js,.ts\" --config-file ./.babelrc; fi"
 
       }
     },
