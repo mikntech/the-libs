@@ -1,6 +1,6 @@
 {
   "name": "the-libs",
-  "version": "1.0.93",
+  "version": "1.0.106",
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
   "main": "index.js",
   "scripts": {
@@ -8,9 +8,8 @@
     "update": "npx npm-check-updates -u",
     "sync-versions": "node sync-version-script.js",
     "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
-    "postbuild": "for d in dist/libs/*/ ; do mv dist/libs/$(basename $d)/libs/$(basename $d)/* dist/libs/$(basename $d)/ && rm -rf dist/libs/$(basename $d)/libs ; done",
     "publish-all": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish --access public) ; done",
-    "build-and-publish": "npm i && npm run sync-versions && npm run build && npm run postbuild && npm run publish-all"
+    "build-and-publish": "npm i && npm run sync-versions && npm run build && npm run publish-all"
   },
   "repository": {
     "type": "git",
