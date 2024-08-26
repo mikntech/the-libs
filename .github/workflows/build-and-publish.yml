@@ -37,5 +37,7 @@ jobs:
           git push git@github.com:${{ github.repository }} HEAD:${{ github.ref_name }}
 
       - name: "build and publish"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_C }}
         run: |
           npm run build-and-publish

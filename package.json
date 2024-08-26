@@ -60,11 +60,6 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@babel/cli": "^7.24.8",
-    "@babel/core": "^7.25.2",
-    "@babel/plugin-transform-modules-commonjs": "^7.24.8",
-    "@babel/preset-env": "^7.25.4",
-    "@babel/preset-typescript": "^7.24.7",
     "@nx/esbuild": "19.6.2",
     "@nx/eslint": "19.6.2",
     "@nx/eslint-plugin": "19.6.2",
@@ -84,6 +79,11 @@
     "@types/zxcvbn": "^4.4.4",
     "@typescript-eslint/eslint-plugin": "^8.2.0",
     "@typescript-eslint/parser": "^8.2.0",
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.24.8",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-typescript": "^7.24.7",
     "babel-cli": "^6.26.0",
     "esbuild": "^0.23.1",
     "eslint": "~9.9.1",
