@@ -50,4 +50,3 @@ jobs:
         run: npm run build-and-publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_C }}
-npmrc
