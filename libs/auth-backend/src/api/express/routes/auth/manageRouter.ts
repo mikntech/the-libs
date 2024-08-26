@@ -19,8 +19,16 @@ export const manageRouter = <
 ) => {
   const router = Router();
 
-  const { requestPasswordReset, resetPassword } =
+  const { requestPasswordReset, resetPassword, updateFullName } =
     genManageControllers(strategy);
+
+  router.put(
+    '/update-name',
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
+      const { newFullName } = req.body;
+      return updateFullName(req.user, req.userType, newFullName);
+    }),
+  );
 
   router.post(
     '/request-password-reset',

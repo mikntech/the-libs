@@ -81,6 +81,16 @@ export const genManageControllers = <
     return generateJWT(user, (user as TODO).userType);
   };
 
+  const changeUsersFullName = async (
+    user: User | null,
+    newFullName: string,
+  ) => {
+    if (!user?.save)
+      throw new Error('a lean doc was passed to changeUsersFullName');
+    user.full_name = newFullName;
+    await user.save();
+  };
+
   const resetPassword = async (
     key: string,
     password: string,
@@ -123,5 +133,23 @@ export const genManageControllers = <
     };
   };
 
-  return { requestPasswordReset, resetPassword };
+  const updateFullName = async (
+    user: User | null,
+    userType: UserType,
+    newFullName: string,
+  ) => {
+    if (!user) throw new UnauthorizedError('you are not logged in');
+
+    validateInput({ newFullName });
+
+    const userDoc = (await findDocs(
+      getModel(userType).findById(user._id),
+      false,
+    )) as unknown as User | null;
+
+    await changeUsersFullName(userDoc, newFullName);
+    return { statusCode: 201 };
+  };
+
+  return { requestPasswordReset, resetPassword, updateFullName };
 };

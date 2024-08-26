@@ -87,6 +87,7 @@ const ConversationView = ({
 
   const messagesEndRef = useRef<ElementRef<typeof TextField>>(null);
 
+
   useEffect(() => {
     messages &&
       messages.length > 0 &&
@@ -95,6 +96,8 @@ const ConversationView = ({
     messagesEndRef.current && setScrolled(false);
   }, [messages, scrolled, res]);
 
+
+
   const formatDate = (date: string): string => {
     return new Date(date)
       .toLocaleDateString('en-GB', {
@@ -102,6 +105,20 @@ const ConversationView = ({
         month: 'short',
       })
       .toUpperCase();
+  };
+  const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      handleSendMessage();
+    }
+  };
+  const handleSendMessage = () => {
+    sendMessage(
+      server?.axiosInstance,
+      conversation._id?.toString() || '',
+      message,
+      fetchConversationMessages
+    );
+    setMessage(''); 
   };
 
   const renderMessages = () => {
@@ -147,6 +164,8 @@ const ConversationView = ({
         justifyContent="space-between"
         alignItems="center"
         marginBottom={4}
+        position="fixed"
+        boxShadow={'0 6px 3px rgba(0, 0, 0, 0.2)'}
       >
         <Grid item>
           <IconButton onClick={() => setSelectedConversation(undefined)}>
@@ -168,21 +187,10 @@ const ConversationView = ({
         width="100%"
         height="calc(100% - 60px)"
         justifyContent="space-between"
+        marginTop={"3rem"}
       >
         <Grid item width="100%" height="calc(100% - 80px)" overflow="scroll">
           {renderMessages()}
-          {/* {messages?.map((message, i) => (
-            <Box
-              key={i}
-              ref={i === messages.length - 1 ? messagesEndRef : null}
-            >
-              <MessageRow
-                key={message._id?.toString()}
-                message={message}
-                tenum={tenum}
-              />
-            </Box>
-          )) || <PrimaryText padded>Loading Messages...</PrimaryText>} */}
         </Grid>
         <Grid
           item
@@ -193,7 +201,7 @@ const ConversationView = ({
           height="80px"
         >
           <Grid item width="80%">
-            <TextField
+            <TextField onKeyDown={handleKeyDown}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               variant="outlined"
@@ -202,17 +210,7 @@ const ConversationView = ({
             />
           </Grid>
           <Grid item>
-            <Btn
-              onClick={() => {
-                sendMessage(
-                  server?.axiosInstance,
-                  conversation._id?.toString() || '',
-                  message,
-                  () => fetchConversationMessages(),
-                );
-                setMessage('');
-              }}
-            >
+            <Btn onClick={handleSendMessage}>
               <Send />
             </Btn>
           </Grid>

@@ -57,7 +57,7 @@ const MessageRow = ({ message, tenum }: MessageRowProps) => {
 
   return (
     <Container>
-      <Box sx={{ display: 'flex', flexDirection: 'column-reverse' }}>
+      <Box sx={{marginRight:"10px", display: 'flex', flexDirection: 'column-reverse' }}>
         {String(user?._id) === message.ownerId && (
           <Balloon read={message.whenQueried ? 'yes' : 'no'} isMe="yes">
             {message.message}

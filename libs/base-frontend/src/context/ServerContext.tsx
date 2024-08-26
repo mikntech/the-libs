@@ -82,7 +82,7 @@ export const ServerProvider = ({
             : BAD_MESSAGE;
         setStatus(newStatus);
         if (newStatus === GOOD_STATUS) {
-          setVersion(response.data.version);
+          setVersion(response.data.Version);
         } else {
           setTimeout(checkStatus, tryInterval);
         }
