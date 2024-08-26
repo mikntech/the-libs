@@ -46,18 +46,8 @@ jobs:
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_C }}" > ~/.npmrc
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Verify npm config
-        run: npm config list
-        # Optional: This step helps ensure that the npm configuration is correct.
-
       - name: Build and Publish
         run: npm run build-and-publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_C }}
-
-      - name: Post-publish cleanup
-        if: always()
-        run: rm -f ~/.npmrc
+npmrc
