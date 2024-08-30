@@ -12,8 +12,6 @@ import { ServerContext } from '../../context';
 import { Add } from '@mui/icons-material';
 import { TODO, guessValueType } from '@the-libs/base-shared';
 import { axiosErrorToaster, IconColorer, OFAB } from '../../utils';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 
 import type { Document as MDocument, Types } from 'mongoose';
 

@@ -3,9 +3,10 @@ export * from './stripe';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import type { Types } from 'mongoose';
+const { Types } = require('mongoose');
+import type { Document as MDocument } from 'mongoose';
 
-export interface BaseEvent extends x.Document {
+export interface BaseEvent extends MDocument {
   _id: Types.ObjectId;
   idOnSource: string;
   tsOnSource: number;
