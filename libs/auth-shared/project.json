@@ -1,0 +1,40 @@
+{
+  "name": "auth-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/auth-shared/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/auth-shared",
+        "tsConfig": "libs/auth-shared/tsconfig.lib.json",
+        "project": "libs/auth-shared/package.json",
+        "entryFile": "libs/auth-shared/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/auth-shared/src",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

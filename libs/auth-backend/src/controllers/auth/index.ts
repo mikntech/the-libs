@@ -10,12 +10,12 @@ import {
   MultiUserType,
   passResetRequest,
   registrationRequest,
-  SomeRequest,
   Strategy,
-  User,
   authSettings,
   MultiClientType,
 } from '@the-libs/auth-backend';
+import { User, SomeRequest } from '@the-libs/auth-shared';
+
 import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import type { CookieOptions } from 'express';

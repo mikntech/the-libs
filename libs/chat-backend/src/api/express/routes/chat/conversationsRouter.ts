@@ -9,7 +9,8 @@ import {
   getNameOfUser,
   getNumberOfUnreadMessagesInConversation,
 } from '@the-libs/chat-backend';
-import { AuthenticatedRequest, User } from '@the-libs/auth-backend';
+import { AuthenticatedRequest } from '@the-libs/auth-backend';
+import { User } from '@the-libs/auth-shared';
 
 export const generateConversationRouter = <UserType>(
   side1Name: string,

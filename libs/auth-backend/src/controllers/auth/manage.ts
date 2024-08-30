@@ -16,8 +16,9 @@ import {
   MultiUserType,
   passResetRequest,
   Strategy,
-  User,
 } from '@the-libs/auth-backend';
+import { User } from '@the-libs/auth-shared';
+
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genManageControllers = <

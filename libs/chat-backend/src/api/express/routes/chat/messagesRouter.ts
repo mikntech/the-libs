@@ -3,7 +3,8 @@ const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import { findDocs, highOrderHandler } from '@the-libs/base-backend';
 import { TODO, UnauthorizedError } from '@the-libs/base-shared';
-import { AuthenticatedRequest, user, User } from '@the-libs/auth-backend';
+import { AuthenticatedRequest } from '@the-libs/auth-backend';
+import { User } from '@the-libs/auth-shared';
 import {
   conversation,
   message,

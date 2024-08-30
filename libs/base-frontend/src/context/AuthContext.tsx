@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { ServerContext } from './index';
 import { Typography } from '@mui/material';
-import { User } from '@the-libs/auth-backend';
+import { User } from '@the-libs/auth-shared';
 
 interface AuthContextProps {
   children: ReactNode;

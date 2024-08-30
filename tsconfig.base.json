@@ -16,6 +16,7 @@
     "baseUrl": ".",
     "paths": {
       "@the-libs/auth-backend": ["libs/auth-backend/src/index.ts"],
+      "@the-libs/auth-shared": ["libs/auth-shared/src/index.ts"],
       "@the-libs/autodesk-backend": ["libs/autodesk-backend/src/index.ts"],
       "@the-libs/base-backend": ["libs/base-backend/src/index.ts"],
       "@the-libs/base-frontend": ["libs/base-frontend/src/index.ts"],

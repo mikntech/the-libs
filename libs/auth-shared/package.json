@@ -1,0 +1,11 @@
+{
+  "name": "@the-libs/auth-shared",
+  "version": "1.1.15",
+  "dependencies": {},
+  "type": "module",
+  "main": "./index.mjs",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

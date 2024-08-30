@@ -1,7 +1,4 @@
-import { User } from './types';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
+import { User } from '@the-libs/auth-shared';
 import type { Model } from 'mongoose';
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './db/mongo/schemas';

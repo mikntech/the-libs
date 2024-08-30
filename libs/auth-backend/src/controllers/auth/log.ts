@@ -1,4 +1,4 @@
-import { MultiUserType, Strategy, User } from '@the-libs/auth-backend';
+import { MultiUserType, Strategy } from '@the-libs/auth-backend';
 import {
   findDocs,
   validateEnum,
@@ -8,6 +8,7 @@ import {
 import { TODO, UnauthorizedError, SomeEnum } from '@the-libs/base-shared';
 import { compare } from 'bcryptjs';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
+import { User } from '@the-libs/auth-shared';
 
 export const genLogControllers = <
   UserType extends SomeEnum<UserType>,

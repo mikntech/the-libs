@@ -1,6 +1,6 @@
 import { SomeEnum } from '@the-libs/base-shared';
 import { userBasicSchema } from './abstract';
-import { User } from '../../../../types';
+import { User } from '@the-libs/auth-shared';
 import { getModel } from '@the-libs/base-backend';
 
 export const user = <
