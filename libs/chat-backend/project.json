@@ -16,6 +16,7 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/libs/chat-backend",
         "tsConfig": "libs/chat-backend/tsconfig.lib.json",
         "project": "libs/chat-backend/package.json",

@@ -16,6 +16,7 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/libs/autodesk-backend",
         "tsConfig": "libs/autodesk-backend/tsconfig.lib.json",
         "project": "libs/autodesk-backend/package.json",

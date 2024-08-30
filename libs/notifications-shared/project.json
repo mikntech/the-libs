@@ -16,6 +16,7 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/libs/notifications-shared",
         "tsConfig": "libs/notifications-shared/tsconfig.lib.json",
         "project": "libs/notifications-shared/package.json",

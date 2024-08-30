@@ -22,6 +22,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/libs/base-frontend",
         "tsConfig": "libs/base-frontend/tsconfig.lib.json",
         "project": "libs/base-frontend/package.json",

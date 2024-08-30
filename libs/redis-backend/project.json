@@ -16,6 +16,7 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/libs/redis-backend",
         "tsConfig": "libs/redis-backend/tsconfig.lib.json",
         "project": "libs/redis-backend/package.json",

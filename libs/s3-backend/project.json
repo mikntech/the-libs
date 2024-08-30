@@ -16,6 +16,7 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
+        "format": ["esm"],
         "outputPath": "dist/libs/s3-backend",
         "tsConfig": "libs/s3-backend/tsconfig.lib.json",
         "project": "libs/s3-backend/package.json",
