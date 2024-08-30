@@ -20,7 +20,10 @@ import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
-import { Model } from 'mongoose';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const { Model } = require('mongoose');
 import { sendEmail } from '@the-libs/email-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';

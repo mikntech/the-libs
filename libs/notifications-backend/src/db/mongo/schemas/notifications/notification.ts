@@ -1,4 +1,7 @@
-import { Types } from 'mongoose';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const { Types } = require('mongoose');
 import { getModel } from '@the-libs/base-backend';
 import { SomeEnum } from '@the-libs/base-shared';
 import { Notification } from '@the-libs/notifications-shared';

@@ -1,7 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import { authSettings, Strategy, User } from '@the-libs/auth-backend';
 import { JwtPayload } from 'jsonwebtoken';
-import { Types } from 'mongoose';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const { Types } = require('mongoose');
 import { genAuthControllers } from '../../../controllers';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { findDocs } from '@the-libs/base-backend';

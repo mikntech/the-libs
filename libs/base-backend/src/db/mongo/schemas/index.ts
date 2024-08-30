@@ -2,12 +2,15 @@ import { WatchDB } from '../watch';
 
 export * from './logs/errorLog';
 
-import mongoose, {
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const {
   IndexDefinition,
   IndexOptions,
   Model,
   Schema,
-} from 'mongoose';
+} = require('mongoose');
 import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
 import { TODO } from '@the-libs/base-shared';
 

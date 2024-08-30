@@ -1,9 +1,12 @@
-import {
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const {
   QueryWithHelpers,
   isValidObjectId,
   Types,
   Document as MDocument,
-} from 'mongoose';
+} = require('mongoose');
 import {
   InvalidEnumError,
   InvalidInputError,

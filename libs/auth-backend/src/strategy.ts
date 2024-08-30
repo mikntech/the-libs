@@ -1,5 +1,8 @@
 import { User } from './types';
-import { Model } from 'mongoose';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const { Model } = require('mongoose');
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './db/mongo/schemas';
 import { SomeEnum, TODO } from '@the-libs/base-shared';

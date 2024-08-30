@@ -1,9 +1,12 @@
 export * from './stripe';
 
-import x from 'mongoose';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const { Types } = require('mongoose');
 
 export interface BaseEvent extends x.Document {
-  _id: x.Types.ObjectId;
+  _id: Types.ObjectId;
   idOnSource: string;
   tsOnSource: number;
   wasHandled: boolean;

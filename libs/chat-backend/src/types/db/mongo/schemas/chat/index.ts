@@ -1,5 +1,7 @@
-import { Document as MDocument, Types } from 'mongoose';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
+const { Document as MDocument, Types } = require('mongoose');
 export type Conversation<
   side1Name extends string = 'side1',
   side2Name extends string = 'side2',

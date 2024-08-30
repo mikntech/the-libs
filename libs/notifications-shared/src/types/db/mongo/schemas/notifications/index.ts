@@ -1,5 +1,7 @@
-import { Document as MDocument, Types } from 'mongoose';
-import { User } from '@the-libs/auth-backend';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const { Document as MDocument, Types } = require('mongoose');import { User } from '@the-libs/auth-backend';
 
 export interface PushDevice extends MDocument {
   _id: Types.ObjectId;
