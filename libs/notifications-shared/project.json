@@ -1,7 +1,7 @@
 {
-  "name": "base-shared",
+  "name": "notifications-shared",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/base-shared/src",
+  "sourceRoot": "libs/notifications-shared/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -16,14 +16,14 @@
       "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/base-shared",
-        "tsConfig": "libs/base-shared/tsconfig.lib.json",
-        "project": "libs/base-shared/package.json",
-        "entryFile": "libs/base-shared/src/index.ts",
+        "outputPath": "dist/libs/notifications-shared",
+        "tsConfig": "libs/notifications-shared/tsconfig.lib.json",
+        "project": "libs/notifications-shared/package.json",
+        "entryFile": "libs/notifications-shared/src/index.ts",
         "assets": [
           {
             "glob": "**/*.json",
-            "input": "libs/base-shared/src",
+            "input": "libs/notifications-shared/src",
             "output": "."
           }
         ]

@@ -35,12 +35,6 @@
         }
       ]
     },
-    "postbuild": {
-      "executor": "nx:run-commands",
-      "options": {
-            "command": "shx test -d dist/libs/base-backend && babel dist/libs/base-backend --out-dir dist/libs/base-backend --extensions \".js,.ts\" --config-file ./.babelrc"
-      }
-    },
     "nx-release-publish": {
       "options": {
         "packageRoot": "dist/{projectRoot}"

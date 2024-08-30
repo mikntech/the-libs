@@ -82,7 +82,7 @@ const MessageRow = ({ message, tenum }: MessageRowProps) => {
             {formatDate(message.createdAt as any)}
             </Typography>
           </Balloon>
-        
+
           // </Box>
         )}
       </Box>
