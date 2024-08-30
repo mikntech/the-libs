@@ -20,8 +20,6 @@ import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 
 import type { Model } from 'mongoose';
 import { sendEmail } from '@the-libs/email-backend';
