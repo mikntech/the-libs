@@ -7,7 +7,7 @@ import {
   toggleButtonClasses,
   Typography,
 } from '@mui/material';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { Dispatch, ReactNode, SetStateAction } from 'react';
 
 interface Options {

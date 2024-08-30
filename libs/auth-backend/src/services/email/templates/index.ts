@@ -1,4 +1,4 @@
-import { GenEmailFunction } from '@email-backend';
+import { GenEmailFunction } from '@the-libs/email-backend';
 
 export const defaultGenRegisterEmail: GenEmailFunction = (url: string) => ({
   subject: 'verify your email to complete registration',

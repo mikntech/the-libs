@@ -1,5 +1,5 @@
-import { getModel } from '@base-backend';
-import { Conversation } from '@chat-backend';
+import { getModel } from '@the-libs/base-backend';
+import { Conversation } from '@the-libs/chat-backend';
 
 export const conversation = (side1Name: string, side2Name: string) =>
   getModel<Conversation<typeof side1Name, typeof side2Name>>('conversation', {

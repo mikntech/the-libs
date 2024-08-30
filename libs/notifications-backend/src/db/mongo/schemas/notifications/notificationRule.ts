@@ -1,6 +1,6 @@
-import { getModel } from '@base-backend';
-import { Notification, NotificationRule } from '@notifications-shared';
-import { SomeEnum } from '@base-shared';
+import { getModel } from '@the-libs/base-backend';
+import { Notification, NotificationRule } from '@the-libs/notifications-shared';
+import { SomeEnum } from '@the-libs/base-shared';
 
 export const notificationRule = <Rules>(RulesValue: SomeEnum<Rules>) =>
   getModel<NotificationRule<Rules>>('notificationRule', {

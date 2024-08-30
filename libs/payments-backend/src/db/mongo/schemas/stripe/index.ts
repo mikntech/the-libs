@@ -1,4 +1,4 @@
-import { getModel } from '@base-backend';
+import { getModel } from '@the-libs/base-backend';
 import { StripeEvent } from '../../../../types';
 import { baseEvent } from '../abstract';
 

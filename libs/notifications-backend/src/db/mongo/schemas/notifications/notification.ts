@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
-import { getModel } from '@base-backend';
-import { SomeEnum } from '@base-shared';
-import { Notification } from '@notifications-shared';
+import { getModel } from '@the-libs/base-backend';
+import { SomeEnum } from '@the-libs/base-shared';
+import { Notification } from '@the-libs/notifications-shared';
 
 export const notification = <Rules>(RulesValue: SomeEnum<Rules>) =>
   getModel<Notification<Rules>>('notification', {

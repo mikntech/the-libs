@@ -1,7 +1,7 @@
-import { AuthenticatedRequest, Strategy } from '@auth-backend';
+import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
 import { Router } from 'express';
-import { highOrderHandler } from '@base-backend';
-import { SomeEnum, TODO } from '@base-shared';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { genLogControllers } from '../../../../controllers/auth/log';
 
 export const logRouter = <

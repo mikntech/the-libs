@@ -2,8 +2,8 @@ import { User } from './types';
 import { Model } from 'mongoose';
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './db/mongo/schemas';
-import { SomeEnum, TODO } from '@base-shared';
-import { GenEmailFunction } from '@email-backend';
+import { SomeEnum, TODO } from '@the-libs/base-shared';
+import { GenEmailFunction } from '@the-libs/email-backend';
 import { defaultGenPassResetEmail, defaultGenRegisterEmail } from './services';
 
 export enum MultiUserType {

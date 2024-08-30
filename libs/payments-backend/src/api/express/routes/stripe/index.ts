@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { highOrderHandler } from '@base-backend';
-import { AuthenticatedRequest } from '@auth-backend';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { createHostAccountAndAccountLink } from '../../../../controllers';
 export const stripeRouter = Router();
 

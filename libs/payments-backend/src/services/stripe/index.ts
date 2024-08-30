@@ -2,7 +2,7 @@ import { Stripe } from 'stripe';
 import { paymentsSettings } from '../../config';
 import { stripeEvent } from '../../db/mongo/schemas';
 import { RawStripeEvent } from '../../types';
-import { expressApp, getBaseSettings } from '@base-backend';
+import { expressApp, getBaseSettings } from '@the-libs/base-backend';
 import { json, Request, Response } from 'express';
 
 export const stripeInstance = new Stripe(paymentsSettings.stripeApiKey, {

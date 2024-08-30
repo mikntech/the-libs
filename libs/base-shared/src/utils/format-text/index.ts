@@ -1,4 +1,4 @@
-import { SimpleAddress } from '@base-shared';
+import { SimpleAddress } from '@the-libs/base-shared';
 
 export const formatTextNicely = (str: string): string =>
   str

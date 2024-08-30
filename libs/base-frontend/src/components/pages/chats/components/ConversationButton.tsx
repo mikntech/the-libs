@@ -10,8 +10,8 @@ import {
 import { Dispatch, SetStateAction } from 'react';
 import Box from '@mui/material/Box';
 import { themeColor, useIsNight } from '../../../../';
-import { TODO } from '@base-shared';
-import { Conversation } from '@chat-backend';
+import { TODO } from '@the-libs/base-shared';
+import { Conversation } from '@the-libs/chat-backend';
 import { extactNameInitials } from '../../../../utils/index';
 import { sourceMapsEnabled } from 'process';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';

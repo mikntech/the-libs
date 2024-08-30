@@ -4,8 +4,8 @@ import {
   NodeEnvironment,
   StagingEnvironment,
   validateDocument,
-} from '@base-backend';
-import { InvalidInputError, TODO, SomeEnum } from '@base-shared';
+} from '@the-libs/base-backend';
+import { InvalidInputError, TODO, SomeEnum } from '@the-libs/base-shared';
 import {
   MultiUserType,
   passResetRequest,
@@ -15,13 +15,13 @@ import {
   User,
   authSettings,
   MultiClientType,
-} from '@auth-backend';
+} from '@the-libs/auth-backend';
 import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 import { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
 import { Model } from 'mongoose';
-import { sendEmail } from '@email-backend';
+import { sendEmail } from '@the-libs/email-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';
 

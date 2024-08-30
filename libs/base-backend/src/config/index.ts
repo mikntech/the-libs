@@ -64,8 +64,8 @@ export const getBaseSettings = <
 >(): BaseSettings<CB> => {
   const clientDomains: CB = JSON.parse(
     isProduction
-      ? (process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 4000 }))
-      : (process.env['CLIENT_PORTS'] ?? JSON.stringify({ single: 'my.co' })),
+      ? (process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 'my.co' }))
+      : (process.env['CLIENT_PORTS'] ?? JSON.stringify({ single: 4000 })),
   );
 
   const mutableClientDomains = clientDomains as { [key: string]: string };

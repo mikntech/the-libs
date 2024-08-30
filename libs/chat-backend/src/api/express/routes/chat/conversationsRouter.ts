@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { highOrderHandler } from '@base-backend';
-import { TODO, UnauthorizedError } from '@base-shared';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { TODO, UnauthorizedError } from '@the-libs/base-shared';
 import {
   conversation,
   getLastMessageOfConversation,
   getNameOfUser,
   getNumberOfUnreadMessagesInConversation,
-} from '@chat-backend';
-import { AuthenticatedRequest, User } from '@auth-backend';
+} from '@the-libs/chat-backend';
+import { AuthenticatedRequest, User } from '@the-libs/auth-backend';
 
 export const generateConversationRouter = <UserType>(
   side1Name: string,

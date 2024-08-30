@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 const process = require('process');
-import { getBaseSettings } from '@base-backend';
+import { getBaseSettings } from '@the-libs/base-backend';
 
 config();
 

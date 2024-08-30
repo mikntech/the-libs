@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { ServerContext } from '../../context';
 import { Add } from '@mui/icons-material';
-import { TODO, guessValueType } from '@base-shared';
+import { TODO, guessValueType } from '@the-libs/base-shared';
 import { axiosErrorToaster, IconColorer, OFAB } from '../../utils';
 import { Document as MDocument, Types } from 'mongoose';
 

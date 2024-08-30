@@ -2,8 +2,8 @@ import { getAutodeskToken } from '../../../../controllers/autodesk';
 import { Router } from 'express';
 import axios from 'axios';
 import { stringify } from 'qs';
-import { highOrderHandler } from '@base-backend';
-import { TODO } from '@base-shared';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { TODO } from '@the-libs/base-shared';
 
 export const autodeskRouter = Router();
 

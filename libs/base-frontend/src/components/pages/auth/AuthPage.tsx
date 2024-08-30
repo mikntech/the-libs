@@ -13,7 +13,7 @@ import { useLocation } from 'react-router-dom';
 import zxcvbn from 'zxcvbn';
 import { Flag } from '@mui/icons-material';
 import { useResponsiveness } from '../../../hooks';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { axiosErrorToaster } from '../../../utils';
 import { useIsNight } from '../../../themes';
 

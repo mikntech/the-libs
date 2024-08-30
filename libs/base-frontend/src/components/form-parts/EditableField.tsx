@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from 'react';
 import { Grid, IconButton, TextField, Typography } from '@mui/material';
 import { Add, Edit, Save } from '@mui/icons-material';
 import { ActionHandler } from '../../types';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { axiosErrorToaster, IconColorer } from '../../utils';
 
 export interface EditableFieldProps<R> {

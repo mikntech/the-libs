@@ -4,15 +4,19 @@ import {
   findDocs,
   validateInput,
   validateEnum,
-} from '@base-backend';
-import { SomeEnum, InvalidInputError, UnauthorizedError } from '@base-shared';
-import { GenEmailFunction } from '@email-backend';
+} from '@the-libs/base-backend';
+import {
+  SomeEnum,
+  InvalidInputError,
+  UnauthorizedError,
+} from '@the-libs/base-shared';
+import { GenEmailFunction } from '@the-libs/email-backend';
 import {
   defaultGenRegisterEmail,
   MultiUserType,
   registrationRequest,
   Strategy,
-} from '@auth-backend';
+} from '@the-libs/auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <

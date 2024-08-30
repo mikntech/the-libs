@@ -1,5 +1,5 @@
 import { getModel } from '../index';
-import { ErrorLog } from '@base-shared';
+import { ErrorLog } from '@the-libs/base-shared';
 
 export const errorLog = () =>
   getModel<ErrorLog>('errorLog', {

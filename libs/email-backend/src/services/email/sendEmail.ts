@@ -1,7 +1,7 @@
 const sendgrid = require('@sendgrid/mail');
 
 import { getEmailSettings } from '../../config';
-import { getBaseSettings, StagingEnvironment } from '@base-backend';
+import { getBaseSettings, StagingEnvironment } from '@the-libs/base-backend';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {

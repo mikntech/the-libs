@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { styled, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { AuthContext } from '../../../../';
-import { Message } from '@chat-backend';
+import { Message } from '@the-libs/chat-backend';
 
 const Container = styled(Box)({
   width: '100%',
@@ -43,13 +43,15 @@ const Balloon = styled(Typography, {
   },
 }));
 
-
 interface MessageRowProps {
   message: Message;
   tenum: { admin: string };
 }
 const formatDate = (date: string): string => {
-  return new Date(date).toLocaleTimeString("en-GB",{ hour: "2-digit", minute: "2-digit" })
+  return new Date(date).toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 };
 
 const MessageRow = ({ message, tenum }: MessageRowProps) => {
@@ -57,29 +59,43 @@ const MessageRow = ({ message, tenum }: MessageRowProps) => {
 
   return (
     <Container>
-      <Box sx={{marginRight:"10px", display: 'flex', flexDirection: 'column-reverse' }}>
+      <Box
+        sx={{
+          marginRight: '10px',
+          display: 'flex',
+          flexDirection: 'column-reverse',
+        }}
+      >
         {String(user?._id) === message.ownerId && (
           <Balloon read={message.whenQueried ? 'yes' : 'no'} isMe="yes">
             {message.message}
-            <Typography sx={{ width:"42px",
-                            height:"20px",
-                            position: 'absolute',
-                            bottom: "-20px",
-                            right: "5px"
-                           }}>
+            <Typography
+              sx={{
+                width: '42px',
+                height: '20px',
+                position: 'absolute',
+                bottom: '-20px',
+                right: '5px',
+              }}
+            >
               {formatDate(message.createdAt as any)}
-              </Typography>
+            </Typography>
           </Balloon>
         )}
         {String(user?._id) !== message.ownerId && (
           // <Box>
-          <Balloon>{message.message}
-          <Typography sx={{ width:"42px",
-                            height:"20px",
-                            position: 'absolute',
-                            bottom: "-20px",
-                            left: "0px"}}>
-            {formatDate(message.createdAt as any)}
+          <Balloon>
+            {message.message}
+            <Typography
+              sx={{
+                width: '42px',
+                height: '20px',
+                position: 'absolute',
+                bottom: '-20px',
+                left: '0px',
+              }}
+            >
+              {formatDate(message.createdAt as any)}
             </Typography>
           </Balloon>
 

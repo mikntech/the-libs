@@ -1,4 +1,4 @@
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 
 export type GenEmailFunction = (...args: TODO[]) => {
   subject: string;

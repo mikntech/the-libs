@@ -22,8 +22,8 @@ import {
 import { ArrowBackIosOutlined, Send } from '@mui/icons-material';
 import { AxiosInstance } from 'axios';
 import { ServerContext } from '../../../../context';
-import { Conversation, Message } from '@chat-backend';
-import { TODO } from '@base-shared';
+import { Conversation, Message } from '@the-libs/chat-backend';
+import { TODO } from '@the-libs/base-shared';
 import { useResponsiveness, useSubscribe } from '../../../../hooks';
 import { axiosErrorToaster } from '../../../../utils';
 import { extactNameInitials } from '../../../../utils/index';
@@ -87,7 +87,6 @@ const ConversationView = ({
 
   const messagesEndRef = useRef<ElementRef<typeof TextField>>(null);
 
-
   useEffect(() => {
     messages &&
       messages.length > 0 &&
@@ -95,8 +94,6 @@ const ConversationView = ({
       messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     messagesEndRef.current && setScrolled(false);
   }, [messages, scrolled, res]);
-
-
 
   const formatDate = (date: string): string => {
     return new Date(date)
@@ -106,7 +103,7 @@ const ConversationView = ({
       })
       .toUpperCase();
   };
-  const handleKeyDown = (event:React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleSendMessage();
     }
@@ -116,7 +113,7 @@ const ConversationView = ({
       server?.axiosInstance,
       conversation._id?.toString() || '',
       message,
-      fetchConversationMessages
+      fetchConversationMessages,
     );
     setMessage('');
   };
@@ -187,7 +184,7 @@ const ConversationView = ({
         width="100%"
         height="calc(100% - 60px)"
         justifyContent="space-between"
-        marginTop={"3rem"}
+        marginTop={'3rem'}
       >
         <Grid item width="100%" height="calc(100% - 80px)" overflow="scroll">
           {renderMessages()}
@@ -201,7 +198,8 @@ const ConversationView = ({
           height="80px"
         >
           <Grid item width="80%">
-            <TextField onKeyDown={handleKeyDown}
+            <TextField
+              onKeyDown={handleKeyDown}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               variant="outlined"

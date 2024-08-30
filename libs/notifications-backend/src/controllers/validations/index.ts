@@ -9,7 +9,7 @@ import {
   InvalidInputError,
   ResourceNotFoundError,
   SomeEnum,
-} from '@base-shared';
+} from '@the-libs/base-shared';
 import { findDocs } from '../data';
 
 export const validateInput = <T = string>(

@@ -1,5 +1,5 @@
-import { WatchDB } from '@base-backend';
-import { stripeEvent } from '@payments-backend';
+import { WatchDB } from '@the-libs/base-backend';
+import { stripeEvent } from '@the-libs/payments-backend';
 
 export const watchStripeEvents = () =>
   WatchDB.add({

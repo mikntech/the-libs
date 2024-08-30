@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { AuthenticatedRequest, Strategy } from '@auth-backend';
-import { highOrderHandler } from '@base-backend';
-import { SomeEnum, TODO } from '@base-shared';
+import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { genManageControllers } from '../../../../controllers/auth/manage';
 
 export const manageRouter = <

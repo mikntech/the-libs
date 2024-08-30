@@ -7,7 +7,7 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 import { json, Router, urlencoded } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { errorLog } from '../../db/mongo';
 
 const { version: Version } = require(

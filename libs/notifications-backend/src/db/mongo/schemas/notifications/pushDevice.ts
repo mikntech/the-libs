@@ -1,5 +1,5 @@
-import { getModel } from '@base-backend';
-import { PushDevice } from '@notifications-shared';
+import { getModel } from '@the-libs/base-backend';
+import { PushDevice } from '@the-libs/notifications-shared';
 
 export const pushDevice = () =>
   getModel<PushDevice>('pushDevice', {

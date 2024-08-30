@@ -1,8 +1,12 @@
 import { Router } from 'express';
-import { AuthenticatedRequest, MultiUserType, Strategy } from '@auth-backend';
+import {
+  AuthenticatedRequest,
+  MultiUserType,
+  Strategy,
+} from '@the-libs/auth-backend';
 import { genRegisterControllers } from '../../../../controllers/auth/register';
-import { highOrderHandler } from '@base-backend';
-import { SomeEnum, TODO } from '@base-shared';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { SomeEnum, TODO } from '@the-libs/base-shared';
 
 export const registerRouter = <
   UserTypeEnum extends SomeEnum<UserTypeEnum>,

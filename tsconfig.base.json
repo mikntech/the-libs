@@ -15,18 +15,18 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@auth-backend": ["libs/auth-backend/src/index.ts"],
-      "@autodesk-backend": ["libs/autodesk-backend/src/index.ts"],
-      "@base-backend": ["libs/base-backend/src/index.ts"],
-      "@base-frontend": ["libs/base-frontend/src/index.ts"],
-      "@base-shared": ["libs/base-shared/src/index.ts"],
-      "@chat-backend": ["libs/chat-backend/src/index.ts"],
-      "@email-backend": ["libs/email-backend/src/index.ts"],
-      "@notifications-backend": ["libs/notifications-backend/src/index.ts"],
-      "@notifications-shared": ["libs/notifications-shared/src/index.ts"],
-      "@payments-backend": ["libs/payments-backend/src/index.ts"],
-      "@redis-backend": ["libs/redis-backend/src/index.ts"],
-      "@s3-backend": ["libs/s3-backend/src/index.ts"]
+      "@the-libs/auth-backend": ["libs/auth-backend/src/index.ts"],
+      "@the-libs/autodesk-backend": ["libs/autodesk-backend/src/index.ts"],
+      "@the-libs/base-backend": ["libs/base-backend/src/index.ts"],
+      "@the-libs/base-frontend": ["libs/base-frontend/src/index.ts"],
+      "@the-libs/base-shared": ["libs/base-shared/src/index.ts"],
+      "@the-libs/chat-backend": ["libs/chat-backend/src/index.ts"],
+      "@the-libs/email-backend": ["libs/email-backend/src/index.ts"],
+      "@the-libs/notifications-backend": ["libs/notifications-backend/src/index.ts"],
+      "@the-libs/notifications-shared": ["libs/notifications-shared/src/index.ts"],
+      "@the-libs/payments-backend": ["libs/payments-backend/src/index.ts"],
+      "@the-libs/redis-backend": ["libs/redis-backend/src/index.ts"],
+      "@the-libs/s3-backend": ["libs/s3-backend/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

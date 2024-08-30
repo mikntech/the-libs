@@ -1,7 +1,7 @@
 import { TextField } from '@mui/material';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { ChangeEvent } from 'react';
-import { formatTextNicely } from '@base-shared';
+import { formatTextNicely } from '@the-libs/base-shared';
 
 interface Options {
   label: string;

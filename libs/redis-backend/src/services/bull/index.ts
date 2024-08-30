@@ -1,5 +1,5 @@
 import BullClass, { JobOptions, ProcessCallbackFunction } from 'bull';
-import { redisSettings } from '@redis-backend';
+import { redisSettings } from '@the-libs/redis-backend';
 
 const createQueue = (queueName: string) =>
   new BullClass(queueName, { redis: redisSettings.uri });

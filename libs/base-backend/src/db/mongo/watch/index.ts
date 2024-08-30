@@ -1,6 +1,6 @@
 import { ChangeStream, GenericListener } from 'mongodb';
 import { Document, Model } from 'mongoose';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 
 interface WatchCallback<T extends Document> {
   modelGetter: () => Model<T>;

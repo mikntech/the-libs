@@ -1,5 +1,5 @@
 import { Document as MDocument, Types } from 'mongoose';
-import { User } from '@auth-backend';
+import { User } from '@the-libs/auth-backend';
 
 export interface PushDevice extends MDocument {
   _id: Types.ObjectId;

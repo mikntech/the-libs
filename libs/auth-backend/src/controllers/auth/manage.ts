@@ -4,15 +4,20 @@ import {
   validateDocument,
   validateEnum,
   validateInput,
-} from '@base-backend';
+} from '@the-libs/base-backend';
 import {
   UnauthorizedError,
   InvalidInputError,
   SomeEnum,
   TODO,
-} from '@base-shared';
+} from '@the-libs/base-shared';
 import { v4 } from 'uuid';
-import { MultiUserType, passResetRequest, Strategy, User } from '@auth-backend';
+import {
+  MultiUserType,
+  passResetRequest,
+  Strategy,
+  User,
+} from '@the-libs/auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genManageControllers = <

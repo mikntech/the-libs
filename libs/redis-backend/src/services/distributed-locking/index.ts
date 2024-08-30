@@ -1,5 +1,5 @@
 import { RedisType } from '../redis-client';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 
 export const runTaskWithLock = <CBR = any>(
   redis: RedisType,

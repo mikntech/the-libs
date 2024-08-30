@@ -1,5 +1,5 @@
 import WebPush from 'web-push';
-import { TODO } from '@base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { notificationsSettings } from '../../config';
 
 WebPush.setVapidDetails(

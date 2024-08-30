@@ -1,4 +1,4 @@
-import { getModel } from '@base-backend';
+import { getModel } from '@the-libs/base-backend';
 import { SomeRequest } from '../../../../types';
 import { requestBasicSchema } from './index';
 

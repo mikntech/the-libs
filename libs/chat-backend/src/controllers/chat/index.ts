@@ -1,9 +1,9 @@
-import { highOrderHandler } from '@base-backend';
-import { TODO } from '@base-shared';
-import { AuthenticatedRequest, User, user } from '@auth-backend';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { TODO } from '@the-libs/base-shared';
+import { AuthenticatedRequest, User, user } from '@the-libs/auth-backend';
 import { message } from '../../db/mongo/schemas/chat';
-import { Message } from '@chat-backend';
-import { subscriber } from '@redis-backend';
+import { Message } from '@the-libs/chat-backend';
+import { subscriber } from '@the-libs/redis-backend';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();

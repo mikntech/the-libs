@@ -3,8 +3,8 @@ import { logRouter } from './logRouter';
 import { manageRouter } from './manageRouter';
 import { registerRouter } from './registerRouter';
 import { Strategy } from '../../../../strategy';
-import { highOrderHandler } from '@base-backend';
-import { SomeEnum } from '@base-shared';
+import { highOrderHandler } from '@the-libs/base-backend';
+import { SomeEnum } from '@the-libs/base-shared';
 
 export const authRouter = <
   UserTypeEnum extends SomeEnum<UserTypeEnum>,

@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import { findDocs, highOrderHandler } from '@base-backend';
-import { TODO, UnauthorizedError } from '@base-shared';
-import { AuthenticatedRequest, user, User } from '@auth-backend';
+import { findDocs, highOrderHandler } from '@the-libs/base-backend';
+import { TODO, UnauthorizedError } from '@the-libs/base-shared';
+import { AuthenticatedRequest, user, User } from '@the-libs/auth-backend';
 import {
   conversation,
   message,
   markMessagesAsRead,
   Conversation,
-} from '@chat-backend';
+} from '@the-libs/chat-backend';
 
 export const generateMessageRouter = <UserType>(
   side1Name: string,

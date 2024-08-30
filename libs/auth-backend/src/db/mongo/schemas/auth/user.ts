@@ -1,7 +1,7 @@
-import { SomeEnum } from '@base-shared';
+import { SomeEnum } from '@the-libs/base-shared';
 import { userBasicSchema } from './abstract';
 import { User } from '../../../../types';
-import { getModel } from '@base-backend';
+import { getModel } from '@the-libs/base-backend';
 
 export const user = <
   NameRequired extends boolean = false,
