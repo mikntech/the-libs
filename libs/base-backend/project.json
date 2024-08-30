@@ -26,7 +26,8 @@
             "input": "libs/base-backend/src",
             "output": "."
           }
-        ]
+        ],
+        "external": ["express", "mongoose", ",cookie-parser","cors","dotenv"]
       },
       "dependsOn": [
         {
