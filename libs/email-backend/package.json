@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/email-backend",
-  "version": "1.1.14",
+  "version": "1.1.15",
   "dependencies": {},
   "type": "commonjs",
   "main": "./index.js",
