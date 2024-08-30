@@ -1,8 +1,8 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import type { Document as MDocument, Types } from 'mongoose';
-const { QueryWithHelpers, isValidObjectId } = require('mongoose');
+import type { Document as MDocument, QueryWithHelpers } from 'mongoose';
+const { isValidObjectId } = require('mongoose');
 import {
   InvalidEnumError,
   InvalidInputError,
