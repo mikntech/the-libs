@@ -2,7 +2,6 @@
   "name": "the-libs",
   "version": "1.1.24",
   "description": "Good unbranded code by Michael Nusair https://www.linkedin.com/in/michael-nx/",
-  "main": "index.js",
   "scripts": {
     "clean": "rm -rf node_modules dist tmp package-lock.json ./.nx",
     "update": "npx npm-check-updates -u",

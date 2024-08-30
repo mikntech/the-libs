@@ -3,7 +3,7 @@
   "version": "1.1.15",
   "dependencies": {},
   "type": "module",
-  "main": "./index.js",
+  "main": "./index.mjs",
   "types": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
