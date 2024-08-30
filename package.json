@@ -92,5 +92,8 @@
     "vite-plugin-dts": "^4.0.3",
     "vitest": "^2.0.5",
     "zxcvbn": "^4.4.2"
+  },
+  "dependencies": {
+    "web-push": "^3.6.7"
   }
 }
