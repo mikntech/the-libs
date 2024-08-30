@@ -38,7 +38,7 @@
     "postbuild": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "if [ -d dist/libs/base-backend ]; then babel dist/libs/base-backend --out-dir dist/libs/base-backend --extensions \".js,.ts\" --config-file ./.babelrc; fi"
+            "command": "shx test -d dist/libs/base-backend && babel dist/libs/base-backend --out-dir dist/libs/base-backend --extensions \".js,.ts\" --config-file ./.babelrc"
       }
     },
     "nx-release-publish": {
