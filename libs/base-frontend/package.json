@@ -2,7 +2,7 @@
   "name": "@the-libs/base-frontend",
   "version": "1.1.15",
   "dependencies": {},
-  "type": "commonjs",
+  "type": "module",
   "main": "./index.mjs",
   "types": "./src/index.d.ts",
   "publishConfig": {
