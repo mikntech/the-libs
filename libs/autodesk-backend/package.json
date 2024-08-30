@@ -2,7 +2,7 @@
   "name": "@the-libs/autodesk-backend",
   "version": "1.1.15",
   "dependencies": {},
-  "type": "commonjs",
+  "type": "module",
   "main": "./index.js",
   "types": "./src/index.d.ts",
   "publishConfig": {
