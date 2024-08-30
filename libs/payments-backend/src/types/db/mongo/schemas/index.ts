@@ -1,9 +1,9 @@
 export * from './stripe';
 
-import { Document, Types } from 'mongoose';
+import x from 'mongoose';
 
-export interface BaseEvent extends Document {
-  _id: Types.ObjectId;
+export interface BaseEvent extends x.Document {
+  _id: x.Types.ObjectId;
   idOnSource: string;
   tsOnSource: number;
   wasHandled: boolean;
