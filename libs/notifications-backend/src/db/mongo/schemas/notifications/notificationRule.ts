@@ -1,13 +1,13 @@
 import { getModel } from '@base-backend';
-import { NotificationRule } from '@notifications-shared';
-import { Rules } from '@offisito-shared';
+import { Notification, NotificationRule } from '@notifications-shared';
+import { SomeEnum } from '@base-shared';
 
-export const notificationRule = () =>
-  getModel<NotificationRule>('notificationRule', {
+export const notificationRule = <Rules>(RulesValue: SomeEnum<Rules>) =>
+  getModel<NotificationRule<Rules>>('notificationRule', {
     userId: { type: String },
     key: {
       type: String,
-      enum: [...Object.keys(Rules)],
+      enum: [...Object.keys(RulesValue)],
     },
     push: {
       type: Boolean,

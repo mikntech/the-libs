@@ -1,5 +1,4 @@
 import { Document as MDocument, Types } from 'mongoose';
-import { Rules } from '@offisito-shared';
 import { User } from '@auth-backend';
 
 export interface PushDevice extends MDocument {
@@ -15,7 +14,7 @@ export interface PushDevice extends MDocument {
   };
 }
 
-export interface NotificationRule extends MDocument {
+export interface NotificationRule<Rules> extends MDocument {
   userId: string;
   key: Rules;
   push?: boolean;
@@ -23,7 +22,7 @@ export interface NotificationRule extends MDocument {
   sms?: boolean;
 }
 
-export interface Notification extends MDocument {
+export interface Notification<Rules> extends MDocument {
   _id: Types.ObjectId;
   key: Rules;
   recipients: { user: User; readTs: number }[];
