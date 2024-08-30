@@ -14,6 +14,7 @@ export const startMongoAndExpress = <CB extends { [s: string]: string }>(
   preMiddlewares: Function[] = [],
   postMiddlewares: Function[] = [],
   logMongoToConsole: boolean = true,
+  disableCors: boolean = false,
 ) => {
   console.log('Connecting to MongoDB...');
   connect(
@@ -22,9 +23,12 @@ export const startMongoAndExpress = <CB extends { [s: string]: string }>(
     logMongoToConsole,
   )
     .then(() =>
-      startExpress<CB>(apiRouter, preMiddlewares, postMiddlewares).catch((e) =>
-        console.log(e),
-      ),
+      startExpress<CB>(
+        apiRouter,
+        preMiddlewares,
+        postMiddlewares,
+        disableCors,
+      ).catch((e) => console.log(e)),
     )
     .catch((e) => console.log(e));
 };

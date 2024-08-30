@@ -21,6 +21,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   apiRouter: Router,
   preMiddlewares: Function[] = [],
   postMiddlewares: Function[] = [],
+  disableCors: boolean = false,
 ) => {
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getBaseSettings<CB>();
@@ -30,7 +31,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
     json({ limit: '50mb' }),
     urlencoded({ limit: '50mb', extended: true }),
     cors({
-      origin: Object.values(clientDomains),
+      origin: disableCors ? '*' : Object.values(clientDomains),
       credentials: true,
     }),
   ];
