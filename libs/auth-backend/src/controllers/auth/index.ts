@@ -18,7 +18,7 @@ import {
 } from '@the-libs/auth-backend';
 import { genSalt, hash } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
-import { CookieOptions } from 'express';
+import type { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
 
 import type { Model } from 'mongoose';

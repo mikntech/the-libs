@@ -1,4 +1,8 @@
-import { NextFunction, Request as ExpressRequest, Response } from 'express';
+import type {
+  NextFunction,
+  Request as ExpressRequest,
+  Response,
+} from 'express';
 import { TODO } from '@the-libs/base-shared';
 
 interface Layer {

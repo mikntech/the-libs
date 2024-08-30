@@ -1,4 +1,6 @@
-import { Router } from 'express';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Router } = require('express');
 import { highOrderHandler } from '@the-libs/base-backend';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { createHostAccountAndAccountLink } from '../../../../controllers';

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { authSettings, Strategy, User } from '@the-libs/auth-backend';
 import { JwtPayload } from 'jsonwebtoken';
 import { createRequire } from 'module';

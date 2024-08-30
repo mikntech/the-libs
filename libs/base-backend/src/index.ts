@@ -5,7 +5,9 @@ export * from './config';
 export * from './controllers';
 export * from './db/mongo';
 
-import { Router } from 'express';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Router } = require('express');
 import { getBaseSettings } from './config';
 import { connect } from './db/mongo';
 

@@ -1,4 +1,6 @@
-import { Router } from 'express';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Router } = require('express');
 import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
 import { highOrderHandler } from '@the-libs/base-backend';
 import { SomeEnum, TODO } from '@the-libs/base-shared';

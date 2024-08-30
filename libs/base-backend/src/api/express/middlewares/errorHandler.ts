@@ -1,4 +1,8 @@
-import { NextFunction, Request as ExpressRequest, Response } from 'express';
+import type {
+  NextFunction,
+  Request as ExpressRequest,
+  Response,
+} from 'express';
 import { StagingEnvironment } from '../../../config';
 import { ClientError, ErrorLog, TODO } from '@the-libs/base-shared';
 import { errorLog } from '../../../db/mongo';

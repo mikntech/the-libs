@@ -1,4 +1,6 @@
-import { Router } from 'express';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Router } = require('express');
 import { highOrderHandler } from '@the-libs/base-backend';
 import { TODO, UnauthorizedError } from '@the-libs/base-shared';
 import {

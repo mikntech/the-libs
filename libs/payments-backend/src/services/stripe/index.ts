@@ -3,7 +3,11 @@ import { paymentsSettings } from '../../config';
 import { stripeEvent } from '../../db/mongo/schemas';
 import { RawStripeEvent } from '../../types';
 import { expressApp, getBaseSettings } from '@the-libs/base-backend';
-import { json, Request, Response } from 'express';
+import type { Request, Response } from 'express';
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { json } = require('express');
 
 export const stripeInstance = new Stripe(paymentsSettings.stripeApiKey, {
   apiVersion: paymentsSettings.stripeApiVersion as any,

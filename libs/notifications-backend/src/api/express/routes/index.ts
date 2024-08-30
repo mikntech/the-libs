@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction, CookieOptions } from 'express';
+import type { Request, Response, NextFunction, CookieOptions } from 'express';
 import { ServerResponse } from 'http';
 import { TODO } from '@the-libs/base-shared';
 

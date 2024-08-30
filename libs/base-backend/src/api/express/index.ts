@@ -2,13 +2,19 @@ export * from './middlewares';
 export * from './routes';
 
 import { getBaseSettings } from '../../config';
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
-const path = require('path');
-import { json, Router, urlencoded } from 'express';
+
+import type { Router } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
 import { TODO } from '@the-libs/base-shared';
 import { errorLog } from '../../db/mongo';
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { json, urlencoded } = require('express');
+
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const path = require('path');
 
 const { version: Version } = require(
   path.join(__dirname, '..', '..', '..', 'package.json'),

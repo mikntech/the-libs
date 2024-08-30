@@ -1,5 +1,7 @@
 import { getAutodeskToken } from '../../../../controllers/autodesk';
-import { Router } from 'express';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Router } = require('express');
 import axios from 'axios';
 import { stringify } from 'qs';
 import { highOrderHandler } from '@the-libs/base-backend';
