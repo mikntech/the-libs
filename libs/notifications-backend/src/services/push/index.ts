@@ -1,6 +1,12 @@
-import WebPush from 'web-push';
 import { TODO } from '@the-libs/base-shared';
 import { notificationsSettings } from '../../config';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const WebPush = require('web-push');
+
+
+
 
 WebPush.setVapidDetails(
   notificationsSettings.pushSubject,
