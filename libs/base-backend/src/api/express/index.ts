@@ -14,11 +14,21 @@ const { json, urlencoded } = require('express');
 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const path = require('path');
 
-const { version: Version } = require(
-  path.join(__dirname, '..', '..', '..', 'package.json'),
-);
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
+
+// Get the current directory equivalent to `__dirname`
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Construct the path to the package.json file
+const packageJsonPath = join(__dirname, '..', '..', '..', 'package.json');
+
+// Read and parse the package.json file
+const { version: Version } = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
+
 const express = require('express');
 
 export const expressApp = express();
