@@ -27,7 +27,8 @@
             "input": "libs/notifications-backend/src",
             "output": "."
           }
-        ]
+        ],
+        "external": ["express", "@the-libs/base-shared", "dotenv", "mongoose", "@the-libs/base-backend", "@the-libs/base-shared", "web-push"]
       },
       "dependsOn": [
         {
@@ -44,3 +45,4 @@
   },
   "tags": []
 }
+asdasd
