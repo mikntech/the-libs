@@ -116,7 +116,7 @@ export const genManageControllers = <
     >(
       getModel(userType).findOne({
         email,
-      }),
+      }) as unknown as TODO,
       false,
     );
     if (!existingUser) throw new UnauthorizedError('what?');

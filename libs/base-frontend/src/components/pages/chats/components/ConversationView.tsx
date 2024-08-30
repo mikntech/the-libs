@@ -118,7 +118,7 @@ const ConversationView = ({
       message,
       fetchConversationMessages
     );
-    setMessage(''); 
+    setMessage('');
   };
 
   const renderMessages = () => {
