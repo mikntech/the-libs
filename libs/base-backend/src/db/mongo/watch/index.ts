@@ -33,7 +33,7 @@ export class WatchDB {
       } else {
         const oldStream = this.activeWatches.get(collectionName);
         oldStream?.close().then();
-        this.activeWatches.set(collectionName, changeStream);
+        this.activeWatches.set(collectionName, changeStream as TODO);
       }
     });
   }
