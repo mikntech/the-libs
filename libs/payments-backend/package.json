@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/payments-backend",
-  "version": "1.1.11",
+  "version": "1.1.12",
   "dependencies": {},
   "type": "commonjs",
   "main": "./index.js",
