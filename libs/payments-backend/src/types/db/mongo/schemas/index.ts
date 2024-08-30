@@ -3,7 +3,7 @@ export * from './stripe';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const { Types } = require('mongoose');
+import type { Types } from 'mongoose';
 
 export interface BaseEvent extends x.Document {
   _id: Types.ObjectId;

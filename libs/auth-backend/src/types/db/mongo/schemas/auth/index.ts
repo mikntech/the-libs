@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const { Document as MDocument, Types } = require('mongoose');
+import type { Document as MDocument, Types } from 'mongoose';
 type OptionalIfFalse<IsRequired extends boolean, T> = IsRequired extends true
   ? T
   : T | undefined;

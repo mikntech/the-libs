@@ -5,16 +5,21 @@ export * from './logs/errorLog';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const {
+import type {
   IndexDefinition,
   IndexOptions,
   Model,
   Schema,
-} = require('mongoose');
+  Connection,
+  SchemaDefinition,
+} from 'mongoose';
+
+const mongoose = require('mongoose');
+
 import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
 import { TODO } from '@the-libs/base-shared';
 
-const connection: { instance?: mongoose.Connection } = {};
+const connection: { instance?: Connection } = {};
 
 export const connect = async <SE = string>(
   mongoURI: string,
@@ -35,10 +40,10 @@ export const connect = async <SE = string>(
 
 const initModel = <Interface>(
   connection: {
-    instance?: mongoose.Connection;
+    instance?: Connection;
   },
   name: string,
-  schema: mongoose.Schema,
+  schema: Schema,
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
   return connection.instance.model<Interface>(
@@ -55,11 +60,11 @@ interface Optional<T> {
 
 export const getModel = <Interface>(
   name: string,
-  schemaDefinition: mongoose.SchemaDefinition,
+  schemaDefinition: SchemaDefinition,
   { chainToSchema, extraIndexs, pres }: Optional<Interface> = {},
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
-  let model: mongoose.Model<Interface>;
+  let model: Model<Interface>;
   const schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
   });

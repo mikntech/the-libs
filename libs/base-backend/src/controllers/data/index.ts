@@ -1,14 +1,9 @@
-
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const {
-  Model,
-  QueryWithHelpers,
-  Types,
-  Document as MDocument,
-} = require('mongoose');
+const { Model, QueryWithHelpers } = require('mongoose');
 
+import type { Types, Document as MDocument } from 'mongoose';
 
 export const findDocs = async <
   isArray extends boolean,

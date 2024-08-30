@@ -5,7 +5,7 @@ import { errorLog } from '../../../db/mongo';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const { Model } = require('mongoose');
+import type { Model } from 'mongoose';
 
 export const serverErrorHandler =
   <DocI = ErrorLog, SE = StagingEnvironment>(

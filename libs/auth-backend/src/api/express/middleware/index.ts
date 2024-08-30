@@ -4,7 +4,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const { Types } = require('mongoose');
+import type { Types } from 'mongoose';
 import { genAuthControllers } from '../../../controllers';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { findDocs } from '@the-libs/base-backend';

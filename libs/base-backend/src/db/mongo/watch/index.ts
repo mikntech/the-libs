@@ -2,7 +2,8 @@ import { ChangeStream, GenericListener } from 'mongodb';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-const { Document, Model } = require('mongoose');import { TODO } from '@the-libs/base-shared';
+import type { Document, Model } from 'mongoose';
+import { TODO } from '@the-libs/base-shared';
 
 interface WatchCallback<T extends Document> {
   modelGetter: () => Model<T>;
