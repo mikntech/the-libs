@@ -8,7 +8,7 @@
     "@mui/x-date-pickers": "^7.15.0",
     "@the-libs/auth-shared": "^1.1.45",
     "@the-libs/base-shared": "^1.1.45",
-    "@the-libs/chat-backend": "^1.1.45",
+    "@the-libs/chat-shared": "^1.1.42",
     "axios": "^1.7.6",
     "dayjs": "^1.11.13",
     "mongoose": "^8.6.0",

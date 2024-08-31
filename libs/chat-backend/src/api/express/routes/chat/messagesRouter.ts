@@ -9,8 +9,8 @@ import {
   conversation,
   message,
   markMessagesAsRead,
-  Conversation,
 } from '@the-libs/chat-backend';
+import { Conversation } from '@the-libs/chat-shared';
 
 export const generateMessageRouter = <UserType>(
   side1Name: string,

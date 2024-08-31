@@ -10,7 +10,7 @@ import {
 import { useLocation } from 'react-router-dom';
 import SendMessageForm from '../../forms/SendMessageForm';
 import { TODO } from '@the-libs/base-shared';
-import { Conversation } from '@the-libs/chat-backend';
+import { Conversation } from '@the-libs/chat-shared';
 
 interface ChatsPageProps {
   isMobillized?: boolean;

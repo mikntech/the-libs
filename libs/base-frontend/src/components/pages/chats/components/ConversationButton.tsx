@@ -11,7 +11,7 @@ import { Dispatch, SetStateAction } from 'react';
 import Box from '@mui/material/Box';
 import { themeColor, useIsNight } from '../../../../';
 import { TODO } from '@the-libs/base-shared';
-import { Conversation } from '@the-libs/chat-backend';
+import { Conversation } from '@the-libs/chat-shared';
 import { extactNameInitials } from '../../../../utils/index';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 

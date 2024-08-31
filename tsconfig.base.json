@@ -22,6 +22,7 @@
       "@the-libs/base-frontend": ["libs/base-frontend/src/index.ts"],
       "@the-libs/base-shared": ["libs/base-shared/src/index.ts"],
       "@the-libs/chat-backend": ["libs/chat-backend/src/index.ts"],
+      "@the-libs/chat-shared": ["libs/chat-shared/src/index.ts"],
       "@the-libs/email-backend": ["libs/email-backend/src/index.ts"],
       "@the-libs/notifications-backend": ["libs/notifications-backend/src/index.ts"],
       "@the-libs/notifications-shared": ["libs/notifications-shared/src/index.ts"],

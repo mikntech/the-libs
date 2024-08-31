@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { styled, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { AuthContext } from '../../../../';
-import { Message } from '@the-libs/chat-backend';
+import { Message } from '@the-libs/chat-shared';
 
 const Container = styled(Box)({
   width: '100%',

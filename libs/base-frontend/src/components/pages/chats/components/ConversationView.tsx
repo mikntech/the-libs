@@ -22,7 +22,7 @@ import {
 import { ArrowBackIosOutlined, Send } from '@mui/icons-material';
 import { AxiosInstance } from 'axios';
 import { ServerContext } from '../../../../context';
-import { Conversation, Message } from '@the-libs/chat-backend';
+import { Conversation, Message } from '@the-libs/chat-shared';
 import { TODO } from '@the-libs/base-shared';
 import { useResponsiveness, useSubscribe } from '../../../../hooks';
 import { axiosErrorToaster } from '../../../../utils';

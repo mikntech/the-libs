@@ -1,5 +1,5 @@
 import { getModel } from '@the-libs/base-backend';
-import { Message } from '@the-libs/chat-backend';
+import { Message } from '@the-libs/chat-shared';
 
 export const message = () =>
   getModel<Message>('message', {

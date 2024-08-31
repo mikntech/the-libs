@@ -2,7 +2,7 @@ import { highOrderHandler } from '@the-libs/base-backend';
 import { TODO } from '@the-libs/base-shared';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 import { message } from '../../db/mongo/schemas/chat';
-import { Message } from '@the-libs/chat-backend';
+import { Message } from '@the-libs/chat-shared';
 import { subscriber } from '@the-libs/redis-backend';
 import { User } from '@the-libs/auth-shared';
 
