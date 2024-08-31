@@ -1,6 +1,6 @@
 import {
   FormControlLabel,
-  Grid,
+  Grid2,
   styled,
   Switch,
   ToggleButton,
@@ -132,19 +132,17 @@ export const renderSwitchGroup = <T, S>(
   anotherComponent: ((value: string) => ReactNode) | undefined = undefined,
   CustomTypography = Typography,
 ) => (
-  <Grid
-    item
+  <Grid2
     container
     justifyContent="center"
     alignItems="center"
     rowSpacing={2}
     direction="column"
   >
-    <Grid item>
+    <Grid2>
       <CustomTypography>{label}:</CustomTypography>
-    </Grid>
-    <Grid
-      item
+    </Grid2>
+    <Grid2
       container
       direction="column"
       justifyContent="center"
@@ -209,23 +207,18 @@ export const renderSwitchGroup = <T, S>(
           },
         );
         return (
-          <Grid
-            key={value}
-            item
-            container={!!anotherComponent}
-            alignItems="center"
-          >
+          <Grid2 key={value} container={!!anotherComponent} alignItems="center">
             {anotherComponent ? (
               <>
-                <Grid item>{switchComponent}</Grid>
-                <Grid item>{anotherComponent(value)}</Grid>
+                <Grid2>{switchComponent}</Grid2>
+                <Grid2>{anotherComponent(value)}</Grid2>
               </>
             ) : (
               switchComponent
             )}
-          </Grid>
+          </Grid2>
         );
       })}
-    </Grid>
-  </Grid>
+    </Grid2>
+  </Grid2>
 );

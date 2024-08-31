@@ -1,5 +1,6 @@
-import { ChangeEvent, useState } from 'react';
-import { Grid, IconButton, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { Grid2, IconButton, TextField, Typography } from '@mui/material';
 import { Add, Edit, Save } from '@mui/icons-material';
 import { ActionHandler } from '../../types';
 import { TODO } from '@the-libs/base-shared';
@@ -25,11 +26,11 @@ export const EditableField = <R,>({
   const [editing, setEditing] = useState<string>();
 
   return editing !== undefined ? (
-    <Grid container columnSpacing={2} alignItems="center">
-      <Grid item>
+    <Grid2 container columnSpacing={2} alignItems="center">
+      <Grid2>
         <PrimaryText>{plus ? '+' : ''}</PrimaryText>
-      </Grid>
-      <Grid item>
+      </Grid2>
+      <Grid2>
         <TextField
           variant="outlined"
           label={name}
@@ -38,8 +39,8 @@ export const EditableField = <R,>({
             setEditing(e.target.value);
           }}
         />
-      </Grid>
-      <Grid item>
+      </Grid2>
+      <Grid2>
         <IconButton
           onClick={() =>
             action('', editing)
@@ -54,21 +55,21 @@ export const EditableField = <R,>({
             <Save />
           </IconColorer>
         </IconButton>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   ) : (
-    <Grid container alignItems="center" columnSpacing={2}>
-      <Grid item>
+    <Grid2 container alignItems="center" columnSpacing={2}>
+      <Grid2>
         <PrimaryText variant="subtitle1" gutterBottom>
           <strong>{name}: </strong> {plus ? '+' : ''}
           {value}
         </PrimaryText>
-      </Grid>
-      <Grid item>
+      </Grid2>
+      <Grid2>
         <IconButton onClick={() => setEditing(value || '')}>
           <IconColorer>{value ? <Edit /> : <Add />}</IconColorer>
         </IconButton>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };

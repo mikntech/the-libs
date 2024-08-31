@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import {
   Button,
-  Grid,
+  Grid2,
   LinearProgress,
   Tooltip,
   Typography,
@@ -364,43 +364,42 @@ export const AuthPage = <UserType,>({
     }
 
     return (
-      <Grid container direction="column" alignItems="center" rowSpacing={2}>
-        <Grid
-          item
+      <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
+        <Grid2
           container
           justifyContent="center"
           alignItems="center"
           width="100%"
         >
-          <Grid item width="100%">
+          <Grid2 width="100%">
             <customComponents.Btn fullWidth onClick={mainButton.clickHandler}>
               {mainButton.label}
             </customComponents.Btn>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
         {(navigateButton.exists || resetButton.exists) && (
-          <Grid item container columnSpacing={2}>
+          <Grid2 container columnSpacing={2}>
             {navigateButton.exists && (
-              <Grid item>
+              <Grid2>
                 <customComponents.PrimaryText
                   onClick={navigateButton.clickHandler}
                 >
                   {navigateButton.label}
                 </customComponents.PrimaryText>
-              </Grid>
+              </Grid2>
             )}
             {resetButton.exists && (
-              <Grid item>
+              <Grid2>
                 <customComponents.PrimaryText
                   onClick={resetButton.clickHandler}
                 >
                   {resetButton.label}
                 </customComponents.PrimaryText>
-              </Grid>
+              </Grid2>
             )}
-          </Grid>
+          </Grid2>
         )}
-      </Grid>
+      </Grid2>
     );
   };
 
@@ -422,13 +421,13 @@ export const AuthPage = <UserType,>({
 
   const authJSX = (
     <Box sx={{ padding: '20px', width: '75%' }}>
-      <Grid container direction="column" alignItems="center" rowSpacing={2}>
-        <Grid item>
+      <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
+        <Grid2>
           <customComponents.PrimaryText variant="h5">
             Welcome to
           </customComponents.PrimaryText>
-        </Grid>
-        <Grid item>
+        </Grid2>
+        <Grid2>
           <Tooltip title={server?.version} placement="right-start">
             <customComponents.Img
               src={isNight ? nightLogoTextOnly : dayLogoTextOnly}
@@ -436,15 +435,15 @@ export const AuthPage = <UserType,>({
               height="100%"
             />
           </Tooltip>
-        </Grid>
+        </Grid2>
         {client !== tenum.guest && (
-          <Grid item>
+          <Grid2>
             <customComponents.PrimaryText variant="h6">
               for {client}s
             </customComponents.PrimaryText>
-          </Grid>
+          </Grid2>
         )}
-        <Grid item>
+        <Grid2>
           {step === Step.checkEmail ? (
             <customComponents.PrimaryText
               textAlign="center"
@@ -543,16 +542,16 @@ export const AuthPage = <UserType,>({
                           left={`${(minPassStrength / 4) * 100 - 5}%`}
                           top={0}
                         >
-                          <Grid container>
-                            <Grid item>
+                          <Grid2 container>
+                            <Grid2>
                               <Flag />
-                            </Grid>
-                            <Grid item>
+                            </Grid2>
+                            <Grid2>
                               <customComponents.PrimaryText>
                                 Min
                               </customComponents.PrimaryText>
-                            </Grid>
-                          </Grid>
+                            </Grid2>
+                          </Grid2>
                         </Box>
                       </Box>
                     ))}
@@ -581,25 +580,25 @@ export const AuthPage = <UserType,>({
               )}
             </>
           )}
-        </Grid>
+        </Grid2>
         {LABELS[buttonLabel][step] && (
-          <Grid item>
+          <Grid2>
             <Box mt={2}>{renderButtons()}</Box>
-          </Grid>
+          </Grid2>
         )}
-      </Grid>
+      </Grid2>
       <br />
-      <Grid item>
+      <Grid2>
         {/* <GoogleSignIn
           onLoginSuccess={handleLoginSuccess}
           onLoginFailure={handleLoginFailure}
         />*/}
-      </Grid>
+      </Grid2>
     </Box>
   );
 
   return (
-    <Grid
+    <Grid2
       container
       justifyContent="center"
       alignItems="center"
@@ -608,8 +607,7 @@ export const AuthPage = <UserType,>({
       wrap="nowrap"
       overflow="hidden"
     >
-      <Grid
-        item
+      <Grid2
         container
         width={
           isMobileOrTabl || client === 'guest' || client === 'host'
@@ -621,12 +619,12 @@ export const AuthPage = <UserType,>({
         paddingTop="13%"
       >
         {authJSX}
-      </Grid>
+      </Grid2>
       {client === 'host' && !isMobileOrTabl && (
-        <Grid item width="60%" height="100%">
+        <Grid2 width="60%" height="100%">
           <customComponents.Img src={backgroundPicture} bg />
-        </Grid>
+        </Grid2>
       )}
-    </Grid>
+    </Grid2>
   );
 };

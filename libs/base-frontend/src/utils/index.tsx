@@ -7,7 +7,7 @@ import {
   CircularProgress,
   Fab,
   FabProps,
-  Grid,
+  Grid2,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -160,17 +160,17 @@ export const Img = forwardRef<TODO, ImgProps>((props, ref) => {
         />
       )}
       {error ? (
-        <Grid
+        <Grid2
           width="100%"
           height="100%"
           container
           justifyContent="center"
           alignItems="center"
         >
-          <Grid item>
+          <Grid2>
             <PrimaryText color="error">Error loading picture</PrimaryText>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       ) : (
         <Box
           component="img"

@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from '@mui/material';
+import { Button, Grid2, Typography } from '@mui/material';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import ConversationView from './components/ConversationView';
 import {
@@ -95,7 +95,7 @@ export const ChatsPage = ({
       customComponents={customComponents}
     />
   ) : (
-    <Grid
+    <Grid2
       width={'auto'}
       height="100%"
       marginX="10px"
@@ -115,10 +115,9 @@ export const ChatsPage = ({
       )}
 
       {!selectedConversation && (
-        <Grid
+        <Grid2
           // width={wide ? '100%' : totalUnReadCounter !== 0 ? '70px' : '50px'}
           height="100%"
-          item
           container
           direction="column"
           rowSpacing={0}
@@ -130,7 +129,7 @@ export const ChatsPage = ({
         >
           {conversations.length > 0 ? (
             conversations.map((conversation) => (
-              <Grid key={conversation._id?.toString()} item>
+              <Grid2 key={conversation._id?.toString()}>
                 <br />
                 <ConversationButton
                   key={conversation._id?.toString()}
@@ -140,18 +139,17 @@ export const ChatsPage = ({
                   setSelectedConversation={setSelectedConversation}
                   disableDarkMode
                 />
-              </Grid>
+              </Grid2>
             ))
           ) : (
             <PrimaryText padded fontSize="80%">
               You don't have conversations yet
             </PrimaryText>
           )}
-        </Grid>
+        </Grid2>
       )}
-      <Grid
+      <Grid2
         height="100%"
-        item
         overflow="scroll"
         flexGrow={1}
         onClick={() => setOpen(false)}
@@ -165,7 +163,7 @@ export const ChatsPage = ({
             tenum={tenum}
           />
         )}
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };

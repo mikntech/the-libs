@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Grid,
+  Grid2,
   IconButton,
   TextField,
   Typography,
@@ -154,7 +154,7 @@ const ConversationView = ({
 
   return (
     <>
-      <Grid
+      <Grid2
         width="100%"
         height="50px"
         container
@@ -164,40 +164,39 @@ const ConversationView = ({
         position="fixed"
         boxShadow={'0 6px 3px rgba(0, 0, 0, 0.2)'}
       >
-        <Grid item>
+        <Grid2>
           <IconButton onClick={() => setSelectedConversation(undefined)}>
             <ArrowBackIosOutlined />
           </IconButton>
-        </Grid>
-        <Grid item>
+        </Grid2>
+        <Grid2>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Avatar>{extactNameInitials(conversation.name)} </Avatar>
             <Typography color="primary.contrastText" fontWeight={700}>
               {conversation.name}
             </Typography>
           </Box>
-        </Grid>
-        <Grid item></Grid>
-      </Grid>
-      <Grid
+        </Grid2>
+        <Grid2></Grid2>
+      </Grid2>
+      <Grid2
         container
         width="100%"
         height="calc(100% - 60px)"
         justifyContent="space-between"
         marginTop={'3rem'}
       >
-        <Grid item width="100%" height="calc(100% - 80px)" overflow="scroll">
+        <Grid2 width="100%" height="calc(100% - 80px)" overflow="scroll">
           {renderMessages()}
-        </Grid>
-        <Grid
-          item
+        </Grid2>
+        <Grid2
           container
           justifyContent="space-between"
           alignItems="center"
           width="100%"
           height="80px"
         >
-          <Grid item width="80%">
+          <Grid2 width="80%">
             <TextField
               onKeyDown={handleKeyDown}
               value={message}
@@ -206,14 +205,14 @@ const ConversationView = ({
               fullWidth
               placeholder="Type a message..."
             />
-          </Grid>
-          <Grid item>
+          </Grid2>
+          <Grid2>
             <Btn onClick={handleSendMessage}>
               <Send />
             </Btn>
-          </Grid>
-        </Grid>
-      </Grid>
+          </Grid2>
+        </Grid2>
+      </Grid2>
     </>
   );
 };

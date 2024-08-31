@@ -1,4 +1,4 @@
-import { Button, Grid, Modal, Typography } from '@mui/material';
+import { Button, Grid2, Modal, Typography } from '@mui/material';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TODO } from '@the-libs/base-shared';
@@ -40,14 +40,13 @@ const SendMessageForm = ({
 
   return (
     <Modal open>
-      <Grid
+      <Grid2
         height="80%"
         width="80%"
         marginLeft="10%"
         marginTop="5%"
         padding="2%"
         overflow="scroll"
-        item
         container
         direction="column"
         rowSpacing={4}
@@ -55,23 +54,23 @@ const SendMessageForm = ({
         wrap="nowrap"
         bgcolor={(theme) => theme.palette.background.default}
       >
-        <Grid item>
+        <Grid2>
           <customComponents.CloseButton onClick={close} />
-        </Grid>
-        <Grid item>
+        </Grid2>
+        <Grid2>
           <customComponents.PrimaryText variant="h5">
             Send a message to the {amIaGuest ? tenum.host : tenum.guest}
           </customComponents.PrimaryText>
-        </Grid>
-        <Grid item>
+        </Grid2>
+        <Grid2>
           {renderTextField(
             message,
             (_, value) => setMessage({ msg: value as string }),
             ['msg'],
             { multiline: true, label: 'Message:' },
           )}
-        </Grid>
-        <Grid item>
+        </Grid2>
+        <Grid2>
           <customComponents.Btn
             onClick={() =>
               server &&
@@ -82,8 +81,8 @@ const SendMessageForm = ({
           >
             Send
           </customComponents.Btn>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Modal>
   );
 };
