@@ -1,6 +1,6 @@
 import { Stripe } from 'stripe';
 import { paymentsSettings } from '../../config';
-import { stripeEvent } from '../../db/mongo/schemas';
+import { stripeEvent } from '../../db/mongo';
 import { RawStripeEvent } from '../../types';
 import { expressApp, getBaseSettings } from '@the-libs/base-backend';
 import type { Request, Response } from 'express';

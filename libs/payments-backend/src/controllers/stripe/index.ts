@@ -1,5 +1,6 @@
 import { stripeInstance } from '../../services';
-import { Stripe } from 'stripe';
+
+import type { Stripe as StripeType } from 'stripe';
 
 export const createPayment = async (
   currency = 'usd',
@@ -34,40 +35,41 @@ export const createPayment = async (
   });
 };
 
-export const createHostAccount = async (): Promise<Stripe.Account | null> => {
-  try {
-    return await stripeInstance.accounts.create({
-      controller: {
-        stripe_dashboard: {
-          type: 'none',
+export const createHostAccount =
+  async (): Promise<StripeType.Account | null> => {
+    try {
+      return await stripeInstance.accounts.create({
+        controller: {
+          stripe_dashboard: {
+            type: 'none',
+          },
+          fees: {
+            payer: 'application',
+          },
+          losses: {
+            payments: 'application',
+          },
+          requirement_collection: 'application',
         },
-        fees: {
-          payer: 'application',
+        capabilities: {
+          transfers: { requested: true },
         },
-        losses: {
-          payments: 'application',
-        },
-        requirement_collection: 'application',
-      },
-      capabilities: {
-        transfers: { requested: true },
-      },
-      country: 'US',
-    });
-  } catch (error) {
-    console.error(
-      'An error occurred when calling the Stripe API to create an account',
-      error,
-    );
-    return null;
-  }
-};
+        country: 'US',
+      });
+    } catch (error) {
+      console.error(
+        'An error occurred when calling the Stripe API to create an account',
+        error,
+      );
+      return null;
+    }
+  };
 
 export const createHostAccountLink = async (
   accountId: string,
   returnUrl: string,
   refreshUrl: string,
-): Promise<Stripe.AccountLink | null> => {
+): Promise<StripeType.AccountLink | null> => {
   try {
     return await stripeInstance.accountLinks.create({
       account: accountId,
@@ -90,7 +92,7 @@ export const createHostAccountAndGetId = async (): Promise<string | null> =>
 export const createHostAccountAndAccountLink = async (
   returnUrl: string,
   refreshUrl: string,
-): Promise<Stripe.AccountLink | null> => {
+): Promise<StripeType.AccountLink | null> => {
   const accountId = await createHostAccountAndGetId();
   if (accountId) return createHostAccountLink(accountId, returnUrl, refreshUrl);
   else console.log('error');

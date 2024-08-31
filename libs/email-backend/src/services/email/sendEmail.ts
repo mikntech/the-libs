@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 const sendgrid = require('@sendgrid/mail');
 
 import { getEmailSettings } from '../../config';

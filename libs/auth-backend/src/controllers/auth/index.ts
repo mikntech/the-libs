@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 import {
   findDocs,
   getBaseSettings,
@@ -17,7 +20,9 @@ import {
 import { User, SomeRequest } from '@the-libs/auth-shared';
 
 import { genSalt, hash } from 'bcryptjs';
-import { sign } from 'jsonwebtoken';
+
+const { sign } = require('jsonwebtoken');
+
 import type { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
 

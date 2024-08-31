@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { authSettings, Strategy } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
-import { JwtPayload } from 'jsonwebtoken';
+import type { JwtPayload } from 'jsonwebtoken';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 

@@ -1,10 +1,15 @@
-import {
+import { s3Settings } from '../../config';
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
+const {
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
-} from '@aws-sdk/client-s3';
-import { s3Settings } from '../../config';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+} = require('@aws-sdk/client-s3');
+
+const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
 export const s3Client = new S3Client({
   region: s3Settings.aws.region,
