@@ -1,0 +1,40 @@
+{
+  "name": "chat-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/chat-shared/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/chat-shared",
+        "tsConfig": "libs/chat-shared/tsconfig.lib.json",
+        "project": "libs/chat-shared/package.json",
+        "entryFile": "libs/chat-shared/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/chat-shared/src",
+            "output": "."
+          }
+        ]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

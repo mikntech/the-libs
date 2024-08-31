@@ -28,3 +28,28 @@ export const guessValueType = (item: TODO) =>
         : typeof item === 'object' && item !== null
           ? JSON.stringify(item)
           : formatTextNicely(String(item));
+
+export const handleSubscribeClick = (cb: (pushSubscription: TODO) => void) => {
+  navigator.serviceWorker.ready.then((registration) => {
+    const base64String =
+      'BH1R9v3i49K6RwINhRAIGDWeD5Qc4P8goayR9Zse5GHr8P6TftjYECx98M-C7YBpA-DPbnM_k_QdZgQc5QnWgU8';
+    const padding = '='.repeat((4 - (base64String?.length % 4)) % 4);
+    const base64 = (base64String + padding)
+      .replace(/-/g, '+')
+      .replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData?.length);
+    for (let i = 0; i < rawData?.length; ++i) {
+      outputArray[i] = rawData.charCodeAt(i);
+    }
+    registration.pushManager
+      .subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: outputArray,
+      })
+      .then((pushSubscription) => cb(pushSubscription))
+      .catch((error) => {
+        console.log('Error during getSubscription()', error);
+      });
+  });
+};
