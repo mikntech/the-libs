@@ -13,7 +13,6 @@ import { themeColor, useIsNight } from '../../../../';
 import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-backend';
 import { extactNameInitials } from '../../../../utils/index';
-import { sourceMapsEnabled } from 'process';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 interface ConversationButtonProps {

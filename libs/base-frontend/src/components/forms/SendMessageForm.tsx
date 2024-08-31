@@ -1,12 +1,9 @@
 import { Button, Grid, Modal, Typography } from '@mui/material';
 import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  renderTextField,
-  sendMessage,
-  ServerContext,
-} from '@the-libs/base-frontend';
 import { TODO } from '@the-libs/base-shared';
+import { renderTextField, sendMessage } from '..';
+import { ServerContext } from '../../context';
 
 interface SendMessageFormProps {
   id: string;
