@@ -97,6 +97,13 @@ export const genManageControllers = <
     await user.save();
   };
 
+  const changeUsersPhone = async (user: TODO, phone: string) => {
+    if (!user?.save)
+      throw new Error('a lean doc was passed to changeUsersPhone');
+    user.phone = phone;
+    await user.save();
+  };
+
   const resetPassword = async (
     key: string,
     password: string,

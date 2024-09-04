@@ -8,6 +8,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import TablePagination from '@mui/material/TablePagination';
 import { ServerContext } from '../../context';
 import { Add } from '@mui/icons-material';
 import { TODO, guessValueType } from '@the-libs/base-shared';
@@ -98,10 +99,16 @@ export const GenericTable = <D extends MDocument<Types.ObjectId>>({
         <TableHead>
           <TableRow>
             {columns.map(({ name }) => (
-              <TableCell key={name}>{name}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold',overflow: 'hidden',textOverflow: 'ellipsis',whiteSpace: 'nowrap',
+                fontSize: 'clamp(0.8rem, 1.5vw + 0.1rem, 1.4rem)'
+               }}
+               key={name}>{name}
+               </TableCell>
             ))}
             {actions?.map(({ name }) => (
-              <TableCell key={name}>{name}</TableCell>
+              <TableCell sx={{ fontWeight: 'bold', fontSize: 'clamp(0.8rem, 1.5vw + 0.1rem, 1.4rem)' }} key={name}>
+                {name}
+                </TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -120,7 +127,11 @@ export const GenericTable = <D extends MDocument<Types.ObjectId>>({
                   return data;
                 })
                 .map((value, j) => (
-                  <TableCell key={`${i}-${j}`}>
+                  <TableCell sx={{ fontSize: {
+                    sm: '0.7rem',
+                    md: '0.8rem',
+                    xl: '1rem'
+                  }}} key={`${i}-${j}`}>
                     {(Array.isArray(value) ? value : [value])
                       .map((item) => guessValueType(item))
                       .join(', ')}

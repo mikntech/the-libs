@@ -45,7 +45,8 @@ export const renderToggleButton = <T,>(
       fontStyle: 'normal',
       paddingBlock: '8px',
       paddingInline: '10.5px',
-      backgroundColor: '#76777A',
+      backgroundColor: '#B9B9B9',
+      color:'white'
     },
     [`&.${toggleButtonClasses.selected}`]: {
       backgroundColor: '#005FAF',

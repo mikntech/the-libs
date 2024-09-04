@@ -21,7 +21,7 @@ export const manageRouter = <
 ) => {
   const router = Router();
 
-  const { requestPasswordReset, resetPassword, updateFullName } =
+  const { requestPasswordReset, resetPassword, updateFullName, updatePhone } =
     genManageControllers(strategy);
 
   router.put(
@@ -29,6 +29,14 @@ export const manageRouter = <
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { newFullName } = req.body;
       return updateFullName(req.user, req.userType, newFullName);
+    }),
+  );
+
+  router.put(
+    '/update-phone',
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
+      const { phone } = req.body;
+      return updatePhone(req.user, req.userType, phone);
     }),
   );
 
