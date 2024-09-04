@@ -160,9 +160,29 @@ export const genManageControllers = <
       false,
     )) as unknown as User | null;
 
+
     await changeUsersFullName(userDoc, newFullName);
     return { statusCode: 201 };
   };
 
-  return { requestPasswordReset, resetPassword, updateFullName };
+
+
+  const updatePhone = async (
+    user: User | null,
+    userType: UserType,
+    phone: string,
+  ) => {
+    if (!user) throw new UnauthorizedError('you are not logged in');
+    validateInput({ phone });
+
+    const userDoc = (await findDocs(
+      getModel(userType).findById(user._id),
+      false,
+    )) as unknown as User | null;
+
+    await changeUsersPhone(userDoc, phone);
+    return { statusCode: 201, body: 'Phone updated successfully' };
+  };
+
+  return { requestPasswordReset, resetPassword, updateFullName, updatePhone };
 };
