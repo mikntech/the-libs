@@ -1,4 +1,4 @@
-import { ChangeStream, GenericListener } from 'mongodb';
+import type { ChangeStream, GenericListener } from 'mongodb';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 

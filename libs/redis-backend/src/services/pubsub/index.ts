@@ -12,17 +12,20 @@ class PubSub {
 
   subscribe(channel: string, callback: Function): string | void {
     if (this.redisClient) {
-      this.redisClient.subscribe(channel, (err) => {
+      this.redisClient.subscribe(channel, (err: string) => {
         if (err) {
           console.error('Redis subscription failed:', err);
         }
       });
 
-      this.redisClient.on('message', (subscribedChannel, message) => {
-        if (subscribedChannel === channel) {
-          callback(message);
-        }
-      });
+      this.redisClient.on(
+        'message',
+        (subscribedChannel: string, message: string) => {
+          if (subscribedChannel === channel) {
+            callback(message);
+          }
+        },
+      );
     } else {
       return this.fallback.subscribe(channel, (msg, data) => {
         callback(data);

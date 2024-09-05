@@ -1,4 +1,3 @@
-import { Stripe } from 'stripe';
 import { paymentsSettings } from '../../config';
 import { stripeEvent } from '../../db/mongo';
 import { RawStripeEvent } from '../../types';
@@ -8,6 +7,7 @@ import type { Request, Response } from 'express';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { json } = require('express');
+const { Stripe } = require('stripe');
 
 export const stripeInstance = new Stripe(paymentsSettings.stripeApiKey, {
   apiVersion: paymentsSettings.stripeApiVersion as any,
@@ -68,7 +68,7 @@ const triggerSync = async () =>
     await stripeInstance.events.list({
       created: { gt: await getLastRecordedEventTS() },
     })
-  ).data.forEach((newEvent) => saveStripeEventToDB(newEvent));
+  ).data.forEach((newEvent: RawStripeEvent) => saveStripeEventToDB(newEvent));
 
 setTimeout(
   () => setInterval(triggerSync, paymentsSettings.syncIntervalInSeconds * 1000),

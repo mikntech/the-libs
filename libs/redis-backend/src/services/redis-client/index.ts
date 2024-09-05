@@ -1,7 +1,10 @@
-import RedisClientClass, { RedisOptions } from 'ioredis';
+import type { RedisOptions } from 'ioredis';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const RedisClientClass = require('ioredis');
 import { redisSettings } from '../..';
 
-export type RedisType = RedisClientClass;
+export type RedisType = typeof RedisClientClass;
 
 export const createRedisInstance = () => {
   try {
