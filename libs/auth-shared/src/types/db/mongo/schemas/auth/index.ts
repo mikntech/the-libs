@@ -3,10 +3,14 @@ type OptionalIfFalse<IsRequired extends boolean, T> = IsRequired extends true
   ? T
   : T | undefined;
 
+type OptionalIfTrue<IsRequired extends boolean, T> = IsRequired extends false
+  ? T | undefined
+  : T;
+
 export interface User<
   NameRequired extends boolean = false,
   ProfilePictureUriRequired extends boolean = false,
-  MultyByRole extends boolean = false,
+  MultyAtAll extends boolean = false,
   USERTYPE = undefined,
 > extends MDocument {
   _id: Types.ObjectId;
@@ -14,7 +18,7 @@ export interface User<
   password: string;
   full_name: OptionalIfFalse<NameRequired, string>;
   profilePictureUri: OptionalIfFalse<ProfilePictureUriRequired, string>;
-  userType: OptionalIfFalse<MultyByRole, USERTYPE>;
+  userType: OptionalIfTrue<MultyAtAll, USERTYPE>;
   createdAt: Date;
   updatedAt: Date;
 }

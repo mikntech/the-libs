@@ -8,7 +8,7 @@ export const user = <
   ProfilePictureUriRequired extends boolean = false,
   TheEnum extends SomeEnum<TheEnum> = string,
 >(
-  multiUserTypeIsByRole: boolean,
+  multiUserTypeIsAtAll: boolean,
   nameRequired: NameRequired extends true ? true : false,
   profilePictureUriRequired: ProfilePictureUriRequired extends true
     ? true
@@ -17,13 +17,13 @@ export const user = <
 ) =>
   getModel<User<NameRequired, ProfilePictureUriRequired>>('user', {
     ...userBasicSchema(nameRequired, profilePictureUriRequired),
-    ...(multiUserTypeIsByRole
-      ? {
+    ...(multiUserTypeIsAtAll
+      ? {}
+      : {
           userType: {
             type: String,
             enum: enumValues as unknown[] as string[],
             required: true,
           },
-        }
-      : {}),
+        }),
   });
