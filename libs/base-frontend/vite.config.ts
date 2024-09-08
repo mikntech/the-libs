@@ -35,6 +35,18 @@ export default defineConfig({
     rollupOptions: {
       // External packages that should not be bundled into your library.
       external: [],
+      onwarn(warning, warn) {
+        // Suppress the warnings related to MUI's "use client" directive
+        if (
+          warning.message.includes(
+            'Module level directives cause errors when bundled, "use client"',
+          )
+        ) {
+          return;
+        }
+        // Default warning handler for other warnings
+        warn(warning);
+      },
     },
   },
 });
