@@ -10,6 +10,7 @@ import {
   InvalidInputError,
   SomeEnum,
   TODO,
+  ClientError,
 } from '@the-libs/base-shared';
 import { v4 } from 'uuid';
 import {
@@ -20,6 +21,7 @@ import {
 import { User } from '@the-libs/auth-shared';
 
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
+import { uploadFile } from '@the-libs/s3-backend';
 
 export const genManageControllers = <
   UserType extends SomeEnum<UserType>,
@@ -160,12 +162,9 @@ export const genManageControllers = <
       false,
     )) as unknown as User | null;
 
-
     await changeUsersFullName(userDoc, newFullName);
     return { statusCode: 201 };
   };
-
-
 
   const updatePhone = async (
     user: User | null,
@@ -184,5 +183,31 @@ export const genManageControllers = <
     return { statusCode: 201, body: 'Phone updated successfully' };
   };
 
-  return { requestPasswordReset, resetPassword, updateFullName, updatePhone };
+  const uploadProfilePicture = async (req: {
+    user: User | null;
+    userType: UserType;
+    files: TODO[];
+  }) => {
+    if (!(req.files && 'map' in req.files))
+      throw new ClientError('No file received');
+    const userDoc = (await findDocs(
+      getModel(req.userType).findById(req.user?._id),
+      false,
+    )) as unknown as User | null;
+    if (!userDoc) throw new UnauthorizedError('Please login first');
+    const file = req.files[0];
+    const uri = `${String(userDoc._id)}/profilepicture/${file.originalname}`;
+    await uploadFile(uri, file.buffer, file.mimetype);
+    userDoc.profilePictureUri = uri;
+    await userDoc.save();
+    return { statusCode: 201, body: 'Picture updated successfully' };
+  };
+
+  return {
+    requestPasswordReset,
+    resetPassword,
+    updateFullName,
+    updatePhone,
+    uploadProfilePicture,
+  };
 };

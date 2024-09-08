@@ -5,6 +5,7 @@ import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
 import { highOrderHandler } from '@the-libs/base-backend';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { genManageControllers } from '../../../../controllers/auth/manage';
+const multer = require('multer');
 
 export const manageRouter = <
   UserTypeEnum extends SomeEnum<UserTypeEnum>,
@@ -21,8 +22,13 @@ export const manageRouter = <
 ) => {
   const router = Router();
 
-  const { requestPasswordReset, resetPassword, updateFullName, updatePhone } =
-    genManageControllers(strategy);
+  const {
+    requestPasswordReset,
+    resetPassword,
+    updateFullName,
+    updatePhone,
+    uploadProfilePicture,
+  } = genManageControllers(strategy);
 
   router.put(
     '/update-name',
@@ -42,18 +48,28 @@ export const manageRouter = <
 
   router.post(
     '/request-password-reset',
-    highOrderHandler((async (req: AuthenticatedRequest<UserTypeEnum>) => {
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { email, userType } = req.body;
       return requestPasswordReset(email, userType);
-    }) as TODO),
+    }),
   );
 
   router.post(
     '/reset-password',
-    highOrderHandler((async (req: AuthenticatedRequest<UserTypeEnum>) => {
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { key, password, passwordAgain, userType } = req.body;
       return resetPassword(key, password, passwordAgain, userType);
-    }) as TODO),
+    }),
+  );
+
+  const upload = multer({ storage: multer.memoryStorage() });
+
+  router.post(
+    '/upload-profile-picture',
+    upload.array('files', 1),
+    highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) =>
+      uploadProfilePicture(req as unknown as TODO),
+    ),
   );
 
   return router;
