@@ -3,12 +3,20 @@ import { defineConfig } from 'vite';
 
 import * as path from 'path';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../node_modules/.vite/base-frontend',
 
-  plugins: [nxViteTsPaths()],
+  plugins: [
+    dts({
+      tsconfigPath: './tsconfig.lib.json',
+      outDir: 'dist/libs/base-frontend', // Where to output .d.ts files
+      insertTypesEntry: true, // Insert `types` entry into package.json
+    }),
+    nxViteTsPaths(),
+  ],
 
   // Uncomment this if you are using workers.
   // worker: {
