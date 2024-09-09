@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     dts({
       tsconfigPath: './tsconfig.lib.json',
-      outDir: 'dist/libs/base-frontend', // Where to output .d.ts files
+      outDir: '/dist/libs/base-frontend', // Where to output .d.ts files
       insertTypesEntry: true, // Insert `types` entry into package.json
     }),
     nxViteTsPaths(),
