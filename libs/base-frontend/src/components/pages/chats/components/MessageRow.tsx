@@ -1,6 +1,5 @@
 import { useContext } from 'react';
-import { styled, Typography } from '@mui/material';
-import Box from '@mui/material/Box';
+import { Box, styled, Typography } from '@mui/material';
 import { AuthContext } from '../../../../';
 import { Message } from '@the-libs/chat-shared';
 

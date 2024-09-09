@@ -1,6 +1,6 @@
 import { ReactNode, useEffect } from 'react';
-import Box from '@mui/material/Box';
 import { frontendSettings } from '../../context';
+import { Box } from '@mui/material';
 
 interface EnvBorderContextProps {
   children: ReactNode;

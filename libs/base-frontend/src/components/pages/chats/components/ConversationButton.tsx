@@ -1,6 +1,7 @@
 import {
   Avatar,
   Badge,
+  Box,
   Card,
   CardActions,
   CardContent,
@@ -8,12 +9,12 @@ import {
   Typography,
 } from '@mui/material';
 import { Dispatch, SetStateAction } from 'react';
-import Box from '@mui/material/Box';
 import { themeColor, useIsNight } from '../../../../';
 import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-shared';
 import { extactNameInitials } from '../../../../utils/index';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { KeyboardArrowRight } from '@mui/icons-material';
+// import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 interface ConversationButtonProps {
   conversation: Conversation;
@@ -119,7 +120,7 @@ export const ConversationButton = ({
             sx={{ marginLeft: 'auto' }}
             aria-label="display graph"
           >
-            <KeyboardArrowRightIcon sx={{ color: 'text.secondary' }} />
+            <KeyboardArrowRight sx={{ color: 'text.secondary' }} />
           </IconButton>
         </CardActions>
       </CardContent>
