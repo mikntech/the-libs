@@ -9,6 +9,7 @@ import {
   SomeEnum,
   InvalidInputError,
   UnauthorizedError,
+  TODO,
 } from '@the-libs/base-shared';
 import { GenEmailFunction } from '@the-libs/email-backend';
 import {
@@ -105,6 +106,7 @@ export const genRegisterControllers = <
     password: string,
     passwordAgain: string,
     requiredFields: RequiredFields,
+    optionalFields: OptionalFields,
   ) => {
     validateInput({ key });
     validateInput({ full_name });
@@ -130,6 +132,11 @@ export const genRegisterControllers = <
       doc.userType as unknown as UserType,
       requiredFields,
     );
+    strategy.postRegistrationCB &&
+      strategy.postRegistrationCB(
+        savedUser,
+        (optionalFields as TODO).business_hp_id,
+      );
     return {
       statusCode: 200,
       cookie: generateSecureCookie(

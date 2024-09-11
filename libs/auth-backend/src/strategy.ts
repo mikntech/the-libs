@@ -45,6 +45,7 @@ export interface Strategy<
   UserEnum extends SomeEnum<UserEnum> = null,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
+  PostRegParams = {},
 > {
   MIN_PASSWORD_STRENGTH: ZXCVBNScore;
   multiUserType: MultiUserType;
@@ -65,6 +66,7 @@ export interface Strategy<
   genRegisterEmail: GenEmailFunction;
   genPassResetEmail: GenEmailFunction;
   enumValues: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
+  postRegistrationCB?: (savedUser: User, params: PostRegParams) => void;
 }
 
 export const createStrategy = <
@@ -73,6 +75,7 @@ export const createStrategy = <
   UserEnum extends SomeEnum<UserEnum> = null,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
+  PostRegParams = {},
 >(
   config: Omit<
     multiUserType_is_SINGLE extends true
@@ -82,7 +85,8 @@ export const createStrategy = <
             OptionalFields,
             UserEnum,
             multiUserType_is_MULTI_COLLECTION,
-            multiUserType_is_SINGLE
+            multiUserType_is_SINGLE,
+            PostRegParams
           >,
           'enumValues'
         >
@@ -91,7 +95,8 @@ export const createStrategy = <
           OptionalFields,
           UserEnum,
           multiUserType_is_MULTI_COLLECTION,
-          multiUserType_is_SINGLE
+          multiUserType_is_SINGLE,
+          PostRegParams
         >,
     'modelMap'
   > & {
@@ -102,14 +107,16 @@ export const createStrategy = <
   OptionalFields,
   UserEnum,
   multiUserType_is_MULTI_COLLECTION,
-  multiUserType_is_SINGLE
+  multiUserType_is_SINGLE,
+  PostRegParams
 > =>
   config as unknown as Strategy<
     RequiredFields,
     OptionalFields,
     UserEnum,
     multiUserType_is_MULTI_COLLECTION,
-    multiUserType_is_SINGLE
+    multiUserType_is_SINGLE,
+    PostRegParams
   >;
 
 export const defaultStrategy = createStrategy({

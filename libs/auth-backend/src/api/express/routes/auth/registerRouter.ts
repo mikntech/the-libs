@@ -25,8 +25,11 @@ export const registerRouter = <
 ) => {
   const router = Router();
 
-  const { requestToRegister, finishRegistration } =
-    genRegisterControllers(strategy);
+  const { requestToRegister, finishRegistration } = genRegisterControllers<
+    UserTypeEnum,
+    RequiredFields,
+    OptionalFields
+  >(strategy);
   router.post(
     '/request' +
       (strategy.multiUserType === MultiUserType.SINGLE ? '' : '/:userType'),
@@ -40,14 +43,21 @@ export const registerRouter = <
   router.post(
     '/finish',
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
-      const { key, full_name, password, passwordAgain, requiredFields } =
-        req.body;
+      const {
+        key,
+        full_name,
+        password,
+        passwordAgain,
+        requiredFields,
+        optionalFields,
+      } = req.body;
       return finishRegistration(
         key,
         full_name,
         password,
         passwordAgain,
         requiredFields,
+        optionalFields,
       );
     }) as TODO,
   );

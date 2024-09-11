@@ -24,7 +24,10 @@ export const authRouter = <
   const router = Router();
   router.use('/log', logRouter(strategy));
   router.use('/manage', manageRouter(strategy));
-  router.use('/register', registerRouter(strategy));
+  router.use(
+    '/register',
+    registerRouter<UserTypeEnum, RequiredFields, OptionalFields>(strategy),
+  );
 
   router.get(
     '/ZXCVBNDifficulty',

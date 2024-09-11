@@ -10,7 +10,7 @@ export const getLastMessageOfConversation = async (conversationId: string) =>
   await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
 
 export const getNameOfUser = async (userId: string) =>
-  (await user(false, false, false).findById(userId))?.full_name;
+  (await user(false, false).findById(userId))?.full_name;
 
 export const markMessagesAsRead = async (
   messages: Message[],
