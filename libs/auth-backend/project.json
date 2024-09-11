@@ -27,7 +27,8 @@
             "input": "libs/auth-backend/src",
             "output": "."
           }
-        ]
+        ],
+    "external": ["express", "@the-libs/auth-shared", "jsonwebtoken", "mongoose", "@the-libs/base-shared", "@the-libs/base-backend", "@the-libs/base-shared", "@the-libs/s3-backend", "multer", "dotenv", "bcrypt", "@the-libs/email-backend", "zxcvbn", "uuid"]
       }
     },
     "nx-release-publish": {

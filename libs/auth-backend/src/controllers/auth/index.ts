@@ -19,7 +19,7 @@ import {
 } from '@the-libs/auth-backend';
 import { User, SomeRequest } from '@the-libs/auth-shared';
 
-import { genSalt, hash } from 'bcryptjs';
+const { genSalt, hash } = require('bcrypt');
 
 const { sign } = require('jsonwebtoken');
 

@@ -5,18 +5,14 @@ import { getModel } from '@the-libs/base-backend';
 
 export const user = <
   NameRequired extends boolean = false,
-  ProfilePictureUriRequired extends boolean = false,
   TheEnum extends SomeEnum<TheEnum> = string,
 >(
   multiUserTypeIsAtAll: boolean,
   nameRequired: NameRequired extends true ? true : false,
-  profilePictureUriRequired: ProfilePictureUriRequired extends true
-    ? true
-    : false,
   enumValues: TheEnum[] = [],
 ) =>
-  getModel<User<NameRequired, ProfilePictureUriRequired>>('user', {
-    ...userBasicSchema(nameRequired, profilePictureUriRequired),
+  getModel<User<NameRequired>>('user', {
+    ...userBasicSchema(nameRequired),
     ...(multiUserTypeIsAtAll
       ? {}
       : {

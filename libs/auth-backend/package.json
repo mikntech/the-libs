@@ -1,7 +1,21 @@
 {
   "name": "@the-libs/auth-backend",
   "version": "1.1.42",
-  "dependencies": {},
+  "dependencies": {
+    "@the-libs/auth-shared": "^1.2.16",
+    "@the-libs/base-backend": "^1.2.16",
+    "@the-libs/base-shared": "^1.2.16",
+    "@the-libs/email-backend": "^1.2.16",
+    "@the-libs/s3-backend": "^1.2.16",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.20.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.1",
+    "multer": "^1.4.5-lts.1",
+    "uuid": "^10.0.0",
+    "zxcvbn": "^4.4.2"
+  },
   "type": "module",
   "main": "./index.js",
   "types": "./src/index.d.ts",

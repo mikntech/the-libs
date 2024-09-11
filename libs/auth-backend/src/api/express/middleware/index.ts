@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from 'express';
-import { authSettings, Strategy } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
 import type { JwtPayload } from 'jsonwebtoken';
 import { createRequire } from 'module';
@@ -10,6 +9,8 @@ import { genAuthControllers } from '../../../controllers';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { findDocs } from '@the-libs/base-backend';
 import { preSignFile } from '@the-libs/s3-backend';
+import { Strategy } from '../../../strategy';
+import { authSettings } from '../../../config';
 const jsonwebtoken = require('jsonwebtoken');
 
 export interface AuthenticatedRequest<

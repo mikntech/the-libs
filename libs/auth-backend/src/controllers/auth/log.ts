@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 import { MultiUserType, Strategy } from '@the-libs/auth-backend';
 import {
   findDocs,
@@ -6,7 +9,7 @@ import {
   validateDocument,
 } from '@the-libs/base-backend';
 import { TODO, UnauthorizedError, SomeEnum } from '@the-libs/base-shared';
-import { compare } from 'bcryptjs';
+const { compare } = require('bcrypt');
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 import { User } from '@the-libs/auth-shared';
 

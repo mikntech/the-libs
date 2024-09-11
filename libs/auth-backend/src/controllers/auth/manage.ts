@@ -125,10 +125,7 @@ export const genManageControllers = <
     const { email } = (await validateKey(key, false)) as unknown as {
       email: string;
     };
-    const existingUser = await findDocs<
-      false,
-      User<false, false, true, UserType>
-    >(
+    const existingUser = await findDocs<false, User<false, false, UserType>>(
       getModel(userType).findOne({
         email,
       }) as unknown as TODO,

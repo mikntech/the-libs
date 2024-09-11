@@ -1,7 +1,4 @@
-export const userBasicSchema = (
-  nameRequired: boolean = false,
-  profilePictureUriRequired: boolean = false,
-) => ({
+export const userBasicSchema = (nameRequired: boolean = false) => ({
   email: {
     type: String,
     required: true,
@@ -14,7 +11,7 @@ export const userBasicSchema = (
   },
   profilePictureUri: {
     type: String,
-    required: profilePictureUriRequired,
+    required: false,
   },
 });
 

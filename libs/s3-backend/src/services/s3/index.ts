@@ -23,7 +23,7 @@ export const uploadFile = async (
   key: string,
   buffer: Buffer,
   mimetype: string,
-) =>{
+) => {
   await s3Client.send(
     new PutObjectCommand({
       Bucket: s3Settings.s3BucketName,
@@ -31,13 +31,15 @@ export const uploadFile = async (
       Body: buffer,
       ContentType: mimetype,
     }),
-  );}
+  );
+};
 
 export const preSignFile = async (
   filePath: string,
   secondsUntilExpiry: number = 300,
-): Promise<string> =>
-  getSignedUrl(
+): Promise<string> => {
+  if (!filePath) throw new Error('fie not found at path "' + filePath + '"');
+  return await getSignedUrl(
     s3Client,
     new GetObjectCommand({
       Bucket: s3Settings.s3BucketName,
@@ -47,3 +49,4 @@ export const preSignFile = async (
       expiresIn: secondsUntilExpiry,
     },
   );
+};
