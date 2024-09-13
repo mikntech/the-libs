@@ -1,0 +1,47 @@
+{
+  "name": "mongo-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mongo-backend/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/mongo-backend",
+        "tsConfig": "libs/mongo-backend/tsconfig.lib.json",
+        "project": "libs/mongo-backend/package.json",
+        "entryFile": "libs/mongo-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/mongo-backend/src",
+            "output": "."
+          }
+        ],
+        "external": ["express", "mongoose" ,"cookie-parser", "cors", "dotenv", "@the-libs/base-shared"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

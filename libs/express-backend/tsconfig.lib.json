@@ -7,7 +7,7 @@
     "declarationMap": true,
     "emitDeclarationOnly": false,
     "sourceMap": true,
-    "outDir": "../../dist/libs/base-backend",
+    "outDir": "../../dist/libs/express-backend",
     "strict": true,
     "moduleResolution": "Node",
     "esModuleInterop": true,

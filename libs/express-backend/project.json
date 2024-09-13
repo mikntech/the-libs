@@ -1,7 +1,7 @@
 {
-  "name": "base-backend",
+  "name": "express-backend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/base-backend/src",
+  "sourceRoot": "libs/express-backend/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,14 +17,14 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "format": ["esm"],
-        "outputPath": "dist/libs/base-backend",
-        "tsConfig": "libs/base-backend/tsconfig.lib.json",
-        "project": "libs/base-backend/package.json",
-        "entryFile": "libs/base-backend/src/index.ts",
+        "outputPath": "dist/libs/express-backend",
+        "tsConfig": "libs/express-backend/tsconfig.lib.json",
+        "project": "libs/express-backend/package.json",
+        "entryFile": "libs/express-backend/src/index.ts",
         "assets": [
           {
             "glob": "**/*.json",
-            "input": "libs/base-backend/src",
+            "input": "libs/express-backend/src",
             "output": "."
           }
         ],
