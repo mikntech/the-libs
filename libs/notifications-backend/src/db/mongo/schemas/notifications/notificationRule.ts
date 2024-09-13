@@ -1,4 +1,4 @@
-import { getModel } from '@the-libs/base-backend';
+import { getModel } from '@the-libs/mongo-backend';
 import { NotificationRule } from '@the-libs/notifications-shared';
 import { SomeEnum } from '@the-libs/base-shared';
 

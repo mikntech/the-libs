@@ -7,7 +7,7 @@ import {
   validateEnum,
   validateInput,
   validateDocument,
-} from '@the-libs/base-backend';
+} from '@the-libs/mongo-backend';
 import { TODO, UnauthorizedError, SomeEnum } from '@the-libs/base-shared';
 const { compare } = require('bcrypt');
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';

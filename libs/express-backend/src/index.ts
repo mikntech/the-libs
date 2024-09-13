@@ -7,8 +7,8 @@ export * from './db/mongo';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { getBaseSettings } from './config';
-import { connect } from '@the-libs/mongo-backend';
+import { getExpressSettings } from './config';
+import { connect, mongoSettings } from '@the-libs/mongo-backend';
 
 //TODO: Move to quickstarts lib!!
 export const startMongoAndExpress = <CB extends { [s: string]: string }>(
@@ -20,8 +20,8 @@ export const startMongoAndExpress = <CB extends { [s: string]: string }>(
 ) => {
   console.log('Connecting to MongoDB...');
   connect(
-    getBaseSettings().mongoURI,
-    getBaseSettings().stagingEnv,
+    mongoSettings.mongoURI,
+    getExpressSettings().stagingEnv,
     logMongoToConsole,
   )
     .then(() =>

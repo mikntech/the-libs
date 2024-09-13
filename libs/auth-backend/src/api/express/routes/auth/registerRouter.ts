@@ -7,7 +7,7 @@ import {
   Strategy,
 } from '@the-libs/auth-backend';
 import { genRegisterControllers } from '../../../../controllers/auth/register';
-import { highOrderHandler } from '@the-libs/base-backend';
+import { highOrderHandler } from '@the-libs/express-backend';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 
 export const registerRouter = <

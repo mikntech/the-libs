@@ -2,7 +2,7 @@ import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { highOrderHandler } from '@the-libs/base-backend';
+import { highOrderHandler } from '@the-libs/express-backend';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { genLogControllers } from '../../../../controllers/auth/log';
 

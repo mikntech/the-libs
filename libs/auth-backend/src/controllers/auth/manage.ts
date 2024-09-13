@@ -4,7 +4,7 @@ import {
   validateDocument,
   validateEnum,
   validateInput,
-} from '@the-libs/base-backend';
+} from '@the-libs/mongo-backend';
 import {
   UnauthorizedError,
   InvalidInputError,

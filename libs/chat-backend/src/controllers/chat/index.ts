@@ -1,4 +1,4 @@
-import { highOrderHandler } from '@the-libs/base-backend';
+import { highOrderHandler } from '@the-libs/express-backend';
 import { TODO } from '@the-libs/base-shared';
 import { User } from '@the-libs/auth-shared';
 import { message } from '../../db/mongo/schemas/chat';

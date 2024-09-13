@@ -1,4 +1,4 @@
-import { getModel } from '@the-libs/base-backend';
+import { getModel } from '@the-libs/mongo-backend';
 import { SomeRequest } from '@the-libs/auth-shared';
 import { requestBasicSchema } from './index';
 

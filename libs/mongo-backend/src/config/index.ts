@@ -1,4 +1,6 @@
 import { createRequire } from 'module';
+import { getExpressSettings, NodeEnvironment } from '@the-libs/express-backend';
+
 const require = createRequire(import.meta.url);
 
 const { config } = require('dotenv');
@@ -11,5 +13,9 @@ export interface MongoSettings {
 }
 
 export const mongoSettings: MongoSettings = {
-  mongoURI: process.env['MONGO_URI'] ?? 'mongodb://localhost:27017/error',
+  mongoURI:
+    process.env['MONGO_URI'] ??
+    (getExpressSettings().nodeEnv === NodeEnvironment.Production
+      ? ''
+      : 'mongodb://localhost:27017/error'),
 };

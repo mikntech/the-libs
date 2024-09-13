@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { findDocs, highOrderHandler } from '@the-libs/base-backend';
+import { highOrderHandler } from '@the-libs/express-backend';
 import { TODO, UnauthorizedError } from '@the-libs/base-shared';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
@@ -11,6 +11,7 @@ import {
   markMessagesAsRead,
 } from '@the-libs/chat-backend';
 import { Conversation } from '@the-libs/chat-shared';
+import { findDocs } from '@the-libs/mongo-backend';
 
 export const generateMessageRouter = <UserType>(
   side1Name: string,

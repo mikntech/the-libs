@@ -4,7 +4,7 @@ import {
   findDocs,
   validateInput,
   validateEnum,
-} from '@the-libs/base-backend';
+} from '@the-libs/mongo-backend';
 import {
   SomeEnum,
   InvalidInputError,

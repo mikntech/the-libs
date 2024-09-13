@@ -1,7 +1,7 @@
 import { SomeEnum } from '@the-libs/base-shared';
 import { userBasicSchema } from './abstract';
 import { User } from '@the-libs/auth-shared';
-import { getModel } from '@the-libs/base-backend';
+import { getModel } from '@the-libs/mongo-backend';
 
 export const user = <
   NameRequired extends boolean = false,

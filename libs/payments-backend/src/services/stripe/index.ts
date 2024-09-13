@@ -1,7 +1,7 @@
 import { paymentsSettings } from '../../config';
 import { stripeEvent } from '../../db/mongo';
 import { RawStripeEvent } from '../../types';
-import { expressApp, getBaseSettings } from '@the-libs/base-backend';
+import { expressApp, getExpressSettings } from '@the-libs/express-backend';
 import type { Request, Response } from 'express';
 
 import { createRequire } from 'module';
@@ -41,7 +41,7 @@ export const webhookHandler = async (rawEvent: RawStripeEvent) => {
 
 const stripeWebhookPath = '/stripe-webhook';
 console.log(
-  `the stripe webhook path is ${getBaseSettings().myDomain}${stripeWebhookPath}`,
+  `the stripe webhook path is ${getExpressSettings().myDomain}${stripeWebhookPath}`,
 );
 expressApp.post(
   stripeWebhookPath,

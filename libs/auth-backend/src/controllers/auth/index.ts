@@ -2,12 +2,10 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 import {
-  findDocs,
-  getBaseSettings,
+  getExpressSettings,
   NodeEnvironment,
   StagingEnvironment,
-  validateDocument,
-} from '@the-libs/base-backend';
+} from '@the-libs/express-backend';
 import { InvalidInputError, TODO, SomeEnum } from '@the-libs/base-shared';
 import {
   MultiUserType,
@@ -28,6 +26,7 @@ const zxcvbn = require('zxcvbn');
 
 import type { Model } from 'mongoose';
 import { sendEmail } from '@the-libs/email-backend';
+import { findDocs, validateDocument } from '@the-libs/mongo-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';
 
@@ -52,8 +51,8 @@ export const genAuthControllers = <
   const generateURLWithParams = (params: string, userType: string) =>
     `${
       strategy.multiClientType === MultiClientType.SINGLE
-        ? getBaseSettings().clientDomains[0]
-        : getBaseSettings<{
+        ? getExpressSettings().clientDomains[0]
+        : getExpressSettings<{
             [key: string]: string;
           }>().clientDomains[userType]
     }/?` + params;
@@ -77,10 +76,10 @@ export const genAuthControllers = <
     options: {
       httpOnly: true,
       sameSite:
-        getBaseSettings().nodeEnv === NodeEnvironment.Development
+        getExpressSettings().nodeEnv === NodeEnvironment.Development
           ? 'lax'
           : 'none',
-      secure: getBaseSettings().nodeEnv === NodeEnvironment.Production,
+      secure: getExpressSettings().nodeEnv === NodeEnvironment.Production,
       ...(expirationDate ? { expires: expirationDate } : {}),
     } as CookieOptions,
   });
@@ -93,7 +92,7 @@ export const genAuthControllers = <
   ) => {
     sendEmail(email, subject, body).then(
       () =>
-        getBaseSettings().stagingEnv === StagingEnvironment.Local &&
+        getExpressSettings().stagingEnv === StagingEnvironment.Local &&
         console.log('tried to send email - link is: ' + link),
     );
   };

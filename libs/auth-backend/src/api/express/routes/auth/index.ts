@@ -5,7 +5,7 @@ import { logRouter } from './logRouter';
 import { manageRouter } from './manageRouter';
 import { registerRouter } from './registerRouter';
 import { Strategy } from '../../../../strategy';
-import { highOrderHandler } from '@the-libs/base-backend';
+import { highOrderHandler } from '@the-libs/express-backend';
 import { SomeEnum } from '@the-libs/base-shared';
 
 export const authRouter = <

@@ -1,7 +1,7 @@
 export * from './middlewares';
 export * from './routes';
 
-import { getBaseSettings } from '../../config';
+import { getExpressSettings } from '../../config';
 
 import type { Router } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
@@ -40,7 +40,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   disableCors: boolean = false,
 ) => {
   console.log('Starting Server...');
-  const { port, clientDomains, stagingEnv } = getBaseSettings<CB>();
+  const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
 
   const defaultPreMiddlewares = [
     cookieParser(),
@@ -53,7 +53,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   ];
 
   const defaultPostMiddlewares = [
-    serverErrorHandler(getBaseSettings().stagingEnv, errorLog()),
+    serverErrorHandler(getExpressSettings().stagingEnv, errorLog()),
   ];
 
   try {
@@ -73,14 +73,14 @@ export const startExpress = async <CB extends { [s: string]: string }>(
 
     expressApp.use('/api', apiRouter);
 
-    getBaseSettings().stagingEnv !== 'prod' && expressApp.use(autoHelper);
+    getExpressSettings().stagingEnv !== 'prod' && expressApp.use(autoHelper);
 
     [...defaultPostMiddlewares, ...postMiddlewares].forEach(
       (middleware: TODO) => expressApp.use(middleware),
     );
 
     expressApp.listen(port, '0.0.0.0', () => {
-      console.log('Server is ready at ' + getBaseSettings().myDomain);
+      console.log('Server is ready at ' + getExpressSettings().myDomain);
     });
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));

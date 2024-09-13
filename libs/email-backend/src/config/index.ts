@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url);
 
 const { config } = require('dotenv');
 const process = require('process');
-import { getBaseSettings } from '@the-libs/base-backend';
+import { getExpressSettings } from '@the-libs/express-backend';
 
 config();
 
@@ -18,5 +18,5 @@ export const getEmailSettings = <
   sendgridApiKey: process.env['SENDGRID_API_KEY'] ?? '',
   sendgridSender:
     process.env['SENDGRID_SENDER'] ??
-    'service@' + getBaseSettings<CB>().clientDomains['single'],
+    'service@' + getExpressSettings<CB>().clientDomains['single'],
 });

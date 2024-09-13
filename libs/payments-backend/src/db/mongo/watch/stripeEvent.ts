@@ -1,4 +1,4 @@
-import { WatchDB } from '@the-libs/base-backend';
+import { WatchDB } from '@the-libs/mongo-backend';
 import { stripeEvent } from '@the-libs/payments-backend';
 
 export const watchStripeEvents = () =>

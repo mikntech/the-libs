@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url);
 import type { Types } from 'mongoose';
 import { genAuthControllers } from '../../../controllers';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
-import { findDocs } from '@the-libs/base-backend';
+import { findDocs } from '@the-libs/mongo-backend';
 import { preSignFile } from '@the-libs/s3-backend';
 import { Strategy } from '../../../strategy';
 import { authSettings } from '../../../config';

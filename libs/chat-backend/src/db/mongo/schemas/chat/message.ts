@@ -1,4 +1,4 @@
-import { getModel } from '@the-libs/base-backend';
+import { getModel } from '@the-libs/mongo-backend';
 import { Message } from '@the-libs/chat-shared';
 
 export const message = () =>
