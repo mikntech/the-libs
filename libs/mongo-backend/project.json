@@ -28,7 +28,7 @@
             "output": "."
           }
         ],
-        "external": ["express", "mongoose" ,"cookie-parser", "cors", "dotenv", "@the-libs/base-shared"]
+        "external": ["mongoose", "dotenv", "@the-libs/base-shared"]
       },
       "dependsOn": [
         {
