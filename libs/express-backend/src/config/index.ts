@@ -1,9 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-
 const { config } = require('dotenv');
 const process = require('process');
-
 config();
 
 export enum NodeEnvironment {
@@ -18,11 +16,10 @@ export enum StagingEnvironment {
   Prod = 'prod',
 }
 
-export interface BaseSettings<CD> {
+export interface ExpressSettings<CD> {
   nodeEnv: NodeEnvironment;
   stagingEnv: StagingEnvironment;
   port: number;
-  mongoURI: string;
   clientDomains: CD;
   myDomain: string;
 }
@@ -62,9 +59,9 @@ const myDomain = generateFullDomain(
   String(port),
 );
 
-export const getBaseSettings = <
+export const getExpressSettings = <
   CB extends { [key: string]: string } = { 0: string },
->(): BaseSettings<CB> => {
+>(): ExpressSettings<CB> => {
   const clientDomains: CB = JSON.parse(
     isProduction
       ? (process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 'my.co' }))
@@ -91,15 +88,13 @@ export const getBaseSettings = <
       : NodeEnvironment.Development,
     stagingEnv: currentStagingEnv,
     port,
-    mongoURI:
-      process.env['MONGO_URI'] ??
-      (isProduction ? '' : 'mongodb://localhost:27017/error'),
     myDomain,
     clientDomains: mutableClientDomains as CB,
   };
 };
 
-export const validateSettings = <CB>(settings: BaseSettings<CB>) => {
+// TODO: Can create a settings lib
+export const validateSettings = <CB>(settings: ExpressSettings<CB>) => {
   if (!settings) {
     throw new Error('Configuration settings could not be loaded');
   } else {

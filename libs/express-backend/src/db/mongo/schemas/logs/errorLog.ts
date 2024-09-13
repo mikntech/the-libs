@@ -1,4 +1,4 @@
-import { getModel } from '../index';
+import { getModel } from '@the-libs/mongo-backend';
 import { ErrorLog } from '@the-libs/base-shared';
 
 export const errorLog = () =>

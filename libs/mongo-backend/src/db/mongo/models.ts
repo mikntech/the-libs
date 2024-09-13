@@ -1,10 +1,6 @@
-import { WatchDB } from '../watch';
-
-export * from './logs/errorLog';
-
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-
+import { WatchDB } from './watch';
 import type {
   IndexDefinition,
   IndexOptions,
@@ -13,9 +9,7 @@ import type {
   Connection,
   SchemaDefinition,
 } from 'mongoose';
-
 const mongoose = require('mongoose');
-
 import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
 import { TODO } from '@the-libs/base-shared';
 
