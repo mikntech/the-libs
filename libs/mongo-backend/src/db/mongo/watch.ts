@@ -1,7 +1,4 @@
 import type { ChangeStream, GenericListener } from 'mongodb';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
 import type { Document, Model } from 'mongoose';
 import { TODO } from '@the-libs/base-shared';
 

@@ -3,20 +3,12 @@ import { defineConfig } from 'vite';
 
 import * as path from 'path';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
-import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../node_modules/.vite/base-frontend',
 
-  plugins: [
-    dts({
-      tsconfigPath: './tsconfig.lib.json',
-      outDir: '../../dist', // Where to output .d.ts files
-      insertTypesEntry: true, // Insert `types` entry into package.json
-    }),
-    nxViteTsPaths(),
-  ],
+  plugins: [nxViteTsPaths()],
 
   // Uncomment this if you are using workers.
   // worker: {
@@ -28,7 +20,9 @@ export default defineConfig({
   build: {
     outDir: '../dist/libs/base-frontend',
     reportCompressedSize: true,
-    sourcemap: true, // This enables source maps
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
@@ -36,7 +30,7 @@ export default defineConfig({
       fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
-      formats: ['es'],
+      formats: ['es', 'cjs'],
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.

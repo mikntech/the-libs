@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
 import { highOrderHandler } from '@the-libs/express-backend';
-import { SomeEnum, TODO } from '@the-libs/base-shared';
+import { SomeEnum } from '@the-libs/base-shared';
 import { genManageControllers } from '../../../../controllers/auth/manage';
 const multer = require('multer');
 
@@ -68,7 +68,7 @@ export const manageRouter = <
     '/upload-profile-picture',
     upload.array('files', 1),
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) =>
-      uploadProfilePicture(req as unknown as TODO),
+      uploadProfilePicture(req),
     ),
   );
 

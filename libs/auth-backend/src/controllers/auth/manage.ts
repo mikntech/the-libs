@@ -180,11 +180,7 @@ export const genManageControllers = <
     return { statusCode: 201, body: 'Phone updated successfully' };
   };
 
-  const uploadProfilePicture = async (req: {
-    user: User | null;
-    userType: UserType;
-    files: TODO[];
-  }) => {
+  const uploadProfilePicture = async (req: TODO) => {
     if (!(req.files && 'map' in req.files))
       throw new ClientError('No file received');
     const userDoc = (await findDocs(

@@ -1,3 +1,4 @@
+import { stringifyIfNeeded } from '@the-libs/base-shared';
 import { stripeInstance } from '../../services';
 
 import type { Stripe as StripeType } from 'stripe';
@@ -35,7 +36,7 @@ export const createPayment = async (
   });
 };
 
-export const createHostAccount =
+export const createConnectedAccount =
   async (): Promise<StripeType.Account | null> => {
     try {
       return await stripeInstance.accounts.create({
@@ -65,18 +66,20 @@ export const createHostAccount =
     }
   };
 
-export const createHostAccountLink = async (
+export const createConnectedAccountLink = async (
   accountId: string,
   returnUrl: string,
   refreshUrl: string,
 ): Promise<StripeType.AccountLink | null> => {
   try {
-    return await stripeInstance.accountLinks.create({
-      account: accountId,
-      return_url: returnUrl,
-      refresh_url: refreshUrl,
-      type: 'account_onboarding',
-    });
+    return stringifyIfNeeded(
+      await stripeInstance.accountLinks.create({
+        account: accountId,
+        return_url: returnUrl,
+        refresh_url: refreshUrl,
+        type: 'account_onboarding',
+      }),
+    );
   } catch (error) {
     console.error(
       'An error occurred when calling the Stripe API to create an account link:',
@@ -86,15 +89,17 @@ export const createHostAccountLink = async (
   }
 };
 
-export const createHostAccountAndGetId = async (): Promise<string | null> =>
-  (await createHostAccount())?.id || null;
+export const createConnectedAccountAndGetId = async (): Promise<
+  string | null
+> => (await createConnectedAccount())?.id || null;
 
-export const createHostAccountAndAccountLink = async (
+export const createConnectedAccountAndAccountLink = async (
   returnUrl: string,
   refreshUrl: string,
 ): Promise<StripeType.AccountLink | null> => {
-  const accountId = await createHostAccountAndGetId();
-  if (accountId) return createHostAccountLink(accountId, returnUrl, refreshUrl);
+  const accountId = await createConnectedAccountAndGetId();
+  if (accountId)
+    return createConnectedAccountLink(accountId, returnUrl, refreshUrl);
   else console.log('error');
   return null;
 };
