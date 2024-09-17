@@ -3,12 +3,20 @@ import { defineConfig } from 'vite';
 
 import * as path from 'path';
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import dts from 'vite-plugin-dts';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../node_modules/.vite/base-frontend',
 
-  plugins: [nxViteTsPaths()],
+  plugins: [
+    dts({
+      tsconfigPath: './tsconfig.lib.json',
+      outDir: '../../dist', // Where to output .d.ts files
+      insertTypesEntry: true, // Insert `types` entry into package.json
+    }),
+    nxViteTsPaths(),
+  ],
 
   // Uncomment this if you are using workers.
   // worker: {
@@ -20,9 +28,7 @@ export default defineConfig({
   build: {
     outDir: '../dist/libs/base-frontend',
     reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
+    sourcemap: true, // This enables source maps
     lib: {
       // Could also be a dictionary or array of multiple entry points.
       entry: 'src/index.ts',
@@ -30,11 +36,26 @@ export default defineConfig({
       fileName: 'index',
       // Change this to the formats you want to support.
       // Don't forget to update your package.json as well.
-      formats: ['es', 'cjs'],
+      formats: ['es'],
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [],
+      external: [
+        '@mui/x-date-pickers',
+        'dayjs',
+        'react',
+        '@mui/material',
+        '@mui/icons-material',
+        '@the-libs/base-shared',
+        'react-router-dom',
+        'mongoose',
+        'react-hot-toast',
+        'zxcvbn',
+        'axios',
+        '@the-libs/chat-shared',
+        '@the-libs/auth-shared',
+        '@emotion/styled',
+      ],
       onwarn(warning, warn) {
         // Suppress the warnings related to MUI's "use client" directive
         if (
