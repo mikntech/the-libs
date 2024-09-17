@@ -3,7 +3,6 @@ const require = createRequire(import.meta.url);
 
 import {
   getExpressSettings,
-  NodeEnvironment,
   StagingEnvironment,
 } from '@the-libs/express-backend';
 import { InvalidInputError, TODO, SomeEnum } from '@the-libs/base-shared';
@@ -26,7 +25,12 @@ const zxcvbn = require('zxcvbn');
 
 import type { Model } from 'mongoose';
 import { sendEmail } from '@the-libs/email-backend';
-import { findDocs, validateDocument } from '@the-libs/mongo-backend';
+import {
+  findDocs,
+  mongoSettings,
+  validateDocument,
+  NodeEnvironment,
+} from '@the-libs/mongo-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';
 
@@ -76,10 +80,8 @@ export const genAuthControllers = <
     options: {
       httpOnly: true,
       sameSite:
-        getExpressSettings().nodeEnv === NodeEnvironment.Development
-          ? 'lax'
-          : 'none',
-      secure: getExpressSettings().nodeEnv === NodeEnvironment.Production,
+        mongoSettings.nodeEnv === NodeEnvironment.Development ? 'lax' : 'none',
+      secure: mongoSettings.nodeEnv === NodeEnvironment.Production,
       ...(expirationDate ? { expires: expirationDate } : {}),
     } as CookieOptions,
   });

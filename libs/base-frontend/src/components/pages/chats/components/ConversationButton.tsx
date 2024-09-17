@@ -26,12 +26,12 @@ interface ConversationButtonProps {
 }
 
 export const ConversationButton = ({
-  conversation,
-  isTheSelectedConversation,
-  setSelectedConversation,
-  wide,
-  disableDarkMode,
-}: ConversationButtonProps) => {
+                                     conversation,
+                                     isTheSelectedConversation,
+                                     setSelectedConversation,
+                                     wide,
+                                     disableDarkMode,
+                                   }: ConversationButtonProps) => {
   const isNight = useIsNight(disableDarkMode);
   const MAX_NAME_LENGTH = 18;
   const MAX_LAST_MESSAGE_LENGTH = 32;
@@ -58,12 +58,19 @@ export const ConversationButton = ({
 
   return (
     <Card
+      component="div"
+      onClick={() => setSelectedConversation(conversation)}
       sx={{
         borderRadius: 0,
         marginLeft: isTheSelectedConversation ? '0.1vw' : '0vw',
         borderBottom: 2,
         borderColor: '#CAC4D0',
         boxShadow: 0,
+        cursor: 'pointer',
+        transition: 'background-color 0.3s ease', // Smooth transition for hover effect
+        '&:hover': {
+          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Add shadow on hover
+        },
       }}
     >
       <CardContent
@@ -116,7 +123,7 @@ export const ConversationButton = ({
 
         <CardActions disableSpacing sx={{ p: 0, ml: 'auto' }}>
           <IconButton
-            onClick={() => setSelectedConversation(conversation)}
+            // onClick={() => setSelectedConversation(conversation)}
             sx={{ marginLeft: 'auto' }}
             aria-label="display graph"
           >

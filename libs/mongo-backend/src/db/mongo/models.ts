@@ -10,7 +10,7 @@ import type {
   SchemaDefinition,
 } from 'mongoose';
 const mongoose = require('mongoose');
-import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
+import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
 
 const connection: { instance?: Connection } = {};
