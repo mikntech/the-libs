@@ -1,5 +1,7 @@
 import type { Document } from 'mongoose';
-import { TODO } from '@the-libs/base-shared';
+import type { TODO } from '@the-libs/base-shared';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 
 const VERSION = '_version';
 const ID = '_id';
