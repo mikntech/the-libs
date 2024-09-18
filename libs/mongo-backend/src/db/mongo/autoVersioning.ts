@@ -2,6 +2,7 @@ import type { Document } from 'mongoose';
 import type { TODO } from '@the-libs/base-shared';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
+const mongoosex = require('mongoose');
 
 const VERSION = '_version';
 const ID = '_id';
@@ -119,7 +120,7 @@ export const versioning = (schema: TODO, options: TODO) => {
 
   options = options || {};
   options.collection = options.collection || 'versions';
-  options.mongoose = options.mongoose || require('mongoose');
+  options.mongoose = options.mongoose || mongoosex;
   const mongoose = options.mongoose;
   const versionedModelName = options.collection;
 
