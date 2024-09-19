@@ -4,7 +4,7 @@ import { TODO } from '@the-libs/base-shared';
 
 interface WatchCallback<T extends Document> {
   modelGetter: () => Model<T>;
-  event: string;
+  event?: string; // defaults to 'change'
   handler: GenericListener;
 }
 
@@ -26,7 +26,7 @@ export class WatchDB {
   static run() {
     this.callbacks.forEach(({ modelGetter, event, handler }) => {
       const model = modelGetter();
-      const changeStream = model.watch().on(event, handler);
+      const changeStream = model.watch().on(event || 'change', handler);
       const { collectionName } = model.collection;
       if (!this.activeWatches.has(collectionName)) {
         this.activeWatches.set(collectionName, changeStream as TODO);
