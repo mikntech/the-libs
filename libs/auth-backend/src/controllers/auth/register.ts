@@ -59,7 +59,7 @@ export const genRegisterControllers = <
       key,
     });
     return generateURLWithParams(
-      `register-code=${key}&email=${email}`,
+      `register-code=${key}&email=${email}&userType=${userType}`,
       userType,
     );
   };

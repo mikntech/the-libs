@@ -14,7 +14,11 @@ export const findDocs = async <
 export const createDoc = async <DocI extends MDocument>(
   model: Model<DocI>,
   fields: {},
-) =>
-  new model({
+  save: boolean = true,
+) => {
+  const doc = new model({
     ...fields,
-  }).save();
+  });
+  if (save) return doc.save();
+  else return doc;
+};

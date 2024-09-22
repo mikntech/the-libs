@@ -3,6 +3,7 @@ import { startExpress } from './api';
 export * from './api/express';
 export * from './config';
 export * from './db/mongo';
+export * from './utils';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
