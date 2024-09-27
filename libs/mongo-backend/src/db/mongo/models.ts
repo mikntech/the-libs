@@ -12,6 +12,8 @@ import type {
 const mongoose = require('mongoose');
 import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
+import { mongoSettings } from '../../config';
+import { getExpressSettings } from '@the-libs/express-backend';
 
 const connection: { instance?: Connection } = {};
 
@@ -48,39 +50,46 @@ const initModel = <Interface>(
 
 interface Optional<T> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
-  extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
+  extraIndexes?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<T>) => Schema)[];
+  reconnect?: boolean;
 }
 
-export const getModel = <Interface>(
+export const getModel = async <Interface>(
   name: string,
   schemaDefinition: SchemaDefinition,
-  { chainToSchema, extraIndexs, pres }: Optional<Interface> = {},
-) => {
+  { chainToSchema, extraIndexes, pres, reconnect }: Optional<Interface> = {},
+): Promise<Model<Interface>> => {
+  if (reconnect) {
+    await connect(
+      mongoSettings.mongoURI,
+      getExpressSettings().stagingEnv,
+      false,
+    );
+  }
+
   if (!connection.instance) throw new Error('Database not initialized');
+
   let model: Model<Interface>;
   const schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
   });
-  type CHAINABLE = unknown;
+
   chainToSchema?.forEach(({ name, params }) =>
-    (schema as CHAINABLE as TODO)[name](...params),
+    (schema as any)[name](...params),
   );
-  extraIndexs?.forEach((extraIndex) =>
+
+  extraIndexes?.forEach((extraIndex) =>
     schema.index(extraIndex.fields, extraIndex.options),
   );
 
-  const funcs = pres?.map((fnc) => fnc(schema));
+  pres?.forEach((fnc) => fnc(schema));
 
   if (mongoose.models[name]) {
     model = connection.instance.model<Interface>(name);
   } else {
     model = initModel(connection, name, schema);
   }
-
-  funcs?.map((fnc) => {
-    model = initModel(connection, name, fnc(model));
-  });
 
   return model;
 };
