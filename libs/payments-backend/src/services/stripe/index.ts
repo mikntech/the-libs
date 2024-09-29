@@ -16,7 +16,7 @@ export const stripeInstance = new Stripe(paymentsSettings.stripeApiKey, {
 const saveStripeEventToDB = async (event: RawStripeEvent) => {
   try {
     console.log('got stripe event from webhook, trying to save to db...');
-    const doc = new (stripeEvent())({
+    const doc = new (await stripeEvent())({
       stringifiedStripeEvent: JSON.stringify(event),
       idOnSource: event.id,
       tsOnSource: event.created,
@@ -56,7 +56,7 @@ expressApp.post(
 );
 
 const getLastRecordedEventTS = async (): Promise<number> => {
-  const lastEvent = await stripeEvent()
+  const lastEvent = await (await stripeEvent())
     .findOne()
     .sort({ createdAt: -1 })
     .exec();

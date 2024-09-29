@@ -132,5 +132,5 @@ export const defaultStrategy = createStrategy({
   passwordType: PasswordType.HASHED,
   mfa: MFA.OFF,
   externalIdentityProviders: ExternalIdentityProviders.OFF,
-  modelMap: () => user(false, false),
+  modelMap: async () => await user(false, false),
 });

@@ -13,7 +13,7 @@ export const getLastMessageOfConversation = async (conversationId: string) =>
     .exec();
 
 export const getNameOfUser = async (userId: string) =>
-  (await user(false, false).findById(userId))?.full_name;
+  (await (await user(false, false)).findById(userId))?.full_name;
 
 export const markMessagesAsRead = async (
   messages: Message[],
