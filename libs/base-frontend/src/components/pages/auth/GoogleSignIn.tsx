@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { frontendSettings } from '../../../context';
 
 // Make sure to update your types globally or locally as needed
 declare global {
@@ -11,16 +10,18 @@ declare global {
 export {};
 
 interface GoogleSignInProps {
+  GOOGLE_CLIENT_ID: string;
   onLoginSuccess: (user: any) => void; // Define the correct user type
   onLoginFailure: (error: any) => void; // Define the error type
 }
 
 const GoogleSignIn = ({
+  GOOGLE_CLIENT_ID,
   onLoginSuccess,
   onLoginFailure,
 }: GoogleSignInProps) => {
   useEffect(() => {
-    const clientId = frontendSettings().GOOGLE_CLIENT_ID; // Ensure this pulls the correct client ID dynamically
+    const clientId = GOOGLE_CLIENT_ID; // Ensure this pulls the correct client ID dynamically
 
     const handleCredentialResponse = (response: any) => {
       // This function is called when the Google API successfully authenticates a user
