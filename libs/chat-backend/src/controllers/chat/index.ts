@@ -7,7 +7,10 @@ import { subscriber } from '@the-libs/redis-backend';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
-  await message().findOne({ conversationId }).sort({ createdAt: -1 }).exec();
+  await (await message())
+    .findOne({ conversationId })
+    .sort({ createdAt: -1 })
+    .exec();
 
 export const getNameOfUser = async (userId: string) =>
   (await user(false, false).findById(userId))?.full_name;
@@ -36,7 +39,9 @@ export const getNumberOfUnreadMessagesInConversation = async (
   user: User,
 ) =>
   (
-    await message().find({
+    await (
+      await message()
+    ).find({
       conversationId,
     })
   ).filter(

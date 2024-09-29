@@ -105,7 +105,7 @@ const ConversationView = ({
   };
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      handleSendMessage();
+      handleSend(await message());
     }
   };
   const handleSendMessage = () => {

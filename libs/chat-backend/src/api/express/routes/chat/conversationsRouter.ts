@@ -26,7 +26,7 @@ export const generateConversationRouter = <UserType>(
       if (isNaN(quantity) || quantity < 1) {
         quantity = undefined;
       }
-      let query = conversation(side1Name, side2Name).find({
+      let query = (await conversation(side1Name, side2Name)).find({
         $or: [
           { hostId: String(req.user?._id) },
           { guestId: String(req.user?._id) },
