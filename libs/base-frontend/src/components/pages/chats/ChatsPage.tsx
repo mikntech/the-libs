@@ -158,7 +158,6 @@ export const ChatsPage = ({
           <ConversationView
             conversation={selectedConversation}
             setSelectedConversation={setSelectedConversation}
-            isMobillized={isMobillized}
             domain={domain}
             tenum={tenum}
           />
