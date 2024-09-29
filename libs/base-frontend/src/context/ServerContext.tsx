@@ -2,40 +2,15 @@ import { createContext, useEffect, useState, ReactNode } from 'react';
 import axios, { AxiosInstance } from 'axios';
 import { Typography } from '@mui/material';
 
-interface FrontendSettings {
-  VITE_NODE_ENV: string;
-  VITE_WHITE_ENV: string;
-  VITE_G_MAPS: string;
-  GOOGLE_CLIENT_ID: string;
-}
-
-export const frontendSettings = (): FrontendSettings => {
-  let res;
-  try {
-    const envConfig = document.getElementById('env-config')?.textContent;
-    res = JSON.parse(envConfig ?? '{}');
-  } catch (e) {
-    res = import.meta.env;
-  }
-
-  let ret: FrontendSettings = {
-    VITE_NODE_ENV: '',
-    VITE_WHITE_ENV: '',
-    VITE_G_MAPS: '',
-    GOOGLE_CLIENT_ID: '',
-  };
-  ret = { ...ret, ...res };
-  return ret;
-};
-
 const DEFAULT_TRY_INTERVAL = 3000;
 const GOOD_STATUS = 'good';
 const BAD_MESSAGE = 'Server is not available. Please try again later.';
 const FIRST_MESSAGE = 'Connecting to server...';
 
-interface ServerProviderProps {
+interface ServerProviderProps<FES> {
   children: ReactNode;
   domain: string;
+  frontendSettings: () => FES;
   MainMessage: (props: { text: string }) => ReactNode;
   tryInterval?: number;
 }
@@ -47,26 +22,27 @@ interface ServerContextProps {
 
 export const ServerContext = createContext<ServerContextProps | null>(null);
 
-const { VITE_WHITE_ENV } = frontendSettings();
-
-const prefix = VITE_WHITE_ENV === 'preprod' ? 'pre' : '';
-
-export const getBaseURL = (domain: string) =>
-  VITE_WHITE_ENV === 'local'
+export const getBaseURL = (domain: string, VITE_WHITE_ENV: string) => {
+  const prefix = VITE_WHITE_ENV === 'preprod' ? 'pre' : '';
+  return VITE_WHITE_ENV === 'local'
     ? 'http://localhost:5556/'
     : `https://${prefix}${domain}/`;
+};
 
-export const ServerProvider = ({
+export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   children,
   domain,
+  frontendSettings,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
   tryInterval = DEFAULT_TRY_INTERVAL,
-}: ServerProviderProps) => {
+}: ServerProviderProps<FES>) => {
+  const { VITE_WHITE_ENV } = frontendSettings();
+
   const [status, setStatus] = useState<string>(FIRST_MESSAGE);
   const [version, setVersion] = useState<string>('');
 
   const axiosInstance = axios.create({
-    baseURL: getBaseURL(domain),
+    baseURL: getBaseURL(domain, VITE_WHITE_ENV),
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
   });

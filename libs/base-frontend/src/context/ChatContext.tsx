@@ -12,6 +12,7 @@ import { Typography } from '@mui/material';
 
 interface ChatContextProps {
   children: ReactNode;
+  VITE_WHITE_ENV: string;
   domain: string;
   MainMessage: (props: { text: string }) => ReactNode;
 }
@@ -26,6 +27,7 @@ export const ChatContext = createContext<{
 
 export const ChatContextProvider = ({
   children,
+  VITE_WHITE_ENV,
   domain,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
 }: ChatContextProps) => {
@@ -33,7 +35,7 @@ export const ChatContextProvider = ({
   const server = useContext(ServerContext);
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
-  const { res } = useSubscribe(domain, 'api/chat/subscribe');
+  const { res } = useSubscribe(VITE_WHITE_ENV, domain, 'api/chat/subscribe');
 
   const fetchConversations = useCallback(async () => {
     try {
