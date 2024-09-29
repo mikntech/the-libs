@@ -149,7 +149,7 @@ export const versioning = (schema: TODO, options: TODO) => {
       const previousVersion = this.toObject({ versionKey: false });
       delete previousVersion._id;
       previousVersion.originalId = this._id;
-      previousVersion.version = this.__v;
+      previousVersion.version = (this as TODO).__v;
       await schema.statics.VersionedModel.create(previousVersion);
     }
     next();
