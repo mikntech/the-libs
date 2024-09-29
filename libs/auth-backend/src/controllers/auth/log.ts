@@ -56,7 +56,7 @@ export const genLogControllers = <
     validateInput({ email });
     validateInput({ password });
     const existingUser = await findDocs<false, User>(
-      getModel(userType).findOne({ email }),
+      (await getModel(userType)).findOne({ email }),
       true,
     );
     if (!existingUser && !validateDocument(existingUser as unknown as User))
