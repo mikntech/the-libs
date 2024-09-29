@@ -1,28 +1,32 @@
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 import { WatchDB } from './watch';
 import type {
+  Connection,
   IndexDefinition,
   IndexOptions,
   Model,
   Schema,
-  Connection,
   SchemaDefinition,
 } from 'mongoose';
-const mongoose = require('mongoose');
 import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
+import { mongoSettings } from '../../config';
+import {
+  getExpressSettings,
+  StagingEnvironment,
+} from '@the-libs/express-backend';
+
+const require = createRequire(import.meta.url);
+const mongoose = require('mongoose');
 
 const connection: { instance?: Connection } = {};
 
-export const connect = async <SE = string>(
-  mongoURI: string,
-  stagingEnv: SE = 'production' as SE,
-  logMongoToConsole: boolean = true,
-) => {
-  stagingEnv === 'local' && mongoose.set('debug', logMongoToConsole);
+const connect = async (logMongoToConsole: boolean = true) => {
+  (getExpressSettings().stagingEnv ?? StagingEnvironment.Prod) ===
+    StagingEnvironment.Local &&
+    mongoose.set('debug', logMongoToConsole ?? true);
   try {
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoSettings.mongoURI);
     console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
@@ -50,14 +54,20 @@ interface Optional<T> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
   extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<T>) => Schema)[];
+  logMongoToConsole?: boolean;
 }
 
-export const getModel = <Interface>(
+export const getModel = async <Interface>(
   name: string,
   schemaDefinition: SchemaDefinition,
-  { chainToSchema, extraIndexs, pres }: Optional<Interface> = {},
+  {
+    chainToSchema,
+    extraIndexs,
+    pres,
+    logMongoToConsole,
+  }: Optional<Interface> = {},
 ) => {
-  if (!connection.instance) throw new Error('Database not initialized');
+  if (!connection?.instance) await connect(logMongoToConsole);
   let model: Model<Interface>;
   const schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
@@ -73,7 +83,7 @@ export const getModel = <Interface>(
   const funcs = pres?.map((fnc) => fnc(schema));
 
   if (mongoose.models[name]) {
-    model = connection.instance.model<Interface>(name);
+    model = connection!.instance!.model<Interface>(name);
   } else {
     model = initModel(connection, name, schema);
   }
