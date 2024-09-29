@@ -53,7 +53,7 @@ export const genRegisterControllers = <
 
   const createKeyForRegistration = async (email: string, userType: string) => {
     const key = v4();
-    await createDoc(registrationRequest(), {
+    await createDoc(await registrationRequest(), {
       email,
       userType: userType as unknown as UserType,
       key,

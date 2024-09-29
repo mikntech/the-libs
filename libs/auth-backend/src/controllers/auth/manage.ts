@@ -52,7 +52,7 @@ export const genManageControllers = <
     userType: UserType,
   ) => {
     const key = v4();
-    await createDoc(passResetRequest(), {
+    await createDoc(await passResetRequest(), {
       email,
       key,
     });

@@ -106,7 +106,10 @@ export const genAuthControllers = <
 
   const validateKey = async (key: string, register: boolean) => {
     const existingRequest = await findDocs<false, SomeRequest<true>>(
-      (register ? registrationRequest() : passResetRequest()).findOne({
+      (register
+        ? await registrationRequest()
+        : await passResetRequest()
+      ).findOne({
         key,
       }),
       true,
