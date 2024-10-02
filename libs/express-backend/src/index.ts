@@ -9,7 +9,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
 
-export const startExpressServer = <CB extends { [s: string]: string }>(
+export const startExpressServer = async <CB extends { [s: string]: string }>(
   apiRouter = Router(),
   preMiddlewares: Function[] = [],
   postMiddlewares: Function[] = [],
