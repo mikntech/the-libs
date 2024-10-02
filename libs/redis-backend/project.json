@@ -27,8 +27,15 @@
             "input": "libs/redis-backend/src",
             "output": "."
           }
-        ]
-      }
+        ],
+        "external": ["dotenv", "bull", "@the-libs/base-shared", "pubsub-js", "ioredis"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
     },
     "nx-release-publish": {
       "options": {
