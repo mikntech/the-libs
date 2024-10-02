@@ -27,8 +27,15 @@
             "input": "libs/agi-backend/src",
             "output": "."
           }
-        ]
-      }
+        ],
+        "external": ["dotenv", "@azure/openai", "openai", "gpt-tokenizer", "@the-libs/base-shared"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
     },
     "nx-release-publish": {
       "options": {

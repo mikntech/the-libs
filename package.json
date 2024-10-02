@@ -84,12 +84,11 @@
     "vite": "^5.4.8",
     "vite-plugin-dts": "^4.2.2",
     "vitest": "^2.1.1",
-    "zxcvbn": "^4.4.2"
-  },
-  "dependencies": {
-    "@azure/openai": "^1.0.0-beta.12",
+    "zxcvbn": "^4.4.2",
     "gpt-tokenizer": "^2.4.0",
     "openai": "^4.66.1",
-    "web-push": "^3.6.7"
-  }
+    "web-push": "^3.6.7",
+    "@azure/openai": "^1.0.0-beta.12"
+  },
+  "dependencies": {}
 }
