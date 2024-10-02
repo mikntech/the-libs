@@ -87,6 +87,9 @@
     "zxcvbn": "^4.4.2"
   },
   "dependencies": {
+    "@azure/openai": "^1.0.0-beta.12",
+    "gpt-tokenizer": "^2.4.0",
+    "openai": "^4.66.1",
     "web-push": "^3.6.7"
   }
 }

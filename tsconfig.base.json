@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@the-libs/agi-backend": ["libs/agi-backend/src/index.ts"],
       "@the-libs/auth-backend": ["libs/auth-backend/src/index.ts"],
       "@the-libs/auth-shared": ["libs/auth-shared/src/index.ts"],
       "@the-libs/autodesk-backend": ["libs/autodesk-backend/src/index.ts"],
