@@ -16,7 +16,7 @@ export const startExpressServer = <CB extends { [s: string]: string }>(
   disableCors: boolean = false,
 ) => {
   console.log('Starting express server MongoDB...');
-  startExpress<CB>(
+  return startExpress<CB>(
     apiRouter,
     preMiddlewares,
     postMiddlewares,

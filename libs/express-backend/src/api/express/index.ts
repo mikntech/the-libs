@@ -82,6 +82,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
     expressApp.listen(port, '0.0.0.0', () => {
       console.log('Server is ready at ' + getExpressSettings().myDomain);
     });
+    return expressApp;
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));
   }
