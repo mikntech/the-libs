@@ -8,7 +8,7 @@ const apiKey = agiSettings.azureAPIKey;
 
 export const completeWithAzure = async (
   model: string,
-  chat: ChatRequestMessageUnion,
+  chat: ChatRequestMessageUnion[],
 ) =>
   new OpenAIClient(endpoint, new AzureKeyCredential(apiKey)).getChatCompletions(
     model,
