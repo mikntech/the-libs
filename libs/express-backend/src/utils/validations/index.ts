@@ -5,6 +5,6 @@ export const validateFiles = (
   fieldName: string,
   shouldBeArray: boolean,
 ) => {
-  if (!(req[fieldName] && (!shouldBeArray || 'map' in req.files)))
+  if (!(req[fieldName] && (!shouldBeArray || 'map' in req[fieldName])))
     throw new ClientError('No file received');
 };
