@@ -54,6 +54,7 @@ const initModel = <Interface>(
 
 interface Optional<T> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
+  wrapSchema?: Function[];
   extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<T>) => Schema)[];
   logMongoToConsole?: boolean;
@@ -64,6 +65,7 @@ export const getModel = async <Interface>(
   schemaDefinition: SchemaDefinition,
   {
     chainToSchema,
+    wrapSchema,
     extraIndexs,
     pres,
     logMongoToConsole,
@@ -71,8 +73,11 @@ export const getModel = async <Interface>(
 ) => {
   if (!connection?.instance) await connect(logMongoToConsole);
   let model: Model<Interface>;
-  const schema = new mongoose.Schema(schemaDefinition, {
+  let schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
+  });
+  wrapSchema?.forEach((wrapper) => {
+    schema = wrapper(schema);
   });
   type CHAINABLE = unknown;
   chainToSchema?.forEach(({ name, params }) =>
