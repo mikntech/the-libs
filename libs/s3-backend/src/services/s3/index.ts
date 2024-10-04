@@ -23,8 +23,8 @@ export const uploadFile = async (
   key: string,
   buffer: Buffer,
   mimetype: string,
-) => {
-  await s3Client.send(
+) =>
+  s3Client.send(
     new PutObjectCommand({
       Bucket: s3Settings.s3BucketName,
       Key: key,
@@ -32,7 +32,6 @@ export const uploadFile = async (
       ContentType: mimetype,
     }),
   );
-};
 
 export const preSignFile = async (
   filePath: string,
