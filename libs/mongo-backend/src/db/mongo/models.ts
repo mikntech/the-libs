@@ -97,7 +97,7 @@ export const getModel = async <Interface>(
   return model;
 };
 
-export const s3SignMiddleware = (schema: Schema) => {
+export const autoSignS3URIs = (schema: Schema) => {
   const signS3UrlsMiddleware = async function (docs: Document | Document[]) {
     if (Array.isArray(docs)) {
       await Promise.all(
