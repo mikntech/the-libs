@@ -107,6 +107,5 @@ export const autoSignS3URIs = (schema: Schema) => {
       await recursivelySignUrls(docs);
     }
   };
-
-  schema.post(/find/, signS3UrlsMiddleware);
+  return schema.post(/find/, signS3UrlsMiddleware);
 };
