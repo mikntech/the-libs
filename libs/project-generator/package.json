@@ -1,13 +1,14 @@
 {
-  "name": "project-generator",
-  "version": "1.0.0",
+  "name": "@the-libs/project-generator",
+  "version": "1.1.42",
   "description": "A custom Nx generator library",
-  "main": "src/index.ts",
-  "bin": {
-    "my-nx-generator": "src/index.ts"
-  },
   "dependencies": {
     "@nx/devkit": "^19.8.3",
     "inquirer": "^11.1.0"
+  },  "type": "module",
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
   }
 }

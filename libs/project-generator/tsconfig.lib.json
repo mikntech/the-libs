@@ -7,7 +7,7 @@
     "declarationMap": true,
     "emitDeclarationOnly": false,
     "sourceMap": true,
-    "outDir": "../../dist/libs/payments-backend",
+    "outDir": "../../dist/libs/project-generator",
     "strict": true,
     "moduleResolution": "Node",
     "esModuleInterop": true,
