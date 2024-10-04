@@ -6,7 +6,10 @@
     "@nx/devkit": "^19.8.3",
     "inquirer": "^11.1.0"
   },  "type": "module",
-  "main": "./index.js",
+  "main": "./src/index.js",
+  "bin": {
+    "project-generator": "src/index.js"
+  },
   "types": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"
