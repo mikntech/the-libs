@@ -49,3 +49,25 @@ export const preSignFile = async (
     },
   );
 };
+
+const isS3Url = (url: string) => url.startsWith('s3://');
+
+export const recursivelySignUrls = async <ObjectType = any>(
+  obj: ObjectType,
+  secondsUntilExpiry: number = 300,
+) => {
+  if (Array.isArray(obj)) {
+    obj.forEach((item) => recursivelySignUrls(item));
+  } else if (typeof obj === 'object' && obj !== null) {
+    for (const key in obj) {
+      if (typeof obj[key] === 'string' && isS3Url(obj[key])) {
+        obj[key] = (await preSignFile(
+          obj[key],
+          secondsUntilExpiry,
+        )) as (ObjectType & object)[Extract<keyof ObjectType, string>];
+      } else if (typeof obj[key] === 'object') {
+        recursivelySignUrls(obj[key]);
+      }
+    }
+  }
+};

@@ -7,6 +7,7 @@ import type {
   Model,
   Schema,
   SchemaDefinition,
+  Document,
 } from 'mongoose';
 import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
@@ -15,6 +16,7 @@ import {
   getExpressSettings,
   StagingEnvironment,
 } from '@the-libs/express-backend';
+import { recursivelySignUrls } from '@the-libs/s3-backend';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -93,4 +95,18 @@ export const getModel = async <Interface>(
   });
 
   return model;
+};
+
+export const s3SignMiddleware = (schema: Schema) => {
+  const signS3UrlsMiddleware = async function (docs: Document | Document[]) {
+    if (Array.isArray(docs)) {
+      await Promise.all(
+        docs.map(async (doc) => await recursivelySignUrls(doc)),
+      );
+    } else if (docs) {
+      await recursivelySignUrls(docs);
+    }
+  };
+
+  schema.post(/find/, signS3UrlsMiddleware);
 };
