@@ -65,14 +65,51 @@ export const autoHelper = (
 
     const relevantRoutes = filterRoutes(allRoutes, basePath);
 
+    const availableRoutes =
+      relevantRoutes.length > 0
+        ? relevantRoutes
+        : ['No available routes under this path'];
+
+    let inTree: TODO = 'error';
+    try {
+      inTree = buildRouteTree(availableRoutes);
+    } catch {}
+
     res.status(404).json({
       message: 'Route not found',
-      availableRoutes:
-        relevantRoutes.length > 0
-          ? relevantRoutes
-          : ['No available routes under this path'],
+      availableRoutes,
+      inTree,
     });
   } else {
     next();
   }
 };
+
+function buildRouteTree(routes: string[]) {
+  const routeTree: TODO = {};
+
+  routes.forEach((route) => {
+    // Split the route by space to separate method and path
+    const [method, path = ''] = route.trim().split(' ');
+
+    // Start at the root of the tree
+    let current = routeTree;
+
+    // Split the path into segments
+    const segments = path.split('/').filter(Boolean);
+
+    // Traverse the tree, creating nodes as necessary
+    segments.forEach((segment, index) => {
+      if (!current[segment]) {
+        current[segment] = {};
+      }
+      current = current[segment];
+    });
+
+    // Add the method to the final node in the path
+    current.method = current.method || [];
+    current.method.push(method);
+  });
+
+  return routeTree;
+}
