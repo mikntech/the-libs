@@ -29,6 +29,7 @@
       "@the-libs/notifications-backend": ["libs/notifications-backend/src/index.ts"],
       "@the-libs/notifications-shared": ["libs/notifications-shared/src/index.ts"],
       "@the-libs/payments-backend": ["libs/payments-backend/src/index.ts"],
+      "@the-libs/project-generator": ["libs/project-generator/src/index.ts"],
       "@the-libs/redis-backend": ["libs/redis-backend/src/index.ts"],
       "@the-libs/s3-backend": ["libs/s3-backend/src/index.ts"]
     }

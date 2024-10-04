@@ -23,6 +23,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.658.1",
     "@aws-sdk/s3-request-presigner": "^3.658.1",
+    "@azure/openai": "^1.0.0-beta.12",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.1",
@@ -69,9 +70,12 @@
     "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "express": "^4.21.0",
+    "gpt-tokenizer": "^2.4.0",
+    "inquirer": "^11.1.0",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.7.0",
+    "openai": "^4.66.1",
     "prettier": "^3.3.3",
     "pubsub-js": "^1.9.4",
     "react": "^18.3.1",
@@ -84,11 +88,7 @@
     "vite": "^5.4.8",
     "vite-plugin-dts": "^4.2.2",
     "vitest": "^2.1.1",
-    "zxcvbn": "^4.4.2",
-    "gpt-tokenizer": "^2.4.0",
-    "openai": "^4.66.1",
     "web-push": "^3.6.7",
-    "@azure/openai": "^1.0.0-beta.12"
-  },
-  "dependencies": {}
+    "zxcvbn": "^4.4.2"
+  }
 }

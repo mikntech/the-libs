@@ -1,0 +1,13 @@
+{
+  "name": "project-generator",
+  "version": "1.0.0",
+  "description": "A custom Nx generator library",
+  "main": "src/index.ts",
+  "bin": {
+    "my-nx-generator": "src/index.ts"
+  },
+  "dependencies": {
+    "@nx/devkit": "^19.8.3",
+    "inquirer": "^11.1.0"
+  }
+}
