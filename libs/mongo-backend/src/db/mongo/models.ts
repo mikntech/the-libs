@@ -104,21 +104,15 @@ export const getModel = async <Interface>(
 
 export const autoSignS3URIs = (schema: Schema) => {
   const signS3UrlsMiddleware = async function (docs: Document | Document[]) {
-    debugger;
-    console.log('Middleware triggered with docs: ', docs);
     if (Array.isArray(docs)) {
-      console.log('Docs is an array, processing each document...');
       await Promise.all(
         docs.map(async (doc) => {
-          console.log('Processing doc:', doc);
           await recursivelySignUrls(doc);
         }),
       );
     } else if (docs) {
-      console.log('Docs is a single document, processing...');
       await recursivelySignUrls(docs);
     }
-    console.log('URL signing complete');
   };
 
   return schema.post(/find/, signS3UrlsMiddleware);

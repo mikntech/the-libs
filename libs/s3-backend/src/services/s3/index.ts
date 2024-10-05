@@ -51,7 +51,8 @@ export const preSignFile = async (
 };
 
 const isS3Url = (url: string) => {
-  debugger;
+  console.log('url is: ', url);
+  console.log('is it s3? ', url.startsWith('s3://'));
   return url.startsWith('s3://');
 };
 
@@ -59,24 +60,18 @@ export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
   secondsUntilExpiry: number = 300,
 ) => {
-  debugger;
   if (Array.isArray(obj)) {
-    console.log('Array detected, iterating through items');
     await Promise.all(
       obj.map((item) => recursivelySignUrls(item, secondsUntilExpiry)),
     );
   } else if (typeof obj === 'object' && obj !== null) {
     for (const key in obj) {
-      console.log(`Checking key: ${key}, value: ${obj[key]}`);
       if (typeof obj[key] === 'string' && isS3Url(obj[key])) {
-        console.log(`S3 URL detected at key: ${key}, signing URL...`);
         obj[key] = (await preSignFile(
           obj[key],
           secondsUntilExpiry,
         )) as (ObjectType & object)[Extract<keyof ObjectType, string>];
-        console.log(`Signed URL: ${obj[key]}`);
       } else if (typeof obj[key] === 'object') {
-        console.log(`Recursing into object at key: ${key}`);
         await recursivelySignUrls(obj[key], secondsUntilExpiry);
       }
     }
