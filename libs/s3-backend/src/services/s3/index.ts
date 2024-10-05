@@ -58,16 +58,23 @@ export const recursivelySignUrls = async <ObjectType = any>(
 ) => {
   debugger;
   if (Array.isArray(obj)) {
-    obj.forEach((item) => recursivelySignUrls(item));
+    console.log('Array detected, iterating through items');
+    await Promise.all(
+      obj.map((item) => recursivelySignUrls(item, secondsUntilExpiry)),
+    );
   } else if (typeof obj === 'object' && obj !== null) {
     for (const key in obj) {
+      console.log(`Checking key: ${key}, value: ${obj[key]}`);
       if (typeof obj[key] === 'string' && isS3Url(obj[key])) {
+        console.log(`S3 URL detected at key: ${key}, signing URL...`);
         obj[key] = (await preSignFile(
           obj[key],
           secondsUntilExpiry,
         )) as (ObjectType & object)[Extract<keyof ObjectType, string>];
+        console.log(`Signed URL: ${obj[key]}`);
       } else if (typeof obj[key] === 'object') {
-        recursivelySignUrls(obj[key]);
+        console.log(`Recursing into object at key: ${key}`);
+        await recursivelySignUrls(obj[key], secondsUntilExpiry);
       }
     }
   }
