@@ -50,11 +50,7 @@ export const preSignFile = async (
   );
 };
 
-const isS3Url = (url: string) => {
-  console.log('url is: ', url);
-  console.log('is it s3? ', url.startsWith('s3://'));
-  return url.startsWith('s3://');
-};
+const isS3Url = (url: string) => url.startsWith('s3://');
 
 export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
