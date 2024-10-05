@@ -56,6 +56,7 @@ export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
   secondsUntilExpiry: number = 300,
 ) => {
+  debugger
   if (Array.isArray(obj)) {
     await Promise.all(
       obj.map((item) => recursivelySignUrls(item, secondsUntilExpiry)),
