@@ -33,7 +33,8 @@ export const preSignFile = async (
   filePath: string,
   secondsUntilExpiry: number = 300,
 ): Promise<string> => {
-  if (!filePath) throw new Error('fie not found at path "' + filePath + '"');
+  filePath = filePath.split('s3://')[0];
+  if (!filePath) throw new Error('file not found at path "' + filePath + '"');
   return await getSignedUrl(
     s3Client,
     new GetObjectCommand({
