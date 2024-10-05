@@ -56,6 +56,7 @@ export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
   secondsUntilExpiry: number = 300,
 ) => {
+  debugger;
   if (Array.isArray(obj)) {
     obj.forEach((item) => recursivelySignUrls(item));
   } else if (typeof obj === 'object' && obj !== null) {

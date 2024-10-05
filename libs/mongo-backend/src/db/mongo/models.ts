@@ -103,7 +103,9 @@ export const getModel = async <Interface>(
 };
 
 export const autoSignS3URIs = (schema: Schema) => {
+  debugger;
   const signS3UrlsMiddleware = async function (docs: Document | Document[]) {
+    debugger;
     if (Array.isArray(docs)) {
       await Promise.all(
         docs.map(async (doc) => await recursivelySignUrls(doc)),
