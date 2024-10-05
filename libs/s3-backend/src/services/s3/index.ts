@@ -51,22 +51,43 @@ const isS3Url = (url: string) => url.startsWith('s3://');
 export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
   secondsUntilExpiry: number = 300,
-): Promise<ObjectType | null | {}> => {
-  const ret: any = structuredClone(obj);
-  if (Array.isArray(ret)) {
-    await Promise.all(
-      ret.map((item) => recursivelySignUrls(item, secondsUntilExpiry)),
-    );
-  } else if (typeof ret === 'object' && ret !== null) {
-    for (const key in ret) {
-      if (typeof ret[key] === 'string') {
-        if (isS3Url(ret[key]))
-          ret[key] = await preSignFile(ret[key], secondsUntilExpiry);
-        return ret;
-      } else if (typeof ret[key] === 'object') {
-        return recursivelySignUrls(ret[key], secondsUntilExpiry);
+): Promise<ObjectType | null> => {
+  if (Array.isArray(obj)) {
+    return Promise.all(
+      obj.map(async (item) => {
+        if (typeof item === 'string' && isS3Url(item)) {
+          return await preSignFile(item, secondsUntilExpiry);
+        } else {
+          return await recursivelySignUrls(item, secondsUntilExpiry);
+        }
+      }),
+    ) as Promise<ObjectType>;
+  } else if (typeof obj === 'object' && obj !== null) {
+    const isMongooseDoc = obj.constructor?.name === 'model';
+    const clonedObj = isMongooseDoc
+      ? (obj as unknown as { toObject: () => ObjectType }).toObject()
+      : { ...obj };
+    for (const key in clonedObj) {
+      if (typeof clonedObj[key] === 'string' && isS3Url(clonedObj[key])) {
+        clonedObj[key] = (await preSignFile(
+          clonedObj[key],
+          secondsUntilExpiry,
+        )) as ObjectType[Extract<keyof ObjectType, string>];
+      } else if (typeof clonedObj[key] === 'object') {
+      } else if (Array.isArray(clonedObj[key])) {
+        clonedObj[key] = (await recursivelySignUrls(
+          clonedObj[key],
+          secondsUntilExpiry,
+        )) as ObjectType[Extract<keyof ObjectType, string>];
+      } else if (typeof clonedObj[key] === 'object') {
+        clonedObj[key] = (await recursivelySignUrls(
+          clonedObj[key],
+          secondsUntilExpiry,
+        )) as ObjectType[Extract<keyof ObjectType, string>];
+      } else if (typeof clonedObj[key] === 'object') {
       }
     }
-  } else return null;
-  return ret;
+    return clonedObj;
+  }
+  return null;
 };
