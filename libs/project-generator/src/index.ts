@@ -6,7 +6,24 @@ const require = createRequire(import.meta.url);
 const inquirer = require('inquirer').default;
 import { execSync } from 'child_process';
 
-async function askQuestions() {
+const doCommand = (cmnd: string) =>
+  execSync(cmnd, {
+    stdio: 'inherit',
+  });
+
+const getList = async (name: string, message: string) => {
+  const { listInput } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: name,
+      message: message + '(comma-separated)',
+    },
+  ]);
+  const list = listInput.split(',').map((app) => app.trim());
+  return list;
+};
+
+const askQuestions = async () => {
   const questions = [
     {
       type: 'input',
@@ -20,22 +37,12 @@ async function askQuestions() {
       choices: ['react', 'angular', 'node'],
     },
   ];
-
   return inquirer.prompt(questions);
-}
+};
 
 async function createProject() {
   const answers = await askQuestions();
-
-  console.log(
-    `Creating a ${answers.template} project named ${answers.name}...`,
-  );
-
-  execSync(`npx nx g @nx/${answers.template}:app ${answers.name}`, {
-    stdio: 'inherit',
-  });
-
-  console.log('Project creation complete!');
+  doCommand(`npx create-nx-workspace`);
 }
 
 createProject();
