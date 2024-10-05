@@ -6,8 +6,6 @@ const require = createRequire(import.meta.url);
 const inquirer = require('inquirer').default;
 import { execSync } from 'child_process';
 
-console.log(inquirer);
-
 async function askQuestions() {
   const questions = [
     {
