@@ -1,6 +1,6 @@
 import { s3Settings } from '../../config';
-
 import { createRequire } from 'module';
+import { TODO } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 
 const {
@@ -19,11 +19,7 @@ export const s3Client = new S3Client({
   },
 });
 
-export const uploadFile = async (
-  key: string,
-  buffer: Buffer,
-  mimetype: string,
-) =>
+export const uploadFile = async (key: string, buffer: TODO, mimetype: string) =>
   s3Client.send(
     new PutObjectCommand({
       Bucket: s3Settings.s3BucketName,
@@ -55,22 +51,22 @@ const isS3Url = (url: string) => url.startsWith('s3://');
 export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
   secondsUntilExpiry: number = 300,
-) => {
-  debugger
-  if (Array.isArray(obj)) {
+): Promise<ObjectType | null | {}> => {
+  const ret: any = structuredClone(obj);
+  if (Array.isArray(ret)) {
     await Promise.all(
-      obj.map((item) => recursivelySignUrls(item, secondsUntilExpiry)),
+      ret.map((item) => recursivelySignUrls(item, secondsUntilExpiry)),
     );
-  } else if (typeof obj === 'object' && obj !== null) {
-    for (const key in obj) {
-      if (typeof obj[key] === 'string' && isS3Url(obj[key])) {
-        obj[key] = (await preSignFile(
-          obj[key],
-          secondsUntilExpiry,
-        )) as (ObjectType & object)[Extract<keyof ObjectType, string>];
-      } else if (typeof obj[key] === 'object') {
-        await recursivelySignUrls(obj[key], secondsUntilExpiry);
+  } else if (typeof ret === 'object' && ret !== null) {
+    for (const key in ret) {
+      if (typeof ret[key] === 'string') {
+        if (isS3Url(ret[key]))
+          ret[key] = await preSignFile(ret[key], secondsUntilExpiry);
+        return ret;
+      } else if (typeof ret[key] === 'object') {
+        return recursivelySignUrls(ret[key], secondsUntilExpiry);
       }
     }
-  }
+  } else return null;
+  return ret;
 };
