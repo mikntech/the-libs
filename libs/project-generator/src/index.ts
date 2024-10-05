@@ -19,8 +19,7 @@ const getList = async (name: string, message: string) => {
       message: message + '(comma-separated)',
     },
   ]);
-  const list = listInput.split(',').map((app) => app.trim());
-  return list;
+  return listInput.split(',').map((input: string) => input.trim());
 };
 
 const askQuestions = async () => {
@@ -30,19 +29,21 @@ const askQuestions = async () => {
       name: 'name',
       message: 'What is the name of your new Nx project?',
     },
-    {
-      type: 'list',
-      name: 'template',
-      message: 'Which template would you like to use?',
-      choices: ['react', 'angular', 'node'],
-    },
   ];
   return inquirer.prompt(questions);
 };
 
 async function createProject() {
-  const answers = await askQuestions();
-  doCommand(`npx create-nx-workspace`);
+  const { name } = await askQuestions();
+  doCommand(`npx --yes create-nx-workspace@latest ${name} \\
+  --preset=none \\
+  --nxCloud=skip \\
+  --ci=skip \\
+  --packageManager=npm \\
+  --style=css \\
+  --interactive=false \\
+  --skipGit=false \\
+  --npmScope=${name}`);
 }
 
 createProject();
