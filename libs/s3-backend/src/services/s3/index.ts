@@ -62,7 +62,7 @@ export const recursivelySignUrls = async <ObjectType = any>(
           return await recursivelySignUrls(item, secondsUntilExpiry);
         }
       }),
-    )) as unknown as ObjectType;
+    )) as ObjectType;
   } else if (typeof obj === 'object' && obj !== null) {
     const isMongooseDoc = obj.constructor?.name === 'model';
     const clonedObj: TODO = isMongooseDoc
@@ -86,7 +86,7 @@ export const recursivelySignUrls = async <ObjectType = any>(
         );
       }
     }
-    return clonedObj;
+    return clonedObj as ObjectType;
   } else {
     return obj;
   }
