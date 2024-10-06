@@ -52,9 +52,9 @@ const isS3Url = (url: string) => url.startsWith('s3://');
 export const recursivelySignUrls = async <ObjectType = any>(
   obj: ObjectType,
   secondsUntilExpiry: number = 300,
-): Promise<ObjectType | null> => {
+): Promise<ObjectType> => {
   if (Array.isArray(obj)) {
-    return Promise.all(
+    return (await Promise.all(
       obj.map(async (item) => {
         if (typeof item === 'string' && isS3Url(item)) {
           return await preSignFile(item, secondsUntilExpiry);
@@ -62,33 +62,32 @@ export const recursivelySignUrls = async <ObjectType = any>(
           return await recursivelySignUrls(item, secondsUntilExpiry);
         }
       }),
-    ) as Promise<ObjectType>;
+    )) as unknown as ObjectType;
   } else if (typeof obj === 'object' && obj !== null) {
     const isMongooseDoc = obj.constructor?.name === 'model';
-    const clonedObj = isMongooseDoc
+    const clonedObj: TODO = isMongooseDoc
       ? (obj as unknown as { toObject: () => ObjectType }).toObject()
       : { ...obj };
     for (const key in clonedObj) {
       if (typeof clonedObj[key] === 'string' && isS3Url(clonedObj[key])) {
-        clonedObj[key] = (await preSignFile(
-          clonedObj[key],
-          secondsUntilExpiry,
-        )) as ObjectType[Extract<keyof ObjectType, string>];
-      } else if (typeof clonedObj[key] === 'object') {
+        clonedObj[key] = await preSignFile(clonedObj[key], secondsUntilExpiry);
       } else if (Array.isArray(clonedObj[key])) {
-        clonedObj[key] = (await recursivelySignUrls(
+        clonedObj[key] = await recursivelySignUrls(
           clonedObj[key],
           secondsUntilExpiry,
-        )) as ObjectType[Extract<keyof ObjectType, string>];
-      } else if (typeof clonedObj[key] === 'object') {
-        clonedObj[key] = (await recursivelySignUrls(
+        );
+      } else if (
+        typeof clonedObj[key] === 'object' &&
+        clonedObj[key] !== null
+      ) {
+        clonedObj[key] = await recursivelySignUrls(
           clonedObj[key],
           secondsUntilExpiry,
-        )) as ObjectType[Extract<keyof ObjectType, string>];
-      } else if (typeof clonedObj[key] === 'object') {
+        );
       }
     }
     return clonedObj;
+  } else {
+    return obj;
   }
-  return null;
 };
