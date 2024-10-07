@@ -16,7 +16,7 @@ import {
   getExpressSettings,
   StagingEnvironment,
 } from '@the-libs/express-backend';
-import { recursivelySignUrls1 } from '@the-libs/s3-backend';
+import { recursivelySignUrls } from '@the-libs/s3-backend';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -107,11 +107,11 @@ export const autoSignS3URIs = (schema: Schema) => {
     if (Array.isArray(docs)) {
       await Promise.all(
         docs.map(async (doc) => {
-          await recursivelySignUrls1(doc);
+          await recursivelySignUrls(doc);
         }),
       );
     } else if (docs) {
-      await recursivelySignUrls1(docs);
+      await recursivelySignUrls(docs);
     }
   };
 

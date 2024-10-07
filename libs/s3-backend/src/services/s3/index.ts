@@ -49,63 +49,8 @@ export const preSignFile = async (
 };
 
 const isS3Url = (url: string) => url.startsWith('s3://');
-export const recursivelySignUrls1 = async <ObjectType = any>(
-  obj: ObjectType,
-  secondsUntilExpiry: number = 300,
-): Promise<ObjectType> => {
-  // Helper function to check if an object or array contains any S3 URLs
-  const containsS3Url = (input: any): boolean => {
-    if (typeof input === 'string' && isS3Url(input)) return true;
-    if (Array.isArray(input)) {
-      return input.some((item) => containsS3Url(item));
-    }
-    if (typeof input === 'object' && input !== null) {
-      return Object.values(input).some((value) => containsS3Url(value));
-    }
-    return false;
-  };
 
-  // If the input is an array, process each item
-  if (Array.isArray(obj)) {
-    return (await Promise.all(
-      obj.map(async (item) =>
-        typeof item === 'string' && isS3Url(item)
-          ? await preSignFile(item, secondsUntilExpiry)
-          : await recursivelySignUrls1(item, secondsUntilExpiry),
-      ),
-    )) as ObjectType;
-  }
-
-  // If it's an object and contains an S3 URL, clone and process it
-  if (typeof obj === 'object' && obj !== null && containsS3Url(obj)) {
-    const isMongooseDoc = obj.constructor?.name === 'model';
-    const clonedObj: any = isMongooseDoc
-      ? (obj as unknown as { toObject: () => ObjectType }).toObject()
-      : { ...obj };
-
-    for (const key in clonedObj) {
-      const value = clonedObj[key];
-
-      // Skip ObjectId instances to prevent alteration
-      if (value instanceof Types.ObjectId) {
-        clonedObj[key] = value;
-      } else if (typeof value === 'string' && isS3Url(value)) {
-        clonedObj[key] = await preSignFile(value, secondsUntilExpiry);
-      } else if (
-        Array.isArray(value) ||
-        (typeof value === 'object' && value !== null)
-      ) {
-        clonedObj[key] = await recursivelySignUrls1(value, secondsUntilExpiry);
-      }
-    }
-    return clonedObj as ObjectType;
-  }
-
-  // If no S3 URLs found, return the object as-is
-  return obj;
-};
-
-export const recursivelySignUrls2 = async <T = any>(
+export const recursivelySignUrls = async <T = any>(
   obj: T,
   secondsUntilExpiry: number = 300,
 ): Promise<T> => {
