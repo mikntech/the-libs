@@ -3,6 +3,7 @@ import {
   createHostedZone,
   createMultipleECRRepositories,
   enableRegion,
+  generateTemplate,
 } from '@the-libs/cicd-backend';
 
 const DOMAIN = 'cubebox.co.il';
@@ -13,3 +14,5 @@ const appNames = ['server', 'client'];
 // createHostedZone(DOMAIN);
 // enableRegion(DEP_REGION);
 // createMultipleECRRepositories(projectName, appNames, DEP_REGION);
+
+console.log(generateTemplate());

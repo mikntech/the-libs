@@ -1,7 +1,7 @@
 {
-  "name": "server",
+  "name": "deploy",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/server/src",
+  "sourceRoot": "apps/deploy/src",
   "projectType": "application",
   "targets": {
     "build": {
@@ -12,13 +12,13 @@
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
-        "outputPath": "dist/apps/server",
+        "outputPath": "dist/apps/deploy",
         "format": [
           "esm"
         ],
         "bundle": true,
-        "main": "apps/server/src/index.ts",
-        "tsConfig": "apps/server/tsconfig.app.json",
+        "main": "apps/deploy/src/index.ts",
+        "tsConfig": "apps/deploy/tsconfig.app.json",
         "external": [
           "aws-sdk",
           "mock-aws-s3",
@@ -48,14 +48,14 @@
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "server:build"
+        "buildTarget": "deploy:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "server:build:development"
+          "buildTarget": "deploy:build:development"
         },
         "production": {
-          "buildTarget": "server:build:production"
+          "buildTarget": "deploy:build:production"
         }
       },
       "dependsOn": [

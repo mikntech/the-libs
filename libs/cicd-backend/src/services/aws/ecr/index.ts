@@ -45,6 +45,6 @@ export const createMultipleECRRepositories = (
   appNames: string[],
   region?: string,
 ) =>
-  appNames.forEach((appName) =>
+  ['base', ...appNames].forEach((appName) =>
     createECRRepository(projectName + '/' + appName, { region }),
   );
