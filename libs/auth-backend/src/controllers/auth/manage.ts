@@ -52,7 +52,7 @@ export const genManageControllers = <
     userType: UserType,
   ) => {
     const key = v4();
-    await createDoc(passResetRequest(), {
+    await createDoc(await passResetRequest(), {
       email,
       key,
     });
@@ -70,7 +70,7 @@ export const genManageControllers = <
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
     const userDoc = await findDocs<false, SCHEMA>(
-      getModel(userType).findOne({ email }),
+      (await getModel(userType)).findOne({ email }),
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
       throw new InvalidInputError('No user found with this email');
@@ -126,7 +126,7 @@ export const genManageControllers = <
       email: string;
     };
     const existingUser = await findDocs<false, User<false, false, UserType>>(
-      getModel(userType).findOne({
+      (await getModel(userType)).findOne({
         email,
       }) as unknown as TODO,
       false,
@@ -155,7 +155,7 @@ export const genManageControllers = <
     validateInput({ newFullName });
 
     const userDoc = (await findDocs(
-      getModel(userType).findById(user._id),
+      (await getModel(userType)).findById(user._id),
       false,
     )) as unknown as User | null;
 
@@ -172,7 +172,7 @@ export const genManageControllers = <
     validateInput({ phone });
 
     const userDoc = (await findDocs(
-      getModel(userType).findById(user._id),
+      (await getModel(userType)).findById(user._id),
       false,
     )) as unknown as User | null;
 
@@ -180,11 +180,7 @@ export const genManageControllers = <
     return { statusCode: 201, body: 'Phone updated successfully' };
   };
 
-  const uploadProfilePicture = async (req: {
-    user: User | null;
-    userType: UserType;
-    files: TODO[];
-  }) => {
+  const uploadProfilePicture = async (req: TODO) => {
     if (!(req.files && 'map' in req.files))
       throw new ClientError('No file received');
     const userDoc = (await findDocs(

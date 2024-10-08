@@ -40,7 +40,22 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [],
+      external: [
+        '@mui/x-date-pickers',
+        'dayjs',
+        'react',
+        '@mui/material',
+        '@mui/icons-material',
+        '@the-libs/base-shared',
+        'react-router-dom',
+        'mongoose',
+        'react-hot-toast',
+        'zxcvbn',
+        'axios',
+        '@the-libs/chat-shared',
+        '@the-libs/auth-shared',
+        '@emotion/styled',
+      ],
       onwarn(warning, warn) {
         // Suppress the warnings related to MUI's "use client" directive
         if (

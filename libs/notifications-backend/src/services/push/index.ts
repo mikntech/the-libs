@@ -5,9 +5,6 @@ const require = createRequire(import.meta.url);
 
 const WebPush = require('web-push');
 
-
-
-
 WebPush.setVapidDetails(
   notificationsSettings.pushSubject,
   notificationsSettings.pushPublicKey,

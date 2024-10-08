@@ -45,7 +45,7 @@ export const genRegisterControllers = <
   } = genAuthControllers(strategy);
 
   const validateEmailNotInUse = async (email: string, userType: UserType) => {
-    if (await findDocs(getModel(userType).findOne({ email }), true))
+    if (await findDocs((await getModel(userType)).findOne({ email }), true))
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );
@@ -53,13 +53,13 @@ export const genRegisterControllers = <
 
   const createKeyForRegistration = async (email: string, userType: string) => {
     const key = v4();
-    await createDoc(registrationRequest(), {
+    await createDoc(await registrationRequest(), {
       email,
       userType: userType as unknown as UserType,
       key,
     });
     return generateURLWithParams(
-      `register-code=${key}&email=${email}`,
+      `register-code=${key}&email=${email}&userType=${userType}`,
       userType,
     );
   };
@@ -91,7 +91,7 @@ export const genRegisterControllers = <
     userType: UserType,
     requiredFields: RequiredFields,
   ) =>
-    createDoc(getModel(userType), {
+    createDoc(await getModel(userType), {
       email,
       full_name,
       userType,

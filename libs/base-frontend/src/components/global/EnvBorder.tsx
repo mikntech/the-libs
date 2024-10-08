@@ -1,12 +1,15 @@
 import { ReactNode, useEffect } from 'react';
-import { frontendSettings } from '../../context';
 import { Box } from '@mui/material';
 
 interface EnvBorderContextProps {
   children: ReactNode;
+  VITE_WHITE_ENV: string;
 }
 
-export const EnvBorder = ({ children }: EnvBorderContextProps) => {
+export const EnvBorder = ({
+  children,
+  VITE_WHITE_ENV,
+}: EnvBorderContextProps) => {
   useEffect(() => {
     const adjustHeight = () => {
       const viewportHeight = window.innerHeight + 'px';
@@ -23,18 +26,12 @@ export const EnvBorder = ({ children }: EnvBorderContextProps) => {
   }, []);
 
   const props = {
-    width:
-      frontendSettings().VITE_WHITE_ENV === 'prod'
-        ? '100%'
-        : 'calc(100% - 8px)',
-    height:
-      frontendSettings().VITE_WHITE_ENV === 'prod'
-        ? '100%'
-        : 'calc(100% - 8px)',
+    width: VITE_WHITE_ENV === 'prod' ? '100%' : 'calc(100% - 8px)',
+    height: VITE_WHITE_ENV === 'prod' ? '100%' : 'calc(100% - 8px)',
     sx:
-      frontendSettings().VITE_WHITE_ENV === 'prod'
+      VITE_WHITE_ENV === 'prod'
         ? {}
-        : frontendSettings().VITE_WHITE_ENV === 'preprod'
+        : VITE_WHITE_ENV === 'preprod'
           ? { border: '4px solid orange' }
           : { border: '4px solid blue' },
   };

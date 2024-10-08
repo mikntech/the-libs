@@ -22,8 +22,8 @@ export const generateMessageRouter = <UserType>(
   messageRouter.get(
     '/conversationMessages/:id',
     highOrderHandler((async (req: AuthenticatedRequest<UserType>) => {
-      const MessageModel = message();
-      const ConversationModel = conversation(side1Name, side2Name);
+      const MessageModel = await message();
+      const ConversationModel = await conversation(side1Name, side2Name);
       const conversationDoc = await findDocs<
         false,
         Conversation<typeof side1Name, typeof side2Name>

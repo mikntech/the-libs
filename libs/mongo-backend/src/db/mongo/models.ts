@@ -1,28 +1,34 @@
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 import { WatchDB } from './watch';
 import type {
+  Connection,
   IndexDefinition,
   IndexOptions,
   Model,
   Schema,
-  Connection,
   SchemaDefinition,
+  Document,
 } from 'mongoose';
-const mongoose = require('mongoose');
-import { versioning } from '@mnpcmw6444/mongoose-auto-versioning';
+import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
+import { mongoSettings } from '../../config';
+import {
+  getExpressSettings,
+  StagingEnvironment,
+} from '@the-libs/express-backend';
+import { recursivelySignUrls } from '@the-libs/s3-backend';
+
+const require = createRequire(import.meta.url);
+const mongoose = require('mongoose');
 
 const connection: { instance?: Connection } = {};
 
-export const connect = async <SE = string>(
-  mongoURI: string,
-  stagingEnv: SE = 'production' as SE,
-  logMongoToConsole: boolean = true,
-) => {
-  stagingEnv === 'local' && mongoose.set('debug', logMongoToConsole);
+const connect = async (logMongoToConsole: boolean = true) => {
+  (getExpressSettings().stagingEnv ?? StagingEnvironment.Prod) ===
+    StagingEnvironment.Local &&
+    mongoose.set('debug', logMongoToConsole ?? true);
   try {
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoSettings.mongoURI);
     console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
@@ -48,19 +54,30 @@ const initModel = <Interface>(
 
 interface Optional<T> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
+  wrapSchema?: Function[];
   extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<T>) => Schema)[];
+  logMongoToConsole?: boolean;
 }
 
-export const getModel = <Interface>(
+export const getModel = async <Interface>(
   name: string,
   schemaDefinition: SchemaDefinition,
-  { chainToSchema, extraIndexs, pres }: Optional<Interface> = {},
+  {
+    chainToSchema,
+    wrapSchema,
+    extraIndexs,
+    pres,
+    logMongoToConsole,
+  }: Optional<Interface> = {},
 ) => {
-  if (!connection.instance) throw new Error('Database not initialized');
+  if (!connection?.instance) await connect(logMongoToConsole);
   let model: Model<Interface>;
-  const schema = new mongoose.Schema(schemaDefinition, {
+  let schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
+  });
+  wrapSchema?.forEach((wrapper) => {
+    schema = wrapper(schema);
   });
   type CHAINABLE = unknown;
   chainToSchema?.forEach(({ name, params }) =>
@@ -73,7 +90,7 @@ export const getModel = <Interface>(
   const funcs = pres?.map((fnc) => fnc(schema));
 
   if (mongoose.models[name]) {
-    model = connection.instance.model<Interface>(name);
+    model = connection!.instance!.model<Interface>(name);
   } else {
     model = initModel(connection, name, schema);
   }
@@ -83,4 +100,20 @@ export const getModel = <Interface>(
   });
 
   return model;
+};
+
+export const autoSignS3URIs = (schema: Schema) => {
+  const signS3UrlsMiddleware = async function (docs: Document | Document[]) {
+    if (Array.isArray(docs)) {
+      await Promise.all(
+        docs.map(async (doc) => {
+          await recursivelySignUrls(doc);
+        }),
+      );
+    } else if (docs) {
+      await recursivelySignUrls(docs);
+    }
+  };
+
+  return schema.post(/find/, signS3UrlsMiddleware);
 };

@@ -1,13 +1,10 @@
 import { createRequire } from 'module';
+import { isProduction } from '@the-libs/mongo-backend';
 const require = createRequire(import.meta.url);
 const { config } = require('dotenv');
 const process = require('process');
 config();
 
-export enum NodeEnvironment {
-  Development = 'development',
-  Production = 'production',
-}
 
 export enum StagingEnvironment {
   Local = 'local',
@@ -17,21 +14,16 @@ export enum StagingEnvironment {
 }
 
 export interface ExpressSettings<CD> {
-  nodeEnv: NodeEnvironment;
   stagingEnv: StagingEnvironment;
   port: number;
   clientDomains: CD;
   myDomain: string;
 }
 
-const validEnvs: NodeEnvironment[] = Object.values(NodeEnvironment);
 const validStagingEnvs: StagingEnvironment[] =
   Object.values(StagingEnvironment);
 
-const nodeEnv = process.env['NODE_ENV'] as NodeEnvironment;
-if (!validEnvs.includes(nodeEnv)) {
-  throw new Error("NODE_ENV must be 'development' or 'production'");
-}
+
 
 const stagingEnv = process.env['STAGING_ENV'] as StagingEnvironment;
 if (!validStagingEnvs.includes(stagingEnv)) {
@@ -40,7 +32,6 @@ if (!validStagingEnvs.includes(stagingEnv)) {
   );
 }
 
-const isProduction = nodeEnv === NodeEnvironment.Production;
 const defaultStagingEnv = isProduction
   ? StagingEnvironment.Prod
   : StagingEnvironment.Local;
@@ -83,9 +74,7 @@ export const getExpressSettings = <
       });
 
   return {
-    nodeEnv: isProduction
-      ? NodeEnvironment.Production
-      : NodeEnvironment.Development,
+
     stagingEnv: currentStagingEnv,
     port,
     myDomain,

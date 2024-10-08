@@ -1,13 +1,10 @@
 import type { ChangeStream, GenericListener } from 'mongodb';
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
 import type { Document, Model } from 'mongoose';
 import { TODO } from '@the-libs/base-shared';
 
 interface WatchCallback<T extends Document> {
-  modelGetter: () => Model<T>;
-  event: string;
+  modelGetter: () => Promise<Model<T>>;
+  event?: string; // defaults to 'change'
   handler: GenericListener;
 }
 
@@ -28,16 +25,18 @@ export class WatchDB {
 
   static run() {
     this.callbacks.forEach(({ modelGetter, event, handler }) => {
-      const model = modelGetter();
-      const changeStream = model.watch().on(event, handler);
-      const { collectionName } = model.collection;
-      if (!this.activeWatches.has(collectionName)) {
-        this.activeWatches.set(collectionName, changeStream as TODO);
-      } else {
-        const oldStream = this.activeWatches.get(collectionName);
-        oldStream?.close().then();
-        this.activeWatches.set(collectionName, changeStream as TODO);
-      }
+      const modelPromise = modelGetter();
+      modelPromise.then((model) => {
+        const changeStream = model.watch().on(event || 'change', handler);
+        const { collectionName } = model.collection;
+        if (!this.activeWatches.has(collectionName)) {
+          this.activeWatches.set(collectionName, changeStream as TODO);
+        } else {
+          const oldStream = this.activeWatches.get(collectionName);
+          oldStream?.close().then();
+          this.activeWatches.set(collectionName, changeStream as TODO);
+        }
+      });
     });
   }
 }

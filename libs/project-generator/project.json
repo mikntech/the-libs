@@ -1,0 +1,20 @@
+{
+  "name": "project-generator",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/project-generator/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/project-generator",
+        "tsConfig": "libs/project-generator/tsconfig.lib.json",
+        "main": "libs/project-generator/src/index.ts"
+      }
+    }
+  },
+  "tags": []
+}

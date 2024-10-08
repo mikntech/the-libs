@@ -18,22 +18,23 @@ import {
   useEffect,
   useRef,
   useState,
+  KeyboardEvent,
 } from 'react';
 import { ArrowBackIosOutlined, Send } from '@mui/icons-material';
 import { AxiosInstance } from 'axios';
 import { ServerContext } from '../../../../context';
 import { Conversation, Message } from '@the-libs/chat-shared';
 import { TODO } from '@the-libs/base-shared';
-import { useResponsiveness, useSubscribe } from '../../../../hooks';
+import { useSubscribe } from '../../../../hooks';
 import { axiosErrorToaster } from '../../../../utils';
-import { extactNameInitials } from '../../../../utils/index';
+import { extactNameInitials } from '../../../../utils';
 
 interface ConversationViewProps {
+  VITE_WHITE_ENV: string;
   conversation: Conversation;
   setSelectedConversation: Dispatch<SetStateAction<Conversation | undefined>>;
   domain: string;
   tenum: { admin: string };
-  isMobillized?: boolean;
   PrimaryText?: FC<TODO>;
   Btn?: FC<TODO>;
 }
@@ -54,9 +55,9 @@ export const sendMessage = (
 };
 
 const ConversationView = ({
+  VITE_WHITE_ENV,
   conversation,
   setSelectedConversation,
-  isMobillized,
   domain,
   tenum,
   PrimaryText = Typography,
@@ -68,7 +69,7 @@ const ConversationView = ({
   const [messages, setMessages] = useState<null | Message[]>(null);
   const [scrolled, setScrolled] = useState<boolean>(false);
 
-  const { res } = useSubscribe(domain, 'api/chat/subscribe');
+  const { res } = useSubscribe(VITE_WHITE_ENV, domain, 'api/chat/subscribe');
 
   const fetchConversationMessages = useCallback(async () => {
     try {
@@ -103,7 +104,7 @@ const ConversationView = ({
       })
       .toUpperCase();
   };
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       handleSendMessage();
     }
@@ -149,8 +150,6 @@ const ConversationView = ({
       }) || <PrimaryText padded>Loading Messages...</PrimaryText>
     );
   };
-
-  const { isMobile } = useResponsiveness(!!isMobillized);
 
   return (
     <>

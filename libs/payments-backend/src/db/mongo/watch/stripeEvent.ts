@@ -1,9 +1,10 @@
 import { WatchDB } from '@the-libs/mongo-backend';
 import { stripeEvent } from '@the-libs/payments-backend';
+import type { GenericListener } from 'mongodb';
 
-export const watchStripeEvents = () =>
+export const watchStripeEvents = (handler: GenericListener) =>
   WatchDB.add({
     modelGetter: stripeEvent,
     event: 'change',
-    handler: (data) => console.log('handler this data!!,  ', data),
+    handler: (...args) => handler(...args),
   });
