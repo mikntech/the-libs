@@ -14,14 +14,24 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Read package names from generated JSON file
+const getSrcLibraries = () => {
+  const packageNamesPath = path.resolve(__dirname, 'packageNames.json');
+  if (!fs.existsSync(packageNamesPath)) {
+    console.error(
+      'Error: packageNames.json not found. Make sure to generate it at compile time.',
+    );
+    return [];
+  }
+
+  const libs = JSON.parse(fs.readFileSync(packageNamesPath, 'utf-8'));
+  console.log('Libraries found in src:', libs);
+  return libs;
+};
+
 const askForAppsAndLibs = async () => {
-  const thisDir = __dirname;
-  const libsDir = path.resolve(thisDir, '../../');
-  const libsNames = fs
-    .readdirSync(libsDir, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => dirent.name);
-  const choices = libsNames.map((name) => ({ name, value: name }));
+  const libsNames = getSrcLibraries(); // Read src libs from JSON file
+  const choices = libsNames.map((name: string) => ({ name, value: name }));
   const questions = [
     {
       type: 'checkbox',
