@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/mikntech/the-libs#readme",
   "devDependencies": {
+    "@aws-sdk/client-ecr": "^3.666.0",
+    "@aws-sdk/client-route-53": "^3.666.0",
     "@aws-sdk/client-s3": "^3.666.0",
     "@aws-sdk/s3-request-presigner": "^3.666.0",
     "@azure/openai": "^1.0.0-beta.12",
@@ -29,7 +31,7 @@
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
     "@mui/x-date-pickers": "^7.19.0",
-    "@nx/esbuild": "20.0.0",
+    "@nx/esbuild": "^20.0.0",
     "@nx/eslint": "20.0.0",
     "@nx/eslint-plugin": "20.0.0",
     "@nx/js": "20.0.0",
