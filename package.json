@@ -25,7 +25,7 @@
     "@aws-sdk/client-route-53": "^3.666.0",
     "@aws-sdk/client-s3": "^3.666.0",
     "@aws-sdk/s3-request-presigner": "^3.666.0",
-    "@azure/openai": "^2.0.0-beta.2",
+    "@azure/openai": "^1.0.0-beta.12",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@nx/jest": "20.0.0",
