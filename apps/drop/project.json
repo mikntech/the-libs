@@ -1,0 +1,58 @@
+{
+  "name": "drop",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "drop/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/drop",
+        "format": ["esm"],
+        "bundle": false,
+        "main": "drop/src/main.ts",
+        "tsConfig": "drop/tsconfig.app.json",
+        "assets": ["drop/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".mjs"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".mjs"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "drop:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "drop:build:development"
+        },
+        "production": {
+          "buildTarget": "drop:build:production"
+        }
+      }
+    }
+  }
+}

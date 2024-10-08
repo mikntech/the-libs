@@ -1,0 +1,13 @@
+{
+  "name": "@the-libs/meta-backend",
+  "version": "1.1.42",
+  "dependencies": {
+    "axios": "^1.7.7"
+  },
+  "type": "module",
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

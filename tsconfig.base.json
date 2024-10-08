@@ -26,6 +26,7 @@
       "@the-libs/cicd-backend": ["libs/cicd-backend/src/index.ts"],
       "@the-libs/email-backend": ["libs/email-backend/src/index.ts"],
       "@the-libs/express-backend": ["libs/express-backend/src/index.ts"],
+      "@the-libs/meta-backend": ["libs/meta-backend/src/index.ts"],
       "@the-libs/mongo-backend": ["libs/mongo-backend/src/index.ts"],
       "@the-libs/notifications-backend": ["libs/notifications-backend/src/index.ts"],
       "@the-libs/notifications-shared": ["libs/notifications-shared/src/index.ts"],
