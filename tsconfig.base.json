@@ -25,8 +25,12 @@
       "@the-libs/email-backend": ["libs/email-backend/src/index.ts"],
       "@the-libs/express-backend": ["libs/express-backend/src/index.ts"],
       "@the-libs/mongo-backend": ["libs/mongo-backend/src/index.ts"],
-      "@the-libs/notifications-backend": ["libs/notifications-backend/src/index.ts"],
-      "@the-libs/notifications-shared": ["libs/notifications-shared/src/index.ts"],
+      "@the-libs/notifications-backend": [
+        "libs/notifications-backend/src/index.ts"
+      ],
+      "@the-libs/notifications-shared": [
+        "libs/notifications-shared/src/index.ts"
+      ],
       "@the-libs/payments-backend": ["libs/payments-backend/src/index.ts"],
       "@the-libs/redis-backend": ["libs/redis-backend/src/index.ts"],
       "@the-libs/s3-backend": ["libs/s3-backend/src/index.ts"]

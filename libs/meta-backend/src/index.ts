@@ -3,7 +3,7 @@ import axios from 'axios';
 const PAGE_ACCESS_TOKEN = 'YOUR_PAGE_ACCESS_TOKEN';
 const PAGE_ID = 'YOUR_PAGE_ID';
 
-async function postToFacebook(message: string) {
+export async function postToFacebook(message: string) {
   const url = `https://graph.facebook.com/v12.0/${PAGE_ID}/feed`;
 
   try {
