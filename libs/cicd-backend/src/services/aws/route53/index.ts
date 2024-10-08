@@ -1,10 +1,13 @@
+import { createRequire } from 'module';
+import { createClient } from '../utils';
+const require = createRequire(import.meta.url);
 const {
   Route53Client,
   CreateHostedZoneCommand,
 } = require('@aws-sdk/client-route-53');
 
-const createHostedZone = async (region = 'us-east-1', domainName: string) => {
-  const client = new Route53Client({ region });
+export const createHostedZone = async (domainName: string, region?: string) => {
+  const client = createClient<typeof Route53Client>(Route53Client, region);
   const params = {
     Name: domainName,
     CallerReference: `cli-script-${Date.now()}`,
@@ -12,9 +15,12 @@ const createHostedZone = async (region = 'us-east-1', domainName: string) => {
   try {
     const command = new CreateHostedZoneCommand(params);
     const response = await client.send(command);
-    console.log('Hosted Zone Created Successfully:', response);
-    return response;
+    return {
+      response,
+      tellUserToConfigure: response.DelegationSet.NameServers,
+    };
   } catch (error) {
     console.error('Error creating hosted zone:', error);
+    return null;
   }
 };
