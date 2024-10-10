@@ -6,6 +6,7 @@ const {
   CreateRepositoryCommand,
   ImageTagMutability,
 } = require('@aws-sdk/client-ecr');
+const { STSClient, GetCallerIdentityCommand } = require('@aws-sdk/client-sts');
 
 interface Options {
   region: string;
@@ -40,11 +41,31 @@ export const createECRRepository = async (
   }
 };
 
-export const createMultipleECRRepositories = (
+export const createMultipleECRRepositories = async (
   projectName: string,
   appNames: string[],
   region?: string,
 ) =>
-  ['base', ...appNames].forEach((appName) =>
-    createECRRepository(projectName + '/' + appName, { region }),
+  Promise.all(
+    ['base', ...appNames].map(async (appName) =>
+      createECRRepository(projectName + '/' + appName, { region }),
+    ),
   );
+
+export const getEcrUri = async (log: boolean = true, region?: string) => {
+  const stsClient = await createClient<typeof STSClient>(STSClient, region);
+
+  try {
+    const identityCommand = new GetCallerIdentityCommand({});
+    const identityResponse = await stsClient.send(identityCommand);
+    const accountId = identityResponse.Account;
+
+    const ecrBaseUri = `${accountId}.dkr.ecr.${await stsClient.config.region()}.amazonaws.com`;
+
+    log && console.log('ECR Base URI:', ecrBaseUri);
+    return ecrBaseUri;
+  } catch (error) {
+    console.error('Error retrieving ECR URI:', error);
+    return null;
+  }
+};
