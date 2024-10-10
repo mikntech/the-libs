@@ -69,8 +69,7 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json ./apps/${appName}/build.env ./
-
+COPY package.json nx.json tsconfig.base.json ./
 RUN npm i
 
 FROM base AS builder
