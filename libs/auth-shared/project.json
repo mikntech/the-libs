@@ -27,7 +27,8 @@
             "input": "libs/auth-shared/src",
             "output": "."
           }
-        ]
+        ],
+    "external": ["mongoose"]
       }
     },
     "nx-release-publish": {
