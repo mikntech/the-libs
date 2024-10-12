@@ -5,11 +5,7 @@ import { highOrderHandler } from '@the-libs/express-backend';
 import { TODO, UnauthorizedError } from '@the-libs/base-shared';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
-import {
-  conversation,
-  message,
-  markMessagesAsRead,
-} from '@the-libs/chat-backend';
+import { conversation, message, markMessagesAsRead } from '../../../../';
 import { Conversation } from '@the-libs/chat-shared';
 import { findDocs } from '@the-libs/mongo-backend';
 

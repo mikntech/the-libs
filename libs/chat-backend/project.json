@@ -27,7 +27,8 @@
             "input": "libs/chat-backend/src",
             "output": "."
           }
-        ]
+        ],
+        "external": ["express", "@the-libs/express-backend", "@the-libs/base-shared", "@the-libs/auth-backend", "@the-libs/auth-shared", "@the-libs/chat-shared", "@the-libs/mongo-backend", "@the-libs/redis-backend"]
       }
     },
     "nx-release-publish": {

@@ -8,7 +8,7 @@ import {
   getLastMessageOfConversation,
   getNameOfUser,
   getNumberOfUnreadMessagesInConversation,
-} from '@the-libs/chat-backend';
+} from '../../../../';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
 
