@@ -1,7 +1,7 @@
 {
-  "name": "auth-shared",
+  "name": "meta-backend",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/auth-shared/src",
+  "sourceRoot": "libs/meta-backend/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,19 +17,25 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "format": ["esm"],
-        "outputPath": "dist/libs/auth-shared",
-        "tsConfig": "libs/auth-shared/tsconfig.lib.json",
-        "project": "libs/auth-shared/package.json",
-        "entryFile": "libs/auth-shared/src/index.ts",
+        "outputPath": "dist/libs/meta-backend",
+        "tsConfig": "libs/meta-backend/tsconfig.lib.json",
+        "project": "libs/meta-backend/package.json",
+        "entryFile": "libs/meta-backend/src/index.ts",
         "assets": [
           {
             "glob": "**/*.json",
-            "input": "libs/auth-shared/src",
+            "input": "libs/meta-backend/src",
             "output": "."
           }
         ],
-    "external": ["axios"]
-      }
+        "external": ["axios"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
     },
     "nx-release-publish": {
       "options": {
