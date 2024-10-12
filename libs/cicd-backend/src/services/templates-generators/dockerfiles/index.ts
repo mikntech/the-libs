@@ -98,7 +98,7 @@ EXPOSE ${String(port)}
 
 ENV PORT=${String(port)}
 
-CMD ["node", "server.js"]
+CMD ["node", "./dist/apps/${appName}/server.js"]
 `;
   log && console.log(ret);
   return ret;
