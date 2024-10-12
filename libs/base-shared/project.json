@@ -27,7 +27,8 @@
             "input": "libs/base-shared/src",
             "output": "."
           }
-        ]
+        ],
+        "external": ["mongoose"]
       },
       "dependsOn": [
         {
