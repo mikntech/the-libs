@@ -1,5 +1,5 @@
 {
-  "name": "@the-libs/meta-backend",
+  "name": "@the-libs/auth-shared",
   "version": "1.1.42",
   "dependencies": {
     "axios": "^1.7.7"
