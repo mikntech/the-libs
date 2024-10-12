@@ -139,7 +139,7 @@ jobs:
         (appName) =>
           `
           
-  build_${appName}:
+  build_mik${appName}:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
@@ -175,7 +175,7 @@ jobs:
           echo "DEP_HASH=$(cat temp_package.json | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
           rm temp_package.json
 
-      - name: Build, tag, and push ${appName} image to Amazon ECR
+      - name: Build, tag, and push mik${appName} image to Amazon ECR
         env:
           DOCKER_BUILDKIT: 1
         run: |
@@ -230,25 +230,25 @@ jobs:
         (appName) =>
           `
           
-      - name: Fetch current ${appName} task definition
-        id: current-task-def-${appName}
+      - name: Fetch current mik${appName} task definition
+        id: current-task-def-mik${appName}
         run: |
-          aws ecs describe-task-definition --task-definition ${appName} > mik-current-${appName}-task-def.json
+          aws ecs describe-task-definition --task-definition mik${appName} > mik-current-mik${appName}-task-def.json
 
-      - name: Update task definition for ${appName}
+      - name: Update task definition for mik${appName}
         run: |
-          jq --arg image_tag "$VERSION" --arg ecr_registry "\${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mik${projectName}/${appName}:" + $image_tag' mik-current-${appName}-task-def.json > mik-intermediate-${appName}-task-def.json
-          jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-${appName}-task-def.json > mik-final-${appName}-task-def.json
+          jq --arg image_tag "$VERSION" --arg ecr_registry "\${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mik${projectName}/mik${appName}:" + $image_tag' mik-current-mik${appName}-task-def.json > mik-intermediate-mik${appName}-task-def.json
+          jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-mik${appName}-task-def.json > mik-final-mik${appName}-task-def.json
 
-      - name: Register task definition for ${appName}
-        id: register-task-def-${appName}
+      - name: Register task definition for mik${appName}
+        id: register-task-def-mik${appName}
         run: |
-          MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-${appName}-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
+          MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-mik${appName}-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
           echo "MIK_TASK_DEF_ARN_SERVER=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
 
-      - name: Update ECS Service for ${appName}
+      - name: Update ECS Service for mik${appName}
         run: |
-          aws ecs update-service --cluster ${'mik' + clusterName} --service ${appName} --task-definition $MIK_TASK_DEF_ARN_SERVER
+          aws ecs update-service --cluster ${'mik' + clusterName} --service mik${appName} --task-definition $MIK_TASK_DEF_ARN_SERVER
 
 `,
       )

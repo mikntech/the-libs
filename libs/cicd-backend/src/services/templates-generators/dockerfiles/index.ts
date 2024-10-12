@@ -55,28 +55,22 @@ EXPOSE ${port}
 
 export const generateStandaloneNextDockerfile = (
   options: Partial<
-    Omit<Options, 'customInstallLine' | 'customEntryPointExtension'>
+    Omit<Options, 'customInstallLine' | 'customEntryPointExtension' | 'nodeTag'>
   >,
+  projectName: string,
+  ecrDomain: string,
   appName: string,
 ) => {
-  let { nodeTag, log, customBuildLine } = options;
-  if (nodeTag === undefined) nodeTag = '21-alpine';
+  let { log, customBuildLine } = options;
   if (log === undefined) log = true;
   const ret = `
-FROM node:${nodeTag} AS base
-
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-COPY package.json nx.json tsconfig.base.json ./
-RUN npm i
+FROM ${ecrDomain}/mik${projectName}/base:$DEP_HASH as base
 
 FROM base AS builder
 
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
+COPY --from=base /app/node_modules ./node_modules
 COPY . .
 
 ${customBuildLine ?? `RUN npm run build:${appName}`}
