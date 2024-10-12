@@ -204,27 +204,34 @@ export const ecsServiceTemplateGenerator = (
         ],
       },
     },
-    Listener: {
+    ListenerHTTPS: {
+      Type: 'AWS::ElasticLoadBalancingV2::Listener',
+      Properties: {
+        DefaultActions: [
+          { Type: 'forward', TargetGroupArn: { Ref: 'TargetGroup' } },
+        ],
+        LoadBalancerArn: { Ref: 'LoadBalancer' },
+        Port: 443,
+        Protocol: 'HTTPS',
+        Certificates: [{ CertificateArn: acmArn }],
+      },
+    },
+    ListenerHTTP: {
       Type: 'AWS::ElasticLoadBalancingV2::Listener',
       Properties: {
         DefaultActions: [
           {
-            Type: 'forward',
-            TargetGroupArn: {
-              Ref: 'TargetGroup',
+            Type: 'redirect',
+            RedirectConfig: {
+              Protocol: 'HTTPS',
+              Port: '443',
+              StatusCode: 'HTTP_301',
             },
           },
         ],
-        LoadBalancerArn: {
-          Ref: 'LoadBalancer',
-        },
-        Port: '443',
-        Protocol: 'HTTPS',
-        Certificates: [
-          {
-            CertificateArn: acmArn,
-          },
-        ],
+        LoadBalancerArn: { Ref: 'LoadBalancer' },
+        Port: 80,
+        Protocol: 'HTTP',
       },
     },
   },

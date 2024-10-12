@@ -98,7 +98,7 @@ await Promise.all(
           329599624617 +
           ':task-definition/mik' +
           name +
-          ':1',
+          ':9',
         port,
         'arn:aws:acm:il-central-1:329599624617:certificate/1e065c87-5516-4511-a153-2a5f9b072e74',
       )),
@@ -117,7 +117,7 @@ await Promise.all(
             329599624617 +
             ':task-definition/mik' +
             name +
-            ':1',
+            ':6',
           port,
           'arn:aws:acm:il-central-1:329599624617:certificate/947699a0-e9bb-4158-8bf2-bc2406e993e6',
         )),
