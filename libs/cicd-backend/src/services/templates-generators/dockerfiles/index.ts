@@ -64,6 +64,7 @@ export const generateStandaloneNextDockerfile = (
   let { log, customBuildLine } = options;
   if (log === undefined) log = true;
   const ret = `
+ARG DEP_HASH
 FROM ${ecrDomain}/mik${projectName}/base:$DEP_HASH as base
 
 FROM base AS builder

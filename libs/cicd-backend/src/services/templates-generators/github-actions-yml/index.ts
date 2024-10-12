@@ -189,7 +189,7 @@ jobs:
     `
     
   deploy_to_ecs:
-    needs: [ prepare, ${appNames.map((appName, index) => (index === 0 ? '' : ' ') + 'build_' + appName)} ]
+    needs: [ prepare, ${appNames.map((appName, index) => (index === 0 ? '' : ' ') + 'build_mik' + appName)} ]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials

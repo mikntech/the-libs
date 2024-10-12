@@ -31,16 +31,16 @@ const stagingENVs = ['prod', 'preprod'];
 // createHostedZone(DOMAIN);
 // enableRegion(DEP_REGION);
 //createMultipleECRRepositories(projectName, appNames, DEP_REGION);
-await getEcrUri(false);
+// await getEcrUri(false);
 //const ecrUri = await getEcrUri();
-generateYML(
+/*generateYML(
   {
     appNames,
   },
   'michael@cubebox.co.il',
   projectName,
   DEP_REGION,
-);
+);*/
 // await generateSSHKey();
 // generateBaseDockerfile({ nodeTag });
 /*generateCustomServerDockerfile(
@@ -61,7 +61,6 @@ generateYML(
 // createS3Bucket('cubebox-prod', true)
 // createS3Bucket('cubebox-preprod')
 // apps.forEach(({ domain }) => requestCertificate(domain));
-/*
 
 console.log(
   await Promise.all(
@@ -83,4 +82,3 @@ console.log(
     ),
   ),
 );
-*/
