@@ -27,7 +27,8 @@
             "input": "libs/notifications-shared/src",
             "output": "."
           }
-        ]
+        ],
+        "external": ["mongoose", "@the-libs/auth-shared"]
       },
       "dependsOn": [
         {
