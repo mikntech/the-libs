@@ -98,7 +98,7 @@ const step2 = async () => {
             ':task-definition/mik' +
             name +
             ':' +
-            (name === 'server' ? 10 : 7),
+            (name === 'server' ? 13 : 8),
           port,
           certificateARNs[index],
         ),
@@ -120,5 +120,3 @@ const step3 = async () => {
       ),
   );
 };
-
-step3();
