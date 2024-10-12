@@ -28,7 +28,7 @@
             "output": "."
           }
         ],
-        "external": ["dotenv", "@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"]
+        "external": ["@the-libs/cicd-backend", "dotenv", "@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner", "@the-libs/base-shared", "mongoose"]
       },
       "dependsOn": [
         {
