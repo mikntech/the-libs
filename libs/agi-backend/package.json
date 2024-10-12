@@ -3,7 +3,7 @@
   "version": "1.1.42",
   "dependencies": {
     "@azure/openai": "^2.0.0-beta.2",
-    "@the-libs/base-shared": "^1.5.1",
+    "@the-libs/base-shared": "^1.2.44",
     "dotenv": "^16.4.5",
     "gpt-tokenizer": "^2.4.0",
     "openai": "^4.67.0"
