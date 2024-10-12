@@ -60,6 +60,7 @@ export const generateStandaloneNextDockerfile = (
   projectName: string,
   ecrDomain: string,
   appName: string,
+  port: number,
 ) => {
   let { log, customBuildLine } = options;
   if (log === undefined) log = true;
@@ -93,9 +94,9 @@ RUN chown nextjs:nodejs .next
  
 USER nextjs
 
-EXPOSE 3000
+EXPOSE ${String(port)}
 
-ENV PORT=3000
+ENV PORT=${String(port)}
 
 CMD ["node", "server.js"]
 `;

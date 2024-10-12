@@ -59,13 +59,14 @@ const step1 = async () => {
     projectName,
     appNames[0],
     ecrUri,
-    4348,
+    apps[0].port,
   );
   generateStandaloneNextDockerfile(
     {},
     projectName,
     await getEcrUri(),
     appNames[1],
+    apps[1].port,
   );
 
   await Promise.all(
@@ -120,3 +121,5 @@ const step3 = async () => {
       ),
   );
 };
+
+const fixRollBack = async () => {};
