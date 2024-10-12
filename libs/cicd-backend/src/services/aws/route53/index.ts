@@ -8,6 +8,11 @@ const {
   ListHostedZonesByNameCommand,
 } = require('@aws-sdk/client-route-53');
 
+const {
+  ElasticLoadBalancingV2Client,
+  DescribeLoadBalancersCommand,
+} = require('@aws-sdk/client-elastic-load-balancing-v2');
+
 export const createHostedZone = async (domainName: string, region?: string) => {
   const client = createClient<typeof Route53Client>(Route53Client, region);
   const params = {
@@ -17,10 +22,9 @@ export const createHostedZone = async (domainName: string, region?: string) => {
   try {
     const command = new CreateHostedZoneCommand(params);
     const response = await client.send(command);
-    const id = response.HostedZone.Id.split('/');
     return {
       response,
-      keepID: id[id.length - 1],
+      keepID: response.HostedZone.Id.split('/').pop(),
       tellUserToConfigure: response.DelegationSet.NameServers,
     };
   } catch (error) {
@@ -32,36 +36,65 @@ export const createHostedZone = async (domainName: string, region?: string) => {
 export const createDNSRecord = async (
   zoneId: string,
   domainName: string,
-  loadBalancerDNS: string,
+  loadBalancerName: string,
   region?: string,
 ) => {
-  const ALB_HOSTED_ZONE_IDS = {
-    'us-east-1': 'Z35SXDOTRQ7X7K',
-    'us-east-2': 'Z3AADJGX6KTTL2',
-    'us-west-1': 'Z368ELLRRE2KJ0',
-    'us-west-2': 'Z1H1FL5HABSF5',
-    'af-south-1': 'Z268VQBMOI5EKX',
-    'ap-east-1': 'Z3W0JX5SA6EZUG',
-    'ap-south-1': 'ZP97RAFLXTNZK',
-    'ap-northeast-1': 'Z14GRHDCWA56QT',
-    'ap-northeast-2': 'Z3JE6OI9U60B6T',
-    'ap-northeast-3': 'Z14YB7MMH6RZOD',
-    'ap-southeast-1': 'Z1LMS91P8CMLE5',
-    'ap-southeast-2': 'Z1GM3OXH4ZPM65',
-    'ca-central-1': 'ZQ6VQB1LZSOJX',
-    'eu-central-1': 'Z215JYRZR1TBD5',
-    'eu-north-1': 'Z23TAZ6LKFMNIO',
-    'eu-west-1': 'Z32O12XQLNTSW2',
-    'eu-west-2': 'ZHURV8PSTC4K8',
-    'eu-west-3': 'Z23RP1B8JEXSDF',
-    'me-south-1': 'Z3QSRYVP46NYYV',
-    'sa-east-1': 'Z2P70J7EXAMPLE',
-    'us-gov-east-1': 'Z1Z4FKXC8NQMEK',
-    'us-gov-west-1': 'Z18D5FSROUN65S',
-    'il-central-1': 'Z3JTZABTB0E7KF',
+  const client = createClient<typeof Route53Client>(Route53Client, region);
+
+  const getALBDnsName = async (loadBalancerName: string, region?: string) => {
+    const elbv2Client = createClient<typeof ElasticLoadBalancingV2Client>(
+      ElasticLoadBalancingV2Client,
+      region,
+    );
+    const command = new DescribeLoadBalancersCommand({
+      Names: [loadBalancerName],
+    });
+
+    try {
+      const response = await elbv2Client.send(command);
+      const loadBalancer = response.LoadBalancers[0];
+      if (loadBalancer) {
+        return loadBalancer.DNSName; // This is the full DNS name for the ALB
+      } else {
+        throw new Error(`Load balancer ${loadBalancerName} not found`);
+      }
+    } catch (error) {
+      console.error(
+        `Error retrieving DNS name for ALB ${loadBalancerName}:`,
+        error,
+      );
+      return null;
+    }
   };
 
-  const client = createClient<typeof Route53Client>(Route53Client, region);
+  const getALBHostedZoneId = async (
+    loadBalancerName: string,
+    region?: string,
+  ) => {
+    const elbv2Client = createClient<typeof ElasticLoadBalancingV2Client>(
+      ElasticLoadBalancingV2Client,
+      region,
+    );
+    const command = new DescribeLoadBalancersCommand({
+      Names: [loadBalancerName],
+    });
+
+    try {
+      const response = await elbv2Client.send(command);
+      const loadBalancer = response.LoadBalancers[0];
+      if (loadBalancer) {
+        return loadBalancer.CanonicalHostedZoneId;
+      } else {
+        throw new Error(`Load balancer ${loadBalancerName} not found`);
+      }
+    } catch (error) {
+      console.error(
+        `Error retrieving hosted zone ID for ALB ${loadBalancerName}:`,
+        error,
+      );
+      return null;
+    }
+  };
 
   const params = {
     HostedZoneId: zoneId,
@@ -73,11 +106,8 @@ export const createDNSRecord = async (
             Name: domainName,
             Type: 'A',
             AliasTarget: {
-              DNSName: loadBalancerDNS,
-              HostedZoneId:
-                ALB_HOSTED_ZONE_IDS[
-                  (await client.config.region()) as keyof typeof ALB_HOSTED_ZONE_IDS
-                ],
+              DNSName: await getALBDnsName(loadBalancerName, region),
+              HostedZoneId: await getALBHostedZoneId(loadBalancerName, region),
               EvaluateTargetHealth: false,
             },
           },
@@ -108,8 +138,7 @@ export const getZoneIdByDomain = async (
 
     const hostedZone = response.HostedZones[0];
     if (hostedZone && hostedZone.Name === `${domainName}.`) {
-      const id = hostedZone.Id.split('/');
-      return id[id.length - 1];
+      return hostedZone.Id.split('/').pop();
     } else {
       console.log(`No hosted zone found for domain ${domainName}`);
       return null;

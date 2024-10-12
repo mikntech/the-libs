@@ -169,7 +169,7 @@ export const ecsServiceTemplateGenerator = (
         Tags: [],
         EnableECSManagedTags: true,
       },
-      DependsOn: ['Listener'],
+      DependsOn: ['ListenerHTTP', 'ListenerHTTPS'],
     },
     LoadBalancer: {
       Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer',
@@ -254,11 +254,13 @@ export const ecsServiceTemplateGenerator = (
         Ref: 'LoadBalancer',
       },
     },
-    Listener: {
-      Description: 'The created listener.',
-      Value: {
-        Ref: 'Listener',
-      },
+    ListenerHTTP: {
+      Description: 'The HTTP listener for redirecting traffic to HTTPS.',
+      Value: { Ref: 'ListenerHTTP' },
+    },
+    ListenerHTTPS: {
+      Description: 'The HTTPS listener handling secure traffic.',
+      Value: { Ref: 'ListenerHTTPS' },
     },
     TargetGroup: {
       Description: 'The created target group.',

@@ -28,7 +28,7 @@
             "output": "."
           }
         ],
-    "external": ["dotenv", "@the-libs/base-shared", "@aws-sdk/client-acm", "@aws-sdk/client-route-53", "@aws-sdk/client-ecr", "@aws-sdk/client-sts", "aws-sdk/client-cloudformation", "@aws-sdk/client-ec2", "@aws-sdk/client-iam", "@aws-sdk/client-ecs", "@aws-sdk/client-s3"]
+    "external": ["dotenv", "@the-libs/base-shared", "@aws-sdk/client-acm", "@aws-sdk/client-route-53", "@aws-sdk/client-ecr", "@aws-sdk/client-sts", "aws-sdk/client-cloudformation", "@aws-sdk/client-ec2", "@aws-sdk/client-iam", "@aws-sdk/client-ecs", "@aws-sdk/client-s3", "@aws-sdk/client-elastic-load-balancing-v2"]
       }
     },
     "nx-release-publish": {

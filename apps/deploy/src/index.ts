@@ -31,70 +31,94 @@ const apps = [
 const appNames = apps.map(({ name }) => name);
 const nodeTag = '18.20.4';
 const stagingENVs = ['prod', 'preprod'];
+const step1 = async () => {
+  await createHostedZone(DOMAIN);
+  enableRegion(DEP_REGION);
 
-await createHostedZone(DOMAIN);
-enableRegion(DEP_REGION);
-createMultipleECRRepositories(projectName, appNames, DEP_REGION).then();
-await getEcrUri(false);
-const ecrUri = await getEcrUri();
-generateYML(
-  {
-    appNames,
-  },
-  'michael@cubebox.co.il',
-  projectName,
-  DEP_REGION,
-);
-await generateSSHKey();
-generateBaseDockerfile({ nodeTag });
-generateCustomServerDockerfile(
-  { nodeTag, customBuildLine: 'RUN npx nx build ' + appNames[0] },
-  projectName,
-  appNames[0],
-  ecrUri,
-  4348,
-);
-generateStandaloneNextDockerfile(
-  {},
-  projectName,
-  await getEcrUri(),
-  appNames[1],
-);
-stagingENVs.forEach((env) => createECSCluster(env, env === 'prod'));
-apps.forEach(({ name, port }) => createTaskDefinition(name, port));
-createS3Bucket('cubebox-prod', true).then();
-createS3Bucket('cubebox-preprod').then();
-const certificateARNs = await Promise.all(
-  apps.map(async ({ domain }) => await requestCertificate(domain)),
-);
+  await createMultipleECRRepositories(projectName, appNames, DEP_REGION);
 
-apps.map(
-  async ({ name, port }, index) =>
-    await createECSService(
-      name,
-      'prod',
-      'arn:aws:ecs:' +
-        DEP_REGION +
-        ':' +
-        (await getAccountId()) +
-        ':task-definition/mik' +
-        name +
-        ':1',
-      port,
-      certificateARNs[index],
-    ),
-);
+  const ecrUri = await getEcrUri();
 
-const vpcId = await getDefaultVpcId();
-const securityGroupId = await getDefaultSecurityGroupId(vpcId);
-
-await updateSecurityGroupInboundRules(securityGroupId);
-
-apps.map(
-  async ({ name }) =>
-    await createDNSRecord(
+  console.log(
+    generateYML(
+      {
+        appNames,
+      },
+      'michael@cubebox.co.il',
+      projectName,
       DEP_REGION,
-      await getZoneIdByDomain(DOMAIN),
-      `${name}.your-load-balancer.amazonaws.com`,
     ),
-);
+  );
+
+  await generateSSHKey();
+
+  generateBaseDockerfile({ nodeTag });
+
+  generateCustomServerDockerfile(
+    { nodeTag, customBuildLine: 'RUN npx nx build ' + appNames[0] },
+    projectName,
+    appNames[0],
+    ecrUri,
+    4348,
+  );
+  generateStandaloneNextDockerfile(
+    {},
+    projectName,
+    await getEcrUri(),
+    appNames[1],
+  );
+
+  await Promise.all(
+    stagingENVs.map(async (env) => await createECSCluster(env, env === 'prod')),
+  );
+  await Promise.all(
+    apps.map(async ({ name, port }) => await createTaskDefinition(name, port)),
+  );
+  await Promise.all(
+    stagingENVs.map(
+      async (env) => await createS3Bucket('cubebox-' + env, true),
+    ),
+  );
+};
+const step2 = async () => {
+  const certificateARNs = await Promise.all(
+    apps.map(async ({ domain }) => await requestCertificate(domain)),
+  );
+
+  await Promise.all(
+    apps.map(
+      async ({ name, port }, index) =>
+        await createECSService(
+          name,
+          'prod',
+          'arn:aws:ecs:' +
+            DEP_REGION +
+            ':' +
+            (await getAccountId()) +
+            ':task-definition/mik' +
+            name +
+            ':' +
+            (name === 'server' ? 10 : 7),
+          port,
+          certificateARNs[index],
+        ),
+    ),
+  );
+
+  const vpcId = await getDefaultVpcId();
+  const securityGroupId = await getDefaultSecurityGroupId(vpcId);
+
+  await updateSecurityGroupInboundRules(securityGroupId);
+};
+const step3 = async () => {
+  apps.map(
+    async ({ name }) =>
+      await createDNSRecord(
+        await getZoneIdByDomain(DOMAIN),
+        (name === 'client' ? '' : name + '.') + DOMAIN,
+        'mik' + name + 'lb',
+      ),
+  );
+};
+
+step3();
