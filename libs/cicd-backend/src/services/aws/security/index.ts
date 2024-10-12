@@ -7,7 +7,9 @@ const {
   AuthorizeSecurityGroupIngressCommand,
 } = require('@aws-sdk/client-ec2');
 
-const updateSecurityGroupInboundRules = async (securityGroupId: string) => {
+export const updateSecurityGroupInboundRules = async (
+  securityGroupId: string,
+) => {
   const ec2Client = createClient<typeof EC2Client>(EC2Client);
   const params = {
     GroupId: securityGroupId,

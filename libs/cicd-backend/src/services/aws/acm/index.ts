@@ -115,6 +115,7 @@ export const requestCertificate = async (domainName: string) => {
         const dnsCommand = new ChangeResourceRecordSetsCommand(dnsParams);
         await route53Client.send(dnsCommand);
         console.log('DNS validation record created for:', domainName);
+        return certificateArn;
       } else {
         console.error('Validation record is missing in ACM response.');
       }

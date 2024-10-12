@@ -69,3 +69,15 @@ export const getEcrUri = async (log: boolean = true, region?: string) => {
     return null;
   }
 };
+
+export const getAccountId = async (region?: string) => {
+  const client = createClient<typeof STSClient>(STSClient, region);
+  try {
+    const command = new GetCallerIdentityCommand({});
+    const response = await client.send(command);
+    return response.Account;
+  } catch (error) {
+    console.error('Error retrieving AWS Account ID:', error);
+    return null;
+  }
+};

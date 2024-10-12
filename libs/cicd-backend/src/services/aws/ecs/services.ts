@@ -13,7 +13,7 @@ const {
   DescribeSubnetsCommand,
 } = require('@aws-sdk/client-ec2');
 
-const getDefaultVpcId = async () => {
+export const getDefaultVpcId = async () => {
   const ec2Client = createClient<typeof EC2Client>(EC2Client);
   const command = new DescribeVpcsCommand({
     Filters: [{ Name: 'isDefault', Values: ['true'] }],
@@ -22,7 +22,7 @@ const getDefaultVpcId = async () => {
   return response.Vpcs[0].VpcId;
 };
 
-const getDefaultSecurityGroupId = async (defaultVpcId: string) => {
+export const getDefaultSecurityGroupId = async (defaultVpcId: string) => {
   try {
     const ec2Client = createClient<typeof EC2Client>(EC2Client);
     const command = new DescribeSecurityGroupsCommand({
@@ -38,7 +38,7 @@ const getDefaultSecurityGroupId = async (defaultVpcId: string) => {
   }
 };
 
-const getAllSubnetIds = async (defaultVpcId: string) => {
+export const getAllSubnetIds = async (defaultVpcId: string) => {
   try {
     const ec2Client = createClient<typeof EC2Client>(EC2Client);
     const command = new DescribeSubnetsCommand({

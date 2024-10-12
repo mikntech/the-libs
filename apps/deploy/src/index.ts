@@ -1,5 +1,4 @@
 import {
-  createECRRepository,
   createHostedZone,
   createMultipleECRRepositories,
   enableRegion,
@@ -9,13 +8,18 @@ import {
   generateYML,
   getEcrUri,
   generateStandaloneNextDockerfile,
-  ecsClusterTemplateGenerator,
   createECSCluster,
   createTaskDefinition,
   createECSService,
+  getDefaultVpcId,
+  getDefaultSecurityGroupId,
+  createDNSRecord,
+  getZoneIdByDomain,
+  getAccountId,
 } from '@the-libs/cicd-backend';
 import { createS3Bucket } from '../../../libs/cicd-backend/src/services/aws/s3';
 import { requestCertificate } from '../../../libs/cicd-backend/src/services/aws/acm';
+import { updateSecurityGroupInboundRules } from '../../../libs/cicd-backend/src/services/aws/security';
 
 const DOMAIN = 'cubebox.co.il';
 const DEP_REGION = 'il-central-1';
@@ -28,98 +32,69 @@ const appNames = apps.map(({ name }) => name);
 const nodeTag = '18.20.4';
 const stagingENVs = ['prod', 'preprod'];
 
-// createHostedZone(DOMAIN);
-// enableRegion(DEP_REGION);
-//createMultipleECRRepositories(projectName, appNames, DEP_REGION);
-// await getEcrUri(false);
-//const ecrUri = await getEcrUri();
-/*generateYML(
+await createHostedZone(DOMAIN);
+enableRegion(DEP_REGION);
+createMultipleECRRepositories(projectName, appNames, DEP_REGION).then();
+await getEcrUri(false);
+const ecrUri = await getEcrUri();
+generateYML(
   {
     appNames,
   },
   'michael@cubebox.co.il',
   projectName,
   DEP_REGION,
-);*/
-// await generateSSHKey();
-// generateBaseDockerfile({ nodeTag });
-/*generateCustomServerDockerfile(
+);
+await generateSSHKey();
+generateBaseDockerfile({ nodeTag });
+generateCustomServerDockerfile(
   { nodeTag, customBuildLine: 'RUN npx nx build ' + appNames[0] },
   projectName,
   appNames[0],
   ecrUri,
   4348,
-);*/
-/*generateStandaloneNextDockerfile(
+);
+generateStandaloneNextDockerfile(
   {},
   projectName,
   await getEcrUri(),
   appNames[1],
-);*/
-// stagingENVs.forEach((env) => createECSCluster(env, env === 'prod'));
-// apps.forEach(({ name, port }) => createTaskDefinition(name, port));
-// createS3Bucket('cubebox-prod', true)
-// createS3Bucket('cubebox-preprod')
-// apps.forEach(({ domain }) => requestCertificate(domain));
-/*
+);
+stagingENVs.forEach((env) => createECSCluster(env, env === 'prod'));
+apps.forEach(({ name, port }) => createTaskDefinition(name, port));
+createS3Bucket('cubebox-prod', true).then();
+createS3Bucket('cubebox-preprod').then();
+const certificateARNs = await Promise.all(
+  apps.map(async ({ domain }) => await requestCertificate(domain)),
+);
 
-await Promise.all(
-    apps.map(
-      async ({ name, port }) =>
-        await createECSService(
-          name,
-          'prod',
-          'arn:aws:ecs:' +
-          DEP_REGION +
-          ':' +
-          someNum +
-          ':task-definition/mik' +
-          name +
-          ':1',
-          port,
-          certificateArn,
-        ),
+apps.map(
+  async ({ name, port }, index) =>
+    await createECSService(
+      name,
+      'prod',
+      'arn:aws:ecs:' +
+        DEP_REGION +
+        ':' +
+        (await getAccountId()) +
+        ':task-definition/mik' +
+        name +
+        ':1',
+      port,
+      certificateARNs[index],
     ),
-  ),
+);
 
-=
-*/
+const vpcId = await getDefaultVpcId();
+const securityGroupId = await getDefaultSecurityGroupId(vpcId);
 
-await Promise.all(
-  apps.map(
-    async ({ name, port }) =>
-      name === 'server' &&
-      (await createECSService(
-        name,
-        'prod',
-        'arn:aws:ecs:' +
-          DEP_REGION +
-          ':' +
-          329599624617 +
-          ':task-definition/mik' +
-          name +
-          ':9',
-        port,
-        'arn:aws:acm:il-central-1:329599624617:certificate/1e065c87-5516-4511-a153-2a5f9b072e74',
-      )),
-  ),
-),
-  await Promise.all(
-    apps.map(
-      async ({ name, port }) =>
-        name === 'client' &&
-        (await createECSService(
-          name,
-          'prod',
-          'arn:aws:ecs:' +
-            DEP_REGION +
-            ':' +
-            329599624617 +
-            ':task-definition/mik' +
-            name +
-            ':6',
-          port,
-          'arn:aws:acm:il-central-1:329599624617:certificate/947699a0-e9bb-4158-8bf2-bc2406e993e6',
-        )),
+await updateSecurityGroupInboundRules(securityGroupId);
+
+apps.map(
+  async ({ name }) =>
+    await createDNSRecord(
+      DEP_REGION,
+      await getZoneIdByDomain(DOMAIN),
+      `${name}.your-load-balancer.amazonaws.com`,
     ),
-  );
+);
