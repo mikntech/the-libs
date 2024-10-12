@@ -61,24 +61,65 @@ const stagingENVs = ['prod', 'preprod'];
 // createS3Bucket('cubebox-prod', true)
 // createS3Bucket('cubebox-preprod')
 // apps.forEach(({ domain }) => requestCertificate(domain));
+/*
 
-console.log(
-  await Promise.all(
+await Promise.all(
     apps.map(
       async ({ name, port }) =>
         await createECSService(
           name,
           'prod',
           'arn:aws:ecs:' +
-            DEP_REGION +
-            ':' +
-            someNum +
-            ':task-definition/mik' +
-            name +
-            ':1',
+          DEP_REGION +
+          ':' +
+          someNum +
+          ':task-definition/mik' +
+          name +
+          ':1',
           port,
           certificateArn,
         ),
     ),
   ),
-);
+
+=
+*/
+
+await Promise.all(
+  apps.map(
+    async ({ name, port }) =>
+      name === 'server' &&
+      (await createECSService(
+        name,
+        'prod',
+        'arn:aws:ecs:' +
+          DEP_REGION +
+          ':' +
+          329599624617 +
+          ':task-definition/mik' +
+          name +
+          ':1',
+        port,
+        'arn:aws:acm:il-central-1:329599624617:certificate/1e065c87-5516-4511-a153-2a5f9b072e74',
+      )),
+  ),
+),
+  await Promise.all(
+    apps.map(
+      async ({ name, port }) =>
+        name === 'client' &&
+        (await createECSService(
+          name,
+          'prod',
+          'arn:aws:ecs:' +
+            DEP_REGION +
+            ':' +
+            329599624617 +
+            ':task-definition/mik' +
+            name +
+            ':1',
+          port,
+          'arn:aws:acm:il-central-1:329599624617:certificate/947699a0-e9bb-4158-8bf2-bc2406e993e6',
+        )),
+    ),
+  );

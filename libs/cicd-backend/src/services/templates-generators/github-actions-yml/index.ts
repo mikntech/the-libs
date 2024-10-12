@@ -237,7 +237,7 @@ jobs:
 
       - name: Update task definition for mik${appName}
         run: |
-          jq --arg image_tag "$VERSION" --arg ecr_registry "\${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mik${projectName}/mik${appName}:" + $image_tag' mik-current-mik${appName}-task-def.json > mik-intermediate-mik${appName}-task-def.json
+          jq --arg image_tag "$VERSION" --arg ecr_registry "\${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mik${projectName}/${appName}:" + $image_tag' mik-current-mik${appName}-task-def.json > mik-intermediate-mik${appName}-task-def.json
           jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-mik${appName}-task-def.json > mik-final-mik${appName}-task-def.json
 
       - name: Register task definition for mik${appName}

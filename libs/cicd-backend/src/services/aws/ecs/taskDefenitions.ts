@@ -106,7 +106,7 @@ export const createTaskDefinition = async (
     containerDefinitions: [
       {
         name: 'mik' + appName,
-        image: 'mikerroruntilactions',
+        image: 'public.ecr.aws/nginx/nginx:latest',
         cpu: 0,
         essential: true,
         portMappings: [
