@@ -1,7 +1,7 @@
 {
-  "name": "notifications-shared",
+  "name": "auth-shared",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/notifications-shared/src",
+  "sourceRoot": "libs/auth-shared/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,24 +17,19 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "format": ["esm"],
-        "outputPath": "dist/libs/notifications-shared",
-        "tsConfig": "libs/notifications-shared/tsconfig.lib.json",
-        "project": "libs/notifications-shared/package.json",
-        "entryFile": "libs/notifications-shared/src/index.ts",
+        "outputPath": "dist/libs/auth-shared",
+        "tsConfig": "libs/auth-shared/tsconfig.lib.json",
+        "project": "libs/auth-shared/package.json",
+        "entryFile": "libs/auth-shared/src/index.ts",
         "assets": [
           {
             "glob": "**/*.json",
-            "input": "libs/notifications-shared/src",
+            "input": "libs/auth-shared/src",
             "output": "."
           }
-        ]
-      },
-      "dependsOn": [
-        {
-          "target": "postbuild",
-          "projects": "self"
-        }
-      ]
+        ],
+    "external": ["mongoose"]
+      }
     },
     "nx-release-publish": {
       "options": {
