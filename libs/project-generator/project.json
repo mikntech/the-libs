@@ -12,7 +12,8 @@
       "options": {
         "outputPath": "dist/libs/project-generator",
         "tsConfig": "libs/project-generator/tsconfig.lib.json",
-        "main": "libs/project-generator/src/index.ts"
+        "main": "libs/project-generator/src/index.ts",
+        "external": ["@nx/devkit", "inquirer"]
       }
     }
   },
