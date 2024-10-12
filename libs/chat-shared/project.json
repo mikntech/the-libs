@@ -27,7 +27,8 @@
             "input": "libs/chat-shared/src",
             "output": "."
           }
-        ]
+        ],
+    "external": ["mongoose"]
       }
     },
     "nx-release-publish": {
