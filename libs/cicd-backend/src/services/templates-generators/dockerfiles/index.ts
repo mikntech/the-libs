@@ -66,7 +66,7 @@ export const generateStandaloneNextDockerfile = (
   if (log === undefined) log = true;
   const ret = `
 ARG DEP_HASH
-FROM ${ecrDomain}/mik${projectName}/base:$DEP_HASH as base
+FROM ${ecrDomain}/mik${projectName}/base:$DEP_HASH AS base
 
 FROM base AS builder
 
@@ -87,6 +87,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/apps/${appName}/public ./public
+COPY --from=builder /app/apps/${appName}/.next/standalone ./
 COPY --from=builder /app/apps/${appName}/.next/static ./.next/static
 
 RUN chown -R nextjs:nodejs .next
@@ -98,7 +99,7 @@ EXPOSE ${String(port)}
 
 ENV PORT=${String(port)}
 
-CMD ["node", "apps/${appName}/.next/standalone/server.js"]
+CMD ["node", "apps/${appName}/server.js"]
 `;
   log && console.log(ret);
   return ret;
