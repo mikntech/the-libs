@@ -99,7 +99,7 @@ const step2 = async () => {
             ':task-definition/mik' +
             name +
             ':' +
-            (name === 'server' ? 13 : 8),
+            (name === 'server' ? 22 : 16),
           port,
           certificateARNs[index],
         ),
@@ -111,6 +111,7 @@ const step2 = async () => {
 
   await updateSecurityGroupInboundRules(securityGroupId);
 };
+
 const step3 = async () => {
   apps.map(
     async ({ name }) =>
@@ -121,5 +122,3 @@ const step3 = async () => {
       ),
   );
 };
-
-const fixRollBack = async () => {};

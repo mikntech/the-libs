@@ -30,6 +30,15 @@ export const updateSecurityGroupInboundRules = async (
           { CidrIp: '0.0.0.0/0', Description: 'Allow HTTPS from any IP' },
         ],
       },
+      {
+        IpProtocol: '-1',
+        UserIdGroupPairs: [
+          {
+            GroupId: securityGroupId,
+            Description: 'Allow all traffic within the security group',
+          },
+        ],
+      },
     ],
   };
 
