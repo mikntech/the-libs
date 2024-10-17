@@ -49,7 +49,6 @@ const appNames = apps.map(({ name }) => name);
 const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
-const stagingENVsShort: Staging[] = stagingENVs.map((name) => Staging[name]);
 
 const step1 = async () => {
   await createHostedZone(DOMAIN);
@@ -141,8 +140,8 @@ const step2 = async () => {
                     ? 22
                     : 16
                   : name === 'server'
-                    ? 4
-                    : 2),
+                    ? 5
+                    : 3),
               port,
               certificateARNs[index],
             ),
@@ -150,19 +149,30 @@ const step2 = async () => {
       );
     }),
   );
+};
+
+const step3 = async () => {
   const vpcId = await getDefaultVpcId();
   const securityGroupId = await getDefaultSecurityGroupId(vpcId);
 
   await updateSecurityGroupInboundRules(securityGroupId);
 };
 
-const step3 = async () => {
-  apps.map(
-    async ({ name }) =>
-      await createDNSRecord(
-        await getZoneIdByDomain(DOMAIN),
-        (name === 'client' ? '' : name + '.') + DOMAIN,
-        'mik' + name + 'lb',
-      ),
+const step4 = async () => {
+  await Promise.all(
+    stagingENVs.map(async (longName) => {
+      apps.map(
+        async ({ name, exactFully }) =>
+          await createDNSRecord(
+            await getZoneIdByDomain(DOMAIN),
+            exactFully[longName] ||
+              (name === 'client' ? '' : name + '.') + DOMAIN,
+            'mik' +
+              (longName === 'prod' ? '' : Staging[longName]) +
+              name +
+              'lb',
+          ),
+      );
+    }),
   );
 };
