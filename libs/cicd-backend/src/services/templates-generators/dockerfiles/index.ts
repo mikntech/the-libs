@@ -87,7 +87,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/apps/${appName}/public ./public
-COPY --from=builder /app/apps/${appName}/.next/standalone ./
+COPY --from=builder /app/apps/${appName}/.next/standalone/apps/${appName} ./
 COPY --from=builder /app/apps/${appName}/.next/static ./.next/static
 
 RUN chown -R nextjs:nodejs .next
@@ -99,7 +99,7 @@ EXPOSE ${String(port)}
 
 ENV PORT=${String(port)}
 
-CMD ["node", "apps/${appName}/server.js"]
+CMD ["node", "server.js"]
 `;
   log && console.log(ret);
   return ret;
