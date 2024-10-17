@@ -98,7 +98,7 @@ EXPOSE ${String(port)}
 
 ENV PORT=${String(port)}
 
-RUN npx next start
+CMD ["node", "apps/${appName}/.next/standalone/server.js"]
 `;
   log && console.log(ret);
   return ret;
