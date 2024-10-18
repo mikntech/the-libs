@@ -68,7 +68,7 @@ export interface Strategy<
   genPassResetEmail: GenEmailFunction;
   enumValues: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
   postRegistrationCB?: (savedUser: User, params: PostRegParams) => void;
-  sendEmails?: { [Key in StagingEnvironment]: boolean };
+  sendEmails?: Partial<{ [Key in StagingEnvironment]: boolean }>;
 }
 
 export const createStrategy = <
