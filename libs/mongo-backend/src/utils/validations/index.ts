@@ -37,7 +37,7 @@ export const validateEnum = <ENUM extends SomeEnum<ENUM>>(
     );
 };
 
-export const validateDocument = (doc: MDocument): boolean =>
+export const validateDocument = (doc: any): boolean =>
   doc && !!doc._id && isValidObjectId(doc._id);
 
 export const findAndValidate = async <
