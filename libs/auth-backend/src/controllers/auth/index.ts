@@ -91,13 +91,10 @@ export const genAuthControllers = <
     subject: string,
     body: string,
     link: string,
-  ) => {
-    sendEmail(email, subject, body).then(
-      () =>
-        getExpressSettings().stagingEnv === StagingEnvironment.Local &&
-        console.log('tried to send email - link is: ' + link),
-    );
-  };
+  ) =>
+    (strategy.sendEmails?.[getExpressSettings().stagingEnv] ?? true)
+      ? sendEmail(email, subject, body).then()
+      : console.log(link);
 
   const validatePasswordStrength = (password: string) => {
     if (zxcvbn(password).score < strategy.MIN_PASSWORD_STRENGTH)

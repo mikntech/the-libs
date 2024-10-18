@@ -5,6 +5,7 @@ import { user } from './db/mongo/schemas';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { GenEmailFunction } from '@the-libs/email-backend';
 import { defaultGenPassResetEmail, defaultGenRegisterEmail } from './services';
+import { StagingEnvironment } from '@the-libs/express-backend';
 
 export enum MultiUserType {
   SINGLE = 'single',
@@ -67,6 +68,7 @@ export interface Strategy<
   genPassResetEmail: GenEmailFunction;
   enumValues: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
   postRegistrationCB?: (savedUser: User, params: PostRegParams) => void;
+  sendEmails?: { [Key in StagingEnvironment]: boolean };
 }
 
 export const createStrategy = <

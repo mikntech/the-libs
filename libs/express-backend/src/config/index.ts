@@ -62,7 +62,6 @@ export const getExpressSettings = <
     };
 
     Object.keys(mutableClientDomains).forEach((key) => {
-      debugger;
       mutableClientDomains[key] =
         'http://localhost:' + mutableClientDomains[key];
     });
