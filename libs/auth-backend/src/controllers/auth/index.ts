@@ -55,7 +55,7 @@ export const genAuthControllers = <
   const generateURLWithParams = (params: string, userType: string) =>
     `${
       strategy.multiClientType === MultiClientType.SINGLE
-        ? getExpressSettings().clientDomains[0]
+        ? getExpressSettings<{ single: string }>().clientDomains.single
         : getExpressSettings<{
             [key: string]: string;
           }>().clientDomains[userType]

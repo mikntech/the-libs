@@ -5,7 +5,6 @@ const { config } = require('dotenv');
 const process = require('process');
 config();
 
-
 export enum StagingEnvironment {
   Local = 'local',
   Dev = 'dev',
@@ -22,8 +21,6 @@ export interface ExpressSettings<CD> {
 
 const validStagingEnvs: StagingEnvironment[] =
   Object.values(StagingEnvironment);
-
-
 
 const stagingEnv = process.env['STAGING_ENV'] as StagingEnvironment;
 if (!validStagingEnvs.includes(stagingEnv)) {
@@ -53,32 +50,29 @@ const myDomain = generateFullDomain(
 export const getExpressSettings = <
   CB extends { [key: string]: string } = { 0: string },
 >(): ExpressSettings<CB> => {
-  const clientDomains: CB = JSON.parse(
+  let clientDomains: CB = JSON.parse(
     isProduction
       ? (process.env['CLIENT_DOMAINS'] ?? JSON.stringify({ single: 'my.co' }))
       : (process.env['CLIENT_PORTS'] ?? JSON.stringify({ single: 4000 })),
   );
 
-  const mutableClientDomains = clientDomains as { [key: string]: string };
+  if (!isProduction) {
+    const mutableClientDomains = JSON.parse(JSON.stringify(clientDomains)) as {
+      [key: string]: string;
+    };
 
-  isProduction
-    ? Object.keys(mutableClientDomains).forEach((key) => {
-        mutableClientDomains[key] = generateFullDomain(
-          mutableClientDomains[key],
-          String(process.env['CLIENT_PORT'] ?? 4100),
-        );
-      })
-    : Object.keys(mutableClientDomains).forEach((key) => {
-        mutableClientDomains[key] =
-          'http://localhost:' + mutableClientDomains[key];
-      });
+    Object.keys(mutableClientDomains).forEach((key) => {
+      mutableClientDomains[key] =
+        'http://localhost:' + mutableClientDomains[key];
+    });
 
+    clientDomains = mutableClientDomains as CB;
+  }
   return {
-
     stagingEnv: currentStagingEnv,
     port,
     myDomain,
-    clientDomains: mutableClientDomains as CB,
+    clientDomains: clientDomains,
   };
 };
 
