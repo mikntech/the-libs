@@ -145,6 +145,8 @@ out
 EOF`);
   const libsToInstall =   await askForAppsAndLibs();
   doCommand(`cd ${name} && npm i ${libsToInstall.join(" ")}`);
+  doCommand(`npm i -D @nx/node`);
+  doCommand(`ls`);
 
 }
 
