@@ -147,8 +147,15 @@ EOF`);
   doCommand(
     `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
-  doCommand(`npm i -D @nx/node`);
-  doCommand(`ls`);
+  doCommand(`cd ${name} && npm i -D @nx/node`);
+  const appName = 'example';
+  doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/assets`);
+  doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/main.ts`);
+  doCommand(
+    `cd ${name} && echo "console.log('im ready')" >> ./apps/${appName}/src/index.ts`,
+  );
+
+  doCommand(`cd ${name} && git add .`);
 }
 
 createProject();
