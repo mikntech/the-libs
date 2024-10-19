@@ -47,7 +47,7 @@ export const genAuthControllers = <
     boolean
   >,
 ) => {
-  const getModel = (userType: UserType): Model<User> =>
+  const getModel = async (userType: UserType): Promise<Model<User>> =>
     (strategy.multiUserType === MultiUserType.MULTI_COLLECTION
       ? (strategy.modelMap as TODO)[userType]
       : strategy.modelMap)();

@@ -184,7 +184,7 @@ export const genManageControllers = <
     if (!(req.files && 'map' in req.files))
       throw new ClientError('No file received');
     const userDoc = (await findDocs(
-      getModel(req.userType).findById(req.user?._id),
+      (await getModel(req.userType)).findById(req.user?._id),
       false,
     )) as unknown as User | null;
     if (!userDoc) throw new UnauthorizedError('Please login first');

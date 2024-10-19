@@ -57,7 +57,7 @@ export interface Strategy<
   externalIdentityProviders: ExternalIdentityProviders;
   modelMap: multiUserType_is_MULTI_COLLECTION extends true
     ? {
-        [Key in keyof UserEnum as UserEnum[Key]]: () => Model<User>;
+        [Key in keyof UserEnum as UserEnum[Key]]: () => Promise<Model<User>>;
       }
     : () => Model<User>;
   requiredFields: (keyof RequiredFields)[];
