@@ -72,7 +72,7 @@ const askQuestions = async () => {
 };
 
 async function createProject() {
-  const { name, } = await askQuestions();
+  const { name } = await askQuestions();
   doCommand('sudo npm i -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${name} \\
   --preset=ts \\
@@ -81,8 +81,8 @@ async function createProject() {
   --interactive=false \\
   --skipGit=false \\
   --npmScope=${name}`);
-  doCommand(`rm -rf ./${name}/packages`)
-  doCommand(`rm -rf ./${name}/README.md`)
+  doCommand(`rm -rf ./${name}/packages`);
+  doCommand(`rm -rf ./${name}/README.md`);
   doCommand(`rm -rf ./${name}/.gitignore`);
   doCommand(`cat <<EOF >> ./${name}/.gitignore
 # See http://help.github.com/ignore-files/ for more about ignoring files.
@@ -143,11 +143,12 @@ Thumbs.db
 out
 
 EOF`);
-  const libsToInstall =   await askForAppsAndLibs();
-  doCommand(`cd ${name} && npm i ${libsToInstall.join(" ")}`);
+  const libsToInstall = await askForAppsAndLibs();
+  doCommand(
+    `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
+  );
   doCommand(`npm i -D @nx/node`);
   doCommand(`ls`);
-
 }
 
 createProject();
