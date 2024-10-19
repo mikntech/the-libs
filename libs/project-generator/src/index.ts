@@ -74,7 +74,7 @@ const askQuestions = async () => {
 
 async function createProject() {
   const { name } = await askQuestions();
-  doCommand('npm i -g nx');
+  doCommand('sudo npm i -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${name} \\
   --preset=ts \\
   --nxCloud=skip \\
