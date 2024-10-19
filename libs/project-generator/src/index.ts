@@ -68,12 +68,11 @@ const askQuestions = async () => {
       message: 'What is the name of your new Nx project?',
     },
   ];
-  await askForAppsAndLibs();
   return inquirer.prompt(questions);
 };
 
 async function createProject() {
-  const { name } = await askQuestions();
+  const { name, } = await askQuestions();
   doCommand('sudo npm i -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${name} \\
   --preset=ts \\
@@ -144,6 +143,8 @@ Thumbs.db
 out
 
 EOF`);
+  const libsToInstall =   await askForAppsAndLibs();
+  doCommand(`cd ${name} && npm i ${libsToInstall.join(" ")}`);
 
 }
 
