@@ -48,3 +48,5 @@ Thumbs.db
 # Next.js
 .next
 out
+/libs/project-generator/src/packageNames.json
+/libs/project-generator/src/writeLibsNames.mjs
