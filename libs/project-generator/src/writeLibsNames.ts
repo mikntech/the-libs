@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Locate the src directory of packages (adjust path if necessary)
-const srcDir = path.resolve(__dirname, '../../');
+const srcDir = path.resolve(__dirname, '../');
 
 // Read directories within src and filter out non-directories
 const libs = fs
