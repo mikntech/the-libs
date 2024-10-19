@@ -38,7 +38,7 @@
         }
       ],
       "options": {
-        "command": "mv packageNames.json dist/libs/project-generator/packageNames.json",
+        "command": "mv packageNames.json dist/libs/project-generator/src/packageNames.json",
         "cwd": "."
       }
     }
