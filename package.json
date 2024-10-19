@@ -78,7 +78,6 @@
     "cors": "^2.8.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.24.0",
     "eslint": "~9.13.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.31.0",
