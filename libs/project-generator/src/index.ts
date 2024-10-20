@@ -149,10 +149,10 @@ EOF`);
   );
   doCommand(`cd ${name} && npm i -D @nx/node`);
   const appName = 'example';
-  doCommand(`nx reset`);
   doCommand(
     `nx g @nx/node:application --directory=apps/${appName} --framework=none --e2eTestRunner=none --unitTestRunner=none`,
   );
+  doCommand(`cd ${name} && ls -a`);
   doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/assets`);
   doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/main.ts`);
   doCommand(`cd ${name} && touch ./apps/${appName}/src/index.ts`);
