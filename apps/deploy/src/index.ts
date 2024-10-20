@@ -131,8 +131,8 @@ const step2 = async () => {
                 name +
                 ':' +
                 (prefix === ''
-                  ? name === 'server'
-                    ? 22
+                  ? name === 'mikntech'
+                    ? 2
                     : 16
                   : name === 'server'
                     ? 5
@@ -171,5 +171,3 @@ const step4 = async () => {
     }),
   );
 };
-
-step2();
