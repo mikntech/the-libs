@@ -1,14 +1,6 @@
-import { WhiteModels } from "./white-models/index";
+import { WhiteModels } from './white-models/index';
 
-export interface AppName {
-  low: string;
-  up: string;
-  special: string;
-  allUp: string;
-  //more...
-}
-
-export type PromptPartType = "static" | "variable";
+export type PromptPartType = 'static' | 'variable';
 
 export interface PromptPart {
   type: PromptPartType;
@@ -34,7 +26,7 @@ export type PromptWireframeGraph = PromptWireframe[];
 export type PromptGraph = Prompt[];
 
 export interface Prompt extends PromptWireframe {
-  result: WhiteModels.Data.Prompts.WhitePromptResult | "empty" | "idea";
+  result: WhiteModels.Data.Prompts.WhitePromptResult | 'empty' | 'idea';
 }
 
 export interface GroupedPrompt {
@@ -54,7 +46,6 @@ export interface FormData {
   productOrService: string;
 }
 
-
 export interface OpenAIJob {
   taskID: string;
   ideaID: string;
@@ -64,6 +55,6 @@ export interface OpenAIJob {
   id?: number;
 }
 
-export * from "./api/index";
-export * from "./white-models/index";
-export * from "./oc-models/index";
+export * from './api/index';
+export * from './white-models/index';
+export * from './oc-models/index';
