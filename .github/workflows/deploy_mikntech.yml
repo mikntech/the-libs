@@ -167,14 +167,14 @@ jobs:
 
       - name: Update task definition for mikmikntech
         run: |
-          jq --arg image_tag \$VERSION\ --arg ecr_registry \${{ steps.login-ecr.outputs.registry }}\ '.taskDefinition.containerDefinitions[0].image = $ecr_registry + \/mikmn/mikntech:\ + $image_tag' mik-current-mikmikntech-task-def.json > mik-intermediate-mikmikntech-task-def.json
+          jq --arg image_tag "$VERSION" --arg ecr_registry "${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mikmn/mikntech:" + $image_tag' mik-current-mikmikntech-task-def.json > mik-intermediate-mikmikntech-task-def.json
           jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-mikmikntech-task-def.json > mik-final-mikmikntech-task-def.json
 
       - name: Register task definition for mikmikntech
         id: register-task-def-mikmikntech
         run: |
           MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-mikmikntech-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
-          echo \MIK_TASK_DEF_ARN_SERVER=$MIK_TASK_DEF_ARN\ >> $GITHUB_ENV
+          echo "MIK_TASK_DEF_ARN_SERVER=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
 
       - name: Update ECS Service for mikmikntech
         run: |
