@@ -59,11 +59,11 @@ jobs:
         run: |
           IMAGE="${ECR_REGISTRY}/mikmn/base:${DEP_HASH}"
           if docker manifest inspect $IMAGE > /dev/null 2>&1; then
-            echo \BASE_IMAGE_EXISTS=true\ >> $GITHUB_ENV
-            echo \Image $IMAGE exists.\
+            echo "BASE_IMAGE_EXISTS=true" >> $GITHUB_ENV
+            echo "Image $IMAGE exists."
           else
-            echo \BASE_IMAGE_EXISTS=false\ >> $GITHUB_ENV
-            echo \Image $IMAGE does not exist.\
+            echo "BASE_IMAGE_EXISTS=false" >> $GITHUB_ENV
+            echo "Image $IMAGE does not exist."
           fi
 
       - name: Build, tag, and push base image to Amazon ECR
