@@ -8,7 +8,7 @@ const { region, keyID, secretKey } = cicdSettings.aws;
 
 if (!region || !keyID || !secretKey) {
   console.error(
-    'Please ensure REGION, AWS_ACCESS_KEY_ID, and AWS_SECRET_ACCESS_KEY are set in the .env file.',
+    'Please ensure AWS_KEY_ID, AWS_SECRET_KEY, AWS_REGION are set in the .env file.',
   );
   process.exit(1);
 }

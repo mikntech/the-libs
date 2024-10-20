@@ -20,6 +20,7 @@ import {
 import { createS3Bucket } from '../../../libs/cicd-backend/src/services/aws/s3';
 import { requestCertificate } from '../../../libs/cicd-backend/src/services/aws/acm';
 import { updateSecurityGroupInboundRules } from '../../../libs/cicd-backend/src/services/aws/security';
+import { printLongTextNicely } from '@the-libs/base-shared';
 
 enum Staging {
   'prod' = 'prod',
@@ -28,27 +29,21 @@ enum Staging {
   'dev' = 'dev',
 }
 
-const DOMAIN = 'cubebox.co.il';
-const DEP_REGION = 'il-central-1';
-const projectName = 'cb';
+const DOMAIN = 'mikntech.com';
+const DEP_REGION = 'ca-central-1';
+const projectName = 'mn';
 const apps = [
   {
-    name: 'server',
-    port: 4050,
-    domain: 'server.cubebox.co.il',
-    exactFully: { preprod: 'preserver.cubebox.co.il' },
-  },
-  {
-    name: 'client',
-    port: 3000,
-    domain: 'cubebox.co.il',
-    exactFully: { preprod: 'pre.cubebox.co.il' },
+    name: 'mikntech',
+    port: 4222,
+    domain: DOMAIN,
+    exactFully: {},
   },
 ];
 const appNames = apps.map(({ name }) => name);
 const nodeTag = '18.20.4';
 
-const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
+const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 
 const step1 = async () => {
   await createHostedZone(DOMAIN);
@@ -57,26 +52,26 @@ const step1 = async () => {
   await createMultipleECRRepositories(projectName, appNames, DEP_REGION);
 
   const ecrUri = await getEcrUri();
-
   console.log(
-    await Promise.all(
-      stagingENVs.map((longName: keyof typeof Staging) =>
-        generateYML(
-          {
-            appNames,
-            name: longName === 'prod' ? 'prd - release' : 'prp - main',
-            branchName: longName === 'prod' ? 'release/prod' : 'main',
-            clusterName: longName,
-            log: false,
-          },
-          'michael@cubebox.co.il',
-          projectName,
-          DEP_REGION,
+    printLongTextNicely(
+      await Promise.all(
+        stagingENVs.map((longName: keyof typeof Staging) =>
+          generateYML(
+            {
+              appNames,
+              name: longName === 'prod' ? 'prd - release' : 'prp - main',
+              branchName: longName === 'prod' ? 'release/prod' : 'main',
+              clusterName: longName,
+              log: false,
+            },
+            'michael@cubebox.co.il',
+            projectName,
+            DEP_REGION,
+          ),
         ),
       ),
     ),
   );
-
   await generateSSHKey();
 
   generateBaseDockerfile({ nodeTag });
@@ -92,8 +87,8 @@ const step1 = async () => {
     {},
     projectName,
     await getEcrUri(),
-    appNames[1],
-    apps[1].port,
+    appNames[0],
+    apps[0].port,
   );
 
   await Promise.all(
@@ -176,3 +171,5 @@ const step4 = async () => {
     }),
   );
 };
+
+step2();

@@ -1,4 +1,5 @@
 import { createRequire } from 'module';
+import { printLongTextNicely } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 
 const { exec } = require('child_process');
@@ -32,12 +33,7 @@ export const generateSSHKey = (
         await fsPromises.unlink(privateKeyPath);
         await fsPromises.unlink(publicKeyPath);
         await fsPromises.rmdir(tempDir);
-        console.log(
-          'Private Key:\n',
-          JSON.stringify(privateKey, null, 2)
-            .replace(/\\n/g, '\n')
-            .replace(/"/g, ''),
-        );
+        console.log('Private Key:\n', printLongTextNicely(privateKey));
         console.log('Public Key:\n', publicKey);
         resolve({ privateKey, publicKey });
       } catch (readError: any) {

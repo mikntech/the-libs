@@ -21,7 +21,6 @@
     "url": "https://github.com/mikntech/the-libs/issues"
   },
   "homepage": "https://github.com/mikntech/the-libs#readme",
-  "dependencies": {},
   "devDependencies": {
     "@aws-sdk/client-acm": "^3.675.0",
     "@aws-sdk/client-cloudformation": "^3.675.0",
@@ -42,11 +41,13 @@
     "@mui/icons-material": "^6.1.4",
     "@mui/material": "^6.1.4",
     "@mui/x-date-pickers": "^7.21.0",
+    "@next/third-parties": "^14.2.15",
     "@nx/esbuild": "^20.0.3",
     "@nx/eslint": "20.0.3",
     "@nx/eslint-plugin": "20.0.3",
     "@nx/jest": "20.0.3",
     "@nx/js": "20.0.3",
+    "@nx/next": "^20.0.3",
     "@nx/node": "20.0.3",
     "@nx/react": "^20.0.3",
     "@nx/vite": "^20.0.3",

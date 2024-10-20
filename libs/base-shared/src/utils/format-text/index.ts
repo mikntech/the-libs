@@ -12,3 +12,6 @@ export const formatAddressNicely = (address: SimpleAddress) =>
     .filter((name) => name !== '_id')
     .map((key) => (address ? address[key as keyof typeof address] : []))
     .join(', ');
+
+export const printLongTextNicely = (text: any) =>
+  JSON.stringify(text, null, 2).replace(/\\n/g, '\n').replace(/"/g, '');

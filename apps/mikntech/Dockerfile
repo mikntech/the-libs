@@ -1,57 +1,33 @@
-FROM node:21-alpine AS base
+ARG DEP_HASH
+FROM 654654441147.dkr.ecr.ca-central-1.amazonaws.com/mikmn/base:$DEP_HASH AS base
 
-# Install dependencies only when needed
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-
-COPY package.json ./
-
-# Install dependencies
-RUN npm i
-
-# Rebuild the source code only when needed
 FROM base AS builder
-
 WORKDIR /app
-
-# Copy dependencies from the deps stage
-COPY --from=deps /app/node_modules ./node_modules
-
-# Copy the entire app for build-time access
 COPY . .
+RUN npm run build:mikntech
 
-# Ensure next is available and build the app
-RUN npm run build
-
-# Production image, copy all the necessary files and prepare for runtime
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Create non-root user for security
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy over build artifacts
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder /app/.next/public ./.next/public
+COPY --from=builder /app/apps/mikntech/public ./public
 
-# Set proper ownership
+RUN mkdir .next
 RUN chown nextjs:nodejs .next
-# mkdir .next &&
 
+COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/standalone/apps/mikntech ./
+COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/static ./.next/static
 
-# Switch to non-root user
 USER nextjs
 
-# Expose the application port
-EXPOSE 3000
+EXPOSE 4222
 
-# Runtime environment variables (you can still override these with docker run flags)
-ENV PORT=3000
-
+ENV PORT=4222
+ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
