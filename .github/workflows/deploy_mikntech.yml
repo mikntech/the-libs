@@ -57,7 +57,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          IMAGE=\${ECR_REGISTRY}/mikmn/base:${DEP_HASH}\
+          IMAGE="${ECR_REGISTRY}/mikmn/base:${DEP_HASH}"
           if docker manifest inspect $IMAGE > /dev/null 2>&1; then
             echo \BASE_IMAGE_EXISTS=true\ >> $GITHUB_ENV
             echo \Image $IMAGE exists.\
