@@ -305,10 +305,10 @@ async function createProject() {
     createAFile(
       'index.ts',
       indexTsTemplate,
-      './' + name + '/apps/' + name + '/src',
+      './' + name + '/apps/' + appName + '/src',
     );
-    doCommand(`cd ${name} && nx build ` + name);
-    doCommand(`cd ${name} && nx serve ` + name);
+    doCommand(`cd ${name} && nx build ` + appName);
+    doCommand(`cd ${name} && nx serve ` + appName);
   });
 
   doCommand(`cd ${name} && git add .`);
