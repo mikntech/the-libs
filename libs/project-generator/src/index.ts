@@ -136,7 +136,7 @@ export const projectJsonTemplate = (appName: string) => `
 `;
 
 export const tsconfigAppJsonTemplate = `
-{{
+{
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
