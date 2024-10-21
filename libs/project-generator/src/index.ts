@@ -282,19 +282,34 @@ async function createProject() {
   doCommand(
     `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
-  const appName = 'example';
-  doCommand(`cd ${name} && mkdir ./apps/${appName}`);
-  doCommand(`cd ${name} && mkdir ./apps/${appName}/src`);
-  createAFile('project.json', projectJsonTemplate(name), './' + name);
-  createAFile('tsconfig.json', tsconfigJsonTemplate, './' + name);
-  createAFile('tsconfig.app.json', tsconfigAppJsonTemplate, './' + name);
-  createAFile(
-    'index.ts',
-    indexTsTemplate,
-    './' + name + '/apps/' + name + '/src',
-  );
-  doCommand(`cd ${name} && nx build ` + name);
-  doCommand(`cd ${name} && nx serve ` + name);
+  doCommand(`cd ${name} && mkdir apps`);
+  const appNames = ['example'];
+  appNames.forEach((appName) => {
+    doCommand(`cd ${name}/apps && mkdir ${appName}`);
+    doCommand(`cd ${name}/apps/${appName} && mkdir src`);
+    createAFile(
+      'project.json',
+      projectJsonTemplate(name),
+      './' + name + 'apps/' + appName,
+    );
+    createAFile(
+      'tsconfig.json',
+      tsconfigJsonTemplate,
+      './' + name + 'apps/' + appName,
+    );
+    createAFile(
+      'tsconfig.app.json',
+      tsconfigAppJsonTemplate,
+      './' + name + 'apps/' + appName,
+    );
+    createAFile(
+      'index.ts',
+      indexTsTemplate,
+      './' + name + '/apps/' + name + '/src',
+    );
+    doCommand(`cd ${name} && nx build ` + name);
+    doCommand(`cd ${name} && nx serve ` + name);
+  });
 
   doCommand(`cd ${name} && git add .`);
 }
