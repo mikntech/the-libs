@@ -150,7 +150,7 @@ EOF`);
   doCommand(`cd ${name} && npm i -D @nx/node`);
   const appName = 'example';
   doCommand(
-    `cd ${name} && nx g @nx/node:application --directory=apps/${appName} --framework=none --e2eTestRunner=none --unitTestRunner=none`,
+    `cd ${name} && nx g @nx/js:app --directory=apps/${appName} --framework=none --e2eTestRunner=none --unitTestRunner=none`,
   );
   doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/assets`);
   doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/main.ts`);
