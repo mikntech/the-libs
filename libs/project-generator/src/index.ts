@@ -9,13 +9,13 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import {
+const {
   dotGitIgnoreTemplate,
   indexDotTs,
   projectJsonTemplate,
   tsconfigAppJsonTemplate,
   tsconfigJsonTemplate,
-} from './templates';
+} = require('./templates');
 
 // Define __filename and __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
