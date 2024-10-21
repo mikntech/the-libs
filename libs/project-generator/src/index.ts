@@ -258,10 +258,7 @@ const createAFile = (name: string, content: string, path: string = './') =>
       'cat <<EOF >> ./' +
       name +
       `
-  ${content}
-  
-  
-  EOF`,
+  ${content}`,
   );
 
 async function createProject() {
