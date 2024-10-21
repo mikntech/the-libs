@@ -286,7 +286,7 @@ async function createProject() {
     doCommand(`cd ${name}/apps/${appName} && mkdir src`);
     createAFile(
       'project.json',
-      projectJsonTemplate(name),
+      projectJsonTemplate(appName),
       './' + name + '/apps/' + appName,
     );
     createAFile(
