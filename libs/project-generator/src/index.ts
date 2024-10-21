@@ -255,10 +255,11 @@ const createAFile = (name: string, content: string, path: string = './') =>
     'cd ' +
       path +
       ' && ' +
-      'cat <<EOF >> ' +
+      'cat <<EOF >> ./' +
       name +
       `
   ${content}
+  
   
   EOF`,
   );
