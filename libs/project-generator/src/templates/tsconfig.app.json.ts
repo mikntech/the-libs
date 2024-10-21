@@ -1,4 +1,5 @@
-{
+export const tsconfigAppJsonTemplate = `
+{{
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
@@ -7,9 +8,13 @@
       "node"
     ]
   },
-  "include": [
-    "src/**/*.test.ts",
+  "exclude": [
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.test.ts"
+  ],
+  "include": [
+    "src/**/*.ts"
   ]
 }
+
+`;

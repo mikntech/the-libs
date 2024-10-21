@@ -9,6 +9,12 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
+import {
+  indexTs,
+  projectJsonTemplate,
+  tsconfigAppJsonTemplate,
+  tsconfigJsonTemplate,
+} from './templates';
 
 // Define __filename and __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +77,19 @@ const askQuestions = async () => {
   return inquirer.prompt(questions);
 };
 
+const createAFile = (name: string, content: string, path: string = './') =>
+  doCommand(
+    'cd ' +
+      path +
+      ' && ' +
+      'cat <<EOF >> ' +
+      name +
+      `
+  ${content}
+  
+  EOF`,
+  );
+
 async function createProject() {
   const { name } = await askQuestions();
   doCommand('sudo npm i -g nx');
@@ -84,8 +103,8 @@ async function createProject() {
   doCommand(`rm -rf ./${name}/packages`);
   doCommand(`rm -rf ./${name}/README.md`);
   doCommand(`rm -rf ./${name}/.gitignore`);
-  doCommand(`cat <<EOF >> ./${name}/.gitignore
-# See http://help.github.com/ignore-files/ for more about ignoring files.
+  const gc = `
+  # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 
 # Secrets and env
@@ -141,23 +160,21 @@ Thumbs.db
 # Next.js
 .next
 out
-
-EOF`);
+`;
+  createAFile('.gitignore', gc, name);
   const libsToInstall = await askForAppsAndLibs();
   doCommand(
     `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
-  doCommand(`cd ${name} && npm i -D @nx/node`);
   const appName = 'example';
-  doCommand(
-    `cd ${name} && nx g @nx/js:app --directory=apps/${appName} --framework=none --e2eTestRunner=none --unitTestRunner=none`,
-  );
-  doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/assets`);
-  doCommand(`cd ${name} && rm -rf ./apps/${appName}/src/main.ts`);
-  doCommand(`cd ${name} && touch ./apps/${appName}/src/index.ts`);
-  doCommand(
-    `cd ${name} && echo "console.log('im ready')" >> ./apps/${appName}/src/index.ts`,
-  );
+  doCommand(`cd ${name} && mkdir ./apps/${appName}`);
+  doCommand(`cd ${name} && mkdir ./apps/${appName}/src`);
+  createAFile('project.json', projectJsonTemplate(name), './' + name);
+  createAFile('tsconfig.json', tsconfigJsonTemplate, './' + name);
+  createAFile('tsconfig.app.json', tsconfigAppJsonTemplate, './' + name);
+  createAFile('index.ts', indexTs, './' + name + '/apps/' + name + '/src');
+  doCommand(`cd ${name} && nx build ` + name);
+  doCommand(`cd ${name} && nx serve ` + name);
 
   doCommand(`cd ${name} && git add .`);
 }

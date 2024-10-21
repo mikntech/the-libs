@@ -1,3 +1,4 @@
+export const tsconfigJsonTemplate = `
 {
   "extends": "../../tsconfig.base.json",
   "files": [],
@@ -11,3 +12,5 @@
     "esModuleInterop": true
   }
 }
+
+`;
