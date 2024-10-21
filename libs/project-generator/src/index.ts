@@ -290,17 +290,17 @@ async function createProject() {
     createAFile(
       'project.json',
       projectJsonTemplate(name),
-      './' + name + 'apps/' + appName,
+      './' + name + '/apps/' + appName,
     );
     createAFile(
       'tsconfig.json',
       tsconfigJsonTemplate,
-      './' + name + 'apps/' + appName,
+      './' + name + '/apps/' + appName,
     );
     createAFile(
       'tsconfig.app.json',
       tsconfigAppJsonTemplate,
-      './' + name + 'apps/' + appName,
+      './' + name + '/apps/' + appName,
     );
     createAFile(
       'index.ts',
