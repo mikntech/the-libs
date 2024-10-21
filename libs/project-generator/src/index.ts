@@ -280,6 +280,7 @@ async function createProject() {
     `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
   doCommand(`cd ${name} && mkdir apps`);
+  doCommand(`cd ${name} && npm i -D @nx/esbuild`);
   const appNames = ['example'];
   appNames.forEach((appName) => {
     doCommand(`cd ${name}/apps && mkdir ${appName}`);
