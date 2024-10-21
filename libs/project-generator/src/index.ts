@@ -205,7 +205,6 @@ const getSrcLibraries = () => {
   }
 
   const libs = JSON.parse(fs.readFileSync(packageNamesPath, 'utf-8'));
-  console.log('Libraries found in src:', libs);
   return libs;
 };
 
