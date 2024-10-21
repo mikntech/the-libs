@@ -10,12 +10,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import {
-  indexTs,
+  dotGitIgnoreTemplate,
+  indexDotTs,
   projectJsonTemplate,
   tsconfigAppJsonTemplate,
   tsconfigJsonTemplate,
 } from './templates';
-import { dotGitIgnoreTemplate } from './templates/gitignore.ts';
 
 // Define __filename and __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -115,7 +115,7 @@ async function createProject() {
   createAFile('project.json', projectJsonTemplate(name), './' + name);
   createAFile('tsconfig.json', tsconfigJsonTemplate, './' + name);
   createAFile('tsconfig.app.json', tsconfigAppJsonTemplate, './' + name);
-  createAFile('index.ts', indexTs, './' + name + '/apps/' + name + '/src');
+  createAFile('index.ts', indexDotTs, './' + name + '/apps/' + name + '/src');
   doCommand(`cd ${name} && nx build ` + name);
   doCommand(`cd ${name} && nx serve ` + name);
 
