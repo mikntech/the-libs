@@ -1,5 +1,42 @@
 #!/usr/bin/env node
 
+export const tsconfigBaseJsonTemplate = `
+{
+  "compilerOptions": {
+  "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "emitDecoratorMetadata": false,
+    "esModuleInterop": true,
+    "experimentalDecorators": false,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "lib": ["es2022"],
+    "module": "ES2022",
+    "noEmitOnError": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "pretty": true,
+    "removeComments": false,
+    "resolveJsonModule": false,
+    "skipDefaultLibCheck": false,
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "strict": true,
+    "target": "es2022",
+    "verbatimModuleSyntax": false
+  }
+}
+
+`;
+
 export const gitignoreTemplate = `
   # See http://help.github.com/ignore-files/ for more about ignoring files.
 
@@ -281,6 +318,9 @@ async function createProject() {
   );
   doCommand(`cd ${name} && mkdir apps`);
   doCommand(`cd ${name} && npm i -D @nx/esbuild`);
+  doCommand(`cd ${name} && npm i -D esbuild`);
+  doCommand(`cd ${name} && rm -f ./tsconfig.base.json`);
+  createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
   const appNames = ['example'];
   appNames.forEach((appName) => {
     doCommand(`cd ${name}/apps && mkdir ${appName}`);
@@ -308,6 +348,8 @@ async function createProject() {
     doCommand(`cd ${name} && nx build ` + appName);
     doCommand(`cd ${name} && nx serve ` + appName);
   });
+
+  ///
 
   doCommand(`cd ${name} && git add .`);
 }
