@@ -9,13 +9,13 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-const {
-  dotGitIgnoreTemplate,
-  indexDotTs,
+import {
+  gitignoreTemplate,
+  indexTsTemplate,
   projectJsonTemplate,
   tsconfigAppJsonTemplate,
   tsconfigJsonTemplate,
-} = require('./templates');
+} from './templates';
 
 // Define __filename and __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
@@ -104,7 +104,7 @@ async function createProject() {
   doCommand(`rm -rf ./${name}/packages`);
   doCommand(`rm -rf ./${name}/README.md`);
   doCommand(`rm -rf ./${name}/.gitignore`);
-  createAFile('.gitignore', dotGitIgnoreTemplate, name);
+  createAFile('.gitignore', gitignoreTemplate, name);
   const libsToInstall = await askForAppsAndLibs();
   doCommand(
     `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
@@ -115,7 +115,11 @@ async function createProject() {
   createAFile('project.json', projectJsonTemplate(name), './' + name);
   createAFile('tsconfig.json', tsconfigJsonTemplate, './' + name);
   createAFile('tsconfig.app.json', tsconfigAppJsonTemplate, './' + name);
-  createAFile('index.ts', indexDotTs, './' + name + '/apps/' + name + '/src');
+  createAFile(
+    'index.ts',
+    indexTsTemplate,
+    './' + name + '/apps/' + name + '/src',
+  );
   doCommand(`cd ${name} && nx build ` + name);
   doCommand(`cd ${name} && nx serve ` + name);
 

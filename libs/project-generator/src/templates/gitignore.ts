@@ -1,4 +1,4 @@
-export const dotGitIgnoreTemplate = `
+export const gitignoreTemplate = `
   # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 
