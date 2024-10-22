@@ -57,8 +57,6 @@ async function createProject() {
       indexTsTemplate,
       './' + name + '/apps/' + appName + '/src',
     );
-    doCommand(`cd ${name} && ${nx} build ` + appName);
-    doCommand(`cd ${name} && ${nx} serve ` + appName);
   });
 
   ///
