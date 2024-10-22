@@ -1,41 +1,40 @@
-name: Build and Publish Libraries
+name: Build and Publish
 on:
   workflow_dispatch:
   pull_request:
   push:
-    branches:
-      - main
+    branches: # Specify your branches here
+      - main # The 'main' branch
 
 jobs:
-  detect-libraries:
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      libraries: ${{ steps.get_libs.outputs.libs }}
+    permissions:
+      contents: write
+      pull-requests: write
+      checks: write
     steps:
-      - name: Checkout repository
+      - name: 'checkout'
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}  # to check out the actual pull request commit, not the merge commit
+          fetch-depth: 0  # a full history is required for pull request analysis
 
-      - name: Find libraries in libs/ directory
-        id: get_libs
+      - name: Bump version in package.json
         run: |
-          LIBS=$(find libs/* -maxdepth 0 -type d -exec basename {} \;)
-          if [ -z "$LIBS" ]; then
-            echo "No libraries found!"
-            exit 1
-          fi
-          LIBS_JSON=$(echo "[\"$(echo $LIBS | sed 's/ /\",\"/g')\"]")
-          echo "Found libraries: $LIBS_JSON"
-          echo "::set-output name=libs::$LIBS_JSON"
-
-  build-and-publish-libs:
-    runs-on: ubuntu-latest
-    needs: detect-libraries
-    strategy:
-      matrix:
-        library: ${{ fromJson(needs.detect-libraries.outputs.libraries) }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+          npm version patch --no-git-tag-version
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git config --global user.email "mnpcmw6444+cicd@gmail.com"
+          git config --global user.name "Version Bump"
+          git commit -am "CI/CD Version auto-increment to $NEW_VERSION [skip ci]"
+          git tag v$NEW_VERSION
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          git config user.name 'github-actions'
+          git config user.email 'github-actions@github.com'
+          git push git@github.com:${{ github.repository }} HEAD:${{ github.ref_name }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -43,29 +42,11 @@ jobs:
           node-version: '22'
           registry-url: 'https://registry.npmjs.org/'
 
-      - name: Install dependencies
-        run: npm i
-
-      - name: Sync versions
-        run: npm run sync-versions
-
-      - name: Build and Publish ${{ matrix.library }}
+      - name: Authenticate to npm
         run: |
-          npx nx build ${{ matrix.library }}
-          if [ -d "dist/libs/${{ matrix.library }}" ]; then
-            cd dist/libs/${{ matrix.library }}
-            npm publish --access public
-          else
-            echo "Directory dist/libs/${{ matrix.library }} does not exist!"
-            exit 1
-          fi
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_C }}" > ~/.npmrc
 
-      - name: Bump version for ${{ matrix.library }}
-        run: |
-          npm version patch --no-git-tag-version
-          NEW_VERSION=$(node -p "require('./package.json').version")
-          git config --global user.email "mnpcmw6444+cicd@gmail.com"
-          git config --global user.name "Version Bump"
-          git commit -am "CI/CD Version bump to $NEW_VERSION for ${{ matrix.library }} [skip ci]"
-          git tag v${NEW_VERSION}
-          git push --tags
+      - name: Build and Publish
+        run: npm run build-and-publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_C }}
