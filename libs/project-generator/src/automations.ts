@@ -13,7 +13,5 @@ export const getSrcLibraries = () => {
     );
     return [];
   }
-
-  const libs = JSON.parse(fs.readFileSync(packageNamesPath, 'utf-8'));
-  return libs;
+  return JSON.parse(fs.readFileSync(packageNamesPath, 'utf-8'));
 };

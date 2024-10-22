@@ -33,8 +33,7 @@ const createProject = async () => {
   doCommand(`cd ${name} && npm i -D esbuild`);
   doCommand(`cd ${name} && rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
-  const appNames = servers;
-  appNames.forEach((appName: string) => {
+  servers.forEach((appName: string) => {
     doCommand(`cd ${name}/apps && mkdir ${appName}`);
     doCommand(`cd ${name}/apps/${appName} && mkdir src`);
     createAFile(

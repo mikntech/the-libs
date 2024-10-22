@@ -1,7 +1,8 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 import { getSrcLibraries } from './automations.js';
-const inquirer = require('inquirer').default;
+import type Inquirer from 'inquirer';
+const inquirer = require('inquirer').default as typeof Inquirer;
 
 export enum NXGOptions {
   SUDO_INSTALL_GLOBAL = 'i -g',
@@ -10,7 +11,7 @@ export enum NXGOptions {
 }
 
 const askOneString = async (message: string) =>
-  await (
+  (
     await inquirer.prompt({
       type: 'input',
       name: 'askOneString',
@@ -18,21 +19,19 @@ const askOneString = async (message: string) =>
     })
   ).askOneString;
 const askListOfStrings = async (message: string) =>
-  await (
-    await (
-      await (
-        await inquirer.prompt([
-          {
-            type: 'input',
-            name: 'askListOfStrings',
-            message: message + ' (comma-separated, no spaces needed)',
-          },
-        ])
-      ).askListOfStrings
-    ).split(',')
-  ).map((input: string) => input.trim());
+  (
+    await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'askListOfStrings',
+        message: message + ' (comma-separated, no spaces needed)',
+      },
+    ])
+  ).askListOfStrings
+    .split(',')
+    .map((input: string) => input.trim());
 const askOneFromOptions = async (message: string, choices: string[]) =>
-  await (
+  (
     await inquirer.prompt({
       type: 'list',
       name: 'askOneFromOptions',
@@ -41,7 +40,7 @@ const askOneFromOptions = async (message: string, choices: string[]) =>
     })
   ).askOneFromOptions;
 const askListFromOptions = async (message: string, choices: string[]) =>
-  await (
+  (
     await inquirer.prompt({
       type: 'checkbox',
       name: 'askListFromOptions',
@@ -51,10 +50,10 @@ const askListFromOptions = async (message: string, choices: string[]) =>
   ).askListFromOptions;
 
 const askName = async () =>
-  await askOneString('What is the name of your new Nx project?');
+  askOneString('What is the name of your new Nx project?');
 
 const askWhatLibsToInstall = async () =>
-  await askListFromOptions(
+  askListFromOptions(
     'Select @the-libs you plan to use, I will "npm i" them for you',
     getSrcLibraries().map((name: string) => ({ name, value: name })),
   );
