@@ -3,48 +3,72 @@ const require = createRequire(import.meta.url);
 import { getSrcLibraries } from './automations.js';
 const inquirer = require('inquirer').default;
 
-const askName = async () => {
-  const question = {
+export enum NXGOptions {
+  SUDO_INSTALL_GLOBAL = 'i -g',
+  NX_IS_INSTALLED_GLOBAL = 'nx',
+  USE_NPX = 'npx nx',
+}
+
+const askOneString = async (message: string) =>
+  inquirer.prompt({
     type: 'input',
-    name: 'name',
-    message: 'What is the name of your new Nx project?',
-  };
-  return inquirer.prompt(question);
-};
-
-const askWhatLibsToInstall = async () => {
-  const libsNames = getSrcLibraries();
-  const choices = libsNames.map((name: string) => ({ name, value: name }));
-  const questions = [
-    {
+    name: 'val',
+    message,
+  });
+const askListOfStrings = async (message: string) =>
+  await inquirer
+    .prompt([
+      {
+        type: 'input',
+        name: 'askListOfStrings',
+        message: message + ' (comma-separated, no spaces needed)',
+      },
+    ])
+    .askListOfStrings.split(',')
+    .map((input: string) => input.trim());
+const askOneFromOptions = async (message: string, choices: string[]) =>
+  (
+    await inquirer.prompt({
+      type: 'list',
+      name: 'askOneFromOptions',
+      message,
+      choices,
+    })
+  ).askOneFromOptions;
+const askListFromOptions = async (message: string, choices: string[]) =>
+  (
+    await inquirer.prompt({
       type: 'checkbox',
-      name: 'selectedItems',
-      message: 'Select @the-libs you plan to use, I will "npm i" them for you',
+      name: 'askListFromOptions',
+      message,
       choices: choices,
-    },
-  ];
-  const answers = await inquirer.prompt(questions);
-  return answers.selectedItems;
-};
+    })
+  ).askListFromOptions;
 
-const getList = async (message: string) => {
-  const { listInput } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'listInput',
-      message: message + ' (comma-separated)',
-    },
-  ]);
-  return listInput.split(',').map((input: string) => input.trim());
+const askName = async () => {
+  return askOneString('What is the name of your new Nx project?');
 };
+const askWhatLibsToInstall = async () =>
+  askListFromOptions(
+    'Select @the-libs you plan to use, I will "npm i" them for you',
+    getSrcLibraries().map((name: string) => ({ name, value: name })),
+  );
 
 export const askQuestions = async () => {
   const name = await askName();
+  const nxg = await askOneFromOptions(
+    'How would you like to handle nx situation?',
+    Object.keys(NXGOptions),
+  );
   const libsToInstall = await askWhatLibsToInstall();
-  const servers = await getList('enter all the servers you want to generate');
-  const clients = await getList(
+  const servers = await askListOfStrings(
+    'enter all the servers you want to generate',
+  );
+  const clients = await askListOfStrings(
     'enter all the vanilla react clients you want to generate',
   );
-  const nexts = await getList('enter all the nextjs you want to generate');
-  return { name, libsToInstall };
+  const nextjss = await askListOfStrings(
+    'enter all the nextjs you want to generate',
+  );
+  return { name, nxg, libsToInstall, servers, clients, nextjss };
 };

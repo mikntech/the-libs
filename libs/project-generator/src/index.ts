@@ -6,12 +6,14 @@ import { projectJsonTemplate } from './templates/projectJson.js';
 import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
 import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
 import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
-import { askQuestions } from './questions.js';
-import { createAFile, doCommand } from './commands.js';
+import { askQuestions, NXGOptions } from './questions.js';
+import { createAFile, doCommand, nxGen } from './commands.js';
 
 async function createProject() {
-  const { name, libsToInstall } = await askQuestions();
-  doCommand('sudo npm i -g nx');
+  const { name, nxg, libsToInstall, servers, clients, nextjss } =
+    await askQuestions();
+  const nx = nxGen(nxg);
+  nxg === NXGOptions.SUDO_INSTALL_GLOBAL && doCommand('sudo npm i -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${name} \\
   --preset=ts \\
   --nxCloud=skip \\
@@ -31,8 +33,8 @@ async function createProject() {
   doCommand(`cd ${name} && npm i -D esbuild`);
   doCommand(`cd ${name} && rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
-  const appNames = ['example'];
-  appNames.forEach((appName) => {
+  const appNames = servers;
+  appNames.forEach((appName: string) => {
     doCommand(`cd ${name}/apps && mkdir ${appName}`);
     doCommand(`cd ${name}/apps/${appName} && mkdir src`);
     createAFile(
@@ -55,8 +57,8 @@ async function createProject() {
       indexTsTemplate,
       './' + name + '/apps/' + appName + '/src',
     );
-    doCommand(`cd ${name} && nx build ` + appName);
-    doCommand(`cd ${name} && nx serve ` + appName);
+    doCommand(`cd ${name} && ${nx} build ` + appName);
+    doCommand(`cd ${name} && ${nx} serve ` + appName);
   });
 
   ///
