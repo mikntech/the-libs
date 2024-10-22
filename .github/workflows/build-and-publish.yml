@@ -24,9 +24,9 @@ jobs:
             exit 1
           fi
           # Convert space-separated list into JSON array format
-          LIBS_JSON=$(echo "[\"$(echo $LIBS | tr ' ' '\",\"')\"]")
+          LIBS_JSON=$(echo "[\"$(echo $LIBS | sed 's/ /\",\"/g')\"]")
           echo "Found libraries: $LIBS_JSON"
-          echo "::set-output name=libs::$LIBS_JSON"  # Set the output variable
+          echo "::set-output name=libs::$LIBS_JSON"
 
   build-and-publish-libs:
     runs-on: ubuntu-latest
