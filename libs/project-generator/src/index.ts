@@ -6,11 +6,11 @@ import { projectJsonTemplate } from './templates/projectJson.js';
 import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
 import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
 import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
-import { askForAppsAndLibs, askQuestions } from './questions.js';
+import { askQuestions } from './questions.js';
 import { createAFile, doCommand } from './commands.js';
 
 async function createProject() {
-  const { name } = await askQuestions();
+  const { name, libsToInstall } = await askQuestions();
   doCommand('sudo npm i -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${name} \\
   --preset=ts \\
@@ -23,7 +23,6 @@ async function createProject() {
   doCommand(`rm -rf ./${name}/README.md`);
   doCommand(`rm -rf ./${name}/.gitignore`);
   createAFile('.gitignore', gitignoreTemplate, name);
-  const libsToInstall = await askForAppsAndLibs();
   doCommand(
     `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
