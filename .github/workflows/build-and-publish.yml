@@ -4,13 +4,13 @@ on:
   pull_request:
   push:
     branches:
-      - main  # Trigger only on the main branch
+      - main
 
 jobs:
   detect-libraries:
     runs-on: ubuntu-latest
     outputs:
-      libraries: ${{ steps.get_libs.outputs.libs }}  # Pass the detected libraries to the matrix
+      libraries: ${{ steps.get_libs.outputs.libs }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -18,22 +18,23 @@ jobs:
       - name: Find libraries in libs/ directory
         id: get_libs
         run: |
+          
           LIBS=$(find libs/* -maxdepth 0 -type d -exec basename {} \;)
           if [ -z "$LIBS" ]; then
             echo "No libraries found!"
             exit 1
           fi
-          # Convert space-separated list into JSON array format
-          LIBS_JSON=$(echo "[\"$(echo $LIBS | sed 's/ /\",\"/g')\"]")
+          
+          LIBS_JSON=$(echo "$LIBS" | sed 's/ /","/g' | sed 's/^/["/' | sed 's/$/"]/')
           echo "Found libraries: $LIBS_JSON"
           echo "::set-output name=libs::$LIBS_JSON"
 
   build-and-publish-libs:
     runs-on: ubuntu-latest
-    needs: detect-libraries  # Ensure libraries are detected before running this job
+    needs: detect-libraries
     strategy:
       matrix:
-        library: ${{ fromJson(needs.detect-libraries.outputs.libraries) }}  # Use the detected libraries
+        library: ${{ fromJson(needs.detect-libraries.outputs.libraries) }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
