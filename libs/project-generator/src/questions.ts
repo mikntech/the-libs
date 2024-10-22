@@ -16,15 +16,16 @@ const askOneString = async (message: string) =>
     message,
   });
 const askListOfStrings = async (message: string) =>
-  await inquirer
-    .prompt([
+  (
+    await inquirer.prompt([
       {
         type: 'input',
         name: 'askListOfStrings',
         message: message + ' (comma-separated, no spaces needed)',
       },
     ])
-    .askListOfStrings.split(',')
+  ).askListOfStrings
+    .split(',')
     .map((input: string) => input.trim());
 const askOneFromOptions = async (message: string, choices: string[]) =>
   (
