@@ -7,21 +7,30 @@ on:
       - main  # Trigger only on the main branch
 
 jobs:
-  build-and-publish-libs:
+  detect-libraries:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      checks: write
-    strategy:
-      matrix:
-        library: [lib1, lib2, lib3]  # Replace with actual library directories
+    outputs:
+      libraries: ${{ steps.get_libs.outputs.libs }}  # Pass the detected libraries to the matrix
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          fetch-depth: 0  # Required for pull request analysis
+
+      - name: Find libraries in libs/ directory
+        id: get_libs
+        run: |
+          LIBS=$(find libs/* -maxdepth 0 -type d -exec basename {} \;)
+          echo "libs=$LIBS"
+          echo "::set-output name=libs::$(echo $LIBS | tr '\n' ' ')"  # Convert newline to space-separated
+
+  build-and-publish-libs:
+    runs-on: ubuntu-latest
+    needs: detect-libraries  # Ensure libraries are detected before running this job
+    strategy:
+      matrix:
+        library: ${{ fromJson(needs.detect-libraries.outputs.libraries) }}  # Use the detected libraries
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
