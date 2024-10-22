@@ -19,15 +19,17 @@ jobs:
         id: get_libs
         run: |
           LIBS=$(find libs/* -maxdepth 0 -type d -exec basename {} \;)
-          echo "libs=$LIBS"
-          echo "::set-output name=libs::$(echo $LIBS | tr '\n' ' ')"  # Convert newline to space-separated
+          # Convert space-separated list into JSON array format
+          LIBS_JSON=$(echo "[\"$(echo $LIBS | tr ' ' '\",\"')\"]")
+          echo "libs=$LIBS_JSON"
+          echo "::set-output name=libs::$LIBS_JSON"  # Output the JSON array
 
   build-and-publish-libs:
     runs-on: ubuntu-latest
     needs: detect-libraries  # Ensure libraries are detected before running this job
     strategy:
       matrix:
-        library: ${{ fromJson(needs.detect-libraries.outputs.libraries) }}  # Use the detected libraries
+        library: ${{ fromJson(needs.detect-libraries.outputs.libraries) }}  # Use the detected libraries in JSON format
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
