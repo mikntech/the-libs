@@ -9,12 +9,12 @@ import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { gitignoreTemplate } from './templates/gitignore.js';
-import { indexTsTemplate } from './templates/indexTs.js';
-import { projectJsonTemplate } from './templates/projectJson.js';
-import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
-import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
-import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
+import { gitignoreTemplate } from './templates/gitignore';
+import { indexTsTemplate } from './templates/indexTs';
+import { projectJsonTemplate } from './templates/projectJson';
+import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson';
+import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson';
+import { tsconfigJsonTemplate } from './templates/tsconfigJson';
 
 // Define __filename and __dirname in ES module
 const __filename = fileURLToPath(import.meta.url);
