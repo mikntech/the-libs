@@ -16,19 +16,21 @@ const askOneString = async (message: string) =>
     message,
   });
 const askListOfStrings = async (message: string) =>
-  (
-    await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'askListOfStrings',
-        message: message + ' (comma-separated, no spaces needed)',
-      },
-    ])
-  ).askListOfStrings
-    .split(',')
-    .map((input: string) => input.trim());
+  await (
+    await (
+      await (
+        await inquirer.prompt([
+          {
+            type: 'input',
+            name: 'askListOfStrings',
+            message: message + ' (comma-separated, no spaces needed)',
+          },
+        ])
+      ).askListOfStrings
+    ).split(',')
+  ).map((input: string) => input.trim());
 const askOneFromOptions = async (message: string, choices: string[]) =>
-  (
+  await (
     await inquirer.prompt({
       type: 'list',
       name: 'askOneFromOptions',
@@ -37,7 +39,7 @@ const askOneFromOptions = async (message: string, choices: string[]) =>
     })
   ).askOneFromOptions;
 const askListFromOptions = async (message: string, choices: string[]) =>
-  (
+  await (
     await inquirer.prompt({
       type: 'checkbox',
       name: 'askListFromOptions',
@@ -46,11 +48,11 @@ const askListFromOptions = async (message: string, choices: string[]) =>
     })
   ).askListFromOptions;
 
-const askName = async () => {
-  return askOneString('What is the name of your new Nx project?');
-};
+const askName = async () =>
+  await askOneString('What is the name of your new Nx project?');
+
 const askWhatLibsToInstall = async () =>
-  askListFromOptions(
+  await askListFromOptions(
     'Select @the-libs you plan to use, I will "npm i" them for you',
     getSrcLibraries().map((name: string) => ({ name, value: name })),
   );
