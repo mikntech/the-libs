@@ -49,27 +49,23 @@ jobs:
       - name: Sync versions
         run: npm run sync-versions
 
+      - name: Build and Publish ${{ matrix.library }}
+        run: |
+          npx nx build ${{ matrix.library }}
+          if [ -d "dist/libs/${{ matrix.library }}" ]; then
+            cd dist/libs/${{ matrix.library }}
+            npm publish --access public
+          else
+            echo "Directory dist/libs/${{ matrix.library }} does not exist!"
+            exit 1
+          fi
+
       - name: Bump version for ${{ matrix.library }}
         run: |
-          cd libs/${{ matrix.library }}
           npm version patch --no-git-tag-version
           NEW_VERSION=$(node -p "require('./package.json').version")
           git config --global user.email "mnpcmw6444+cicd@gmail.com"
           git config --global user.name "Version Bump"
           git commit -am "CI/CD Version bump to $NEW_VERSION for ${{ matrix.library }} [skip ci]"
           git tag v${NEW_VERSION}
-          cd ../..
-
-      - name: Build ${{ matrix.library }}
-        run: |
-          npx nx build ${{ matrix.library }}
-
-      - name: Authenticate to npm for ${{ matrix.library }}
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_C }}" > ~/.npmrc
-
-      - name: Publish ${{ matrix.library }}
-        run: |
-          cd dist/libs/${{ matrix.library }}
-          npm publish --access public
-          cd ../../..
+          git push --tags
