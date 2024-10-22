@@ -45,14 +45,14 @@ jobs:
           registry-url: 'https://registry.npmjs.org/'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm i
 
       - name: Sync versions
         run: npm run sync-versions
 
       - name: Build ${{ matrix.library }}
         run: |
-          nx build ${{ matrix.library }}
+          npx nx build ${{ matrix.library }}
 
       - name: Publish ${{ matrix.library }}
         run: |
