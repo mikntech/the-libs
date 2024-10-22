@@ -27,12 +27,12 @@ const askWhatLibsToInstall = async () => {
   return answers.selectedItems;
 };
 
-const getList = async (name: string, message: string) => {
+const getList = async (message: string) => {
   const { listInput } = await inquirer.prompt([
     {
       type: 'input',
-      name: name,
-      message: message + '(comma-separated)',
+      name: 'listInput',
+      message: message + ' (comma-separated)',
     },
   ]);
   return listInput.split(',').map((input: string) => input.trim());
@@ -41,8 +41,10 @@ const getList = async (name: string, message: string) => {
 export const askQuestions = async () => {
   const name = await askName();
   const libsToInstall = await askWhatLibsToInstall();
-  const servers = await getList('xxxxx', 'yyyyy');
-  const clients = await getList('xxxxx', 'yyyyy');
-  const nexts = await getList('xxxxx', 'yyyyy');
+  const servers = await getList('enter all the servers you want to generate');
+  const clients = await getList(
+    'enter all the vanilla react clients you want to generate',
+  );
+  const nexts = await getList('enter all the nextjs you want to generate');
   return { name, libsToInstall };
 };
