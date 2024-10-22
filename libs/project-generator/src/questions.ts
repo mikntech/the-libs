@@ -10,11 +10,13 @@ export enum NXGOptions {
 }
 
 const askOneString = async (message: string) =>
-  inquirer.prompt({
-    type: 'input',
-    name: 'val',
-    message,
-  });
+  await (
+    await inquirer.prompt({
+      type: 'input',
+      name: 'askOneString',
+      message,
+    })
+  ).askOneString;
 const askListOfStrings = async (message: string) =>
   await (
     await (

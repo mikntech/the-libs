@@ -9,7 +9,7 @@ import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
 import { askQuestions, NXGOptions } from './questions.js';
 import { createAFile, doCommand, nxGen } from './commands.js';
 
-async function createProject() {
+const createProject = async () => {
   const { name, nxg, libsToInstall, servers, clients, nextjss } =
     await askQuestions();
   const nx = nxGen(nxg);
@@ -62,6 +62,6 @@ async function createProject() {
   ///
 
   doCommand(`cd ${name} && git add .`);
-}
+};
 
 createProject();
