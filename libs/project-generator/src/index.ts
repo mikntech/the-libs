@@ -6,8 +6,8 @@ import { projectJsonTemplate } from './templates/projectJson.js';
 import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
 import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
 import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
-import { askForAppsAndLibs, askQuestions } from './questions';
-import { createAFile, doCommand } from './commands';
+import { askForAppsAndLibs, askQuestions } from './questions.js';
+import { createAFile, doCommand } from './commands.js';
 
 async function createProject() {
   const { name } = await askQuestions();
