@@ -18,14 +18,12 @@ jobs:
       - name: Find libraries in libs/ directory
         id: get_libs
         run: |
-          
           LIBS=$(find libs/* -maxdepth 0 -type d -exec basename {} \;)
           if [ -z "$LIBS" ]; then
             echo "No libraries found!"
             exit 1
           fi
-          
-          LIBS_JSON=$(echo "$LIBS" | sed 's/ /","/g' | sed 's/^/["/' | sed 's/$/"]/')
+          LIBS_JSON=$(echo "[\"$(echo $LIBS | sed 's/ /\",\"/g')\"]")
           echo "Found libraries: $LIBS_JSON"
           echo "::set-output name=libs::$LIBS_JSON"
 
