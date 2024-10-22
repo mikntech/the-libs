@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-import { gitignoreTemplate } from './templates/gitignore';
-import { indexTsTemplate } from './templates/indexTs';
-import { projectJsonTemplate } from './templates/projectJson';
-import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson';
-import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson';
-import { tsconfigJsonTemplate } from './templates/tsconfigJson';
+import { gitignoreTemplate } from './templates/gitignore.js';
+import { indexTsTemplate } from './templates/indexTs.js';
+import { projectJsonTemplate } from './templates/projectJson.js';
+import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
+import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
+import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
 import { askForAppsAndLibs, askQuestions } from './questions';
 import { createAFile, doCommand } from './commands';
 
