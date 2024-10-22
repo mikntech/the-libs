@@ -1,5 +1,5 @@
 import { execSync } from 'child_process';
-import { NXGOptions } from './questions';
+import { NXGOptions } from './questions.js';
 
 export const nxGen = (option: NXGOptions) =>
   option === NXGOptions.USE_NPX ? 'npx nx' : 'nx';
