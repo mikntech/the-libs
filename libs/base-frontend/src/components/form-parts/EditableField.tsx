@@ -1,3 +1,4 @@
+'use client';
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { Grid2, IconButton, TextField, Typography } from '@mui/material';
