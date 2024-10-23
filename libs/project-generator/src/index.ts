@@ -9,6 +9,47 @@ import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
 import { askQuestions, NXGOptions } from './questions.js';
 import { createAFile, doCommand, nxGen } from './commands.js';
 
+enum App {
+  Server = 'server',
+  Client = 'client',
+  Next = 'next',
+}
+
+const createApp = async (type: App, appName: string) => {
+  switch (type) {
+    case App.Server:
+      doCommand(`cd ${name}/apps && mkdir ${appName}`);
+      doCommand(`cd ${name}/apps/${appName} && mkdir src`);
+      createAFile(
+        'project.json',
+        projectJsonTemplate(appName),
+        './' + name + '/apps/' + appName,
+      );
+      createAFile(
+        'tsconfig.json',
+        tsconfigJsonTemplate,
+        './' + name + '/apps/' + appName,
+      );
+      createAFile(
+        'tsconfig.app.json',
+        tsconfigAppJsonTemplate,
+        './' + name + '/apps/' + appName,
+      );
+      createAFile(
+        'index.ts',
+        indexTsTemplate,
+        './' + name + '/apps/' + appName + '/src',
+      );
+      break;
+    case App.Client:
+      // need to ideate
+      break;
+    case App.Next:
+      // have in file
+      break;
+  }
+};
+
 const createProject = async () => {
   const { name, nxg, libsToInstall, servers, clients, nextjss } =
     await askQuestions();
@@ -33,30 +74,19 @@ const createProject = async () => {
   doCommand(`cd ${name} && npm i -D esbuild`);
   doCommand(`cd ${name} && rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
-  servers.forEach((appName: string) => {
-    doCommand(`cd ${name}/apps && mkdir ${appName}`);
-    doCommand(`cd ${name}/apps/${appName} && mkdir src`);
-    createAFile(
-      'project.json',
-      projectJsonTemplate(appName),
-      './' + name + '/apps/' + appName,
-    );
-    createAFile(
-      'tsconfig.json',
-      tsconfigJsonTemplate,
-      './' + name + '/apps/' + appName,
-    );
-    createAFile(
-      'tsconfig.app.json',
-      tsconfigAppJsonTemplate,
-      './' + name + '/apps/' + appName,
-    );
-    createAFile(
-      'index.ts',
-      indexTsTemplate,
-      './' + name + '/apps/' + appName + '/src',
-    );
-  });
+  await Promise.all(
+    servers.map(
+      async (appName: string) => await createApp(App.Server, appName),
+    ),
+  );
+  await Promise.all(
+    clients.map(
+      async (appName: string) => await createApp(App.Client, appName),
+    ),
+  );
+  await Promise.all(
+    nextjss.map(async (appName: string) => await createApp(App.Next, appName)),
+  );
 
   ///
 
