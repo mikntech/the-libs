@@ -41,7 +41,6 @@
         "devTargetName": "dev",
         "serveStaticTargetName": "serve-static"
       }
-    }n
     }
   ],
   "targetDefaults": {
