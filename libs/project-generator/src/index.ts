@@ -15,7 +15,7 @@ enum App {
   Next = 'next',
 }
 
-const createApp = async (type: App, appName: string) => {
+const createApp = async (nx: string, type: App, appName: string) => {
   switch (type) {
     case App.Server:
       doCommand(`cd ${name}/apps && mkdir ${appName}`);
@@ -45,7 +45,9 @@ const createApp = async (type: App, appName: string) => {
       // need to ideate
       break;
     case App.Next:
-      // have in file
+      doCommand(
+        `${nx} g @nx/next:app apps/${appName} --style=@emotion/styled --e2eTestRunner=none --appRouter=true --srcDir=true`,
+      );
       break;
   }
 };
@@ -76,16 +78,18 @@ const createProject = async () => {
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
   await Promise.all(
     servers.map(
-      async (appName: string) => await createApp(App.Server, appName),
+      async (appName: string) => await createApp(nx, App.Server, appName),
     ),
   );
   await Promise.all(
     clients.map(
-      async (appName: string) => await createApp(App.Client, appName),
+      async (appName: string) => await createApp(nx, App.Client, appName),
     ),
   );
   await Promise.all(
-    nextjss.map(async (appName: string) => await createApp(App.Next, appName)),
+    nextjss.map(
+      async (appName: string) => await createApp(nx, App.Next, appName),
+    ),
   );
 
   ///

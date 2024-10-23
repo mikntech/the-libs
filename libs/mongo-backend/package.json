@@ -3,6 +3,7 @@
   "version": "1.1.42",
   "dependencies": {
     "@the-libs/base-shared": "^1.5.1",
+    "@the-libs/s3-backend": "^1.5.1",
     "dotenv": "^16.4.5",
     "mongoose": "^8.6.2"
   },
