@@ -163,6 +163,10 @@ jobs:
           MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-mikmikntech-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
           echo "MIK_TASK_DEF_ARN_MIKNTECH=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
 
+      - name: Debug Task Definition ARN
+        run: |
+          echo "Task definition ARN: ${{ env.MIK_TASK_DEF_ARN_MIKNTECH }}"
+
       - name: Update ECS Service for mikmikntech
         run: |
           aws ecs update-service --cluster mikprod --service mikmikntech --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH }}
