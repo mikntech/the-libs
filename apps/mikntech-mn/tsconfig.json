@@ -26,8 +26,8 @@
     "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
-    "../../apps/mikntech-michaelnusair/.next/types/**/*.ts",
-    "../../dist/apps/mikntech-michaelnusair/.next/types/**/*.ts",
+    ".//.next/types/**/*.ts",
+    "../../dist/apps/mikntech-mn/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],

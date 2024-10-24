@@ -222,7 +222,7 @@ if (cicdSettings.aws.region !== DEP_REGION)
 const projectName = 'mn';
 const apps = [
   {
-    name: 'mikntech-michaelnusair',
+    name: 'mikntech-mn',
     port: 3000,
     domain: DOMAIN,
     type: AppType.Next,
@@ -237,6 +237,7 @@ const apps = [
 const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod'];
+/*
 
 await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
@@ -251,7 +252,10 @@ await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
 //
 
 await step2ARNsServices(apps, stagingENVs).then();
-setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 3000);
+setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 10000);
+*/
+
+step3DNSRecords(DOMAIN, apps, stagingENVs).then();
 
 //
 

@@ -75,7 +75,7 @@ jobs:
           docker push $ECR_REGISTRY/mikmn/base:${DEP_HASH}
   
 
-  build_mikmikntech-michaelnusair:
+  build_mikmikntech-mn:
     needs: prepare
     runs-on: ubuntu-latest
     steps:
@@ -111,18 +111,18 @@ jobs:
           echo "DEP_HASH=$(cat temp_package.json | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
           rm temp_package.json
 
-      - name: Build, tag, and push mikmikntech-michaelnusair image to Amazon ECR
+      - name: Build, tag, and push mikmikntech-mn image to Amazon ECR
         env:
           DOCKER_BUILDKIT: 1
         run: |
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          docker build --build-arg DEP_HASH=${DEP_HASH} -t $ECR_REGISTRY/mikmn/mikntech-michaelnusair:$VERSION -f ./apps/mikntech-michaelnusair/Dockerfile .
-          docker push $ECR_REGISTRY/mikmn/mikntech-michaelnusair:$VERSION
+          docker build --build-arg DEP_HASH=${DEP_HASH} -t $ECR_REGISTRY/mikmn/mikntech-mn:$VERSION -f ./apps/mikntech-mn/Dockerfile .
+          docker push $ECR_REGISTRY/mikmn/mikntech-mn:$VERSION
   
   
 
   deploy_to_ecs:
-    needs: [ prepare, build_mikmikntech-michaelnusair ]
+    needs: [ prepare, build_mikmikntech-mn ]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
@@ -154,23 +154,23 @@ jobs:
 
 
 
-      - name: Fetch current mikmikntech-michaelnusair task definition
-        id: current-task-def-mikmikntech-michaelnusair
+      - name: Fetch current mikmikntech-mn task definition
+        id: current-task-def-mikmikntech-mn
         run: |
-          aws ecs describe-task-definition --task-definition mikmikntech-michaelnusair > mik-current-mikmikntech-michaelnusair-task-def.json
+          aws ecs describe-task-definition --task-definition mikmikntech-mn > mik-current-mikmikntech-mn-task-def.json
 
-      - name: Update task definition for mikmikntech-michaelnusair
+      - name: Update task definition for mikmikntech-mn
         run: |
-          jq --arg image_tag "$VERSION" --arg ecr_registry "${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mikmn/mikntech-michaelnusair:" + $image_tag' mik-current-mikmikntech-michaelnusair-task-def.json > mik-intermediate-mikmikntech-michaelnusair-task-def.json
-          jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-mikmikntech-michaelnusair-task-def.json > mik-final-mikmikntech-michaelnusair-task-def.json
+          jq --arg image_tag "$VERSION" --arg ecr_registry "${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mikmn/mikntech-mn:" + $image_tag' mik-current-mikmikntech-mn-task-def.json > mik-intermediate-mikmikntech-mn-task-def.json
+          jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-mikmikntech-mn-task-def.json > mik-final-mikmikntech-mn-task-def.json
 
-      - name: Register task definition for mikmikntech-michaelnusair
-        id: register-task-def-mikmikntech-michaelnusair
+      - name: Register task definition for mikmikntech-mn
+        id: register-task-def-mikmikntech-mn
         run: |
-          MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-mikmikntech-michaelnusair-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
-          echo "MIK_TASK_DEF_ARN_MIKNTECH-MICHAELNUSAIR=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
+          MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-mikmikntech-mn-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
+          echo "MIK_TASK_DEF_ARN_mikntech-mn=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
 
-      - name: Update ECS Service for mikmikntech-michaelnusair
+      - name: Update ECS Service for mikmikntech-mn
         run: |
-          aws ecs update-service --cluster mikprod --service mikmikntech-michaelnusair --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH-MICHAELNUSAIR }} 
+          aws ecs update-service --cluster mikprod --service mikmikntech-mn --task-definition ${{ env.MIK_TASK_DEF_ARN_mikntech-mn }} 
 
