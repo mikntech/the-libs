@@ -1,4 +1,4 @@
-name: deploy_mikntech_michaelnusair
+name: deploy_mikntech_thelibs
 
 on:
   push:
