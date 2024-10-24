@@ -1,11 +1,12 @@
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
-import IconButton from "@mui/material/IconButton";
+import IconButton from '@mui/material/IconButton';
 
-import WbSunnyRoundedIcon from "@mui/icons-material/WbSunnyRounded";
-import ModeNightRoundedIcon from "@mui/icons-material/ModeNightRounded";
+import WbSunnyRoundedIcon from '@mui/icons-material/WbSunnyRounded';
+import ModeNightRoundedIcon from '@mui/icons-material/ModeNightRounded';
+import { TODO } from '@the-libs/base-shared';
 
-function ToggleColorMode({ mode, toggleColorMode, ...props }) {
+function ToggleColorMode({ mode, toggleColorMode, ...props }: TODO) {
   return (
     <IconButton
       onClick={toggleColorMode}
@@ -14,7 +15,7 @@ function ToggleColorMode({ mode, toggleColorMode, ...props }) {
       size="small"
       {...props}
     >
-      {mode === "dark" ? (
+      {mode === 'dark' ? (
         <WbSunnyRoundedIcon fontSize="small" />
       ) : (
         <ModeNightRoundedIcon fontSize="small" />
@@ -24,7 +25,7 @@ function ToggleColorMode({ mode, toggleColorMode, ...props }) {
 }
 
 ToggleColorMode.propTypes = {
-  mode: PropTypes.oneOf(["dark", "light"]).isRequired,
+  mode: PropTypes.oneOf(['dark', 'light']).isRequired,
   toggleColorMode: PropTypes.func.isRequired,
 };
 

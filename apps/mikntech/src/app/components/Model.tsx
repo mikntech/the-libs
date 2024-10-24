@@ -5,26 +5,27 @@ import {
   Grid2,
   Typography,
   useTheme,
-} from "@mui/material";
-import Card from "@mui/material/Card";
-import Divider from "@mui/material/Divider";
-import Button from "@mui/material/Button";
-import WorkIcon from "@mui/icons-material/Work";
-import SchoolIcon from "@mui/icons-material/School";
-import VolunteerActivismIcon from "@mui/icons-material/VolunteerActivism";
-import { cloneElement } from "react";
-import { grey } from "@mui/material/colors";
-import CardContent from "@mui/material/CardContent";
+} from '@mui/material';
+import Card from '@mui/material/Card';
+import Divider from '@mui/material/Divider';
+import Button from '@mui/material/Button';
+import WorkIcon from '@mui/icons-material/Work';
+import SchoolIcon from '@mui/icons-material/School';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import { cloneElement } from 'react';
+import { grey } from '@mui/material/colors';
+import CardContent from '@mui/material/CardContent';
+import { TODO } from '@the-libs/base-shared';
 
 // CardComponent for Pricing Tiers
-const CardComponent = ({ tier, theme }) => (
+const CardComponent = ({ tier, theme }: TODO) => (
   <Card
     sx={{
       p: 2,
-      display: "flex",
-      flexDirection: "column",
+      display: 'flex',
+      flexDirection: 'column',
       gap: 4,
-      backgroundColor: theme.palette.mode === "dark" ? grey[900] : grey[100],
+      backgroundColor: theme.palette.mode === 'dark' ? grey[900] : grey[100],
       boxShadow: 3,
       color: theme.palette.text.primary,
     }}
@@ -33,18 +34,18 @@ const CardComponent = ({ tier, theme }) => (
       <Box
         sx={{
           mb: 2,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
           gap: 1,
         }}
       >
         {cloneElement(tier.icon, {
           sx: {
             color:
-              theme.palette.mode === "dark"
-                ? tier.icon.props.sx?.color || "primary.light"
-                : tier.icon.props.sx?.color || "primary.main",
+              theme.palette.mode === 'dark'
+                ? tier.icon.props.sx?.color || 'primary.light'
+                : tier.icon.props.sx?.color || 'primary.main',
           },
         })}
         <Typography component="h3" variant="h6">
@@ -52,13 +53,13 @@ const CardComponent = ({ tier, theme }) => (
         </Typography>
       </Box>
 
-      <Divider sx={{ my: 1, opacity: 0.8, borderColor: "divider" }} />
+      <Divider sx={{ my: 1, opacity: 0.8, borderColor: 'divider' }} />
 
       <Box
         sx={{
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'baseline',
+          justifyContent: 'center',
         }}
       >
         <Grid2
@@ -94,48 +95,48 @@ const CardComponent = ({ tier, theme }) => (
 // Pricing Tiers Data
 const tiers = [
   {
-    title: "Consultation",
-    hours: "3-10",
-    price: "599",
-    buttonText: "Get Started",
-    buttonVariant: "outlined",
-    buttonColor: "primary",
+    title: 'Consultation',
+    hours: '3-10',
+    price: '599',
+    buttonText: 'Get Started',
+    buttonVariant: 'outlined',
+    buttonColor: 'primary',
     icon: <WorkIcon />,
   },
   {
-    title: "Mentorship",
-    hours: "11-30",
-    price: "499",
-    buttonText: "Get Started",
-    buttonVariant: "outlined",
-    buttonColor: "primary",
+    title: 'Mentorship',
+    hours: '11-30',
+    price: '499',
+    buttonText: 'Get Started',
+    buttonVariant: 'outlined',
+    buttonColor: 'primary',
     icon: <SchoolIcon />,
   },
   {
-    title: "Mentorship",
-    hours: "31-50",
-    price: "399",
-    buttonText: "Get Started",
-    buttonVariant: "outlined",
-    buttonColor: "primary",
+    title: 'Mentorship',
+    hours: '31-50',
+    price: '399',
+    buttonText: 'Get Started',
+    buttonVariant: 'outlined',
+    buttonColor: 'primary',
     icon: <SchoolIcon />,
   },
   {
-    title: "Contribution",
-    hours: "51-100",
-    price: "349",
-    buttonText: "Get Started",
-    buttonVariant: "outlined",
-    buttonColor: "primary",
+    title: 'Contribution',
+    hours: '51-100',
+    price: '349',
+    buttonText: 'Get Started',
+    buttonVariant: 'outlined',
+    buttonColor: 'primary',
     icon: <VolunteerActivismIcon />,
   },
   {
-    title: "Contribution",
-    hours: "101-150",
-    price: "299",
-    buttonText: "Get Started",
-    buttonVariant: "outlined",
-    buttonColor: "primary",
+    title: 'Contribution',
+    hours: '101-150',
+    price: '299',
+    buttonText: 'Get Started',
+    buttonVariant: 'outlined',
+    buttonColor: 'primary',
     icon: <VolunteerActivismIcon />,
   },
 ];
@@ -150,18 +151,18 @@ export default function Pricing() {
       sx={{
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         gap: { xs: 3, sm: 6 },
       }}
     >
       {/* Pricing Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
         }}
       >
         <Typography
@@ -186,7 +187,7 @@ export default function Pricing() {
       <Grid2
         container
         spacing={3}
-        sx={{ alignItems: "center", justifyContent: "center", width: "100%" }}
+        sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}
       >
         {tiers.map((tier) => (
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={tier.title + tier.hours}>
@@ -198,8 +199,8 @@ export default function Pricing() {
       {/* @the-libs and Flexible Model Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
           mt: 4,
         }}
       >
@@ -226,8 +227,8 @@ export default function Pricing() {
       {/* Contract Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
           mt: 6,
         }}
       >
@@ -262,8 +263,8 @@ export default function Pricing() {
       {/* @the-libs Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
           mt: 4,
         }}
       >
@@ -276,7 +277,7 @@ export default function Pricing() {
         >
           At the heart of our development process is a set of reusable
           libraries, carefully designed to maximize efficiency and minimize
-          redundancy. These libraries follow a{" "}
+          redundancy. These libraries follow a{' '}
           <b>blackbox package/product-oriented</b> approach, meaning you can
           focus on the core functionality while shared features are abstracted
           into well-maintained modules.

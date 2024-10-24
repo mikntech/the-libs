@@ -16,7 +16,10 @@
         "name": "next"
       }
     ],
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "module": "esnext"
   },
   "include": [
     "**/*.ts",
@@ -27,5 +30,8 @@
     "../../dist/apps/mikntech/.next/types/**/*.ts",
     "next-env.d.ts"
   ],
-  "exclude": ["node_modules", "jest.config.ts"]
+  "exclude": [
+    "node_modules",
+    "jest.config.ts"
+  ]
 }

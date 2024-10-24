@@ -1,11 +1,12 @@
 import { alpha } from '@mui/material/styles';
 import { gray, orange } from '../themePrimitives';
+import { TODO } from '@the-libs/base-shared';
 
 /* eslint-disable import/prefer-default-export */
 export const feedbackCustomizations = {
   MuiAlert: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         borderRadius: 10,
         backgroundColor: orange[100],
         color: theme.palette.text.primary,
@@ -22,7 +23,7 @@ export const feedbackCustomizations = {
   },
   MuiDialog: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         '& .MuiDialog-paper': {
           borderRadius: '10px',
           border: '1px solid',
@@ -33,7 +34,7 @@ export const feedbackCustomizations = {
   },
   MuiLinearProgress: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         height: 8,
         borderRadius: 8,
         backgroundColor: gray[200],

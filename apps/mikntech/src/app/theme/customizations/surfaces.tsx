@@ -1,5 +1,6 @@
 import { alpha } from '@mui/material/styles';
 import { gray } from '../themePrimitives';
+import { TODO } from '@the-libs/base-shared';
 
 /* eslint-disable import/prefer-default-export */
 export const surfacesCustomizations = {
@@ -9,7 +10,7 @@ export const surfacesCustomizations = {
       disableGutters: true,
     },
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         padding: 4,
         overflow: 'clip',
         backgroundColor: theme.palette.background.default,
@@ -34,7 +35,7 @@ export const surfacesCustomizations = {
   },
   MuiAccordionSummary: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         border: 'none',
         borderRadius: 8,
         '&:hover': { backgroundColor: gray[50] },
@@ -57,7 +58,7 @@ export const surfacesCustomizations = {
   },
   MuiCard: {
     styleOverrides: {
-      root: ({ theme }) => {
+      root: ({ theme }: TODO) => {
         return {
           padding: 16,
           gap: 16,

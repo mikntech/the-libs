@@ -5,6 +5,7 @@ import { buttonBaseClasses } from '@mui/material/ButtonBase';
 import { chipClasses } from '@mui/material/Chip';
 import { iconButtonClasses } from '@mui/material/IconButton';
 import { gray, red, green } from '../themePrimitives';
+import { TODO } from '@the-libs/base-shared';
 
 /* eslint-disable import/prefer-default-export */
 export const dataDisplayCustomizations = {
@@ -20,7 +21,7 @@ export const dataDisplayCustomizations = {
   },
   MuiListItem: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         [`& .${svgIconClasses.root}`]: {
           width: '1rem',
           height: '1rem',
@@ -57,12 +58,12 @@ export const dataDisplayCustomizations = {
   },
   MuiListItemText: {
     styleOverrides: {
-      primary: ({ theme }) => ({
+      primary: ({ theme }: TODO) => ({
         fontSize: theme.typography.body2.fontSize,
         fontWeight: 500,
         lineHeight: theme.typography.body2.lineHeight,
       }),
-      secondary: ({ theme }) => ({
+      secondary: ({ theme }: TODO) => ({
         fontSize: theme.typography.caption.fontSize,
         lineHeight: theme.typography.caption.lineHeight,
       }),
@@ -70,7 +71,7 @@ export const dataDisplayCustomizations = {
   },
   MuiListSubheader: {
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         backgroundColor: 'transparent',
         padding: '4px 8px',
         fontSize: theme.typography.caption.fontSize,
@@ -91,7 +92,7 @@ export const dataDisplayCustomizations = {
       size: 'small',
     },
     styleOverrides: {
-      root: ({ theme }) => ({
+      root: ({ theme }: TODO) => ({
         border: '1px solid',
         borderRadius: '999px',
         [`& .${chipClasses.label}`]: {

@@ -5,11 +5,38 @@
   "projectType": "application",
   "tags": [],
   "targets": {
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
       "options": {
-        "jestConfig": "apps/mikntech/jest.config.ts"
+        "root": "apps/mikntech",
+        "outputPath": "dist/apps/mikntech",
+        "fileReplacements": [
+          {
+            "replace": "apps/mikntech/src/environments/environment.ts",
+            "with": "apps/mikntech/src/environments/environment.prod.ts"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "mikntech:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/mikntech/**/*.{ts,tsx}"]
       }
     }
   }
