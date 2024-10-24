@@ -237,25 +237,21 @@ const apps = [
 const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod'];
-/*
 
-await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
+/*await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
   DEP_REGION,
   projectName,
   apps,
   stagingENVs,
   nodeTag,
-);
+);*/
 
 //
 //
 
 await step2ARNsServices(apps, stagingENVs).then();
-setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 10000);
-*/
-
-step3DNSRecords(DOMAIN, apps, stagingENVs).then();
+setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
 
 //
 
