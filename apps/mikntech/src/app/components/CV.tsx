@@ -6,7 +6,7 @@ import {
   Link,
   Card,
   CardContent,
-} from "@mui/material";
+} from '@mui/material';
 
 export default function CV() {
   return (
@@ -20,11 +20,11 @@ export default function CV() {
         <Typography>
           <Link href="mailto:MNPCMW6444@gmail.com">MNPCMW6444@gmail.com</Link> |
           <Link href="https://linkedin.com/in/michael-nx" target="_blank">
-            {" "}
+            {' '}
             LinkedIn
           </Link>
         </Typography>
-        <Typography variant="body2">Email: michael@miknteh.com</Typography>
+        <Typography variant="body2">Email: michael@mikntech.com</Typography>
       </Box>
 
       {/* Experience Section */}
@@ -123,8 +123,8 @@ export default function CV() {
                 </Typography>
                 <Link href="https://t.ly/d-8BY" target="_blank">
                   failean
-                </Link>{" "}
-                /{" "}
+                </Link>{' '}
+                /{' '}
                 <Link href="https://t.ly/iDNwf" target="_blank">
                   scailean
                 </Link>
