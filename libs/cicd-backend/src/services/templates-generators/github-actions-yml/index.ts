@@ -244,11 +244,11 @@ jobs:
         id: register-task-def-mik${appName}
         run: |
           MIK_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://mik-final-mik${appName}-task-def.json | jq -r '.taskDefinition.taskDefinitionArn')
-          echo "MIK_TASK_DEF_ARN_SERVER=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
+          echo "MIK_TASK_DEF_ARN_${appName.toUpperCase()}=$MIK_TASK_DEF_ARN" >> $GITHUB_ENV
 
       - name: Update ECS Service for mik${appName}
         run: |
-          aws ecs update-service --cluster ${'mik' + clusterName} --service mik${appName} --task-definition $MIK_TASK_DEF_ARN_SERVER
+          aws ecs update-service --cluster ${'mik' + clusterName} --service mik${appName} --task-definition $MIK_TASK_DEF_ARN_${appName.toUpperCase()}
 
 `,
       )
