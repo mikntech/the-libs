@@ -94,7 +94,7 @@ const createProject = async () => {
     ),
   );
   doCommand('echo doing next if needed');
-  nextjss.length > 0 && doCommand(nx + ' add @nx/next');
+  nextjss.length > 0 && doCommand('cd ' + name + ' ' + nx + ' add @nx/next');
   doCommand('echo doing nexts');
   await Promise.all(
     nextjss.map(
