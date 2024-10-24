@@ -4,7 +4,7 @@ FROM 654654441147.dkr.ecr.ca-central-1.amazonaws.com/mikmn/base:$DEP_HASH AS bas
 FROM base AS builder
 WORKDIR /app
 COPY . .
-RUN npx nx build mikntech
+RUN npx nx build miknteh
 
 FROM base AS runner
 WORKDIR /app
@@ -26,8 +26,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/static ./.nex
 
 USER nextjs
 
-EXPOSE 4222
+EXPOSE 3000
 
-ENV PORT=4222
+ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
+
