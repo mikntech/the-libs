@@ -10,9 +10,9 @@ const compat = new FlatCompat({
 });
 
 module.exports = [
-  ...fixupConfigRules(compat.extends('next')),
+  //...fixupConfigRules(compat.extends('next')),
 
-  ...fixupConfigRules(compat.extends('next/core-web-vitals')),
+  //...fixupConfigRules(compat.extends('next/core-web-vitals')),
 
   ...baseConfig,
   ...nx.configs['flat/react-typescript'],
