@@ -57,7 +57,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-          ssh-key: \${{ secrets.MiK_ACTIONS_DEPLOY_KEY }}
+          ssh-key: \${{ secrets.MIK_ACTIONS_DEPLOY_KEY }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -92,7 +92,7 @@ jobs:
       - name: Set up Git with SSH for pushing
         run: |
           mkdir -p ~/.ssh
-          echo "\${{ secrets.MiK_ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          echo "\${{ secrets.MIK_ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           git config user.name '${bumpMessage}'

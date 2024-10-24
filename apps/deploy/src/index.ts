@@ -15,12 +15,14 @@ import {
   getDefaultSecurityGroupId,
   createDNSRecord,
   getZoneIdByDomain,
-  getAccountId,
+  cicdSettings,
+  generateClientDockerfile,
 } from '@the-libs/cicd-backend';
 import { createS3Bucket } from '../../../libs/cicd-backend/src/services/aws/s3';
 import { requestCertificate } from '../../../libs/cicd-backend/src/services/aws/acm';
 import { updateSecurityGroupInboundRules } from '../../../libs/cicd-backend/src/services/aws/security';
 import { printLongText } from '@the-libs/base-shared';
+import { AppType } from '@the-libs/project-generator';
 
 enum Staging {
   'prod' = 'prod',
@@ -29,35 +31,22 @@ enum Staging {
   'dev' = 'dev',
 }
 
-const DOMAIN = 'couple-link.com';
-const DEP_REGION = 'eu-central-1';
-const projectName = 'cl';
-const apps = [
-  {
-    name: 'server',
-    port: 3321,
-    domain: DOMAIN,
-    exactFully: {
-      prod: 'server.couple-link.com',
-      preprod: 'preserver.couple-link.com',
-    },
-  },
-  {
-    name: 'client',
-    port: 5173,
-    domain: DOMAIN,
-    exactFully: {
-      prod: 'couple-link.com',
-      preprod: 'pre.couple-link.com',
-    },
-  },
-];
-const appNames = apps.map(({ name }) => name);
-const nodeTag = '18.20.4';
+const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3 = async (
+  DOMAIN: string,
+  DEP_REGION: string,
+  projectName: string,
+  apps: {
+    name: string;
+    port: number;
+    domain: string;
+    type: AppType;
+    exactFully: { [key in Staging]: string };
+  }[],
+  stagingENVs: (keyof typeof Staging)[],
+  nodeTag: string,
+) => {
+  const appNames = apps.map(({ name }) => name);
 
-const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
-
-const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
   await createHostedZone(DOMAIN);
   enableRegion(DEP_REGION);
 
@@ -90,26 +79,56 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
 
   generateBaseDockerfile({ nodeTag });
 
-  generateCustomServerDockerfile(
-    { nodeTag, customBuildLine: 'RUN npx nx build ' + appNames[0] },
-    projectName,
-    appNames[0],
-    ecrUri,
-    apps[0].port,
-  );
-  generateStandaloneNextDockerfile(
-    {},
-    projectName,
-    await getEcrUri(),
-    appNames[0],
-    apps[0].port,
+  await Promise.all(
+    apps.map(async ({ name, port, type }) => {
+      switch (type) {
+        case AppType.Server:
+          generateCustomServerDockerfile(
+            { nodeTag, customBuildLine: 'RUN npx nx build ' + name },
+            projectName,
+            name,
+            ecrUri,
+            port,
+          );
+          break;
+        case AppType.Client:
+          generateClientDockerfile(
+            {},
+            projectName,
+            await getEcrUri(),
+            appNames[0],
+            apps[0].port,
+          );
+          break;
+        case AppType.Next:
+          generateStandaloneNextDockerfile(
+            {},
+            projectName,
+            await getEcrUri(),
+            appNames[0],
+            apps[0].port,
+          );
+          break;
+      }
+    }),
   );
 
   await Promise.all(
     stagingENVs.map(async (env) => await createECSCluster(env, env === 'prod')),
   );
   await Promise.all(
-    apps.map(async ({ name, port }) => await createTaskDefinition(name, port)),
+    stagingENVs.map(
+      async (env) =>
+        await Promise.all(
+          apps.map(
+            async ({ name, port }) =>
+              await createTaskDefinition(
+                env === Staging.prod ? name : env + name,
+                port,
+              ),
+          ),
+        ),
+    ),
   );
   await Promise.all(
     stagingENVs.map(
@@ -118,7 +137,16 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
   );
 };
 
-const step2ARNsServices = async () => {
+const step2ARNsServices = async (
+  apps: {
+    name: string;
+    port: number;
+    domain: string;
+    type: AppType;
+    exactFully: { [key in Staging]: string };
+  }[],
+  stagingENVs: (keyof typeof Staging)[],
+) => {
   await Promise.all(
     stagingENVs.map(async (longName) => {
       const prefix = longName === 'prod' ? '' : Staging[longName];
@@ -126,7 +154,10 @@ const step2ARNsServices = async () => {
       const certificateARNs = await Promise.all(
         apps.map(
           async ({ domain, exactFully }) =>
-            await requestCertificate(exactFully[longName] || prefix + domain),
+            await requestCertificate(
+              exactFully[longName] ||
+                (prefix !== '' ? prefix + '.' : prefix) + domain,
+            ),
         ),
       );
 
@@ -136,7 +167,7 @@ const step2ARNsServices = async () => {
             await createECSService(
               prefix + name,
               longName,
-              /* 'mik' + */ prefix + name,
+              'mik' + prefix + name,
               port,
               certificateARNs[index],
             ),
@@ -149,31 +180,96 @@ const step2ARNsServices = async () => {
 const step3cpvSecurity = async () => {
   const vpcId = await getDefaultVpcId();
   const securityGroupId = await getDefaultSecurityGroupId(vpcId);
-
   await updateSecurityGroupInboundRules(securityGroupId);
 };
 
-const step4DNSRecords = async () => {
+const step4DNSRecords = async (
+  DOMAIN: string,
+  apps: {
+    name: string;
+    port: number;
+    domain: string;
+    type: AppType;
+    exactFully: { [key in Staging]: string };
+  }[],
+  stagingENVs: (keyof typeof Staging)[],
+) => {
   await Promise.all(
     stagingENVs.map(async (longName) => {
-      apps.map(
-        async ({ name, exactFully }) =>
-          await createDNSRecord(
-            await getZoneIdByDomain(DOMAIN),
-            exactFully[longName] ||
-              (name === 'client' ? '' : name + '.') + DOMAIN,
-            'mik' +
-              (longName === 'prod' ? '' : Staging[longName]) +
-              name +
-              'lb',
-          ),
+      await Promise.all(
+        apps.map(
+          async ({ name, exactFully }) =>
+            await createDNSRecord(
+              await getZoneIdByDomain(DOMAIN),
+              exactFully[longName] ||
+                (name === 'client' ? '' : name + '.') + DOMAIN,
+              'mik' +
+                (longName === 'prod' ? '' : Staging[longName]) +
+                name +
+                'lb',
+            ),
+        ),
       );
     }),
   );
 };
 
-// step2ARNsServices(); /*.then(() => setTimeout(() => , 3000));*/
-// step4DNSRecords();
+//
+
+//
+
+//
+
+//
+
+//
+
+const DOMAIN = 'couple-link.com';
+const DEP_REGION = 'us-east-2';
+if (cicdSettings.aws.region !== DEP_REGION)
+  throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
+const projectName = 'cl';
+const apps = [
+  {
+    name: 'server',
+    port: 4321,
+    domain: DOMAIN,
+    type: AppType.Server,
+    exactFully: {
+      [Staging.prod]: 'server.couple-link.com',
+      [Staging.preprod]: 'preserver.couple-link.com',
+      [Staging.tst]: '',
+      [Staging.dev]: '',
+    },
+  },
+  {
+    name: 'client',
+    port: 5173,
+    domain: DOMAIN,
+    type: AppType.Client,
+    exactFully: {
+      [Staging.prod]: 'couple-link.com',
+      [Staging.preprod]: 'pre.couple-link.com',
+      [Staging.tst]: '',
+      [Staging.dev]: '',
+    },
+  },
+];
+const nodeTag = '18.20.4';
+
+const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
+
+/*step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
+  DOMAIN,
+  DEP_REGION,
+  projectName,
+  apps,
+  stagingENVs,
+  nodeTag,
+).then();*/
+// step2ARNsServices(apps, stagingENVs).then();
+// step3cpvSecurity().then();
+// step4DNSRecords(DOMAIN, apps, stagingENVs).then();
 
 //
 

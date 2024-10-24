@@ -53,6 +53,35 @@ EXPOSE ${port}
   return ret;
 };
 
+export const generateClientDockerfile = (
+  options: Partial<Omit<Options, 'customInstallLine'>>,
+  projectName: string,
+  appName: string,
+  ecrDomain: string,
+  port: number,
+) => {
+  let { nodeTag, log, customBuildLine, customEntryPointExtension } = options;
+  if (nodeTag === undefined) nodeTag = 'lts';
+  if (log === undefined) log = true;
+  const ret = `
+ARG DEP_HASH
+FROM ${ecrDomain}/mik${projectName}/base:$DEP_HASH as builder
+WORKDIR /app
+COPY package.json nx.json tsconfig.base.json ./
+COPY libs/ libs/
+COPY apps/${appName}/ apps/${appName}/
+${customBuildLine ?? `RUN npm run build:${appName}`}
+
+FROM node:${nodeTag}-slim
+WORKDIR /app
+COPY --from=builder /app .
+CMD ["node", "dist/apps/${appName}/server.${customEntryPointExtension ?? 'js'}"]
+EXPOSE ${port}
+`;
+  log && console.log(ret);
+  return ret;
+};
+
 export const generateStandaloneNextDockerfile = (
   options: Partial<
     Omit<Options, 'customInstallLine' | 'customEntryPointExtension' | 'nodeTag'>
