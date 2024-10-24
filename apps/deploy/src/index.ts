@@ -39,7 +39,7 @@ const apps = [
     domain: DOMAIN,
     exactFully: {
       prod: 'server.couple-link.com',
-      pre: 'preserver.couple-link.com',
+      preprod: 'preserver.couple-link.com',
     },
   },
   {
@@ -48,14 +48,14 @@ const apps = [
     domain: DOMAIN,
     exactFully: {
       prod: 'couple-link.com',
-      pre: 'pre.couple-link.com',
+      preprod: 'pre.couple-link.com',
     },
   },
 ];
 const appNames = apps.map(({ name }) => name);
 const nodeTag = '18.20.4';
 
-const stagingENVs: (keyof typeof Staging)[] = ['prod'];
+const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
 
 const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
   await createHostedZone(DOMAIN);
@@ -118,7 +118,12 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
   );
 };
 
-const step2ARNsServices = async () => {
+const step2ARNsServices = async (
+  n1: number,
+  n2: number,
+  n3: number,
+  n4: number,
+) => {
   await Promise.all(
     stagingENVs.map(async (longName) => {
       const prefix = longName === 'prod' ? '' : Staging[longName];
@@ -145,12 +150,12 @@ const step2ARNsServices = async () => {
                 name +
                 ':' +
                 (prefix === ''
-                  ? name === 'mikntech'
-                    ? 2
-                    : 16
-                  : name === 'server'
-                    ? 5
-                    : 3),
+                  ? name === 'server'
+                    ? n1
+                    : n2
+                  : name === 'client'
+                    ? n3
+                    : n4),
               port,
               certificateARNs[index],
             ),
@@ -185,6 +190,10 @@ const step4DNSRecords = async () => {
     }),
   );
 };
+
+// step2ARNsServices(19, 18, 16, 15);
+
+// step4DNSRecords();
 
 //
 
