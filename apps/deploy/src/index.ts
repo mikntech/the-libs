@@ -251,8 +251,10 @@ await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
 //
 //
 */
+/*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
+*/
 
 //
 
