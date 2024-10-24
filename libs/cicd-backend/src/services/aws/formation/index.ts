@@ -78,6 +78,7 @@ export const ecsServiceTemplateGenerator = (
   securityGroup: string,
   subnets: string[],
   vpc: string,
+  containerName: string,
   taskDefinitionArn: string,
   port: number,
   acmArn: string,
@@ -130,7 +131,7 @@ export const ecsServiceTemplateGenerator = (
         DesiredCount: 1,
         LoadBalancers: [
           {
-            ContainerName: 'mik' + appName,
+            ContainerName: containerName,
             ContainerPort: port,
             LoadBalancerName: {
               Ref: 'AWS::NoValue',

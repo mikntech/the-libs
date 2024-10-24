@@ -117,6 +117,7 @@ export const createECSService = async (
     defaultSecurityGroupId,
     subnetIds,
     defaultVpcId,
+    taskDefinitionArn,
     await getLatestTaskDefinitionArn(taskDefinitionArn),
     port,
     acmArn,

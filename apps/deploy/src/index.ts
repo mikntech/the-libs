@@ -261,9 +261,9 @@ const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
   stagingENVs,
   nodeTag,
 ).then();*/
-// step2ARNsServices(apps, stagingENVs).then();
+// await step2ARNsServices(apps, stagingENVs).then();
 // step3cpvSecurity().then();
-// step4DNSRecords(DOMAIN, apps, stagingENVs).then();
+// setTimeout(() => step4DNSRecords(DOMAIN, apps, stagingENVs).then(), 3000);
 
 //
 
