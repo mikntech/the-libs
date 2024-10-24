@@ -7,12 +7,12 @@ export default function Index() {
     logEvent('FROM MN TO MIKN', 'https://server.mikntech.com/analytics')
       .then(() => {
         // Redirect after the fetch call is done
-        window.location.href = 'https://mikntech/who';
+        window.location.href = 'https://mikntech.com/who';
       })
       .catch((error) => {
         console.error('Error sending analytics:', error);
         // Optionally still redirect even if the fetch fails
-        window.location.href = 'https://mikntech/who';
+        window.location.href = 'https://mikntech.com/who';
       });
   }, []);
 
