@@ -178,6 +178,6 @@ jobs:
 
       - name: Update ECS Service for mikmikntech
         run: |
-          aws ecs update-service --cluster mikprod --service mikmikntech --task-definition $MIK_TASK_DEF_ARN_MIKNTECH
+          aws ecs update-service --cluster mikprod --service mikmikntech --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH }}
 
 
