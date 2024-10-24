@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/source",
-  "version": "1.5.130",
+  "version": "1.5.131",
   "license": "MIT",
   "description": "Good unbranded code by Michael Nusair - https://mikntech.com - https://www.linkedin.com/in/michael-nx",
   "scripts": {
@@ -128,6 +128,5 @@
     "zxcvbn": "^4.4.2",
     "next": "^15.0.1"
   },
-  "dependencies": {
-  }
+  "dependencies": {}
 }
