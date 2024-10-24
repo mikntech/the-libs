@@ -63,6 +63,19 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.11.0'
+          
+          
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: \${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: \${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${region}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
 
 ` +
     (bumpVersion
@@ -142,17 +155,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.11.0'
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: \${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: \${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${region}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
 
       - name: Extract version from package.json
         run: |
