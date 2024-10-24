@@ -136,13 +136,7 @@ const step2ARNsServices = async () => {
             await createECSService(
               prefix + name,
               longName,
-              'arn:aws:ecs:' +
-                DEP_REGION +
-                ':' +
-                (await getAccountId()) +
-                ':task-definition/mik' +
-                prefix +
-                name,
+              /* 'mik' + */ prefix + name,
               port,
               certificateARNs[index],
             ),
@@ -178,8 +172,8 @@ const step4DNSRecords = async () => {
   );
 };
 
-//step2ARNsServices()/*.then(() => setTimeout(() => , 3000));*/
-//step4DNSRecords();
+// step2ARNsServices(); /*.then(() => setTimeout(() => , 3000));*/
+// step4DNSRecords();
 
 //
 
