@@ -40,28 +40,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
 
-
-      - name: Bump version in package.json
-        run: |
-          npm version patch --no-git-tag-version
-          NEW_VERSION=$(node -p "require('./package.json').version")
-          git config --global user.email "michael@couple-link.com"
-          git config --global user.name "GitHub Action"
-          git commit -am "CI/CD Version auto-increment to $NEW_VERSION [skip ci]"
-          git tag v$NEW_VERSION
-
-      - name: Set up Git with SSH for pushing
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.MIK_ACTIONS_DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          git config user.name 'CI/CD Version auto-increment to $NEW_VERSION [skip ci]'
-          git config user.email 'GitHub Action'
-          git push git@github.com:${{ github.repository }} HEAD:${{ github.ref_name }}
-
-
-
       - name: Extract version from package.json
         run: |
           echo "VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
