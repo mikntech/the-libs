@@ -15,30 +15,35 @@ enum App {
   Next = 'next',
 }
 
-const createApp = async (nx: string, type: App, appName: string) => {
+const createApp = async (
+  pname: string,
+  nx: string,
+  type: App,
+  appName: string,
+) => {
   switch (type) {
     case App.Server:
-      doCommand(`cd ${name}/apps && mkdir ${appName}`);
-      doCommand(`cd ${name}/apps/${appName} && mkdir src`);
+      doCommand(`cd ${pname}/apps && mkdir ${appName}`);
+      doCommand(`cd ${pname}/apps/${appName} && mkdir src`);
       createAFile(
         'project.json',
         projectJsonTemplate(appName),
-        './' + name + '/apps/' + appName,
+        './' + pname + '/apps/' + appName,
       );
       createAFile(
         'tsconfig.json',
         tsconfigJsonTemplate,
-        './' + name + '/apps/' + appName,
+        './' + pname + '/apps/' + appName,
       );
       createAFile(
         'tsconfig.app.json',
         tsconfigAppJsonTemplate,
-        './' + name + '/apps/' + appName,
+        './' + pname + '/apps/' + appName,
       );
       createAFile(
         'index.ts',
         indexTsTemplate,
-        './' + name + '/apps/' + appName + '/src',
+        './' + pname + '/apps/' + appName + '/src',
       );
       break;
     case App.Client:
@@ -46,7 +51,7 @@ const createApp = async (nx: string, type: App, appName: string) => {
       break;
     case App.Next:
       doCommand(
-        `${nx} g @nx/next:app apps/${appName} --style=@emotion/styled --e2eTestRunner=none --appRouter=true --srcDir=true`,
+        `cd ${pname} && ${nx} g @nx/next:app apps/${appName} --style=@emotion/styled --e2eTestRunner=none --appRouter=true --srcDir=true`,
       );
       break;
   }
@@ -79,13 +84,13 @@ const createProject = async () => {
   doCommand('echo doing servers');
   await Promise.all(
     servers.map(
-      async (appName: string) => await createApp(nx, App.Server, appName),
+      async (appName: string) => await createApp(name, nx, App.Server, appName),
     ),
   );
   doCommand('echo doing clients');
   await Promise.all(
     clients.map(
-      async (appName: string) => await createApp(nx, App.Client, appName),
+      async (appName: string) => await createApp(name, nx, App.Client, appName),
     ),
   );
   doCommand('echo doing next if needed');
@@ -93,7 +98,7 @@ const createProject = async () => {
   doCommand('echo doing nexts');
   await Promise.all(
     nextjss.map(
-      async (appName: string) => await createApp(nx, App.Next, appName),
+      async (appName: string) => await createApp(name, nx, App.Next, appName),
     ),
   );
 
