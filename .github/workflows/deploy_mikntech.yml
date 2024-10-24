@@ -147,19 +147,6 @@ jobs:
         run: |
           echo \VERSION=$(cat package.json | jq -r .version)\ >> $GITHUB_ENV
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-
-
       - name: Fetch current mikmikntech task definition
         id: current-task-def-mikmikntech
         run: |
@@ -179,5 +166,3 @@ jobs:
       - name: Update ECS Service for mikmikntech
         run: |
           aws ecs update-service --cluster mikprod --service mikmikntech --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH }}
-
-
