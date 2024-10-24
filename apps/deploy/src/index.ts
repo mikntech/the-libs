@@ -29,15 +29,27 @@ enum Staging {
   'dev' = 'dev',
 }
 
-const DOMAIN = 'mikntech.com';
-const DEP_REGION = 'ca-central-1';
-const projectName = 'mn';
+const DOMAIN = 'couple-link.com';
+const DEP_REGION = 'eu-central-1';
+const projectName = 'cl';
 const apps = [
   {
-    name: 'mikntech',
-    port: 4222,
+    name: 'server',
+    port: 3321,
     domain: DOMAIN,
-    exactFully: {},
+    exactFully: {
+      prod: 'server.couple-link.com',
+      pre: 'preserver.couple-link.com',
+    },
+  },
+  {
+    name: 'client',
+    port: 5173,
+    domain: DOMAIN,
+    exactFully: {
+      prod: 'couple-link.com',
+      pre: 'pre.couple-link.com',
+    },
   },
 ];
 const appNames = apps.map(({ name }) => name);
@@ -45,7 +57,7 @@ const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 
-const step1 = async () => {
+const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
   await createHostedZone(DOMAIN);
   enableRegion(DEP_REGION);
 
@@ -60,12 +72,12 @@ const step1 = async () => {
             generateYML(
               {
                 appNames,
-                name: longName === 'prod' ? 'deploy_mikntech' : 'prp - main',
-                branchName: longName === 'prod' ? 'main' : 'main',
+                name: longName === 'prod' ? 'prd - release/prod' : 'prp - main',
+                branchName: longName === 'prod' ? 'release/prod' : 'main',
                 clusterName: longName,
                 log: false,
               },
-              'michael@mikntech.com',
+              'michael@couple-link.com',
               projectName,
               DEP_REGION,
             ),
@@ -106,7 +118,7 @@ const step1 = async () => {
   );
 };
 
-const step2 = async () => {
+const step2ARNsServices = async () => {
   await Promise.all(
     stagingENVs.map(async (longName) => {
       const prefix = longName === 'prod' ? '' : Staging[longName];
@@ -148,14 +160,14 @@ const step2 = async () => {
   );
 };
 
-const step3 = async () => {
+const step3cpvSecurity = async () => {
   const vpcId = await getDefaultVpcId();
   const securityGroupId = await getDefaultSecurityGroupId(vpcId);
 
   await updateSecurityGroupInboundRules(securityGroupId);
 };
 
-const step4 = async () => {
+const step4DNSRecords = async () => {
   await Promise.all(
     stagingENVs.map(async (longName) => {
       apps.map(
@@ -173,29 +185,6 @@ const step4 = async () => {
     }),
   );
 };
-
-console.log(
-  printLongText(
-    (
-      await Promise.all(
-        stagingENVs.map((longName: keyof typeof Staging) =>
-          generateYML(
-            {
-              appNames,
-              name: longName === 'prod' ? 'deploy_mikntech' : 'prp - main',
-              branchName: longName === 'prod' ? 'main' : 'main',
-              clusterName: longName,
-              log: false,
-            },
-            'michael@mikntech.com',
-            projectName,
-            DEP_REGION,
-          ),
-        ),
-      )
-    ).join('\n\n\n\n\n\n'),
-  ),
-);
 
 //
 
