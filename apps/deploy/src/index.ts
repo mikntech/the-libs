@@ -174,13 +174,7 @@ const step2ARNsServices = async (
   );
 };
 
-const step3cpvSecurity = async () => {
-  const vpcId = await getDefaultVpcId();
-  const securityGroupId = await getDefaultSecurityGroupId(vpcId);
-  await updateSecurityGroupInboundRules(securityGroupId);
-};
-
-const step4DNSRecords = async (
+const step3DNSRecords = async (
   DOMAIN: string,
   apps: {
     name: string;
@@ -191,6 +185,9 @@ const step4DNSRecords = async (
   }[],
   stagingENVs: (keyof typeof Staging)[],
 ) => {
+  const vpcId = await getDefaultVpcId();
+  const securityGroupId = await getDefaultSecurityGroupId(vpcId);
+  await updateSecurityGroupInboundRules(securityGroupId);
   await Promise.all(
     stagingENVs.map(async (envKey) => {
       await Promise.all(
@@ -262,8 +259,7 @@ const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
   nodeTag,
 ).then();*/
 // await step2ARNsServices(apps, stagingENVs).then();
-// step3cpvSecurity().then();
-// setTimeout(() => step4DNSRecords(DOMAIN, apps, stagingENVs).then(), 3000);
+// setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 3000);
 
 //
 
