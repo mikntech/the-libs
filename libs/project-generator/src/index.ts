@@ -51,7 +51,7 @@ const createApp = async (
       break;
     case App.Next:
       doCommand(
-        `cd ${pname} && ${nx} g @nx/next:app apps/${appName} --style=@emotion/styled --e2eTestRunner=none --appRouter=true --srcDir=true`,
+        `cd ${pname} && ${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`,
       );
       break;
   }
