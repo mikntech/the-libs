@@ -20,7 +20,7 @@ import {
 import { createS3Bucket } from '../../../libs/cicd-backend/src/services/aws/s3';
 import { requestCertificate } from '../../../libs/cicd-backend/src/services/aws/acm';
 import { updateSecurityGroupInboundRules } from '../../../libs/cicd-backend/src/services/aws/security';
-import { printLongTextNicely } from '@the-libs/base-shared';
+import { printLongText } from '@the-libs/base-shared';
 
 enum Staging {
   'prod' = 'prod',
@@ -53,23 +53,25 @@ const step1 = async () => {
 
   const ecrUri = await getEcrUri();
   console.log(
-    printLongTextNicely(
-      await Promise.all(
-        stagingENVs.map((longName: keyof typeof Staging) =>
-          generateYML(
-            {
-              appNames,
-              name: longName === 'prod' ? 'prd - release' : 'prp - main',
-              branchName: longName === 'prod' ? 'release/prod' : 'main',
-              clusterName: longName,
-              log: false,
-            },
-            'michael@cubebox.co.il',
-            projectName,
-            DEP_REGION,
+    printLongText(
+      (
+        await Promise.all(
+          stagingENVs.map((longName: keyof typeof Staging) =>
+            generateYML(
+              {
+                appNames,
+                name: longName === 'prod' ? 'deploy_mikntech' : 'prp - main',
+                branchName: longName === 'prod' ? 'main' : 'main',
+                clusterName: longName,
+                log: false,
+              },
+              'michael@mikntech.com',
+              projectName,
+              DEP_REGION,
+            ),
           ),
-        ),
-      ),
+        )
+      ).join('\n\n\n\n\n\n'),
     ),
   );
   await generateSSHKey();
@@ -171,6 +173,29 @@ const step4 = async () => {
     }),
   );
 };
+
+console.log(
+  printLongText(
+    (
+      await Promise.all(
+        stagingENVs.map((longName: keyof typeof Staging) =>
+          generateYML(
+            {
+              appNames,
+              name: longName === 'prod' ? 'deploy_mikntech' : 'prp - main',
+              branchName: longName === 'prod' ? 'main' : 'main',
+              clusterName: longName,
+              log: false,
+            },
+            'michael@mikntech.com',
+            projectName,
+            DEP_REGION,
+          ),
+        ),
+      )
+    ).join('\n\n\n\n\n\n'),
+  ),
+);
 
 //
 

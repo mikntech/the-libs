@@ -13,5 +13,9 @@ export const formatAddressNicely = (address: SimpleAddress) =>
     .map((key) => (address ? address[key as keyof typeof address] : []))
     .join(', ');
 
+export const printLongText = (text: string) => {
+  return text.replace(/\\n/g, '\n'); // Just replace the escaped newlines if needed
+};
+
 export const printLongTextNicely = (text: any) =>
   JSON.stringify(text, null, 2).replace(/\\n/g, '\n').replace(/"/g, '');

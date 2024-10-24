@@ -89,17 +89,7 @@ jobs:
       : '') +
     `
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: \${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: \${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${region}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
+   
       - name: Extract version from package.json
         run: |
           echo "VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
@@ -248,7 +238,7 @@ jobs:
 
       - name: Update ECS Service for mik${appName}
         run: |
-          aws ecs update-service --cluster ${'mik' + clusterName} --service mik${appName} --task-definition $MIK_TASK_DEF_ARN_${appName.toUpperCase()}
+          aws ecs update-service --cluster ${'mik' + clusterName} --service mik${appName} --task-definition \${{ env.MIK_TASK_DEF_ARN_${appName.toUpperCase()} }} 
 
 `,
       )
