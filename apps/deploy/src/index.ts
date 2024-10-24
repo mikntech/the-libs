@@ -250,8 +250,10 @@ const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 //
 //
 
+/*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
+*/
 
 //
 
