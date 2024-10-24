@@ -4,6 +4,40 @@
   "sourceRoot": "apps/mikntech-mn",
   "projectType": "application",
   "tags": [],
-  "// targets": "to see all targets run: nx show project mikntech-mn --web",
-  "targets": {}
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "root": "apps/mikntech-mn",
+        "outputPath": "dist/apps/mikntech-mn",
+        "fileReplacements": [
+          {
+            "replace": "apps/mikntech-mn/src/environments/environment.ts",
+            "with": "apps/mikntech-mn/src/environments/environment.prod.ts"
+          }
+        ]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "sourceMap": false,
+          "extractCss": true,
+          "namedChunks": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "options": {
+        "buildTarget": "mikntech-mn:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "options": {
+        "lintFilePatterns": ["apps/mikntech-mn/**/*.{ts,tsx}"]
+      }
+    }
+  }
 }

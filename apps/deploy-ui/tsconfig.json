@@ -23,6 +23,11 @@
     "paths": {
       "@the-libs/agi-backend": [
         "libs/agi-backend/src/index.ts"
+      ],  "@the-libs/analytics-backend": [
+        "libs/analytics-backend/src/index.ts"
+      ],
+      "@the-libs/analytics-frontend": [
+        "libs/analytics-frontend/src/index.ts"
       ],
       "@the-libs/auth-backend": [
         "libs/auth-backend/src/index.ts"

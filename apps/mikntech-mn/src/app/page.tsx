@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import { logEvent } from '../../../../libs/analytics-frontend';
+import { logEvent } from '@the-libs/analytics-frontend';
 
 export default function Index() {
   useEffect(() => {
