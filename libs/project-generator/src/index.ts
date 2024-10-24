@@ -76,16 +76,21 @@ const createProject = async () => {
   doCommand(`cd ${name} && npm i -D esbuild`);
   doCommand(`cd ${name} && rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
+  doCommand('echo doing servers');
   await Promise.all(
     servers.map(
       async (appName: string) => await createApp(nx, App.Server, appName),
     ),
   );
+  doCommand('echo doing clients');
   await Promise.all(
     clients.map(
       async (appName: string) => await createApp(nx, App.Client, appName),
     ),
   );
+  doCommand('echo doing next if needed');
+  nextjss.length > 0 && doCommand(nx + ' add @nx/next');
+  doCommand('echo doing nexts');
   await Promise.all(
     nextjss.map(
       async (appName: string) => await createApp(nx, App.Next, appName),
