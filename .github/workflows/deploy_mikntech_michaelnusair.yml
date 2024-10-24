@@ -32,7 +32,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
+          aws-region: us-west-2
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -56,7 +56,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          IMAGE="${ECR_REGISTRY}/mikmkmn/base:${DEP_HASH}"
+          IMAGE="${ECR_REGISTRY}/mikmn/base:${DEP_HASH}"
           if docker manifest inspect $IMAGE > /dev/null 2>&1; then
             echo "BASE_IMAGE_EXISTS=true" >> $GITHUB_ENV
             echo "Image $IMAGE exists."
@@ -71,8 +71,8 @@ jobs:
           DOCKER_BUILDKIT: 1
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          docker build -t $ECR_REGISTRY/mikmkmn/base:${DEP_HASH} -f ./Dockerfile .
-          docker push $ECR_REGISTRY/mikmkmn/base:${DEP_HASH}
+          docker build -t $ECR_REGISTRY/mikmn/base:${DEP_HASH} -f ./Dockerfile .
+          docker push $ECR_REGISTRY/mikmn/base:${DEP_HASH}
   
 
   build_mikmikntech-michaelnusair:
@@ -94,7 +94,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
+          aws-region: us-west-2
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -116,8 +116,8 @@ jobs:
           DOCKER_BUILDKIT: 1
         run: |
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
-          docker build --build-arg DEP_HASH=${DEP_HASH} -t $ECR_REGISTRY/mikmkmn/mikntech-michaelnusair:$VERSION -f ./apps/mikntech-michaelnusair/Dockerfile .
-          docker push $ECR_REGISTRY/mikmkmn/mikntech-michaelnusair:$VERSION
+          docker build --build-arg DEP_HASH=${DEP_HASH} -t $ECR_REGISTRY/mikmn/mikntech-michaelnusair:$VERSION -f ./apps/mikntech-michaelnusair/Dockerfile .
+          docker push $ECR_REGISTRY/mikmn/mikntech-michaelnusair:$VERSION
   
   
 
@@ -130,7 +130,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.MIK_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.MIK_AWS_SECRET_ACCESS_KEY }}
-          aws-region: ca-central-1
+          aws-region: us-west-2
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -161,7 +161,7 @@ jobs:
 
       - name: Update task definition for mikmikntech-michaelnusair
         run: |
-          jq --arg image_tag "$VERSION" --arg ecr_registry "${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mikmkmn/mikntech-michaelnusair:" + $image_tag' mik-current-mikmikntech-michaelnusair-task-def.json > mik-intermediate-mikmikntech-michaelnusair-task-def.json
+          jq --arg image_tag "$VERSION" --arg ecr_registry "${{ steps.login-ecr.outputs.registry }}" '.taskDefinition.containerDefinitions[0].image = $ecr_registry + "/mikmn/mikntech-michaelnusair:" + $image_tag' mik-current-mikmikntech-michaelnusair-task-def.json > mik-intermediate-mikmikntech-michaelnusair-task-def.json
           jq '.taskDefinition | del(.taskDefinitionArn, .status, .revision, .registeredAt, .registeredBy, .requiresAttributes, .compatibilities)' mik-intermediate-mikmikntech-michaelnusair-task-def.json > mik-final-mikmikntech-michaelnusair-task-def.json
 
       - name: Register task definition for mikmikntech-michaelnusair
@@ -173,3 +173,4 @@ jobs:
       - name: Update ECS Service for mikmikntech-michaelnusair
         run: |
           aws ecs update-service --cluster mikprod --service mikmikntech-michaelnusair --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH-MICHAELNUSAIR }} 
+

@@ -215,32 +215,20 @@ const step3DNSRecords = async (
 
 //
 
-const DOMAIN = 'couple-link.com';
-const DEP_REGION = 'us-east-2';
+const DOMAIN = 'michael-nusair.com';
+const DEP_REGION = 'us-west-2';
 if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
-const projectName = 'cl';
+const projectName = 'mn';
 const apps = [
   {
-    name: 'server',
-    port: 4321,
+    name: 'mikntech-michaelnusair',
+    port: 3000,
     domain: DOMAIN,
-    type: AppType.Server,
+    type: AppType.Next,
     exactFully: {
-      [Staging.prod]: 'server.couple-link.com',
-      [Staging.preprod]: 'preserver.couple-link.com',
-      [Staging.tst]: '',
-      [Staging.dev]: '',
-    },
-  },
-  {
-    name: 'client',
-    port: 5173,
-    domain: DOMAIN,
-    type: AppType.Client,
-    exactFully: {
-      [Staging.prod]: 'couple-link.com',
-      [Staging.preprod]: 'pre.couple-link.com',
+      [Staging.prod]: 'michael-nusair.com',
+      [Staging.preprod]: '',
       [Staging.tst]: '',
       [Staging.dev]: '',
     },
@@ -248,23 +236,22 @@ const apps = [
 ];
 const nodeTag = '18.20.4';
 
-const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
+const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 
-/*step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
+await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
   DEP_REGION,
   projectName,
   apps,
   stagingENVs,
   nodeTag,
-).then();*/
+);
 
 //
+//
 
-/*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 3000);
-*/
 
 //
 
