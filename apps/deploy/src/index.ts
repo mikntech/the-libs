@@ -57,13 +57,13 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3 = async (
     printLongText(
       (
         await Promise.all(
-          stagingENVs.map((longName: keyof typeof Staging) =>
+          stagingENVs.map((envKey: keyof typeof Staging) =>
             generateYML(
               {
                 appNames,
-                name: longName === 'prod' ? 'prd - release/prod' : 'prp - main',
-                branchName: longName === 'prod' ? 'release/prod' : 'main',
-                clusterName: longName,
+                name: envKey === 'prod' ? 'prd - release/prod' : 'prp - main',
+                branchName: envKey === 'prod' ? 'release/prod' : 'main',
+                clusterName: envKey,
                 log: false,
               },
               'michael@couple-link.com',
@@ -130,11 +130,11 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3 = async (
         ),
     ),
   );
-  await Promise.all(
+  /* await Promise.all(
     stagingENVs.map(
-      async (longName) => await createS3Bucket('cubebox-' + longName, true),
+      async (envKey) => await createS3Bucket('-' + envKey, true),
     ),
-  );
+  );*/
 };
 
 const step2ARNsServices = async (
@@ -148,17 +148,14 @@ const step2ARNsServices = async (
   stagingENVs: (keyof typeof Staging)[],
 ) => {
   await Promise.all(
-    stagingENVs.map(async (longName) => {
-      const prefix = longName === 'prod' ? '' : Staging[longName];
-
+    stagingENVs.map(async (envKey) => {
+      const prefix = envKey === 'prod' ? '' : Staging[envKey];
       const certificateARNs = await Promise.all(
-        apps.map(
-          async ({ domain, exactFully }) =>
-            await requestCertificate(
-              exactFully[longName] ||
-                (prefix !== '' ? prefix + '.' : prefix) + domain,
-            ),
-        ),
+        apps.map(async ({ name, exactFully }) => {
+          if (!exactFully[Staging[envKey]])
+            throw new Error('exactFully is must for ' + name + ' ' + envKey);
+          return await requestCertificate(exactFully[Staging[envKey]]);
+        }),
       );
 
       await Promise.all(
@@ -166,8 +163,8 @@ const step2ARNsServices = async (
           async ({ name, port }, index) =>
             await createECSService(
               prefix + name,
-              longName,
-              'mik' + prefix + name,
+              envKey,
+              'mik' + (envKey === 'prod' ? '' : envKey) + name,
               port,
               certificateARNs[index],
             ),
@@ -195,18 +192,15 @@ const step4DNSRecords = async (
   stagingENVs: (keyof typeof Staging)[],
 ) => {
   await Promise.all(
-    stagingENVs.map(async (longName) => {
+    stagingENVs.map(async (envKey) => {
       await Promise.all(
         apps.map(
           async ({ name, exactFully }) =>
             await createDNSRecord(
               await getZoneIdByDomain(DOMAIN),
-              exactFully[longName] ||
+              exactFully[Staging[envKey]] ||
                 (name === 'client' ? '' : name + '.') + DOMAIN,
-              'mik' +
-                (longName === 'prod' ? '' : Staging[longName]) +
-                name +
-                'lb',
+              'mik' + (envKey === 'prod' ? '' : Staging[envKey]) + name + 'lb',
             ),
         ),
       );
