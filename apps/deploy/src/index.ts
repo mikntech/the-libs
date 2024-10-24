@@ -118,12 +118,7 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustesS3 = async () => {
   );
 };
 
-const step2ARNsServices = async (
-  n1: number,
-  n2: number,
-  n3: number,
-  n4: number,
-) => {
+const step2ARNsServices = async () => {
   await Promise.all(
     stagingENVs.map(async (longName) => {
       const prefix = longName === 'prod' ? '' : Staging[longName];
@@ -147,15 +142,7 @@ const step2ARNsServices = async (
                 (await getAccountId()) +
                 ':task-definition/mik' +
                 prefix +
-                name +
-                ':' +
-                (prefix === ''
-                  ? name === 'server'
-                    ? n1
-                    : n2
-                  : name === 'client'
-                    ? n3
-                    : n4),
+                name,
               port,
               certificateARNs[index],
             ),
@@ -191,9 +178,8 @@ const step4DNSRecords = async () => {
   );
 };
 
-// step2ARNsServices(19, 18, 16, 15);
-
-// step4DNSRecords();
+//step2ARNsServices()/*.then(() => setTimeout(() => , 3000));*/
+//step4DNSRecords();
 
 //
 

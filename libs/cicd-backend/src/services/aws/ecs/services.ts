@@ -12,6 +12,11 @@ const {
   DescribeVpcsCommand,
   DescribeSubnetsCommand,
 } = require('@aws-sdk/client-ec2');
+const {
+  ECSClient,
+  ListTaskDefinitionsCommand,
+  DescribeTaskDefinitionCommand,
+} = require('@aws-sdk/client-ecs');
 
 export const getDefaultVpcId = async () => {
   const ec2Client = createClient<typeof EC2Client>(EC2Client);
@@ -53,6 +58,44 @@ export const getAllSubnetIds = async (defaultVpcId: string) => {
   }
 };
 
+export const getLatestTaskDefinitionArn = async (familyPrefix: string) => {
+  try {
+    const ecsClient = createClient<typeof ECSClient>(ECSClient);
+
+    const listCommand = new ListTaskDefinitionsCommand({
+      familyPrefix,
+      sort: 'DESC',
+      maxResults: 1,
+    });
+
+    const listResponse = await ecsClient.send(listCommand);
+
+    if (
+      !listResponse.taskDefinitionArns ||
+      listResponse.taskDefinitionArns.length === 0
+    ) {
+      throw new Error('No task definitions found for the specified family');
+    }
+
+    const latestTaskDefinitionArn = listResponse.taskDefinitionArns[0];
+
+    const describeCommand = new DescribeTaskDefinitionCommand({
+      taskDefinition: latestTaskDefinitionArn,
+    });
+
+    const describeResponse = await ecsClient.send(describeCommand);
+
+    console.log(
+      'Latest Task Definition Details:',
+      describeResponse.taskDefinition,
+    );
+
+    return latestTaskDefinitionArn;
+  } catch (error) {
+    console.error('Error retrieving latest task definition ARN:', error);
+  }
+};
+
 export const createECSService = async (
   appName: string,
   clusterName: string,
@@ -74,7 +117,7 @@ export const createECSService = async (
     defaultSecurityGroupId,
     subnetIds,
     defaultVpcId,
-    taskDefinitionArn,
+    await getLatestTaskDefinitionArn(taskDefinitionArn),
     port,
     acmArn,
     spinsDown,
