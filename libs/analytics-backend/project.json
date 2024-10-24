@@ -1,0 +1,47 @@
+{
+  "name": "analytics-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/analytics-backend/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/analytics-backend",
+        "tsConfig": "libs/analytics-backend/tsconfig.lib.json",
+        "project": "libs/analytics-backend/package.json",
+        "entryFile": "libs/analytics-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/analytics-backend/src",
+            "output": "."
+          }
+        ],
+        "external": ["dotenv", "@azure/openai", "openai", "gpt-tokenizer", "@the-libs/base-shared"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}
