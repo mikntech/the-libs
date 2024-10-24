@@ -215,19 +215,19 @@ const step3DNSRecords = async (
 
 //
 
-const DOMAIN = 'michael-nusair.com';
-const DEP_REGION = 'us-west-2';
+const DOMAIN = 'the-libs.com';
+const DEP_REGION = 'us-west-1';
 if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
 const projectName = 'mn';
 const apps = [
   {
-    name: 'mikntech-mn',
+    name: 'mikntech-tl',
     port: 3000,
     domain: DOMAIN,
     type: AppType.Next,
     exactFully: {
-      [Staging.prod]: 'michael-nusair.com',
+      [Staging.prod]: 'the-libs.com',
       [Staging.preprod]: '',
       [Staging.tst]: '',
       [Staging.dev]: '',
@@ -238,14 +238,14 @@ const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 
-/*await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
+await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
   DEP_REGION,
   projectName,
   apps,
   stagingENVs,
   nodeTag,
-);*/
+);
 
 //
 //
