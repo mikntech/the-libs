@@ -26,8 +26,8 @@
     "**/*.jsx",
     "**/*.ts",
     "**/*.tsx",
-    "../../apps/mikntech-thelibs/.next/types/**/*.ts",
-    "../../dist/apps/mikntech-thelibs/.next/types/**/*.ts",
+    "../../apps/mikntech-tl/.next/types/**/*.ts",
+    "../../dist/apps/mikntech-tl/.next/types/**/*.ts",
     "next-env.d.ts",
     ".next/types/**/*.ts"
   ],
