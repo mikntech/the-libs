@@ -5,7 +5,7 @@ FROM 654654441147.dkr.ecr.us-west-2.amazonaws.com/mikmn/base:$DEP_HASH AS base
 FROM base AS builder
 WORKDIR /app
 COPY . .
-RUN npm run build:mikntech-mn
+RUN npx nx build mikntech-mn
 
 FROM base AS runner
 WORKDIR /app
