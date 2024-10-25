@@ -97,7 +97,8 @@ export const genAuthControllers = <
               ? getExpressSettings<{ single: string }>().clientDomains.single
               : getExpressSettings<{
                   [key: string]: string;
-                }>().clientDomains[userType])
+                }>().clientDomains[userType]
+            ).replace(/^https?:\/\//, '')
           : 'localhost',
       maxAge: expirationTime,
       httpOnly: true,
