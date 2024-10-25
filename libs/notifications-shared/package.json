@@ -5,8 +5,8 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "mongoose": "^8.6.2",
-    "@the-libs/auth-shared": "^1.2.19"
+    "mongoose": "^8.7.3",
+    "@the-libs/auth-shared": "^1.8.13"
   },
   "type": "module",
   "main": "./index.js",

@@ -5,7 +5,7 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "mongoose": "^8.6.2"
+    "mongoose": "^8.7.3"
   },
   "type": "module",
   "main": "./index.js",
