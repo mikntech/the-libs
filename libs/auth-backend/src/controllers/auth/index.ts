@@ -62,14 +62,41 @@ export const genAuthControllers = <
     }
   };
 
-  const generateURLWithParams = (params: string, userType: string) =>
-    `${
+  const generateURLWithParams = (params: string, userType: string) => {
+    console.log('strategy.multiClientType: ', strategy.multiClientType);
+    console.log('MultiClientType.SINGLE: ', MultiClientType.SINGLE);
+    console.log(
+      'strategy.multiClientType === MultiClientType.SINGLE: ',
+      strategy.multiClientType === MultiClientType.SINGLE,
+    );
+    console.log('getExpressSettings<any>(): ', getExpressSettings<any>());
+    console.log(
+      'getExpressSettings<any>().clientDomains: ',
+      getExpressSettings<any>().clientDomains,
+    );
+    console.log('userType: ', userType);
+    console.log(
+      'getExpressSettings<{ single: string }>().clientDomains.single: ',
+      getExpressSettings<{ single: string }>().clientDomains.single,
+    );
+    console.log(
+      'getExpressSettings<{[key: string]: string;}>().clientDomains[userType]: ',
+      getExpressSettings<{
+        [key: string]: string;
+      }>().clientDomains[userType],
+    );
+
+    const URLPart1 = `${
       strategy.multiClientType === MultiClientType.SINGLE
         ? getExpressSettings<{ single: string }>().clientDomains.single
         : getExpressSettings<{
             [key: string]: string;
           }>().clientDomains[userType]
-    }/?` + params;
+    }/?`;
+    console.log('URLPart1: ', URLPart1);
+    console.log('params: ', params);
+    return URLPart1 + params;
+  };
 
   const generateJWT = ({ _id }: User, userType: UserType) =>
     sign(
