@@ -1,33 +1,32 @@
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
 import { getExpressSettings } from '@the-libs/express-backend';
-import { InvalidInputError, TODO, SomeEnum } from '@the-libs/base-shared';
+import { InvalidInputError, TODO } from '@the-libs/base-shared';
 import {
+  authSettings,
+  MultiClientType,
   MultiUserType,
   passResetRequest,
   registrationRequest,
   Strategy,
-  authSettings,
-  MultiClientType,
 } from '@the-libs/auth-backend';
-import { User, SomeRequest } from '@the-libs/auth-shared';
-
-const { genSalt, hash } = require('bcrypt');
-
-const { sign } = require('jsonwebtoken');
-
+import { SomeRequest, User } from '@the-libs/auth-shared';
 import type { CookieOptions } from 'express';
-const zxcvbn = require('zxcvbn');
-
 import type { Model } from 'mongoose';
 import { sendEmail } from '@the-libs/email-backend';
 import {
   findDocs,
   mongoSettings,
-  validateDocument,
   NodeEnvironment,
+  validateDocument,
 } from '@the-libs/mongo-backend';
+
+const require = createRequire(import.meta.url);
+
+const { genSalt, hash } = require('bcrypt');
+
+const { sign } = require('jsonwebtoken');
+
+const zxcvbn = require('zxcvbn');
 
 export const JWT_COOKIE_NAME = 'jwt';
 
@@ -88,11 +87,15 @@ export const genAuthControllers = <
     name,
     val,
     options: {
-      httpOnly: true,
-      sameSite:
-        mongoSettings.nodeEnv === NodeEnvironment.Development ? 'lax' : 'none',
-      secure: mongoSettings.nodeEnv === NodeEnvironment.Production,
-      ...(expirationDate ? { expires: expirationDate } : {}),
+      httpOnly: true, // Keeps the cookie inaccessible from JavaScript
+      secure: mongoSettings.nodeEnv === NodeEnvironment.Production, // Ensures cookies are sent over HTTPS in production
+      sameSite: 'lax', // Allows cookies to be sent on same-site requests
+      path: '/', // Ensures the cookie is available throughout the app
+      domain:
+        mongoSettings.nodeEnv === NodeEnvironment.Production
+          ? '.cubebox.co.il'
+          : 'localhost', // Adjust domain for production
+      maxAge: 24 * 60 * 60 * 1000, // Optional: Set a lifetime if required (24 hours in this case)
     } as CookieOptions,
   });
 
