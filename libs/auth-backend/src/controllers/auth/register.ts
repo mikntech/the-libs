@@ -142,6 +142,7 @@ export const genRegisterControllers = <
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         generateJWT(savedUser, doc.userType as unknown as UserType),
+        doc.userType as unknown as UserType,
       ),
     };
   };

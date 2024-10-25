@@ -90,13 +90,14 @@ export const genLogControllers = <
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         await getToken(email, password, userType as TODO),
+        userType,
       ),
     };
   };
 
   const logOut = async () => ({
     statusCode: 200,
-    cookie: generateSecureCookie(JWT_COOKIE_NAME, '', new Date(0)),
+    cookie: generateSecureCookie(JWT_COOKIE_NAME, '', 'userType', 0),
   });
 
   return {
