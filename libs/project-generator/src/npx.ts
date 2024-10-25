@@ -7,7 +7,13 @@ import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
 import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
 import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
 import { askQuestions, NXGOptions } from './questions.js';
-import { createAFile, doCommand, nxGen } from './commands.js';
+import {
+  createAFile,
+  doCommand,
+  doCommandInD,
+  log,
+  nxGen,
+} from './commands.js';
 import { AppType } from './types.js';
 
 const createApp = async (
@@ -18,8 +24,8 @@ const createApp = async (
 ) => {
   switch (type) {
     case AppType.Server:
-      doCommand(`cd ${pname}/apps && mkdir ${appName}`);
-      doCommand(`cd ${pname}/apps/${appName} && mkdir src`);
+      doCommandInD(`${pname}/apps`, `mkdir ${appName}`);
+      doCommandInD(`${pname}/apps/${appName}`, `mkdir src`);
       createAFile(
         'project.json',
         projectJsonTemplate(appName),
@@ -45,9 +51,18 @@ const createApp = async (
       // need to ideate
       break;
     case AppType.Next:
-      doCommand(
-        `cd ${pname} && ${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`,
+      doCommandInD(
+        pname,
+        `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`,
       );
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf public/.gitkeep');
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf specs');
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf jest.config.ts');
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf src/app/api');
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.spec.json');
+      doCommandInD(pname, 'rm -rf ./jest.config.ts');
+      doCommandInD(pname, 'rm -rf ./jest.preset.ts');
+
       break;
   }
 };
@@ -64,35 +79,36 @@ const createProject = async () => {
   --interactive=false \\
   --skipGit=false \\
   --npmScope=${name}`);
-  doCommand(`rm -rf ./${name}/packages`);
-  doCommand(`rm -rf ./${name}/README.md`);
-  doCommand(`rm -rf ./${name}/.gitignore`);
+  doCommandInD(`${name}`, `rm -rf packages`);
+  doCommandInD(`${name}`, `rm -rf README.md`);
+  doCommandInD(`${name}`, `rm -rf .gitignore`);
   createAFile('.gitignore', gitignoreTemplate, name);
-  doCommand(
-    `cd ${name} && npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
+  doCommandInD(
+    name,
+    `npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
-  doCommand(`cd ${name} && mkdir apps`);
-  doCommand(`cd ${name} && npm i -D @nx/esbuild`);
-  doCommand(`cd ${name} && npm i -D esbuild`);
-  doCommand(`cd ${name} && rm -f ./tsconfig.base.json`);
+  doCommandInD(name, `mkdir apps`);
+  doCommandInD(name, `npm i -D @nx/esbuild`);
+  doCommandInD(name, `npm i -D esbuild`);
+  doCommandInD(name, `rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
-  doCommand('echo doing servers');
+  log('doing servers');
   await Promise.all(
     servers.map(
       async (appName: string) =>
         await createApp(name, nx, AppType.Server, appName),
     ),
   );
-  doCommand('echo doing clients');
+  log('doing clients');
   await Promise.all(
     clients.map(
       async (appName: string) =>
         await createApp(name, nx, AppType.Client, appName),
     ),
   );
-  doCommand('echo doing next if needed');
+  log('doing next if needed');
   nextjss.length > 0 && doCommand('cd ' + name + ' && ' + nx + ' add @nx/next');
-  doCommand('echo doing nexts');
+  log('doing nexts');
   await Promise.all(
     nextjss.map(
       async (appName: string) =>
@@ -100,9 +116,9 @@ const createProject = async () => {
     ),
   );
 
-  ///
+  /// cicd?
 
-  doCommand(`cd ${name} && git add .`);
+  doCommandInD(name, `git add .`);
 };
 
 createProject();

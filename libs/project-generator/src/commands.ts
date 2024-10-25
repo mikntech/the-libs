@@ -9,6 +9,13 @@ export const doCommand = (cmnd: string) =>
     stdio: 'inherit',
   });
 
+export const doCommandInD = (d: string, cmnd: string) =>
+  execSync('cd ' + d + ' && ' + cmnd, {
+    stdio: 'inherit',
+  });
+
+export const log = (text: string) => doCommand('echo ' + text);
+
 export const createAFile = (
   name: string,
   content: string,
