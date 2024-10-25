@@ -21,8 +21,8 @@ import {
   nxGen,
 } from './commands.js';
 import { AppType } from './types.js';
-import { nextConfigJsTemplate } from './templates/nextConfigJs';
-import { nxJsonTemplate } from './templates/nxJson';
+import { nextConfigJsTemplate } from './templates/nextConfigJs.js';
+import { nxJsonTemplate } from './templates/nxJson.js';
 
 const createApp = async (
   pname: string,
