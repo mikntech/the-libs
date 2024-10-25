@@ -83,27 +83,16 @@ export const genAuthControllers = <
   const generateSecureCookie = (
     name: string,
     val: string,
-    userType: UserType,
-    expirationTime: number = 24 * 60 * 60 * 1000,
+    expirationDate?: Date,
   ) => ({
     name,
     val,
     options: {
-      path: '/',
-      domain:
-        mongoSettings.nodeEnv === NodeEnvironment.Production
-          ? '.' +
-            (strategy.multiClientType === MultiClientType.SINGLE
-              ? getExpressSettings<{ single: string }>().clientDomains.single
-              : getExpressSettings<{
-                  [key: string]: string;
-                }>().clientDomains[userType])
-          : 'localhost',
-      maxAge: expirationTime,
       httpOnly: true,
       sameSite:
         mongoSettings.nodeEnv === NodeEnvironment.Development ? 'lax' : 'none',
       secure: mongoSettings.nodeEnv === NodeEnvironment.Production,
+      ...(expirationDate ? { expires: expirationDate } : {}),
     } as CookieOptions,
   });
 
