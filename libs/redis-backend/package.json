@@ -5,7 +5,7 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.8.13",
+    "@the-libs/base-shared": "^1.8.14",
     "bull": "^4.16.3",
     "dotenv": "^16.4.5",
     "ioredis": "^5.4.1",
