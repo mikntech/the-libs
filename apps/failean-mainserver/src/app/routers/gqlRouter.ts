@@ -1,10 +1,10 @@
-import express from "express";
+import express from 'express';
 
 const router = express.Router();
 
 router.use(express.urlencoded({ extended: true }));
 
-router.get("/s", async (req, res) => {
+router.get('/s', async (req, res) => {
   return res.status(200).send(`
   <html><head>
 <script src="https://embeddable-sandbox.cdn.apollographql.com/_latest/embeddable-sandbox.umd.production.min.js"></script> 

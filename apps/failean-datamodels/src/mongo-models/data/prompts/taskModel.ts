@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const taskModel = new mongoose.Schema(
   {
@@ -12,7 +12,7 @@ const taskModel = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default taskModel;

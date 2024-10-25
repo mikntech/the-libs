@@ -28,7 +28,13 @@
             "output": "."
           }
         ],
-        "external": ["dotenv", "bull", "@the-libs/base-shared", "pubsub-js", "ioredis"]
+        "external": [
+          "dotenv",
+          "bull",
+          "@the-libs/base-shared",
+          "pubsub-js",
+          "ioredis"
+        ]
       },
       "dependsOn": [
         {

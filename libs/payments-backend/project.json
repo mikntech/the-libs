@@ -28,7 +28,16 @@
             "output": "."
           }
         ],
-        "external": ["express", "@the-libs/express-backend", "@the-libs/auth-backend", "dotenv", "@the-libs/base-shared", "@the-libs/mongo-backend", "mongodb", "stripe"]
+        "external": [
+          "express",
+          "@the-libs/express-backend",
+          "@the-libs/auth-backend",
+          "dotenv",
+          "@the-libs/base-shared",
+          "@the-libs/mongo-backend",
+          "mongodb",
+          "stripe"
+        ]
       }
     },
     "nx-release-publish": {

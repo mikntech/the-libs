@@ -1,6 +1,9 @@
 {
   "name": "@the-libs/email-backend",
   "version": "1.1.42",
+  "scripts": {
+    "update": "npx --yes npm-check-updates -u"
+  },
   "dependencies": {
     "@sendgrid/mail": "^8.1.3",
     "@the-libs/base-shared": "^1.5.122",

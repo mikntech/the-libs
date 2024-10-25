@@ -1,11 +1,11 @@
-import { Box, Container, Grid, TextField, Typography } from "@mui/material";
-import { useState } from "react";
-import Button from "@mui/material/Button";
+import { Box, Container, Grid, TextField, Typography } from '@mui/material';
+import { useState } from 'react';
+import Button from '@mui/material/Button';
 
 const Contact = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
 
   return (
     <Container>

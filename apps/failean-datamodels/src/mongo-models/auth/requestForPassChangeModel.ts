@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const requestForPassChangeModel = new mongoose.Schema(
   {
@@ -13,7 +13,7 @@ const requestForPassChangeModel = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default requestForPassChangeModel;

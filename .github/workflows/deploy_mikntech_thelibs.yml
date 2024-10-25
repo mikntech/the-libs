@@ -5,7 +5,6 @@ on:
     branches:
       - main
 
-
 permissions:
   actions: read
   contents: read
@@ -27,7 +26,6 @@ jobs:
         with:
           node-version: '18'
 
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -38,7 +36,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-
 
       - name: Extract version from package.json
         run: |
@@ -73,7 +70,6 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/mikmn/base:${DEP_HASH} -f ./Dockerfile .
           docker push $ECR_REGISTRY/mikmn/base:${DEP_HASH}
-  
 
   build_mikmikntech-tl:
     needs: prepare
@@ -118,11 +114,9 @@ jobs:
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
           docker build --build-arg DEP_HASH=${DEP_HASH} -t $ECR_REGISTRY/mikmn/mikntech-tl:$VERSION -f ./apps/mikntech-tl/Dockerfile .
           docker push $ECR_REGISTRY/mikmn/mikntech-tl:$VERSION
-  
-  
 
   deploy_to_ecs:
-    needs: [ prepare, build_mikmikntech-tl ]
+    needs: [prepare, build_mikmikntech-tl]
     runs-on: ubuntu-latest
     steps:
       - name: Configure AWS credentials
@@ -150,10 +144,6 @@ jobs:
         run: |
           echo "VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
 
-
-
-
-
       - name: Fetch current mikmikntech-tl task definition
         id: current-task-def-mikmikntech-tl
         run: |
@@ -172,5 +162,4 @@ jobs:
 
       - name: Update ECS Service for mikmikntech-tl
         run: |
-          aws ecs update-service --cluster mikprod --service mikmikntech-tl --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH-TL }} 
-
+          aws ecs update-service --cluster mikprod --service mikmikntech-tl --task-definition ${{ env.MIK_TASK_DEF_ARN_MIKNTECH-TL }}

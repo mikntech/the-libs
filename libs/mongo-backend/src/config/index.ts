@@ -12,7 +12,6 @@ export enum NodeEnvironment {
   Production = 'production',
 }
 
-
 export interface MongoSettings {
   nodeEnv: NodeEnvironment;
   mongoURI: string;
@@ -32,7 +31,5 @@ export const mongoSettings: MongoSettings = {
     : NodeEnvironment.Development,
   mongoURI:
     process.env['MONGO_URI'] ??
-    (isProduction
-      ? ''
-      : 'mongodb://localhost:27017/error'),
+    (isProduction ? '' : 'mongodb://localhost:27017/error'),
 };

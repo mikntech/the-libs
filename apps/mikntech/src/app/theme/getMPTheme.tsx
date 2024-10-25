@@ -1,12 +1,12 @@
-import { getDesignTokens } from "./themePrimitives";
+import { getDesignTokens } from './themePrimitives';
 import {
   inputsCustomizations,
   dataDisplayCustomizations,
   feedbackCustomizations,
   navigationCustomizations,
   surfacesCustomizations,
-} from "./customizations";
-import { PaletteMode } from "@mui/material/styles";
+} from './customizations';
+import { PaletteMode } from '@mui/material/styles';
 
 export default function getMPTheme(mode: PaletteMode) {
   return {

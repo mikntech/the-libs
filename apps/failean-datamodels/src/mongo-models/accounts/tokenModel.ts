@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const tokenModel = new mongoose.Schema(
   {
@@ -8,7 +8,7 @@ const tokenModel = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default tokenModel;

@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
 interface Answer {
   question: string;
@@ -23,7 +23,7 @@ const answerSchema = new mongoose.Schema<Answer>(
     failingScore: { type: Number, required: true },
     leanScore: { type: Number, required: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const stepSchema = new mongoose.Schema<Step>(
@@ -31,7 +31,7 @@ const stepSchema = new mongoose.Schema<Step>(
     title: { type: String, required: true },
     answers: [answerSchema],
   },
-  { _id: false }
+  { _id: false },
 );
 
 const critiqModel = new mongoose.Schema<CritiqDocument>(
@@ -42,7 +42,7 @@ const critiqModel = new mongoose.Schema<CritiqDocument>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default critiqModel;

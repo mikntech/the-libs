@@ -1,6 +1,6 @@
 export const signupreq = (url: string) => ({
-    subject: "Complete Your Failean Account Setup",
-    body: `<!DOCTYPE html>
+  subject: 'Complete Your Failean Account Setup',
+  body: `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -78,8 +78,8 @@ export const signupreq = (url: string) => ({
 });
 
 export const passreset = (url: string) => ({
-    subject: "Reset Your Password - Failean",
-    body: `<!DOCTYPE html>
+  subject: 'Reset Your Password - Failean',
+  body: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -158,8 +158,8 @@ export const passreset = (url: string) => ({
 });
 
 export const websiteSignup = (url: string) => ({
-    subject: "Complete Your Registration at Failean",
-    body: `<!DOCTYPE html>
+  subject: 'Complete Your Registration at Failean',
+  body: `<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -241,8 +241,8 @@ export const websiteSignup = (url: string) => ({
 });
 
 export const waitListReady = (name: string) => ({
-    subject: "Early Access Activation: Start Exploring Now",
-    body: `<!DOCTYPE html>
+  subject: 'Early Access Activation: Start Exploring Now',
+  body: `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -291,7 +291,7 @@ export const waitListReady = (name: string) => ({
     </div>
 
     <div class="content">
-        <p>Hello ${name === "Unknown" ? "there" : name},</p>
+        <p>Hello ${name === 'Unknown' ? 'there' : name},</p>
 
         <p>We hope this message finds you in good spirits. This is Michael, CEO of Failean LLC, and we're thrilled to announce your early access activation to our anticipated new offering.</p>
 

@@ -28,7 +28,12 @@
             "output": "."
           }
         ],
-        "external" : ["dotenv", "@the-libs/base-backend", "@the-libs/base-shared", "@sendgrid/mail"]
+        "external": [
+          "dotenv",
+          "@the-libs/base-backend",
+          "@the-libs/base-shared",
+          "@sendgrid/mail"
+        ]
       }
     },
     "nx-release-publish": {

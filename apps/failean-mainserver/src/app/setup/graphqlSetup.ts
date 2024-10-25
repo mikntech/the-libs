@@ -1,11 +1,11 @@
-import { makeExecutableSchema } from "@graphql-tools/schema";
-import { ApolloServer } from "apollo-server-express";
-import typeDefs from "../typeDefs";
-import Query from "../resolvers/query";
-import Mutation from "../resolvers/mutation";
-import Subscription from "../resolvers/subscription";
-import { ApolloServerPluginLandingPageDisabled } from "apollo-server-core";
-import pubsub from "./redisSetup";
+import { makeExecutableSchema } from '@graphql-tools/schema';
+import { ApolloServer } from 'apollo-server-express';
+import typeDefs from '../typeDefs';
+import Query from '../resolvers/query';
+import Mutation from '../resolvers/mutation';
+import Subscription from '../resolvers/subscription';
+import { ApolloServerPluginLandingPageDisabled } from 'apollo-server-core';
+import pubsub from './redisSetup';
 
 const resolvers = {
   Query,
@@ -40,7 +40,7 @@ const configureApolloServer = (): ApolloServer => {
     context: buildContext,
   };
 
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === 'production') {
     return new ApolloServer({
       ...serverConfig,
       plugins: [ApolloServerPluginLandingPageDisabled()],

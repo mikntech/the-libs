@@ -1,5 +1,5 @@
 const Query = {
-  hello: () => "Hello, world!",
+  hello: () => 'Hello, world!',
 };
 
 export default Query;

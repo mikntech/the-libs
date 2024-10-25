@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const userModel = new mongoose.Schema(
   {
@@ -15,12 +15,12 @@ const userModel = new mongoose.Schema(
     subscription: {
       type: String,
       required: true,
-      default: "free",
+      default: 'free',
     },
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default userModel;

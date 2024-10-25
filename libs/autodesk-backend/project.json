@@ -28,7 +28,14 @@
             "output": "."
           }
         ],
-        "external": ["express", "axios", "qs", "@the-libs/base-backend", "@the-libs/base-shared", "dotenv"]
+        "external": [
+          "express",
+          "axios",
+          "qs",
+          "@the-libs/base-backend",
+          "@the-libs/base-shared",
+          "dotenv"
+        ]
       }
     },
     "nx-release-publish": {

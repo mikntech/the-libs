@@ -28,7 +28,7 @@
             "output": "."
           }
         ],
-    "external": ["mongoose"]
+        "external": ["mongoose"]
       }
     },
     "nx-release-publish": {

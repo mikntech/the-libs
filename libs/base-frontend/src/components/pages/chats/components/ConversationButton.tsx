@@ -26,12 +26,12 @@ interface ConversationButtonProps {
 }
 
 export const ConversationButton = ({
-                                     conversation,
-                                     isTheSelectedConversation,
-                                     setSelectedConversation,
-                                     wide,
-                                     disableDarkMode,
-                                   }: ConversationButtonProps) => {
+  conversation,
+  isTheSelectedConversation,
+  setSelectedConversation,
+  wide,
+  disableDarkMode,
+}: ConversationButtonProps) => {
   const isNight = useIsNight(disableDarkMode);
   const MAX_NAME_LENGTH = 18;
   const MAX_LAST_MESSAGE_LENGTH = 32;

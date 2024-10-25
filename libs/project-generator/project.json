@@ -19,9 +19,7 @@
           "projects": "self"
         }
       ],
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/project-generator",
         "tsConfig": "libs/project-generator/tsconfig.lib.json",

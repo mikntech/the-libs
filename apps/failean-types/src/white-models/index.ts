@@ -1,5 +1,5 @@
-import mongoose, { Document } from "mongoose";
-import {PromptName} from "../index";
+import mongoose, { Document } from 'mongoose';
+import { PromptName } from '../index';
 
 export namespace WhiteModels {
   export namespace Accounts {
@@ -32,7 +32,7 @@ export namespace WhiteModels {
       email: string;
       passwordHash: string;
       name: string;
-      subscription: "free" | "basic" | "premium";
+      subscription: 'free' | 'basic' | 'premium';
       createdAt: Date;
       updatedAt: Date;
     }
@@ -54,7 +54,7 @@ export namespace WhiteModels {
         owner: mongoose.Types.ObjectId;
         ideaID: string;
         promptName: string;
-        reason: "run" | "feedback" | "save";
+        reason: 'run' | 'feedback' | 'save';
         data: string;
         createdAt: Date;
         updatedAt: Date;
@@ -100,23 +100,21 @@ export namespace WhiteModels {
     export interface EmailModel extends Document {
       email?: string;
       product?: string;
-      emailSent?:string;
-      deleted?:string
+      emailSent?: string;
+      deleted?: string;
       createdAt: Date;
       updatedAt: Date;
     }
   }
 
   export namespace Tasks {
-    export interface OpenAITaskModel extends Document{
+    export interface OpenAITaskModel extends Document {
       startTime: Date;
       finishTime?: Date;
       status: String;
       promptResIDOrReason?: String;
-      userID:string;
-      promptName:PromptName;
+      userID: string;
+      promptName: PromptName;
     }
   }
-
-
 }

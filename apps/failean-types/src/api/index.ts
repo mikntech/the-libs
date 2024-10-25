@@ -1,6 +1,6 @@
-import { PromptGraph, PromptName } from "..";
+import { PromptGraph, PromptName } from '..';
 
-import { WhiteModels } from "../white-models/index";
+import { WhiteModels } from '../white-models/index';
 
 type WhiteIdea = WhiteModels.Data.Ideas.WhiteIdea;
 type WhitePromptResult = WhiteModels.Data.Prompts.WhitePromptResult;

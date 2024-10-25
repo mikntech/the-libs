@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document } from 'mongoose';
 
 export namespace OCModels {
   export interface ExpressRequest extends Document {

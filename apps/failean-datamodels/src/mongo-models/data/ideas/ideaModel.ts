@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const ideaModel = new mongoose.Schema(
   {
@@ -14,7 +14,7 @@ const ideaModel = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default ideaModel;

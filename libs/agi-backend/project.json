@@ -28,7 +28,13 @@
             "output": "."
           }
         ],
-        "external": ["dotenv", "@azure/openai", "openai", "gpt-tokenizer", "@the-libs/base-shared"]
+        "external": [
+          "dotenv",
+          "@azure/openai",
+          "openai",
+          "gpt-tokenizer",
+          "@the-libs/base-shared"
+        ]
       },
       "dependsOn": [
         {

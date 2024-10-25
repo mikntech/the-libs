@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const promptResultModel = new mongoose.Schema(
   {
@@ -7,7 +7,7 @@ const promptResultModel = new mongoose.Schema(
     promptName: { type: String, required: true },
     reason: {
       type: String,
-      enum: ["run", "feedback", "save"],
+      enum: ['run', 'feedback', 'save'],
       required: true,
     },
     data: {
@@ -17,7 +17,7 @@ const promptResultModel = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default promptResultModel;

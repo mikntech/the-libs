@@ -6,24 +6,16 @@
   "targets": {
     "build": {
       "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
         "platform": "node",
         "outputPath": "dist/apps/deploy",
-        "format": [
-          "esm"
-        ],
+        "format": ["esm"],
         "bundle": true,
         "main": "apps/deploy/src/index.ts",
         "tsConfig": "apps/deploy/tsconfig.app.json",
-        "external": [
-          "aws-sdk",
-          "mock-aws-s3",
-          "nock"
-        ],
+        "external": ["aws-sdk", "mock-aws-s3", "nock"],
         "esbuildOptions": {
           "sourcemap": true,
           "outExtension": {

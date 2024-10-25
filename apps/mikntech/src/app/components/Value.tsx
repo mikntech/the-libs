@@ -1,4 +1,4 @@
-import { Box, Container, Typography, useTheme } from "@mui/material";
+import { Box, Container, Typography, useTheme } from '@mui/material';
 
 // Main Pricing Component
 export default function Pricing() {
@@ -10,18 +10,18 @@ export default function Pricing() {
       sx={{
         pt: { xs: 4, sm: 12 },
         pb: { xs: 8, sm: 16 },
-        position: "relative",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
         gap: { xs: 3, sm: 6 },
       }}
     >
       {/* Tailored Solutions Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
           mt: 4,
         }}
       >
@@ -58,8 +58,8 @@ export default function Pricing() {
       {/* Your Benefits Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
           mt: 4,
         }}
       >
@@ -119,8 +119,8 @@ export default function Pricing() {
       {/* Case Studies Section */}
       <Box
         sx={{
-          width: { sm: "100%", md: "60%" },
-          textAlign: { sm: "left", md: "center" },
+          width: { sm: '100%', md: '60%' },
+          textAlign: { sm: 'left', md: 'center' },
           mt: 6,
         }}
       >

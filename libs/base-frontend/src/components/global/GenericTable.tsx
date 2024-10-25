@@ -99,16 +99,29 @@ export const GenericTable = <D extends MDocument<Types.ObjectId>>({
         <TableHead>
           <TableRow>
             {columns.map(({ name }) => (
-              <TableCell sx={{ fontWeight: 'bold',overflow: 'hidden',textOverflow: 'ellipsis',whiteSpace: 'nowrap',
-                fontSize: 'clamp(0.8rem, 1.5vw + 0.1rem, 1.4rem)'
-               }}
-               key={name}>{name}
-               </TableCell>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                  fontSize: 'clamp(0.8rem, 1.5vw + 0.1rem, 1.4rem)',
+                }}
+                key={name}
+              >
+                {name}
+              </TableCell>
             ))}
             {actions?.map(({ name }) => (
-              <TableCell sx={{ fontWeight: 'bold', fontSize: 'clamp(0.8rem, 1.5vw + 0.1rem, 1.4rem)' }} key={name}>
+              <TableCell
+                sx={{
+                  fontWeight: 'bold',
+                  fontSize: 'clamp(0.8rem, 1.5vw + 0.1rem, 1.4rem)',
+                }}
+                key={name}
+              >
                 {name}
-                </TableCell>
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
@@ -127,11 +140,16 @@ export const GenericTable = <D extends MDocument<Types.ObjectId>>({
                   return data;
                 })
                 .map((value, j) => (
-                  <TableCell sx={{ fontSize: {
-                    sm: '0.7rem',
-                    md: '0.8rem',
-                    xl: '1rem'
-                  }}} key={`${i}-${j}`}>
+                  <TableCell
+                    sx={{
+                      fontSize: {
+                        sm: '0.7rem',
+                        md: '0.8rem',
+                        xl: '1rem',
+                      },
+                    }}
+                    key={`${i}-${j}`}
+                  >
                     {(Array.isArray(value) ? value : [value])
                       .map((item) => guessValueType(item))
                       .join(', ')}

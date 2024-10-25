@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const requestForAccountModel = new mongoose.Schema(
   {
@@ -17,7 +17,7 @@ const requestForAccountModel = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default requestForAccountModel;

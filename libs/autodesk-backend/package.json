@@ -1,6 +1,9 @@
 {
   "name": "@the-libs/autodesk-backend",
   "version": "1.1.42",
+  "scripts": {
+    "update": "npx --yes npm-check-updates -u"
+  },
   "dependencies": {
     "@the-libs/base-shared": "^1.5.122",
     "@the-libs/base-backend": "^1.2.17",

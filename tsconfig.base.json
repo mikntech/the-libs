@@ -10,81 +10,37 @@
     "importHelpers": true,
     "target": "es2020",
     "module": "ES2022",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@the-libs/agi-backend": [
-        "libs/agi-backend/src/index.ts"
-      ],
-      "@the-libs/analytics-backend": [
-        "libs/analytics-backend/src/index.ts"
-      ],
-      "@the-libs/analytics-frontend": [
-        "libs/analytics-frontend/src/index.ts"
-      ],
-      "@the-libs/auth-backend": [
-        "libs/auth-backend/src/index.ts"
-      ],
-      "@the-libs/auth-shared": [
-        "libs/auth-shared/src/index.ts"
-      ],
-      "@the-libs/autodesk-backend": [
-        "libs/autodesk-backend/src/index.ts"
-      ],
-      "@the-libs/base-frontend": [
-        "libs/base-frontend/src/index.ts"
-      ],
-      "@the-libs/base-shared": [
-        "libs/base-shared/src/index.ts"
-      ],
-      "@the-libs/chat-backend": [
-        "libs/chat-backend/src/index.ts"
-      ],
-      "@the-libs/chat-shared": [
-        "libs/chat-shared/src/index.ts"
-      ],
-      "@the-libs/cicd-backend": [
-        "libs/cicd-backend/src/index.ts"
-      ],
-      "@the-libs/email-backend": [
-        "libs/email-backend/src/index.ts"
-      ],
-      "@the-libs/express-backend": [
-        "libs/express-backend/src/index.ts"
-      ],
-      "@the-libs/meta-backend": [
-        "libs/meta-backend/src/index.ts"
-      ],
-      "@the-libs/mongo-backend": [
-        "libs/mongo-backend/src/index.ts"
-      ],
+      "@the-libs/agi-backend": ["libs/agi-backend/src/index.ts"],
+      "@the-libs/analytics-backend": ["libs/analytics-backend/src/index.ts"],
+      "@the-libs/analytics-frontend": ["libs/analytics-frontend/src/index.ts"],
+      "@the-libs/auth-backend": ["libs/auth-backend/src/index.ts"],
+      "@the-libs/auth-shared": ["libs/auth-shared/src/index.ts"],
+      "@the-libs/autodesk-backend": ["libs/autodesk-backend/src/index.ts"],
+      "@the-libs/base-frontend": ["libs/base-frontend/src/index.ts"],
+      "@the-libs/base-shared": ["libs/base-shared/src/index.ts"],
+      "@the-libs/chat-backend": ["libs/chat-backend/src/index.ts"],
+      "@the-libs/chat-shared": ["libs/chat-shared/src/index.ts"],
+      "@the-libs/cicd-backend": ["libs/cicd-backend/src/index.ts"],
+      "@the-libs/email-backend": ["libs/email-backend/src/index.ts"],
+      "@the-libs/express-backend": ["libs/express-backend/src/index.ts"],
+      "@the-libs/meta-backend": ["libs/meta-backend/src/index.ts"],
+      "@the-libs/mongo-backend": ["libs/mongo-backend/src/index.ts"],
       "@the-libs/notifications-backend": [
         "libs/notifications-backend/src/index.ts"
       ],
       "@the-libs/notifications-shared": [
         "libs/notifications-shared/src/index.ts"
       ],
-      "@the-libs/payments-backend": [
-        "libs/payments-backend/src/index.ts"
-      ],
-      "@the-libs/project-generator": [
-        "libs/project-generator/src/index.ts"
-      ],
-      "@the-libs/redis-backend": [
-        "libs/redis-backend/src/index.ts"
-      ],
-      "@the-libs/s3-backend": [
-        "libs/s3-backend/src/index.ts"
-      ]
+      "@the-libs/payments-backend": ["libs/payments-backend/src/index.ts"],
+      "@the-libs/project-generator": ["libs/project-generator/src/index.ts"],
+      "@the-libs/redis-backend": ["libs/redis-backend/src/index.ts"],
+      "@the-libs/s3-backend": ["libs/s3-backend/src/index.ts"]
     }
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ]
+  "exclude": ["node_modules", "tmp"]
 }

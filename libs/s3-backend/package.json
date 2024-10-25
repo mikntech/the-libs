@@ -1,6 +1,9 @@
 {
   "name": "@the-libs/s3-backend",
   "version": "1.1.42",
+  "scripts": {
+    "update": "npx --yes npm-check-updates -u"
+  },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.670.0",
     "@aws-sdk/s3-request-presigner": "^3.670.0",

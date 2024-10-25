@@ -1,6 +1,9 @@
 {
   "name": "@the-libs/cicd-backend",
   "version": "1.1.42",
+  "scripts": {
+    "update": "npx --yes npm-check-updates -u"
+  },
   "dependencies": {
     "@aws-sdk/client-acm": "^3.670.0",
     "@aws-sdk/client-cloudformation": "^3.670.0",
