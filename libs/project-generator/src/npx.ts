@@ -137,7 +137,14 @@ const createProject = async () => {
     ),
   );
   log('doing next if needed');
-  nextjss.length > 0 && doCommand('cd ' + name + ' && ' + nx + ' add @nx/next');
+  nextjss.length > 0 &&
+    doCommand(
+      'cd ' +
+        name +
+        ' && ' +
+        nx +
+        'g @nx/next:init --no-interactive --skipInstall',
+    );
   log('doing nexts');
   await Promise.all(
     nextjss.map(
