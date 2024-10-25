@@ -30,11 +30,10 @@ const createApp = async (
   type: AppType,
   appName: string,
 ) => {
-  if (!!appName)
+  if (appName)
     switch (type) {
       case AppType.Server:
-        doCommandInD(`${pname}/apps`, `mkdir ${appName}`);
-        doCommandInD(`${pname}/apps/${appName}`, `mkdir src`);
+        doCommandInD(`${pname}/apps`, `mkdir -p ${appName}/src`);
         createAFile(
           'project.json',
           projectJsonServerTemplate(appName),
