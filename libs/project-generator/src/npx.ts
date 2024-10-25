@@ -138,14 +138,11 @@ const createProject = async () => {
     ),
   );
   log('doing next if needed');
-  nextjss.length > 0 &&
-    doCommand(
-      'cd ' +
-        name +
-        ' && ' +
-        nx +
-        ' g @nx/next:init --no-interactive --skipInstall',
-    );
+  if (nextjss.length > 0 && nextjss[0] !== '') {
+    log('it is needed');
+    doCommandInD(name, 'npm i -D @nx/next:init');
+    doCommandInD(name, nx + ' g @nx/next:init --no-interactive --skipInstall');
+  } else log('it is not needed');
   log('doing nexts');
   await Promise.all(
     nextjss.map(
