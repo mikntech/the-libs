@@ -29,11 +29,10 @@
           }
         ],
         "external": [
-          "dotenv",
-          "@azure/openai",
-          "openai",
-          "gpt-tokenizer",
-          "@the-libs/base-shared"
+          "@the-libs/express-backend",
+          "@the-libs/base-shared",
+          "express",
+          "@the-libs/mongo-backend"
         ]
       },
       "dependsOn": [

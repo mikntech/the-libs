@@ -30,10 +30,10 @@
         ],
         "external": [
           "dotenv",
-          "@azure/openai",
           "openai",
           "gpt-tokenizer",
-          "@the-libs/base-shared"
+          "@the-libs/base-shared",
+          "@azure/identity"
         ]
       },
       "dependsOn": [
