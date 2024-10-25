@@ -2,10 +2,16 @@
 
 import { gitignoreTemplate } from './templates/gitignore.js';
 import { indexTsTemplate } from './templates/indexTs.js';
-import { projectJsonTemplate } from './templates/projectJson.js';
+import {
+  projectJsonNextTemplate,
+  projectJsonServerTemplate,
+} from './templates/projectJson.js';
 import { tsconfigAppJsonTemplate } from './templates/tsconfigAppJson.js';
 import { tsconfigBaseJsonTemplate } from './templates/tsconfigBaseJson.js';
-import { tsconfigJsonTemplate } from './templates/tsconfigJson.js';
+import {
+  tsconfigJsonNextTemplate,
+  tsconfigJsonServerTemplate,
+} from './templates/tsconfigJson.js';
 import { askQuestions, NXGOptions } from './questions.js';
 import {
   createAFile,
@@ -15,6 +21,8 @@ import {
   nxGen,
 } from './commands.js';
 import { AppType } from './types.js';
+import { nextConfigJsTemplate } from './templates/nextConfigJs';
+import { nxJsonTemplate } from './templates/nxJson';
 
 const createApp = async (
   pname: string,
@@ -28,12 +36,12 @@ const createApp = async (
       doCommandInD(`${pname}/apps/${appName}`, `mkdir src`);
       createAFile(
         'project.json',
-        projectJsonTemplate(appName),
+        projectJsonServerTemplate(appName),
         './' + pname + '/apps/' + appName,
       );
       createAFile(
         'tsconfig.json',
-        tsconfigJsonTemplate,
+        tsconfigJsonServerTemplate,
         './' + pname + '/apps/' + appName,
       );
       createAFile(
@@ -62,7 +70,29 @@ const createApp = async (
       doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.spec.json');
       doCommandInD(pname, 'rm -rf ./jest.config.ts');
       doCommandInD(pname, 'rm -rf ./jest.preset.ts');
-
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.json');
+      createAFile(
+        'tsconfig.json',
+        tsconfigJsonNextTemplate(appName),
+        './' + pname + '/apps/' + appName,
+      );
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf project.json');
+      createAFile(
+        'project.json',
+        projectJsonNextTemplate(appName),
+        './' + pname + '/apps/' + appName,
+      );
+      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf next.config.js');
+      createAFile(
+        'next.config.js',
+        nextConfigJsTemplate,
+        './' + pname + '/apps/' + appName,
+      );
+      doCommandInD(pname, 'npm uninstall @testing-library/react --force');
+      doCommandInD(pname, 'npm uninstall babel-jest --force');
+      doCommandInD(pname, 'npm uninstall jest-environment-jsdom --force');
+      doCommandInD(`${pname}`, 'rm -rf nx.json');
+      createAFile('nx.json', nxJsonTemplate, './' + pname);
       break;
   }
 };
