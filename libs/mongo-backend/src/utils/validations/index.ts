@@ -25,7 +25,9 @@ export const validateInput = <T = string>(
   return value;
 };
 
-export const validateEnum = <ENUM extends SomeEnum<ENUM>>(
+type E<EE> = SomeEnum<EE> | string | number | symbol;
+
+export const validateEnum = <ENUM extends E<ENUM>>(
   input: ENUM,
   enumValues: ENUM[],
 ) => {

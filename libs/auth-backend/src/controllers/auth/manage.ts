@@ -24,7 +24,7 @@ import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 import { uploadFile } from '@the-libs/s3-backend';
 
 export const genManageControllers = <
-  UserType extends SomeEnum<UserType>,
+  UserType extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(

@@ -11,7 +11,7 @@ import { highOrderHandler } from '@the-libs/express-backend';
 import { SomeEnum, TODO } from '@the-libs/base-shared';
 
 export const registerRouter = <
-  UserTypeEnum extends SomeEnum<UserTypeEnum>,
+  UserTypeEnum extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(

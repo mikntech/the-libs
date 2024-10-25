@@ -37,7 +37,7 @@ export const signProfilePic = async <UserI extends User = User>(
 
 export const authorizer =
   <
-    UserType extends SomeEnum<UserType>,
+    UserType extends string | number | symbol,
     RequiredFields extends {},
     OptionalFields extends {},
     UserI extends User,

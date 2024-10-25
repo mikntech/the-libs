@@ -8,7 +8,7 @@ import { genManageControllers } from '../../../../controllers/auth/manage';
 const multer = require('multer');
 
 export const manageRouter = <
-  UserTypeEnum extends SomeEnum<UserTypeEnum>,
+  UserTypeEnum extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(

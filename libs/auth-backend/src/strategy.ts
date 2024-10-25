@@ -2,7 +2,7 @@ import { User } from '@the-libs/auth-shared';
 import type { Model } from 'mongoose';
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './db/mongo/schemas';
-import { SomeEnum, TODO } from '@the-libs/base-shared';
+import { SomeEnum } from '@the-libs/base-shared';
 import { GenEmailFunction } from '@the-libs/email-backend';
 import { defaultGenPassResetEmail, defaultGenRegisterEmail } from './services';
 import { StagingEnvironment } from '@the-libs/express-backend';
@@ -15,11 +15,11 @@ export enum MultiUserType {
 
 export enum MultiClientType {
   SINGLE = 'single',
-  MULTI = 'muti',
+  MULTI = 'multi',
 }
 
 export enum VerifiedContactMethod {
-  EMAIL = 'e-mail',
+  EMAIL = 'email',
   SMS = 'sms',
 }
 
@@ -36,14 +36,14 @@ export enum ExternalIdentityProviders {
   OFF = 'off',
 }
 
-export enum defaultUserType {
-  'singe' = 'singe',
+export enum DefaultUserType {
+  SINGLE = 'single',
 }
 
 export interface Strategy<
   RequiredFields extends {},
   OptionalFields extends {},
-  UserEnum extends SomeEnum<UserEnum> = null,
+  UserEnum extends string | number | symbol = never,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
   PostRegParams = {},
@@ -56,17 +56,15 @@ export interface Strategy<
   mfa: MFA;
   externalIdentityProviders: ExternalIdentityProviders;
   modelMap: multiUserType_is_MULTI_COLLECTION extends true
-    ? {
-        [Key in keyof UserEnum as UserEnum[Key]]: () => Promise<Model<User>>;
-      }
-    : () => Model<User>;
+    ? Record<UserEnum, () => Promise<Model<User>>>
+    : () => Promise<Model<User>>;
   requiredFields: (keyof RequiredFields)[];
   requiredEnums: (keyof RequiredFields)[];
   optionalFields: (keyof OptionalFields)[];
   onCreateFields?: Partial<RequiredFields | OptionalFields>;
   genRegisterEmail: GenEmailFunction;
   genPassResetEmail: GenEmailFunction;
-  enumValues: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
+  enumValues?: multiUserType_is_SINGLE extends true ? undefined : UserEnum[];
   postRegistrationCB?: (savedUser: User, params: PostRegParams) => void;
   sendEmails?: Partial<{ [Key in StagingEnvironment]: boolean }>;
 }
@@ -74,7 +72,7 @@ export interface Strategy<
 export const createStrategy = <
   RequiredFields extends {},
   OptionalFields extends {},
-  UserEnum extends SomeEnum<UserEnum> = null,
+  UserEnum extends string | number | symbol,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
   PostRegParams = {},
@@ -102,7 +100,9 @@ export const createStrategy = <
         >,
     'modelMap'
   > & {
-    modelMap: TODO;
+    modelMap: multiUserType_is_MULTI_COLLECTION extends true
+      ? Record<UserEnum, () => Promise<Model<User>>>
+      : () => Promise<Model<User>>;
   },
 ): Strategy<
   RequiredFields,
@@ -111,15 +111,7 @@ export const createStrategy = <
   multiUserType_is_MULTI_COLLECTION,
   multiUserType_is_SINGLE,
   PostRegParams
-> =>
-  config as unknown as Strategy<
-    RequiredFields,
-    OptionalFields,
-    UserEnum,
-    multiUserType_is_MULTI_COLLECTION,
-    multiUserType_is_SINGLE,
-    PostRegParams
-  >;
+> => config;
 
 export const defaultStrategy = createStrategy({
   genRegisterEmail: defaultGenRegisterEmail,
@@ -134,5 +126,5 @@ export const defaultStrategy = createStrategy({
   passwordType: PasswordType.HASHED,
   mfa: MFA.OFF,
   externalIdentityProviders: ExternalIdentityProviders.OFF,
-  modelMap: async () => await user(false, false),
+  modelMap: async () => user(false, false),
 });

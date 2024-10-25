@@ -7,7 +7,7 @@ import { SomeEnum, TODO } from '@the-libs/base-shared';
 import { genLogControllers } from '../../../../controllers/auth/log';
 
 export const logRouter = <
-  UserTypeEnum extends SomeEnum<UserTypeEnum>,
+  UserTypeEnum extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(

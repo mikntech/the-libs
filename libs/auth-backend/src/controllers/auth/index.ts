@@ -1,10 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import {
-  getExpressSettings,
-  StagingEnvironment,
-} from '@the-libs/express-backend';
+import { getExpressSettings } from '@the-libs/express-backend';
 import { InvalidInputError, TODO, SomeEnum } from '@the-libs/base-shared';
 import {
   MultiUserType,
@@ -35,7 +32,7 @@ import {
 export const JWT_COOKIE_NAME = 'jwt';
 
 export const genAuthControllers = <
-  UserType extends SomeEnum<UserType>,
+  UserType extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(
@@ -47,10 +44,23 @@ export const genAuthControllers = <
     boolean
   >,
 ) => {
-  const getModel = async (userType: UserType): Promise<Model<User>> =>
-    (strategy.multiUserType === MultiUserType.MULTI_COLLECTION
-      ? (strategy.modelMap as TODO)[userType]
-      : strategy.modelMap)();
+  const getModel = async (userType: UserType): Promise<Model<User>> => {
+    if (strategy.multiUserType === MultiUserType.MULTI_COLLECTION) {
+      const modelMap = strategy.modelMap as {
+        [key in keyof UserType]: () => Promise<Model<User>>;
+      };
+
+      const userSpecificModel = modelMap[userType as unknown as keyof UserType];
+      if (userSpecificModel) {
+        return await userSpecificModel();
+      } else {
+        throw new Error(`Model not found for user type: ${String(userType)}`);
+      }
+    } else {
+      const singleModel = strategy.modelMap as () => Promise<Model<User>>;
+      return await singleModel();
+    }
+  };
 
   const generateURLWithParams = (params: string, userType: string) =>
     `${

@@ -14,7 +14,7 @@ import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 import { User } from '@the-libs/auth-shared';
 
 export const genLogControllers = <
-  UserType extends SomeEnum<UserType>,
+  UserType extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(
@@ -70,7 +70,7 @@ export const genLogControllers = <
   };
 
   const logIn = async <
-    UserType extends SomeEnum<UserType>,
+    UserType extends string | number | symbol,
     SCHEMA extends User = User,
   >(
     email: string,

@@ -21,7 +21,7 @@ import {
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 
 export const genRegisterControllers = <
-  UserType extends SomeEnum<UserType>,
+  UserType extends string | number | symbol,
   RequiredFields extends {},
   OptionalFields extends {},
 >(
