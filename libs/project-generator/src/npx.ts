@@ -30,7 +30,7 @@ const createApp = async (
   type: AppType,
   appName: string,
 ) => {
-  if (!!pname)
+  if (!!appName)
     switch (type) {
       case AppType.Server:
         doCommandInD(`${pname}/apps`, `mkdir ${appName}`);
