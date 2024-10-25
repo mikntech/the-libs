@@ -141,7 +141,7 @@ export const genManageControllers = <
           existingUser as TODO,
           await hashPassword(password),
         ),
-        userType,
+        String(userType),
       ),
     };
   };

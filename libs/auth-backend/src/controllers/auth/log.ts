@@ -90,7 +90,7 @@ export const genLogControllers = <
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         await getToken(email, password, userType as TODO),
-        userType,
+        String(userType),
       ),
     };
   };
