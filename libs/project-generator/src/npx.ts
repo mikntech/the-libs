@@ -99,61 +99,64 @@ const createApp = async (
 };
 
 const createProject = async () => {
-  const { name, nxg, libsToInstall, servers, clients, nextjss } =
-    await askQuestions();
+  const {
+    name: pname,
+    nxg,
+    libsToInstall,
+    servers,
+    clients,
+    nextjss,
+  } = await askQuestions();
   const nx = nxGen(nxg);
   nxg === NXGOptions.SUDO_INSTALL_GLOBAL && doCommand('sudo npm i -g nx');
-  doCommand(`npx --yes create-nx-workspace@latest ${name} \\
+  doCommand(`npx --yes create-nx-workspace@latest ${pname} \\
   --preset=ts \\
   --nxCloud=skip \\
   --packageManager=npm \\
   --interactive=false \\
   --skipGit=false \\
-  --npmScope=${name}`);
-  doCommandInD(`${name}`, `rm -rf packages`);
-  doCommandInD(`${name}`, `rm -rf README.md`);
-  doCommandInD(`${name}`, `rm -rf .gitignore`);
-  createAFile('.gitignore', gitignoreTemplate, name);
+  --npmScope=${pname}`);
+  doCommandInD(`${pname}`, `rm -rf packages`);
+  doCommandInD(`${pname}`, `rm -rf README.md`);
+  doCommandInD(`${pname}`, `rm -rf .gitignore`);
+  createAFile('.gitignore', gitignoreTemplate, pname);
   doCommandInD(
-    name,
+    pname,
     `npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
-  doCommandInD(name, `mkdir apps`);
-  doCommandInD(name, `npm i -D @nx/esbuild`);
-  doCommandInD(name, `npm i -D esbuild`);
-  doCommandInD(name, `rm -f ./tsconfig.base.json`);
-  createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + name);
+  doCommandInD(pname, `mkdir apps`);
+  doCommandInD(pname, `npm i -D @nx/esbuild`);
+  doCommandInD(pname, `npm i -D esbuild`);
+  doCommandInD(pname, `rm -f ./tsconfig.base.json`);
+  createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + pname);
   log('doing servers');
   await Promise.all(
     servers.map(
       async (appName: string) =>
-        await createApp(name, nx, AppType.Server, appName),
+        await createApp(pname, nx, AppType.Server, appName),
     ),
   );
   log('doing clients');
   await Promise.all(
     clients.map(
       async (appName: string) =>
-        await createApp(name, nx, AppType.Client, appName),
+        await createApp(pname, nx, AppType.Client, appName),
     ),
   );
   log('doing next if needed');
-  if (nextjss.length > 0 && nextjss[0] !== '') {
-    log('it is needed');
-    doCommandInD(name, 'npm i -D @nx/next');
-    doCommandInD(name, nx + ' g @nx/next:init --no-interactive --skipInstall');
-  } else log('it is not needed');
+  nextjss.some((appName: string) => appName !== '') &&
+    doCommandInD(pname, 'npm i -D @nx/next');
   log('doing nexts');
   await Promise.all(
     nextjss.map(
       async (appName: string) =>
-        await createApp(name, nx, AppType.Next, appName),
+        await createApp(pname, nx, AppType.Next, appName),
     ),
   );
 
   /// cicd?
 
-  doCommandInD(name, `git add .`);
+  doCommandInD(pname, `git add .`);
 };
 
 createProject();
