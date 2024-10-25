@@ -20,6 +20,15 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }} # to check out the actual pull request commit, not the merge commit
           fetch-depth: 0 # a full history is required for pull request analysis
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Build and Publish
+        run: npm run update-all
+
       - name: Bump version in package.json
         run: |
           npm version patch --no-git-tag-version
@@ -35,12 +44,6 @@ jobs:
           git config user.name 'github-actions'
           git config user.email 'github-actions@github.com'
           git push git@github.com:${{ github.repository }} HEAD:${{ github.ref_name }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '22'
-          registry-url: 'https://registry.npmjs.org/'
 
       - name: Authenticate to npm
         run: |

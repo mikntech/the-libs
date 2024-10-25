@@ -11,7 +11,7 @@
     "sync-versions": "node sync-version-script.js",
     "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
     "publish-all": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish --access public) ; done",
-    "build-and-publish": "npm run update-all && npm i --legacy-peer-deps && npm run sync-versions && npm run build && npm run publish-all"
+    "build-and-publish": "npm i --legacy-peer-deps && npm run sync-versions && npm run build && npm run publish-all"
   },
   "repository": {
     "type": "git",
