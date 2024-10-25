@@ -144,7 +144,7 @@ const createProject = async () => {
         name +
         ' && ' +
         nx +
-        'g @nx/next:init --no-interactive --skipInstall',
+        ' g @nx/next:init --no-interactive --skipInstall',
     );
   log('doing nexts');
   await Promise.all(
