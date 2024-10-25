@@ -30,71 +30,72 @@ const createApp = async (
   type: AppType,
   appName: string,
 ) => {
-  switch (type) {
-    case AppType.Server:
-      doCommandInD(`${pname}/apps`, `mkdir ${appName}`);
-      doCommandInD(`${pname}/apps/${appName}`, `mkdir src`);
-      createAFile(
-        'project.json',
-        projectJsonServerTemplate(appName),
-        './' + pname + '/apps/' + appName,
-      );
-      createAFile(
-        'tsconfig.json',
-        tsconfigJsonServerTemplate,
-        './' + pname + '/apps/' + appName,
-      );
-      createAFile(
-        'tsconfig.app.json',
-        tsconfigAppJsonTemplate,
-        './' + pname + '/apps/' + appName,
-      );
-      createAFile(
-        'index.ts',
-        indexTsTemplate,
-        './' + pname + '/apps/' + appName + '/src',
-      );
-      break;
-    case AppType.Client:
-      // need to ideate
-      break;
-    case AppType.Next:
-      doCommandInD(
-        pname,
-        `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`,
-      );
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf public/.gitkeep');
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf specs');
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf jest.config.ts');
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf src/app/api');
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.spec.json');
-      doCommandInD(pname, 'rm -rf ./jest.config.ts');
-      doCommandInD(pname, 'rm -rf ./jest.preset.ts');
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.json');
-      createAFile(
-        'tsconfig.json',
-        tsconfigJsonNextTemplate(appName),
-        './' + pname + '/apps/' + appName,
-      );
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf project.json');
-      createAFile(
-        'project.json',
-        projectJsonNextTemplate(appName),
-        './' + pname + '/apps/' + appName,
-      );
-      doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf next.config.js');
-      createAFile(
-        'next.config.js',
-        nextConfigJsTemplate,
-        './' + pname + '/apps/' + appName,
-      );
-      doCommandInD(pname, 'npm uninstall @testing-library/react --force');
-      doCommandInD(pname, 'npm uninstall babel-jest --force');
-      doCommandInD(pname, 'npm uninstall jest-environment-jsdom --force');
-      doCommandInD(`${pname}`, 'rm -rf nx.json');
-      createAFile('nx.json', nxJsonTemplate, './' + pname);
-      break;
-  }
+  if (!!pname)
+    switch (type) {
+      case AppType.Server:
+        doCommandInD(`${pname}/apps`, `mkdir ${appName}`);
+        doCommandInD(`${pname}/apps/${appName}`, `mkdir src`);
+        createAFile(
+          'project.json',
+          projectJsonServerTemplate(appName),
+          './' + pname + '/apps/' + appName,
+        );
+        createAFile(
+          'tsconfig.json',
+          tsconfigJsonServerTemplate,
+          './' + pname + '/apps/' + appName,
+        );
+        createAFile(
+          'tsconfig.app.json',
+          tsconfigAppJsonTemplate,
+          './' + pname + '/apps/' + appName,
+        );
+        createAFile(
+          'index.ts',
+          indexTsTemplate,
+          './' + pname + '/apps/' + appName + '/src',
+        );
+        break;
+      case AppType.Client:
+        // need to ideate
+        break;
+      case AppType.Next:
+        doCommandInD(
+          pname,
+          `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`,
+        );
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf public/.gitkeep');
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf specs');
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf jest.config.ts');
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf src/app/api');
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.spec.json');
+        doCommandInD(pname, 'rm -rf ./jest.config.ts');
+        doCommandInD(pname, 'rm -rf ./jest.preset.ts');
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.json');
+        createAFile(
+          'tsconfig.json',
+          tsconfigJsonNextTemplate(appName),
+          './' + pname + '/apps/' + appName,
+        );
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf project.json');
+        createAFile(
+          'project.json',
+          projectJsonNextTemplate(appName),
+          './' + pname + '/apps/' + appName,
+        );
+        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf next.config.js');
+        createAFile(
+          'next.config.js',
+          nextConfigJsTemplate,
+          './' + pname + '/apps/' + appName,
+        );
+        doCommandInD(pname, 'npm uninstall @testing-library/react --force');
+        doCommandInD(pname, 'npm uninstall babel-jest --force');
+        doCommandInD(pname, 'npm uninstall jest-environment-jsdom --force');
+        doCommandInD(`${pname}`, 'rm -rf nx.json');
+        createAFile('nx.json', nxJsonTemplate, './' + pname);
+        break;
+    }
 };
 
 const createProject = async () => {
