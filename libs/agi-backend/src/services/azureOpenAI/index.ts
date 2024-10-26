@@ -4,7 +4,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { AzureOpenAI } = require('openai');
 
-const apiVersion = '2024-05-13';
+const apiVersion = '2024-07-01-preview';
 
 const options = {
   apiKey: agiSettings.azureAPIKey,
@@ -29,7 +29,7 @@ export const complete = async (model: string, chat: any) => {
     });
     return response;
   } catch (error) {
-    console.error("Error with chat completion request:", error);
+    console.error('Error with chat completion request:', error);
     throw error;
   }
 };
