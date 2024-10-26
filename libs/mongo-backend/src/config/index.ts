@@ -15,6 +15,7 @@ export enum NodeEnvironment {
 export interface MongoSettings {
   nodeEnv: NodeEnvironment;
   mongoURI: string;
+  defaultDebugAllModels: boolean;
 }
 
 const validEnvs: NodeEnvironment[] = Object.values(NodeEnvironment);
@@ -32,4 +33,5 @@ export const mongoSettings: MongoSettings = {
   mongoURI:
     process.env['MONGO_URI'] ??
     (isProduction ? '' : 'mongodb://localhost:27017/error'),
+  defaultDebugAllModels: Boolean(process.env['MONGO_DEFAULT_DEBUG']),
 };

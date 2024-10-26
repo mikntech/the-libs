@@ -23,10 +23,12 @@ const mongoose = require('mongoose');
 
 const connection: { instance?: Connection } = {};
 
-const connect = async (logMongoToConsole: boolean = true) => {
-  (getExpressSettings().stagingEnv ?? StagingEnvironment.Prod) ===
-    StagingEnvironment.Local &&
-    mongoose.set('debug', logMongoToConsole ?? true);
+const connect = async (
+  logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
+) => {
+  /* (getExpressSettings().stagingEnv ?? StagingEnvironment.Prod) ===
+    StagingEnvironment.Local &&*/
+  mongoose.set('debug', logMongoToConsole ?? true);
   try {
     await mongoose.connect(mongoSettings.mongoURI);
     console.log('Mongo DB connected successfully');
