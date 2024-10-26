@@ -5,7 +5,6 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@azure/identity": "^4.5.0",
     "@the-libs/base-shared": "^1.8.20",
     "dotenv": "^16.4.5",
     "gpt-tokenizer": "^2.5.1",

@@ -32,8 +32,7 @@
           "dotenv",
           "openai",
           "gpt-tokenizer",
-          "@the-libs/base-shared",
-          "@azure/identity"
+          "@the-libs/base-shared"
         ]
       },
       "dependsOn": [

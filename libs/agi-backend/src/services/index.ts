@@ -1,7 +1,6 @@
 import { TODO } from '@the-libs/base-shared';
 
-export * from './azure';
-export * from './openAI';
+export * from './azureOpenAI';
 
 import { encodeChat } from 'gpt-tokenizer';
 
