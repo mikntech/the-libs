@@ -184,6 +184,8 @@ export const genManageControllers = <
   const uploadProfilePicture = async (req: TODO) => {
     if (!(req.files && 'map' in req.files))
       throw new ClientError('No file received');
+    if (!req.userType || !req.user?._id)
+      throw new UnauthorizedError('Please log in');
     const userDoc = (await findDocs(
       (await getModel(req.userType)).findById(req.user?._id),
       false,
