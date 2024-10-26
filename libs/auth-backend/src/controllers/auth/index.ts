@@ -80,6 +80,13 @@ export const genAuthControllers = <
       authSettings.jwtSecret,
     );
 
+  const getClientDomain = (userType: string) =>
+    strategy.multiClientType === MultiClientType.SINGLE
+      ? getExpressSettings<{ single: string }>().clientDomains.single
+      : getExpressSettings<{
+          [key: string]: string;
+        }>().clientDomains[userType];
+
   const generateSecureCookie = (
     name: string,
     val: string,
@@ -92,13 +99,7 @@ export const genAuthControllers = <
       path: '/',
       domain:
         mongoSettings.nodeEnv === NodeEnvironment.Production
-          ? '.' +
-            (strategy.multiClientType === MultiClientType.SINGLE
-              ? getExpressSettings<{ single: string }>().clientDomains.single
-              : getExpressSettings<{
-                  [key: string]: string;
-                }>().clientDomains[userType]
-            ).replace(/^https?:\/\//, '')
+          ? '.' + getClientDomain(userType).replace(/^https?:\/\//, '')
           : 'localhost',
       maxAge: expirationTime,
       httpOnly: true,
