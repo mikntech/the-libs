@@ -1,3 +1,5 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
 import { getSrcLibraries } from './automations.js';
 const inquirer = require('inquirer').default;
 
