@@ -9,7 +9,7 @@
     "sourceMap": true,
     "outDir": "../../dist/libs/project-generator",
     "strict": true,
-    "moduleResolution": "Node",
+    "moduleResolution": "nodenext",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
