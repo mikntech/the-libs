@@ -5,11 +5,11 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.9.3",
+    "@the-libs/base-shared": "^1.9.4",
     "bull": "^4.16.3",
     "dotenv": "^16.4.5",
     "ioredis": "^5.4.1",
-    "pubsub-js": "^1.9.4"
+    "pubsub-js": "^1.9.5"
   },
   "type": "module",
   "main": "./index.js",
