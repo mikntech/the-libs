@@ -125,7 +125,7 @@ const createProject = async () => {
   doCommandInD(pname, `npm i -D esbuild`);
   doCommandInD(pname, `rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + pname);
-  modifyJsonFile(`./${pname}/tsconfig.json`, {
+  await modifyJsonFile(`./${pname}/tsconfig.json`, {
     references: null,
   });
   log('doing servers');
