@@ -5,7 +5,7 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.9.2",
+    "@the-libs/base-shared": "^1.9.3",
     "dotenv": "^16.4.5",
     "gpt-tokenizer": "^2.5.1",
     "openai": "^4.68.4"
