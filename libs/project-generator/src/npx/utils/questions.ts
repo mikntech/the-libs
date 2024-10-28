@@ -1,6 +1,5 @@
 import { getSrcLibraries } from './automations.js';
-import type Inquirer from 'inquirer';
-const inquirer: typeof Inquirer = require('inquirer').default;
+const inquirer = require('inquirer').default;
 
 export enum NXGOptions {
   SUDO_INSTALL_GLOBAL = 'i -g',
