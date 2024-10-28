@@ -7,7 +7,7 @@
     "preprebuild": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc libs/project-generator/src/npx/utils/writeLibsNames.ts --module es2022 --skipLibCheck --outDir dist/libs/project-generator && mv dist/libs/project-generator/writeLibsNames.js dist/libs/project-generator/writeLibsNames.mjs && node dist/libs/project-generator/writeLibsNames.mjs && mv dist/libs/project-generator/packageNames.json packageNames.json",
+        "command": "tsc libs/project-generator/src/npx/utils/writeLibsNames.ts --module es2022 --skipLibCheck --outDir dist/libs/project-generator && mv distdist/libs/project-generator/src/npx/utils/writeLibsNames.js distdist/libs/project-generator/src/npx/utils/writeLibsNames.mjs && node distdist/libs/project-generator/src/npx/utils/writeLibsNames.mjs && mv distdist/libs/project-generator/src/npx/utils/packageNames.json packageNames.json",
         "cwd": "."
       }
     },
@@ -36,7 +36,7 @@
         }
       ],
       "options": {
-        "command": "mv packageNames.json dist/libs/project-generator/src/packageNames.json",
+        "command": "mv packageNames.json dist/libs/project-generator/src/npx/utils/packageNames.json",
         "cwd": "."
       }
     }
