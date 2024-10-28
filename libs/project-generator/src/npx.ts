@@ -156,6 +156,9 @@ const createProject = async () => {
   /// cicd?
 
   doCommandInD(pname, `git add .`);
+
+  // commit with creditfull message or input?
+  // define remote and push, after asking for an empty newborn repo?
 };
 
 createProject();
