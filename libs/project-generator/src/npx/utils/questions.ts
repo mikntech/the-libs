@@ -1,8 +1,6 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 import { getSrcLibraries } from './automations.js';
 import type Inquirer from 'inquirer';
-const inquirer = require('inquirer').default as typeof Inquirer;
+const inquirer: typeof Inquirer = require('inquirer').default;
 
 export enum NXGOptions {
   SUDO_INSTALL_GLOBAL = 'i -g',
@@ -17,7 +15,7 @@ const askOneString = async (message: string) =>
       name: 'askOneString',
       message,
     })
-  ).askOneString;
+  )['askOneString'];
 const askListOfStrings = async (message: string) =>
   (
     await inquirer.prompt([
@@ -38,7 +36,7 @@ const askOneFromOptions = async (message: string, choices: string[]) =>
       message,
       choices,
     })
-  ).askOneFromOptions;
+  )['askOneFromOptions'];
 const askListFromOptions = async (message: string, choices: string[]) =>
   (
     await inquirer.prompt({
@@ -47,7 +45,7 @@ const askListFromOptions = async (message: string, choices: string[]) =>
       message,
       choices: choices,
     })
-  ).askListFromOptions;
+  )['askListFromOptions'];
 
 const askName = async () =>
   askOneString('What is the name of your new Nx project?');
