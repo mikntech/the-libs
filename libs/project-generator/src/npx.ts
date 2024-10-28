@@ -5,3 +5,5 @@
 import { createProject } from './project.js';
 
 createProject().then();
+
+// MORE TODOs: mark what commands can be caught and gracefully continue
