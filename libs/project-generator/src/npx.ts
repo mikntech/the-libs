@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+//# some of the manual generation could have been done with plugins if i read this earlier: https://github.com/nrwl/nx/issues/28322#issuecomment-2402630258
+
 import { gitignoreTemplate } from './templates/gitignore.js';
 import { indexTsTemplate } from './templates/indexTs.js';
 import {
@@ -13,16 +15,11 @@ import {
   tsconfigJsonServerTemplate,
 } from './templates/tsconfigJson.js';
 import { askQuestions, NXGOptions } from './questions.js';
-import {
-  createAFile,
-  doCommand,
-  doCommandInD,
-  log,
-  nxGen,
-} from './commands.js';
+import { doCommand, doCommandInD, log, nxGen } from './commands.js';
 import { AppType } from './types.js';
 import { nextConfigJsTemplate } from './templates/nextConfigJs.js';
 import { nxJsonTemplate } from './templates/nxJson.js';
+import { modifyJsonFile, createAFile } from './fs.js';
 
 const createApp = async (
   pname: string,
@@ -61,7 +58,7 @@ const createApp = async (
       case AppType.Next:
         doCommandInD(
           pname,
-          `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`,
+          `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`, // TODO: Bug
         );
         doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf public/.gitkeep');
         doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf specs');
@@ -128,6 +125,9 @@ const createProject = async () => {
   doCommandInD(pname, `npm i -D esbuild`);
   doCommandInD(pname, `rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + pname);
+  modifyJsonFile(`./${pname}/tsconfig.json`, {
+    references: null,
+  });
   log('doing servers');
   await Promise.all(
     servers.map(
@@ -153,12 +153,12 @@ const createProject = async () => {
     ),
   );
 
-  /// cicd?
+  // TODO: cicd?
 
   doCommandInD(pname, `git add .`);
 
-  // commit with creditfull message or input?
-  // define remote and push, after asking for an empty newborn repo?
+  // TODO: commit with creditfull message or input?
+  // TODO: define remote and push, after asking for an empty newborn repo?
 };
 
 createProject();
