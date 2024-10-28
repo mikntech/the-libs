@@ -1,1 +1,1 @@
-export * from './npx-utils/types.js';
+export * from './types.js';

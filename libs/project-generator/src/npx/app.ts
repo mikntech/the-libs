@@ -1,18 +1,18 @@
-import { indexTsTemplate } from './npx-utils/templates/indexTs.js';
+import { indexTsTemplate } from './utils/templates/indexTs.js';
 import {
   projectJsonNextTemplate,
   projectJsonServerTemplate,
-} from './npx-utils/templates/projectJson.js';
-import { tsconfigAppJsonTemplate } from './npx-utils/templates/tsconfigAppJson.js';
+} from './utils/templates/projectJson.js';
+import { tsconfigAppJsonTemplate } from './utils/templates/tsconfigAppJson.js';
 import {
   tsconfigJsonNextTemplate,
   tsconfigJsonServerTemplate,
-} from './npx-utils/templates/tsconfigJson.js';
-import { doCommandInD } from './npx-utils/commands.js';
-import { AppType } from './npx-utils/types.js';
-import { nextConfigJsTemplate } from './npx-utils/templates/nextConfigJs.js';
-import { nxJsonTemplate } from './npx-utils/templates/nxJson.js';
-import { createAFile } from './npx-utils/fs.js';
+} from './utils/templates/tsconfigJson.js';
+import { doCommandInD } from './utils/commands.js';
+import { AppType } from '../types.js';
+import { nextConfigJsTemplate } from './utils/templates/nextConfigJs.js';
+import { nxJsonTemplate } from './utils/templates/nxJson.js';
+import { createAFile } from './utils/fs.js';
 
 export const createApp = async (
   pname: string,

@@ -1,9 +1,9 @@
-import { gitignoreTemplate } from './npx-utils/templates/gitignore.js';
-import { tsconfigBaseJsonTemplate } from './npx-utils/templates/tsconfigBaseJson.js';
-import { askQuestions } from './npx-utils/questions.js';
-import { doCommand, doCommandInD, log, nxGen } from './npx-utils/commands.js';
-import { AppType } from './npx-utils/types.js';
-import { modifyJsonFile, createAFile } from './npx-utils/fs.js';
+import { gitignoreTemplate } from './utils/templates/gitignore.js';
+import { tsconfigBaseJsonTemplate } from './utils/templates/tsconfigBaseJson.js';
+import { askQuestions } from './utils/questions.js';
+import { doCommand, doCommandInD, log, nxGen } from './utils/commands.js';
+import { AppType } from '../types.js';
+import { modifyJsonFile, createAFile } from './utils/fs.js';
 import { createApp } from './app.js';
 
 export const createProject = async () => {
