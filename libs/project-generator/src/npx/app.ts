@@ -53,26 +53,26 @@ export const createApp = async (
           pname,
           `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true`, // TODO: Bug
         );
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf public/.gitkeep');
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf specs');
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf jest.config.ts');
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf src/app/api');
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.spec.json');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf public/.gitkeep');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf specs');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf jest.config.ts');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf src/app/api');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf tsconfig.spec.json');
         doCommandInD(pname, 'rm -rf ./jest.config.ts');
         doCommandInD(pname, 'rm -rf ./jest.preset.ts');
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf tsconfig.json');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf tsconfig.json');
         createAFile(
           'tsconfig.json',
           tsconfigJsonNextTemplate(appName),
           './' + pname + '/apps/' + appName,
         );
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf project.json');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf project.json');
         createAFile(
           'project.json',
           projectJsonNextTemplate(appName),
           './' + pname + '/apps/' + appName,
         );
-        doCommandInD(`${pname}+/apps/${appName}`, 'rm -rf next.config.js');
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf next.config.js');
         createAFile(
           'next.config.js',
           nextConfigJsTemplate,
