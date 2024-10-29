@@ -5,6 +5,7 @@ export const tsconfigBaseJsonTemplate = `
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "declaration": true,
+    "moduleResolution": "node",
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "emitDecoratorMetadata": false,
