@@ -35,10 +35,13 @@ const askListOfStrings = async (message: string): Promise<string[]> =>
   ).askListOfStrings
     .split(',')
     .map((input: string) => input.trim());
-const askOneFromOptions = async (
+const askOneFromOptions = async <
+  CHOICES_ENUM = string,
+  CHOICES = CHOICES_ENUM[],
+>(
   message: string,
-  choices: string[],
-): Promise<string> =>
+  choices: CHOICES,
+): Promise<CHOICES_ENUM> =>
   (
     await inquirer.prompt({
       type: 'list',
@@ -71,9 +74,9 @@ const askWhatLibsToInstall = async () =>
 
 export const askProjectQuestions = async () => {
   const name = await askName();
-  const nxg = await askOneFromOptions(
+  const nxg = await askOneFromOptions<keyof typeof NXGOptions>(
     'How would you like to handle nx cli situation?',
-    Object.keys(NXGOptions),
+    Object.keys(NXGOptions) as (keyof typeof NXGOptions)[],
   );
   const libsToInstall = await askWhatLibsToInstall();
   const servers = await askListOfStrings(
@@ -89,4 +92,7 @@ export const askProjectQuestions = async () => {
 };
 
 export const whatToDo = async () =>
-  askOneFromOptions('How do you want to do?', Object.values(WhatToDo));
+  askOneFromOptions<WhatToDo>(
+    'How do you want to do?',
+    Object.values(WhatToDo),
+  );
