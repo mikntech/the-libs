@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const srcDir = path.resolve(__dirname, '../');
+const srcDir = path.resolve(__dirname, '../../../../');
 
 const libs = fs
   .readdirSync(srcDir, { withFileTypes: true })
