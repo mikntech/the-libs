@@ -1,6 +1,6 @@
 import { gitignoreTemplate } from './utils/templates/gitignore.js';
 import { tsconfigBaseJsonTemplate } from './utils/templates/tsconfigBaseJson.js';
-import { askQuestions } from './utils/questions.js';
+import { askProjectQuestions } from './utils/questions.js';
 import { doCommand, doCommandInD, log, nxGen } from './utils/commands.js';
 import { AppType } from '../types.js';
 import { modifyJsonFile, createAFile } from './utils/fs.js';
@@ -14,7 +14,7 @@ export const createProject = async () => {
     servers,
     clients,
     nextjss,
-  } = await askQuestions();
+  } = await askProjectQuestions();
   const nx = nxGen(nxg);
   nxg === 'SUDO_INSTALL_GLOBAL' && doCommand('sudo npm i -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${pname} \\

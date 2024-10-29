@@ -9,7 +9,13 @@ export enum NXGOptions {
   USE_NPX = 'npx nx',
 }
 
-const askOneString = async (message: string) =>
+export enum WhatToDo {
+  NEW_PROJECT = 'create a new project - im in the desired parent dir now',
+  NEW_APP = "create an app - im in my monorepo's root now",
+  NEW_LIB = "create a lib - im in my monorepo's root now",
+}
+
+const askOneString = async (message: string): Promise<string> =>
   (
     await inquirer.prompt({
       type: 'input',
@@ -17,7 +23,7 @@ const askOneString = async (message: string) =>
       message,
     })
   )['askOneString'];
-const askListOfStrings = async (message: string) =>
+const askListOfStrings = async (message: string): Promise<string[]> =>
   (
     await inquirer.prompt([
       {
@@ -29,7 +35,10 @@ const askListOfStrings = async (message: string) =>
   ).askListOfStrings
     .split(',')
     .map((input: string) => input.trim());
-const askOneFromOptions = async (message: string, choices: string[]) =>
+const askOneFromOptions = async (
+  message: string,
+  choices: string[],
+): Promise<string> =>
   (
     await inquirer.prompt({
       type: 'list',
@@ -38,7 +47,10 @@ const askOneFromOptions = async (message: string, choices: string[]) =>
       choices,
     })
   )['askOneFromOptions'];
-const askListFromOptions = async (message: string, choices: string[]) =>
+const askListFromOptions = async (
+  message: string,
+  choices: string[],
+): Promise<string[]> =>
   (
     await inquirer.prompt({
       type: 'checkbox',
@@ -57,10 +69,10 @@ const askWhatLibsToInstall = async () =>
     getSrcLibraries().map((name: string) => ({ name, value: name })),
   );
 
-export const askQuestions = async () => {
+export const askProjectQuestions = async () => {
   const name = await askName();
   const nxg = await askOneFromOptions(
-    'How would you like to handle nx situation?',
+    'How would you like to handle nx cli situation?',
     Object.keys(NXGOptions),
   );
   const libsToInstall = await askWhatLibsToInstall();
@@ -75,3 +87,6 @@ export const askQuestions = async () => {
   );
   return { name, nxg, libsToInstall, servers, clients, nextjss };
 };
+
+export const whatToDo = async () =>
+  askOneFromOptions('How do you want to do?', Object.values(WhatToDo));
