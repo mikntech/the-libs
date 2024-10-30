@@ -42,12 +42,14 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
 
+  const origin = disableCors ? '*' : Object.values(clientDomains);
+  console.log('cors origin: ', origin);
   const defaultPreMiddlewares = [
     cookieParser(),
     json({ limit: '50mb' }),
     urlencoded({ limit: '50mb', extended: true }),
     cors({
-      origin: disableCors ? '*' : Object.values(clientDomains),
+      origin,
       credentials: true,
     }),
   ];
