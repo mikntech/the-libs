@@ -4,6 +4,7 @@ export const tsconfigAppJsonTemplate = `
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
     "module": "es2022",
+    "moduleResolution": "bundler",
     "types": [
       "node"
     ]
