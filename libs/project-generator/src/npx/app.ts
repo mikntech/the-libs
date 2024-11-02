@@ -51,7 +51,7 @@ export const createApp = async (
       case AppType.Next:
         doCommandInD(
           pname,
-          `yes | ${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true \\
+          `${nx} g @nx/next:app apps/${appName} --style=scss --e2eTestRunner=none --appRouter=true --srcDir=true \\
            --interactive=false \\`,
         );
         doCommandInD(`${pname}/apps/${appName}`, 'rm -rf public/.gitkeep');
