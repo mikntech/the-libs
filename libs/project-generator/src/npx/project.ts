@@ -40,6 +40,7 @@ export const createProject = async () => {
   await modifyJsonFile(`./${pname}/tsconfig.json`, {
     references: null,
   });
+  doCommandInD(pname, 'npm i -D @nx/react');
   log('doing servers');
   await Promise.all(
     servers.map(
