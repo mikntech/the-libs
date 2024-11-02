@@ -15,7 +15,7 @@
     "@aws-sdk/client-route-53": "^3.683.0",
     "@aws-sdk/client-s3": "^3.685.0",
     "@aws-sdk/client-sts": "^3.682.0",
-    "@the-libs/base-shared": "^1.9.26",
+    "@the-libs/base-shared": "^1.9.27",
     "dotenv": "^16.4.5"
   },
   "type": "module",
