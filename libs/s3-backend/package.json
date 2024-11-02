@@ -5,12 +5,12 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.682.0",
-    "@aws-sdk/s3-request-presigner": "^3.682.0",
-    "@the-libs/base-shared": "^1.9.25",
-    "@the-libs/cicd-backend": "^1.9.25",
+    "@aws-sdk/client-s3": "^3.685.0",
+    "@aws-sdk/s3-request-presigner": "^3.685.0",
+    "@the-libs/base-shared": "^1.9.26",
+    "@the-libs/cicd-backend": "^1.9.26",
     "dotenv": "^16.4.5",
-    "mongoose": "^8.7.3"
+    "mongoose": "^8.8.0"
   },
   "type": "module",
   "main": "./index.js",
