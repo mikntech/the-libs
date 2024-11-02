@@ -46,7 +46,10 @@ export const createApp = async (
         );
         break;
       case AppType.Client:
-        // need to ideate
+        doCommandInD(
+          pname,
+          `${nx} g @nx/react:app apps/${appName} --bundler=vite --style=@emotion/styled --appRouter=false --e2eTestRunner=none --interactive=false`,
+        );
         break;
       case AppType.Next:
         doCommandInD(

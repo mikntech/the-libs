@@ -47,6 +47,9 @@ export const createProject = async () => {
         await createApp(pname, nx, AppType.Server, appName),
     ),
   );
+  log('doing vite if needed');
+  nextjss.some((appName: string) => appName !== '') &&
+    doCommandInD(pname, 'nx add @nx/vite --setupPathsPlugin');
   log('doing clients');
   await Promise.all(
     clients.map(
