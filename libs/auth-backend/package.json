@@ -6,8 +6,8 @@
   },
   "dependencies": {
     "@the-libs/base-backend": "^1.2.17",
-    "@the-libs/auth-shared": "^1.9.34",
-    "@the-libs/base-shared": "^1.9.34",
+    "@the-libs/auth-shared": "^1.9.35",
+    "@the-libs/base-shared": "^1.9.35",
     "@the-libs/email-backend": "^1.9.34",
     "@the-libs/s3-backend": "^1.9.34",
     "bcrypt": "^5.1.1",
