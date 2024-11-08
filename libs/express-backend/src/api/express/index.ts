@@ -39,11 +39,14 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   postMiddlewares: Function[] = [],
   disableCors: boolean = false,
   dontListen: boolean = false,
+  extraCorsOrigins: string[] = [],
 ) => {
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
 
-  const origin = disableCors ? '*' : Object.values(clientDomains);
+  const origin = disableCors
+    ? '*'
+    : [...Object.values(clientDomains), ...extraCorsOrigins];
   console.log('cors origin: ', origin);
   const defaultPreMiddlewares = [
     cookieParser(),

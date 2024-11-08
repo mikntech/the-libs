@@ -15,6 +15,7 @@ export const startExpressServer = async <CB extends { [s: string]: string }>(
   postMiddlewares: Function[] = [],
   disableCors: boolean = false,
   dontListen: boolean = false,
+  extraCorsOrigins: string[] = [],
 ) => {
   console.log('Starting express server MongoDB...');
   return startExpress<CB>(
@@ -23,5 +24,6 @@ export const startExpressServer = async <CB extends { [s: string]: string }>(
     postMiddlewares,
     disableCors,
     dontListen,
+    extraCorsOrigins,
   ).catch((e) => console.log(e));
 };
