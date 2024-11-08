@@ -13,6 +13,7 @@ interface ServerProviderProps<FES> {
   exactDomainURI?: string;
   frontendSettings: () => FES;
   MainMessage: (props: { text: string }) => ReactNode;
+  serverPort?: number;
   tryInterval?: number;
 }
 
@@ -23,10 +24,14 @@ interface ServerContextProps {
 
 export const ServerContext = createContext<ServerContextProps | null>(null);
 
-export const getBaseURL = (domain: string, VITE_WHITE_ENV: string) => {
+export const getBaseURL = (
+  domain: string,
+  VITE_WHITE_ENV: string,
+  serverPort = 5556,
+) => {
   const prefix = VITE_WHITE_ENV === 'preprod' ? 'pre' : '';
   return VITE_WHITE_ENV === 'local'
-    ? 'http://localhost:5556/'
+    ? `http://localhost:${serverPort}/`
     : `https://${prefix}${domain}/`;
 };
 
@@ -35,6 +40,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   domain,
   frontendSettings,
   exactDomainURI,
+  serverPort,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
   tryInterval = DEFAULT_TRY_INTERVAL,
 }: ServerProviderProps<FES>) => {
@@ -44,7 +50,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   const [version, setVersion] = useState<string>('');
 
   const axiosInstance = axios.create({
-    baseURL: exactDomainURI || getBaseURL(domain, VITE_WHITE_ENV),
+    baseURL: exactDomainURI || getBaseURL(domain, VITE_WHITE_ENV, serverPort),
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
   });
