@@ -38,6 +38,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   preMiddlewares: Function[] = [],
   postMiddlewares: Function[] = [],
   disableCors: boolean = false,
+  dontListen: boolean = false,
 ) => {
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
@@ -81,9 +82,10 @@ export const startExpress = async <CB extends { [s: string]: string }>(
       (middleware: TODO) => expressApp.use(middleware),
     );
 
-    expressApp.listen(port, '0.0.0.0', () => {
-      console.log('Server is ready at ' + getExpressSettings().myDomain);
-    });
+    !dontListen &&
+      expressApp.listen(port, '0.0.0.0', () => {
+        console.log('Server is ready at ' + getExpressSettings().myDomain);
+      });
     return expressApp;
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));
