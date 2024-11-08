@@ -74,7 +74,8 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
         let gqlLive = false;
         try {
           await request(
-            'http://localhost:4321',
+            getBaseURL(domain, VITE_WHITE_ENV, serverPort, exactDomainURI) +
+              '/graphql',
             gql`query adxnxnxnnxnxjjjd (){}`,
           );
         } catch (e: any) {
