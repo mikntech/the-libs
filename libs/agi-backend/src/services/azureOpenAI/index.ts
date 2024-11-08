@@ -1,11 +1,14 @@
 import { agiSettings } from '../../config';
 import { createRequire } from 'module';
 import * as ChatAPI from 'openai/src/resources/chat/chat';
-import { ChatCompletionMessageParam } from 'openai/src/resources/chat/completions';
+import {
+  ChatCompletion,
+  ChatCompletionMessageParam,
+} from 'openai/src/resources/chat/completions';
+import { APIPromise } from 'openai/core';
 
 const require = createRequire(import.meta.url);
 const { AzureOpenAI } = require('openai');
-import type { ChatCompletion, APIPromise } from 'openai';
 
 const apiVersion = '2024-07-01-preview';
 
