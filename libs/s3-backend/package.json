@@ -7,10 +7,10 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.687.0",
     "@aws-sdk/s3-request-presigner": "^3.687.0",
-    "@the-libs/base-shared": "^1.9.35",
-    "@the-libs/cicd-backend": "^1.9.35",
+    "@the-libs/base-shared": "^1.9.37",
+    "@the-libs/cicd-backend": "^1.9.37",
     "dotenv": "^16.4.5",
-    "mongoose": "^8.8.0"
+    "mongoose": "^8.8.1"
   },
   "type": "module",
   "main": "./index.js",

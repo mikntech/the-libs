@@ -5,10 +5,10 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.9.35",
-    "@the-libs/s3-backend": "^1.9.34",
+    "@the-libs/base-shared": "^1.9.37",
+    "@the-libs/s3-backend": "^1.9.37",
     "dotenv": "^16.4.5",
-    "mongoose": "^8.8.0"
+    "mongoose": "^8.8.1"
   },
   "type": "module",
   "main": "./index.js",
