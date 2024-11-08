@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
 import axios, { AxiosInstance } from 'axios';
 import { Typography } from '@mui/material';
+import { request, gql } from 'graphql-request';
 
 const DEFAULT_TRY_INTERVAL = 3000;
 const GOOD_STATUS = 'good';
@@ -15,6 +16,7 @@ interface ServerProviderProps<FES> {
   MainMessage: (props: { text: string }) => ReactNode;
   serverPort?: number;
   tryInterval?: number;
+  gqlCheck?: boolean;
 }
 
 interface ServerContextProps {
@@ -28,11 +30,15 @@ export const getBaseURL = (
   domain: string,
   VITE_WHITE_ENV: string,
   serverPort = 5556,
+  exactDomainURI?: string,
 ) => {
   const prefix = VITE_WHITE_ENV === 'preprod' ? 'pre' : '';
-  return VITE_WHITE_ENV === 'local'
-    ? `http://localhost:${serverPort}/`
-    : `https://${prefix}${domain}/`;
+  return (
+    exactDomainURI ||
+    (VITE_WHITE_ENV === 'local'
+      ? `http://localhost:${serverPort}/`
+      : `https://${prefix}${domain}/`)
+  );
 };
 
 export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
@@ -41,6 +47,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   frontendSettings,
   exactDomainURI,
   serverPort,
+  gqlCheck,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
   tryInterval = DEFAULT_TRY_INTERVAL,
 }: ServerProviderProps<FES>) => {
@@ -50,7 +57,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   const [version, setVersion] = useState<string>('');
 
   const axiosInstance = axios.create({
-    baseURL: exactDomainURI || getBaseURL(domain, VITE_WHITE_ENV, serverPort),
+    baseURL: getBaseURL(domain, VITE_WHITE_ENV, serverPort, exactDomainURI),
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
   });
@@ -64,7 +71,17 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
           response.data['Health Check Status'] === 'Im alive'
             ? GOOD_STATUS
             : BAD_MESSAGE;
-        setStatus(newStatus);
+        let gqlLive = false;
+        try {
+          await request(
+            'http://localhost:4321',
+            gql`query adxnxnxnnxnxjjjd (){}`,
+          );
+        } catch (e: any) {
+          if (e?.response?.status === 400) gqlLive = true;
+        }
+
+        setStatus(gqlCheck ? (gqlLive ? GOOD_STATUS : BAD_MESSAGE) : newStatus);
         if (newStatus === GOOD_STATUS) {
           setVersion(response.data.Version);
         } else {

@@ -44,7 +44,8 @@
           "axios",
           "@the-libs/chat-shared",
           "@the-libs/auth-shared",
-          "@emotion/styled"
+          "@emotion/styled",
+          "graphql-request"
         ]
       },
       "configurations": {

@@ -131,5 +131,7 @@
     "web-push": "^3.6.7",
     "zxcvbn": "^4.4.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "graphql-request": "^7.1.2"
+  }
 }
