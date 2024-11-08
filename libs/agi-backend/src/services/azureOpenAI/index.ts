@@ -1,8 +1,11 @@
 import { agiSettings } from '../../config';
 import { createRequire } from 'module';
+import * as ChatAPI from 'openai/src/resources/chat/chat';
+import { ChatCompletionMessageParam } from 'openai/src/resources/chat/completions';
 
 const require = createRequire(import.meta.url);
 const { AzureOpenAI } = require('openai');
+import type { ChatCompletion, APIPromise } from 'openai';
 
 const apiVersion = '2024-07-01-preview';
 
@@ -14,7 +17,10 @@ const options = {
 };
 
 // Chat completion function compatible with GPT-4o
-export const complete = async (model: string, chat: any) => {
+export const complete = async (
+  model: (string & {}) | ChatAPI.ChatModel,
+  chat: Array<ChatCompletionMessageParam>,
+) => {
   try {
     // Format the chat input as a message array expected by chat-completion models
     const messages = [
@@ -23,7 +29,9 @@ export const complete = async (model: string, chat: any) => {
     ];
 
     // Call chat-completion API instead of completion
-    const response = await new AzureOpenAI(options).chat.completions.create({
+    const response: APIPromise<ChatCompletion> = await new AzureOpenAI(
+      options,
+    ).chat.completions.create({
       model,
       messages,
     });
