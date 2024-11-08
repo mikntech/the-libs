@@ -10,6 +10,7 @@ const FIRST_MESSAGE = 'Connecting to server...';
 interface ServerProviderProps<FES> {
   children: ReactNode;
   domain: string;
+  exactDomainURI?: string;
   frontendSettings: () => FES;
   MainMessage: (props: { text: string }) => ReactNode;
   tryInterval?: number;
@@ -33,6 +34,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   children,
   domain,
   frontendSettings,
+  exactDomainURI,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
   tryInterval = DEFAULT_TRY_INTERVAL,
 }: ServerProviderProps<FES>) => {
@@ -42,7 +44,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   const [version, setVersion] = useState<string>('');
 
   const axiosInstance = axios.create({
-    baseURL: getBaseURL(domain, VITE_WHITE_ENV),
+    baseURL: exactDomainURI || getBaseURL(domain, VITE_WHITE_ENV),
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
   });
