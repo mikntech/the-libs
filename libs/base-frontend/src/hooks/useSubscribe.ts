@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getBaseURL } from '../';
 
 export const useSubscribe = <T = string>(
-  VITE_WHITE_ENV: string,
+  VITE_STAGING_ENV: string,
   domain: string,
   endpoint: string,
   serverPort = 5556,
@@ -11,7 +11,7 @@ export const useSubscribe = <T = string>(
 
   useEffect(() => {
     const eventSource = new EventSource(
-      getBaseURL(domain, VITE_WHITE_ENV, serverPort) + endpoint,
+      getBaseURL(domain, VITE_STAGING_ENV, serverPort) + endpoint,
       {
         withCredentials: true,
       },

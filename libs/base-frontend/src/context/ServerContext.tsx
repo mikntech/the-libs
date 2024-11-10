@@ -28,20 +28,20 @@ export const ServerContext = createContext<ServerContextProps | null>(null);
 
 export const getBaseURL = (
   domain: string,
-  VITE_WHITE_ENV: string,
+  VITE_STAGING_ENV: string,
   serverPort = 5556,
   exactDomainURI?: string,
 ) => {
-  const prefix = VITE_WHITE_ENV === 'preprod' ? 'pre' : '';
+  const prefix = VITE_STAGING_ENV === 'preprod' ? 'pre' : '';
   return (
     exactDomainURI ||
-    (VITE_WHITE_ENV === 'local'
+    (VITE_STAGING_ENV === 'local'
       ? `http://localhost:${serverPort}/`
       : `https://${prefix}${domain}/`)
   );
 };
 
-export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
+export const ServerProvider = <FES extends { VITE_STAGING_ENV: string }>({
   children,
   domain,
   frontendSettings,
@@ -51,13 +51,13 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
   tryInterval = DEFAULT_TRY_INTERVAL,
 }: ServerProviderProps<FES>) => {
-  const { VITE_WHITE_ENV } = frontendSettings();
+  const { VITE_STAGING_ENV } = frontendSettings();
 
   const [status, setStatus] = useState<string>(FIRST_MESSAGE);
   const [version, setVersion] = useState<string>('');
 
   const axiosInstance = axios.create({
-    baseURL: getBaseURL(domain, VITE_WHITE_ENV, serverPort, exactDomainURI),
+    baseURL: getBaseURL(domain, VITE_STAGING_ENV, serverPort, exactDomainURI),
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
   });
@@ -74,7 +74,7 @@ export const ServerProvider = <FES extends { VITE_WHITE_ENV: string }>({
         let gqlLive = false;
         try {
           await request(
-            getBaseURL(domain, VITE_WHITE_ENV, serverPort, exactDomainURI) +
+            getBaseURL(domain, VITE_STAGING_ENV, serverPort, exactDomainURI) +
               '/graphql',
             gql`query adxnxnxnnxnxjjjd (){}`,
           );

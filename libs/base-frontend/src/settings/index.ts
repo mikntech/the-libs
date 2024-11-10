@@ -1,6 +1,6 @@
 export interface BaseFrontendSettings {
   VITE_NODE_ENV: string;
-  VITE_WHITE_ENV: string;
+  VITE_STAGING_ENV: string;
 }
 
 export const getFrontendSettings = <

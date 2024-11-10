@@ -3,12 +3,12 @@ import { Box } from '@mui/material';
 
 interface EnvBorderContextProps {
   children: ReactNode;
-  VITE_WHITE_ENV: string;
+  VITE_STAGING_ENV: string;
 }
 
 export const EnvBorder = ({
   children,
-  VITE_WHITE_ENV,
+  VITE_STAGING_ENV,
 }: EnvBorderContextProps) => {
   useEffect(() => {
     const adjustHeight = () => {
@@ -26,12 +26,12 @@ export const EnvBorder = ({
   }, []);
 
   const props = {
-    width: VITE_WHITE_ENV === 'prod' ? '100%' : 'calc(100% - 8px)',
-    height: VITE_WHITE_ENV === 'prod' ? '100%' : 'calc(100% - 8px)',
+    width: VITE_STAGING_ENV === 'prod' ? '100%' : 'calc(100% - 8px)',
+    height: VITE_STAGING_ENV === 'prod' ? '100%' : 'calc(100% - 8px)',
     sx:
-      VITE_WHITE_ENV === 'prod'
+      VITE_STAGING_ENV === 'prod'
         ? {}
-        : VITE_WHITE_ENV === 'preprod'
+        : VITE_STAGING_ENV === 'preprod'
           ? { border: '4px solid orange' }
           : { border: '4px solid blue' },
   };

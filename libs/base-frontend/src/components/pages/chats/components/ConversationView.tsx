@@ -30,7 +30,7 @@ import { axiosErrorToaster } from '../../../../utils';
 import { extactNameInitials } from '../../../../utils';
 
 interface ConversationViewProps {
-  VITE_WHITE_ENV: string;
+  VITE_STAGING_ENV: string;
   conversation: Conversation;
   setSelectedConversation: Dispatch<SetStateAction<Conversation | undefined>>;
   domain: string;
@@ -55,7 +55,7 @@ export const sendMessage = (
 };
 
 const ConversationView = ({
-  VITE_WHITE_ENV,
+  VITE_STAGING_ENV,
   conversation,
   setSelectedConversation,
   domain,
@@ -69,7 +69,7 @@ const ConversationView = ({
   const [messages, setMessages] = useState<null | Message[]>(null);
   const [scrolled, setScrolled] = useState<boolean>(false);
 
-  const { res } = useSubscribe(VITE_WHITE_ENV, domain, 'api/chat/subscribe');
+  const { res } = useSubscribe(VITE_STAGING_ENV, domain, 'api/chat/subscribe');
 
   const fetchConversationMessages = useCallback(async () => {
     try {

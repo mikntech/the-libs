@@ -13,7 +13,7 @@ import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-shared';
 
 interface ChatsPageProps {
-  VITE_WHITE_ENV: string;
+  VITE_STAGING_ENV: string;
   isMobillized?: boolean;
   PrimaryText?: TODO;
   tenum: { guest: string; host: string; admin: string };
@@ -27,7 +27,7 @@ interface ChatsPageProps {
 }
 
 export const ChatsPage = ({
-  VITE_WHITE_ENV,
+  VITE_STAGING_ENV,
   isMobillized,
   PrimaryText = Typography,
   tenum,
@@ -158,7 +158,7 @@ export const ChatsPage = ({
       >
         {selectedConversation && (
           <ConversationView
-            VITE_WHITE_ENV={VITE_WHITE_ENV}
+            VITE_STAGING_ENV={VITE_STAGING_ENV}
             conversation={selectedConversation}
             setSelectedConversation={setSelectedConversation}
             domain={domain}
