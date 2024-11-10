@@ -16,3 +16,13 @@ export const loadFonts = () => {
   link.rel = 'stylesheet';
   document.head.appendChild(link);
 };
+
+export const lazyLoadFonts = () => {
+  if (document.readyState === 'loading') {
+    //   // Loading hasn't finished yet
+    document.addEventListener('DOMContentLoaded', loadFonts);
+  } else {
+    //   // `DOMContentLoaded` has already fired
+    loadFonts();
+  }
+};
