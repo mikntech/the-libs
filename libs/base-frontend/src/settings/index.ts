@@ -13,7 +13,7 @@ export const getFrontendSettings = <FES extends BaseFrontendSettings>(
   } catch (e) {
     res = import.meta.env;
   }
-  keys.forEach((key) => {
+  ['VITE_NODE_ENV', 'VITE_STAGING_ENV', ...keys].forEach((key) => {
     if (res[key] === undefined)
       res[key] = import.meta.env[key as keyof ImportMetaEnv];
   });
