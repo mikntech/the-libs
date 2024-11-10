@@ -17,5 +17,5 @@ export const getFrontendSettings = <FES extends BaseFrontendSettings>(
     if (res[key] === undefined)
       res[key] = import.meta.env[key as keyof ImportMetaEnv];
   });
-  return res.map();
+  return res;
 };
