@@ -1,34 +1,17 @@
-import { autodeskSettings } from '../../config';
+import { derivativesApi, forgeAuth } from '../../services';
 
-interface Credentials {
-  credentials: {
-    client_id: any;
-    client_secret: any;
-    grant_type: string;
-    scope: string;
-  };
-  BaseUrl: string;
-  Version: string;
-  Authentication?: string;
-}
+export const getAutodeskToken = async () =>
+  (await forgeAuth.authenticate()).access_token;
 
-export const getAutodeskToken = async () => {
-  try {
-    const credentials: Credentials = {
-      credentials: {
-        client_id: autodeskSettings.AUTODESK_CLIENT_ID,
-        client_secret: autodeskSettings.AUTODESK_CLIENT_SECRET,
-        grant_type: 'client_credentials',
-        scope: 'data:read',
-      },
-      // Autodesk Forge base url
-      BaseUrl: 'https://developer.api.autodesk.com',
-      Version: 'v2',
-    };
-    credentials.Authentication = `${credentials.BaseUrl}/authentication/${credentials.Version}/token`;
-    return credentials;
-  } catch (error) {
-    console.error('Error getting token:', error);
-    return null;
-  }
+export const translate = async (fileUrn: string) => {
+  const urn = Buffer.from(fileUrn).toString('base64'); // Forge requires base64 encoding
+  await derivativesApi.translate(
+    {
+      input: { urn },
+      output: { formats: [{ type: 'svf', views: ['2d', '3d'] }] },
+    },
+    forgeAuth,
+    forgeAuth.getCredentials(),
+  );
+  return { statusCode: 201, body: 'Translation started' };
 };

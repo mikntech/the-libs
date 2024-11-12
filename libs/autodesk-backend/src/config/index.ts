@@ -7,11 +7,11 @@ const process = require('process');
 config();
 
 export interface AutodeskSettings {
-  AUTODESK_CLIENT_ID: string;
-  AUTODESK_CLIENT_SECRET: string;
+  autodeskClientId: string;
+  autodeskClientSecret: string;
 }
 
 export const autodeskSettings: AutodeskSettings = {
-  AUTODESK_CLIENT_ID: process.env['AUTODESK_CLIENT_ID'] ?? '',
-  AUTODESK_CLIENT_SECRET: process.env['AUTODESK_CLIENT_SECRET'] ?? '',
+  autodeskClientId: process.env['AUTODESK_CLIENT_ID'] ?? '',
+  autodeskClientSecret: process.env['AUTODESK_CLIENT_SECRET'] ?? '',
 };
