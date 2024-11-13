@@ -9,7 +9,7 @@
     "update": "npx --yes npm-check-updates -u",
     "update-all": "for d in libs/*/ ; do (cd \"$d\" && npm run update) ; done",
     "sync-versions": "node sync-version-script.js",
-    "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
+    "build": "find libs/* -type d -maxdepth 0 | xargs -P $(nproc) -I {} nx build $(basename {})",
     "publish-all": "find dist/libs/* -type d -maxdepth 0 | xargs -P $(nproc) -I {} bash -c 'cd \"{}\" && npm publish --access public'",
     "build-and-publish": "npm i --legacy-peer-deps && npm run sync-versions && npm run build && npm run publish-all"
   },
