@@ -1,10 +1,27 @@
-export const userBasicSchema = (nameRequired: boolean = false) => ({
+import {
+  PasswordType,
+  Strategy,
+  VerifiedContactMethod,
+} from '../../../../strategy';
+
+export const userBasicSchema = (
+  strategy: Strategy<{}, {}>,
+  nameRequired: boolean = false,
+) => ({
   email: {
     type: String,
-    required: true,
+    required: strategy.verifiedContactMethod === VerifiedContactMethod.EMAIL,
     unique: true,
   },
-  password: { type: String, required: true },
+  phone: {
+    type: String,
+    required: strategy.verifiedContactMethod === VerifiedContactMethod.SMS,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: strategy.passwordType === PasswordType.HASHED,
+  },
   full_name: {
     type: String,
     required: nameRequired,
