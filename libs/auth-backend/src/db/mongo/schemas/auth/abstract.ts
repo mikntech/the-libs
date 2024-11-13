@@ -5,22 +5,22 @@ import {
 } from '../../../../strategy';
 
 export const userBasicSchema = (
-  strategy: Strategy<{}, {}>,
+  { passwordType, verifiedContactMethod }: Partial<Strategy<any, any>>,
   nameRequired: boolean = false,
 ) => ({
   email: {
     type: String,
-    required: strategy.verifiedContactMethod === VerifiedContactMethod.EMAIL,
+    required: verifiedContactMethod === VerifiedContactMethod.EMAIL,
     unique: true,
   },
   phone: {
     type: String,
-    required: strategy.verifiedContactMethod === VerifiedContactMethod.SMS,
+    required: verifiedContactMethod === VerifiedContactMethod.SMS,
     unique: true,
   },
   password: {
     type: String,
-    required: strategy.passwordType === PasswordType.HASHED,
+    required: passwordType === PasswordType.HASHED,
   },
   full_name: {
     type: String,
