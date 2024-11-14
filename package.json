@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/source",
-  "version": "1.10.21",
+  "version": "1.10.22",
   "license": "MIT",
   "description": "Good unbranded code by Michael Nusair - https://mikntech.com - https://www.linkedin.com/in/michael-nx",
   "scripts": {
@@ -134,7 +134,5 @@
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2"
   },
-  "dependencies": {
-
-  }
+  "dependencies": {}
 }
