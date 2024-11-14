@@ -1,7 +1,7 @@
 import { autodeskSettings } from '../config';
-
-const { DerivativesApi } = require('forge-apis');
-const { AuthClientTwoLegged } = require('forge-apis');
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { DerivativesApi, AuthClientTwoLegged } = require('forge-apis');
 const { autodeskClientId, autodeskClientSecret } = autodeskSettings;
 export const forgeAuth = new AuthClientTwoLegged(
   autodeskClientId,

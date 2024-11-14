@@ -129,11 +129,12 @@
     "vite-plugin-dts": "^4.3.0",
     "vitest": "^2.1.4",
     "web-push": "^3.6.7",
-    "zxcvbn": "^4.4.2"
-  },
-  "dependencies": {
+    "zxcvbn": "^4.4.2",
     "forge-apis": "^0.9.10",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.2"
+  },
+  "dependencies": {
+
   }
 }

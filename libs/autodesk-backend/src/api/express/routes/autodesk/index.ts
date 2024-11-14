@@ -3,7 +3,6 @@ const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import { highOrderHandler } from '@the-libs/express-backend';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
-import { derivativesApi, forgeAuth } from '../../../../services';
 import { getAutodeskToken, translate } from '../../../../controllers/autodesk';
 
 export const autodeskRouter = Router();
