@@ -22,7 +22,7 @@ class PubSub {
     callback: (message: string) => void,
   ): string | (() => void) | void {
     if (this.redisClient) {
-      this.redisClient.subscribe(channel, (err) => {
+      this.redisClient.subscribe(channel, (err: Error) => {
         if (err) console.error('Redis subscription failed:', err);
       });
 
@@ -37,7 +37,7 @@ class PubSub {
 
       // Return a cleanup function to unsubscribe and remove the listener
       return () => {
-        this.redisClient?.unsubscribe(channel, (err) => {
+        this.redisClient?.unsubscribe(channel, (err: Error) => {
           if (err) console.error('Redis unsubscription failed:', err);
         });
         this.redisClient?.off('message', messageListener);
@@ -55,7 +55,7 @@ class PubSub {
    */
   publish(channel: string, message: string) {
     if (this.redisClient) {
-      this.redisClient.publish(channel, message, (err) => {
+      this.redisClient.publish(channel, message, (err: Error) => {
         if (err) console.error('Redis publish failed:', err);
       });
     } else {
@@ -69,7 +69,7 @@ class PubSub {
    */
   unsubscribe(tokenOrChannel: string | symbol) {
     if (this.redisClient) {
-      this.redisClient.unsubscribe(tokenOrChannel as string, (err) => {
+      this.redisClient.unsubscribe(tokenOrChannel as string, (err: Error) => {
         if (err) console.error('Redis unsubscribe failed:', err);
       });
     } else {
