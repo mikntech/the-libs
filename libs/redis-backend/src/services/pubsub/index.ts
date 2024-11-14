@@ -86,4 +86,63 @@ export class PubSub {
       this.fallback.unsubscribe(tokenOrChannel as string);
     }
   }
+
+  /**
+   * Provides an AsyncIterator for a specific channel to use in GraphQL subscriptions.
+   * @param channel - The channel to listen to
+   * @returns An AsyncIterator that yields messages as they arrive
+   */
+  // asyncIterator method inside PubSub class
+  asyncIterator(channel: string) {
+    const messageQueue: any[] = [];
+    let isListening = true;
+
+    const pushMessage = (message: any) => {
+      messageQueue.push(message);
+      if (resolveNext) {
+        resolveNext(messageQueue.shift()!);
+        resolveNext = null;
+      }
+    };
+
+    let resolveNext: ((value: any) => void) | null = null;
+
+    // Capture the result of subscribe, which may be a function or string
+    const cleanup = this.subscribe(channel, (message) => {
+      if (isListening) {
+        pushMessage(message);
+      }
+    });
+
+    return {
+      next: () => {
+        return new Promise<{ value: any; done: boolean }>((resolve) => {
+          if (messageQueue.length > 0) {
+            resolve({ value: messageQueue.shift(), done: false });
+          } else {
+            resolveNext = resolve;
+          }
+        });
+      },
+      return: () => {
+        isListening = false;
+        // Check if cleanup is a function before calling it
+        if (typeof cleanup === 'function') {
+          cleanup();
+        }
+        return Promise.resolve({ value: undefined, done: true });
+      },
+      throw: (error: any) => {
+        isListening = false;
+        // Check if cleanup is a function before calling it
+        if (typeof cleanup === 'function') {
+          cleanup();
+        }
+        return Promise.reject(error);
+      },
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+    };
+  }
 }
