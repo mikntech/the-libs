@@ -1,7 +1,7 @@
 import NodePubSub from 'pubsub-js';
 import { createRedisInstance, RedisType } from '../redis-client';
 
-class PubSub {
+export class PubSub {
   private redisClient: RedisType | null;
   private fallback: typeof NodePubSub;
 
@@ -22,7 +22,7 @@ class PubSub {
     callback: (message: string) => void,
   ): string | (() => void) | void {
     if (this.redisClient) {
-      this.redisClient.subscribe(channel, (err: Error) => {
+      this.redisClient.subscribe(channel, (err: Error | null | undefined) => {
         if (err) console.error('Redis subscription failed:', err);
       });
 
@@ -37,9 +37,12 @@ class PubSub {
 
       // Return a cleanup function to unsubscribe and remove the listener
       return () => {
-        this.redisClient?.unsubscribe(channel, (err: Error) => {
-          if (err) console.error('Redis unsubscription failed:', err);
-        });
+        this.redisClient?.unsubscribe(
+          channel,
+          (err: Error | null | undefined) => {
+            if (err) console.error('Redis unsubscription failed:', err);
+          },
+        );
         this.redisClient?.off('message', messageListener);
       };
     } else {
@@ -55,9 +58,13 @@ class PubSub {
    */
   publish(channel: string, message: string) {
     if (this.redisClient) {
-      this.redisClient.publish(channel, message, (err: Error) => {
-        if (err) console.error('Redis publish failed:', err);
-      });
+      this.redisClient.publish(
+        channel,
+        message,
+        (err: Error | null | undefined) => {
+          if (err) console.error('Redis publish failed:', err);
+        },
+      );
     } else {
       this.fallback.publish(channel, message);
     }
@@ -69,13 +76,14 @@ class PubSub {
    */
   unsubscribe(tokenOrChannel: string | symbol) {
     if (this.redisClient) {
-      this.redisClient.unsubscribe(tokenOrChannel as string, (err: Error) => {
-        if (err) console.error('Redis unsubscribe failed:', err);
-      });
+      this.redisClient.unsubscribe(
+        tokenOrChannel as string,
+        (err: Error | null | undefined) => {
+          if (err) console.error('Redis unsubscribe failed:', err);
+        },
+      );
     } else {
       this.fallback.unsubscribe(tokenOrChannel as string);
     }
   }
 }
-
-export default new PubSub();
