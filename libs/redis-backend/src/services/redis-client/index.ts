@@ -1,14 +1,14 @@
-import type { RedisOptions } from 'ioredis';
+import type { Redis as TRedis } from 'ioredis';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const RedisClientClass = require('ioredis');
+const { Redis } = require('ioredis');
 import { redisSettings } from '../..';
 
-export type RedisType = typeof RedisClientClass;
+export type RedisType = TRedis;
 
-export const createRedisInstance = () => {
+export const createRedisInstance = (): RedisType | null => {
   try {
-    return new RedisClientClass(redisSettings.uri as RedisOptions); // the type assertion is not needed but makes a potential mismatch between RedisOptions and RedisURI in the future easier to debug
+    return new Redis(redisSettings.uri);
   } catch (e) {
     console.log(e);
   }
