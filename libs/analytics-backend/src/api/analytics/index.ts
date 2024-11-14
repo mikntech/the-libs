@@ -17,7 +17,7 @@ export const analyticsRouterGenerator = <ENUM>(
       try {
         const avent = new (await analyticEvent<ENUM>(AnalyticEventEnum))({
           value: req.body.value,
-          userPhone: req.body.userPhone,
+          userNumber: req.body.userNumber,
         });
         await avent.save();
       } catch (e) {
