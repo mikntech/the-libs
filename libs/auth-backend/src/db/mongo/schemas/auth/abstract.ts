@@ -11,12 +11,12 @@ export const userBasicSchema = (
   email: {
     type: String,
     required: verifiedContactMethod === VerifiedContactMethod.EMAIL,
-    unique: true,
+    unique: verifiedContactMethod === VerifiedContactMethod.EMAIL,
   },
   phone: {
     type: String,
     required: verifiedContactMethod === VerifiedContactMethod.SMS,
-    unique: true,
+    unique: verifiedContactMethod === VerifiedContactMethod.SMS,
   },
   password: {
     type: String,
