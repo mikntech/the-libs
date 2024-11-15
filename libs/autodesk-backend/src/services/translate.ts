@@ -20,7 +20,7 @@ const waitForTranslationStatus = async (
       if (status === 'complete') {
         console.log('Translation completed successfully.');
         return true;
-      } else if (status === 'pending') {
+      } else if (status === 'pending' || status === 'inprogress') {
         console.log(
           'Translation is still pending. Checking again in 5 seconds...',
         );
