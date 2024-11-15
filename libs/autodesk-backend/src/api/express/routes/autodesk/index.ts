@@ -3,7 +3,8 @@ const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import { highOrderHandler } from '@the-libs/express-backend';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
-import { getAutodeskToken, translate } from '../../../../controllers/autodesk';
+import { encodeUrn, getToken } from '../../../../controllers/autodesk';
+import { s3Settings } from '@the-libs/s3-backend';
 
 export const autodeskRouter = Router();
 
@@ -11,13 +12,14 @@ autodeskRouter.get(
   '/getToken',
   highOrderHandler(async () => ({
     statusCode: 200,
-    body: { token: await getAutodeskToken() },
+    body: { token: await getToken() },
   })),
 );
 
-autodeskRouter.post(
-  '/translate',
-  highOrderHandler(async (req: AuthenticatedRequest) =>
-    translate(req.body.fileUrn),
-  ),
+autodeskRouter.get(
+  '/getEncodedUrn',
+  highOrderHandler(async (req: AuthenticatedRequest) => ({
+    statusCode: 200,
+    body: encodeUrn(s3Settings.s3BucketName, req.body.fileUrn),
+  })),
 );
