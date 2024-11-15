@@ -14,10 +14,10 @@ const checkTranslationStatus = async (encodedUrn: string) => {
 
     if (manifest.body.status === 'complete') {
       return true;
-    } else if (manifest.body.status === 'inprogress') {
+    } else if (manifest.body.status === 'pending') {
       return false;
     } else {
-      console.error('Translation failed:', manifest.body);
+      console.error('Translation Not Completed:', manifest.body);
       return false;
     }
   } catch (e: any) {
