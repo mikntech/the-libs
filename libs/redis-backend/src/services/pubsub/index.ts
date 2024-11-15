@@ -1,7 +1,7 @@
 import NodePubSub from 'pubsub-js';
 import { createRedisInstance, RedisType } from '../redis-client';
 
-export class PubSub {
+class PubSub {
   private redisClient: RedisType | null;
   private fallback: typeof NodePubSub;
 
@@ -146,3 +146,5 @@ export class PubSub {
     };
   }
 }
+
+export const pubSubInstance = new PubSub();
