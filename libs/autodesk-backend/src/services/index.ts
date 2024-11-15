@@ -1,3 +1,6 @@
+export * from './translate';
+export * from './upload';
+
 import { autodeskSettings } from '../config';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);

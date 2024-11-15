@@ -1,5 +1,5 @@
-import { authClient, objectsApi } from '../../services';
-import { getToken } from './auth';
+import { getToken } from '../controllers/autodesk';
+import { authClient, objectsApi } from './index';
 
 const checkFileAccessibility = async (
   forgeBucketKey: string,

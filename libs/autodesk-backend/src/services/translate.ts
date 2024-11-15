@@ -1,8 +1,7 @@
-import { authClient, derivativesApi } from '../../services';
-import { getToken } from './auth';
+import { authClient, derivativesApi } from './index';
 import { downloadFile, s3Settings } from '@the-libs/s3-backend';
-import { encodeUrn } from './encodeUrn';
 import { uploadToForge } from './upload';
+import { encodeUrn, getToken } from '../controllers/autodesk';
 
 const checkTranslationStatus = async (encodedUrn: string) => {
   try {
