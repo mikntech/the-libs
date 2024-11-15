@@ -17,13 +17,16 @@ const waitForTranslationStatus = async (
 
       const status = manifest.body.status;
 
-      if (status === 'complete') {
+      if (status === 'complete' || status === 'success') {
         console.log('Translation completed successfully.');
         return true;
       } else if (status === 'pending' || status === 'inprogress') {
-        console.log(
-          'Translation is still pending. Checking again in 5 seconds...',
+        console.error(
+          'Translation not completed. Status:',
+          status,
+          ' Checking again in 5 seconds...',
         );
+
         await new Promise((resolve) => setTimeout(resolve, 5000));
       } else {
         console.error('Translation not completed. Status:', status);
