@@ -1,7 +1,8 @@
 import { authClient, derivativesApi } from '../../services';
 import { getToken } from './auth';
-import { s3Settings } from '@the-libs/s3-backend';
+import { downloadFile, s3Settings } from '@the-libs/s3-backend';
 import { encodeUrn } from './encodeUrn';
+import { uploadToForge } from './upload';
 
 const checkTranslationStatus = async (encodedUrn: string) => {
   try {
