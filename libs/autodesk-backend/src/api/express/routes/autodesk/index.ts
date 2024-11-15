@@ -9,7 +9,7 @@ import { s3Settings } from '@the-libs/s3-backend';
 export const autodeskRouter = Router();
 
 autodeskRouter.get(
-  '/getToken',
+  '/token',
   highOrderHandler(async () => ({
     statusCode: 200,
     body: { token: await getToken() },
@@ -17,9 +17,9 @@ autodeskRouter.get(
 );
 
 autodeskRouter.get(
-  '/getEncodedUrn',
+  '/encodedUrn/:fileUrn',
   highOrderHandler(async (req: AuthenticatedRequest) => ({
     statusCode: 200,
-    body: encodeUrn(s3Settings.s3BucketName, req.body.fileUrn),
+    body: encodeUrn(s3Settings.s3BucketName, req.params['fileUrn']),
   })),
 );
