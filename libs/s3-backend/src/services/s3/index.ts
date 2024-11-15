@@ -101,3 +101,11 @@ export const recursivelySignUrls = async <T = any>(
 
   return await process(obj);
 };
+
+export const downloadFile = async (key: string) =>
+  await s3Client.send(
+    new GetObjectCommand({
+      Bucket: s3Settings.s3BucketName,
+      Key: key,
+    }),
+  );
