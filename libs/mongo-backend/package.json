@@ -5,8 +5,8 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.10.32",
-    "@the-libs/s3-backend": "^1.10.32",
+    "@the-libs/base-shared": "^1.10.33",
+    "@the-libs/s3-backend": "^1.10.33",
     "dotenv": "^16.4.5",
     "mongoose": "^8.8.1"
   },

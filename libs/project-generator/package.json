@@ -6,7 +6,7 @@
   },
   "description": "A custom Nx generator library",
   "dependencies": {
-    "@nx/devkit": "^20.1.1",
+    "@nx/devkit": "^20.1.2",
     "inquirer": "^12.1.0"
   },
   "type": "module",
