@@ -3,25 +3,35 @@ import { downloadFile, s3Settings } from '@the-libs/s3-backend';
 import { uploadToForge } from './upload';
 import { encodeUrn, getToken } from '../controllers/autodesk';
 
-const checkTranslationStatus = async (encodedUrn: string) => {
+const waitForTranslationStatus = async (
+  encodedUrn: string,
+): Promise<boolean> => {
   try {
-    const manifest = await derivativesApi.getManifest(
-      encodedUrn,
-      {},
-      authClient,
-      await getToken(),
-    );
+    while (true) {
+      const manifest = await derivativesApi.getManifest(
+        encodedUrn,
+        {},
+        authClient,
+        await getToken(),
+      );
 
-    if (manifest.body.status === 'complete') {
-      return true;
-    } else if (manifest.body.status === 'pending') {
-      return false;
-    } else {
-      console.error('Translation Not Completed:', manifest.body);
-      return false;
+      const status = manifest.body.status;
+
+      if (status === 'complete') {
+        console.log('Translation completed successfully.');
+        return true;
+      } else if (status === 'pending') {
+        console.log(
+          'Translation is still pending. Checking again in 5 seconds...',
+        );
+        await new Promise((resolve) => setTimeout(resolve, 5000));
+      } else {
+        console.error('Translation not completed. Status:', status);
+        return false;
+      }
     }
-  } catch (e: any) {
-    console.error('Error checking translation status:', e.message || e);
+  } catch (error: any) {
+    console.error('Error checking translation status:', error.message || error);
     return false;
   }
 };
@@ -55,14 +65,7 @@ export const translate = async (s3Key: string) => {
       authClient,
       await getToken(),
     );
-    let isComplete = false;
-    while (!isComplete) {
-      isComplete = await checkTranslationStatus(encodedUrn);
-      if (!isComplete) {
-        await new Promise((resolve) => setTimeout(resolve, 5000));
-      }
-    }
-
+    await waitForTranslationStatus(encodedUrn);
     return { statusCode: 201, body: encodedUrn };
   } catch (e: any) {
     console.error('Error during translation workflow:', e.message || e, {
