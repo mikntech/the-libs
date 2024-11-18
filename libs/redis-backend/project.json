@@ -33,6 +33,7 @@
           "bull",
           "@the-libs/base-shared",
           "pubsub-js",
+          "@bull-board/express",
           "ioredis"
         ]
       },

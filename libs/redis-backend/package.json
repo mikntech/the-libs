@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@the-libs/base-shared": "^1.11.2",
+    "@bull-board/express": "^6.5.2",
     "bull": "^4.16.4",
     "dotenv": "^16.4.5",
     "ioredis": "^5.4.1",
