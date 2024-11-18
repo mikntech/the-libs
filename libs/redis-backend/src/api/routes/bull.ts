@@ -5,9 +5,9 @@ const { BullAdapter } = require('@bull-board/api/bullAdapter');
 const { ExpressAdapter } = require('@bull-board/express');
 import type { Queue } from 'bull';
 
-export const createDashboardRoute = (queues: Queue[]) => {
+export const createDashboardRoute = (queues: Queue[], route = '/dashboard') => {
   const serverAdapter = new ExpressAdapter();
-  serverAdapter.setBasePath('/dashboard');
+  serverAdapter.setBasePath(route);
 
   createBullBoard({
     queues: queues.map((queue) => new BullAdapter(queue)),
