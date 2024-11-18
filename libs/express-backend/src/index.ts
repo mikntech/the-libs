@@ -11,8 +11,8 @@ const { Router } = require('express');
 
 export const startExpressServer = async <CB extends { [s: string]: string }>(
   apiRouter = Router(),
-  preMiddlewares: Function[] = [],
-  postMiddlewares: Function[] = [],
+  preMiddlewares: (Function | { route: string; func: Function })[] = [],
+  postMiddlewares: (Function | { route: string; func: Function })[] = [],
   disableCors: boolean = false,
   dontListen: boolean = false,
   extraCorsOrigins: string[] = [],

@@ -35,8 +35,8 @@ export const expressApp = express();
 
 export const startExpress = async <CB extends { [s: string]: string }>(
   apiRouter: Router,
-  preMiddlewares: Function[] = [],
-  postMiddlewares: Function[] = [],
+  preMiddlewares: (Function | { route: string; func: Function })[] = [],
+  postMiddlewares: (Function | { route: string; func: Function })[] = [],
   disableCors: boolean = false,
   dontListen: boolean = false,
   extraCorsOrigins: string[] = [],
@@ -64,7 +64,9 @@ export const startExpress = async <CB extends { [s: string]: string }>(
 
   try {
     [...defaultPreMiddlewares, ...preMiddlewares].forEach((middleware: TODO) =>
-      expressApp.use(middleware),
+      middleware?.route
+        ? expressApp.use(middleware.route, middleware.func)
+        : expressApp.use(middleware),
     );
 
     const statusEndpointHandler = (_: TODO, res: TODO) =>
@@ -82,7 +84,10 @@ export const startExpress = async <CB extends { [s: string]: string }>(
     getExpressSettings().stagingEnv !== 'prod' && expressApp.use(autoHelper);
 
     [...defaultPostMiddlewares, ...postMiddlewares].forEach(
-      (middleware: TODO) => expressApp.use(middleware),
+      (middleware: TODO) =>
+        middleware?.route
+          ? expressApp.use(middleware.route, middleware.func)
+          : expressApp.use(middleware),
     );
 
     const httpServer =
