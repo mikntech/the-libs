@@ -14,11 +14,11 @@ export const createQueue = <DATA>(
   queueName: string,
   howToProcess: ProcessCallbackFunction<DATA>,
   OnDone?: (job: Job<DATA>, done: DoneCallback) => void,
-) =>
-  new BullClass(queueName, { redis: redisSettings.uri }).process(
-    howToProcess,
-    OnDone,
-  );
+) => {
+  const queue = new BullClass(queueName, { redis: redisSettings.uri });
+  queue.process(howToProcess, OnDone);
+  return queue;
+};
 
 export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
   queue.add(data, opts);
