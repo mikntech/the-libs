@@ -81,7 +81,8 @@ export const startExpress = async <CB extends { [s: string]: string }>(
 
     expressApp.use('/api', apiRouter);
 
-    getExpressSettings().stagingEnv !== 'prod' && expressApp.use(autoHelper);
+    getExpressSettings().stagingEnv !== 'prod' &&
+      expressApp.use('/api', autoHelper);
 
     [...defaultPostMiddlewares, ...postMiddlewares].forEach(
       (middleware: TODO) =>
