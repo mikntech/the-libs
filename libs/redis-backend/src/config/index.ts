@@ -24,10 +24,12 @@ export const redisSettings: RedisSettings = {
     port: parseInt(process.env['REDIS_PORT'] || '1'),
     password: process.env['REDIS_PASSWORD'] || '',
     user: process.env['REDIS_USER'] || '',
-    tls: process.env['REDIS_TLS_SERVERNAME']
-      ? {
-          servername: process.env['REDIS_TLS_SERVERNAME'],
-        }
-      : undefined,
+    tls:
+      !process.env['REDIS_TLS_SERVERNAME'] ||
+      process.env['REDIS_TLS_SERVERNAME'] === ''
+        ? undefined
+        : {
+            servername: process.env['REDIS_TLS_SERVERNAME'],
+          },
   },
 };
