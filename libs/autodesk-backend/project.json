@@ -31,6 +31,7 @@
         "external": [
           "express",
           "axios",
+          "bull",
           "qs",
           "@the-libs/base-backend",
           "@the-libs/base-shared",
