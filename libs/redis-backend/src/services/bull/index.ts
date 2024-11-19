@@ -8,7 +8,13 @@ export const createQueue = <DATA>(
   queueName: string,
   howToProcess: ProcessCallbackFunction<DATA>,
 ) => {
-  const queue = new BullClass(queueName, { redis: redisSettings.uri });
+  const queue = new BullClass(queueName, {
+    redis: {
+      ...redisSettings.uri,
+      user: 'app',
+      tls: {},
+    },
+  });
   queue.process(howToProcess);
   return queue;
 };
