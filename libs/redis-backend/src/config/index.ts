@@ -10,6 +10,8 @@ interface RedisURI {
   host: string;
   port: number;
   password: string;
+  user: string;
+  tls: {};
 }
 
 export interface RedisSettings {
@@ -21,5 +23,7 @@ export const redisSettings: RedisSettings = {
     host: process.env['REDIS_HOST'] || '',
     port: parseInt(process.env['REDIS_PORT'] || '1'),
     password: process.env['REDIS_PASSWORD'] || '',
+    user: process.env['REDIS_USER'] || '',
+    tls: {},
   },
 };
