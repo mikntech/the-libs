@@ -2,7 +2,6 @@ import { s3Settings } from '../../config';
 import { createRequire } from 'module';
 import { TODO } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
-const { Types } = require('mongoose');
 
 const {
   GetObjectCommand,
@@ -11,6 +10,7 @@ const {
 } = require('@aws-sdk/client-s3');
 
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
+const { Upload } = require('@aws-sdk/lib-storage');
 
 export const s3Client = new S3Client({
   region: s3Settings.aws.region,
@@ -19,6 +19,30 @@ export const s3Client = new S3Client({
     secretAccessKey: s3Settings.aws.secretKey,
   },
 });
+
+export const streamFile = async (
+  key: string,
+  buffer: TODO,
+  mimetype: string,
+) => {
+  try {
+    const upload = new Upload({
+      client: s3Client,
+      params: {
+        Bucket: s3Settings.s3BucketName!,
+        Key: key,
+        Body: buffer,
+        ContentType: mimetype,
+      },
+    });
+
+    await upload.done();
+    console.log(`File uploaded successfully to S3: ${key}`);
+  } catch (err) {
+    console.error(`Failed to upload file to S3: ${key}`, err);
+    throw err;
+  }
+};
 
 export const uploadFile = async (key: string, buffer: TODO, mimetype: string) =>
   s3Client.send(
