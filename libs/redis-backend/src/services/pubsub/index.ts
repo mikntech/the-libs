@@ -6,10 +6,10 @@ class PubSub {
   private redisPublisher: RedisType | null;
   private fallback: typeof NodePubSub;
 
-  constructor() {
+  constructor(redis: RedisType) {
     // Create separate Redis instances for subscriber and publisher
-    this.redisSubscriber = createRedisInstance();
-    this.redisPublisher = createRedisInstance();
+    this.redisSubscriber = redis;
+    this.redisPublisher = redis;
     this.fallback = NodePubSub;
   }
 
@@ -125,4 +125,4 @@ class PubSub {
   }
 }
 
-export const pubSubInstance = new PubSub();
+export const pubSubInstance = (redis: RedisType) => new PubSub(redis);

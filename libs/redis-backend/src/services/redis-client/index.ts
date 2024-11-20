@@ -14,5 +14,3 @@ export const createRedisInstance = (): RedisType | null => {
   }
   return null;
 };
-
-export const redisClient = createRedisInstance();
