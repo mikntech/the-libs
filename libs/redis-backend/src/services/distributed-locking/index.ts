@@ -1,7 +1,7 @@
 import { RedisType } from '../redis-client';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const { Redlock } = require('redlock');
+const { default: Redlock } = require('redlock');
 
 export const runTaskWithLock = <CBR = any>(
   redis: RedisType,
