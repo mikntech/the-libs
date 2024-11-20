@@ -49,7 +49,18 @@ if (ip && pem && endpoint) {
 
   const ssh = spawn(
     'ssh',
-    ['-i', pemPath, '-L', `6379:${endpoint}:${port}`, `${sshUser}@${ip}`, '-N'],
+    [
+      '-i',
+      pemPath,
+      '-L',
+      `6379:${endpoint}:${port}`,
+      `${sshUser}@${ip}`,
+      '-N',
+      '-o',
+      'StrictHostKeyChecking=no',
+      '-o',
+      'UserKnownHostsFile=/dev/null',
+    ],
     {
       stdio: ['inherit', 'inherit', 'inherit'],
     },
