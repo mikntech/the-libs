@@ -125,4 +125,4 @@ class PubSub {
   }
 }
 
-export const pubSubInstance = (redis: RedisType) => new PubSub(redis);
+export const createPubSubInstance = (redis: RedisType) => new PubSub(redis);

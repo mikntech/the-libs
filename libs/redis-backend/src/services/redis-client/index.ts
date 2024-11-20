@@ -6,11 +6,5 @@ import { redisSettings } from '../..';
 
 export type RedisType = TRedis;
 
-export const createRedisInstance = (): RedisType | null => {
-  try {
-    return new Redis(redisSettings.uri);
-  } catch (e) {
-    console.log(e);
-  }
-  return null;
-};
+export const createRedisInstance = (): RedisType =>
+  new Redis(redisSettings.uri);

@@ -1,10 +1,14 @@
 import { highOrderHandler } from '@the-libs/express-backend';
-import { TODO } from '@the-libs/base-shared';
 import { User } from '@the-libs/auth-shared';
 import { message } from '../../db/mongo/schemas/chat';
 import { Message } from '@the-libs/chat-shared';
-import { pubSubInstance } from '@the-libs/redis-backend';
+import {
+  createPubSubInstance,
+  createRedisInstance,
+} from '@the-libs/redis-backend';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
+
+const pubSubInstance = createPubSubInstance(createRedisInstance());
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await (await message())
