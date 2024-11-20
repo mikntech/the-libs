@@ -1,41 +1,32 @@
 import { RedisType } from '../redis-client';
-import { TODO } from '@the-libs/base-shared';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { Redlock } = require('redlock');
 
 export const runTaskWithLock = <CBR = any>(
   redis: RedisType,
   LOCK_KEY: string,
   LOCK_TIMEOUT: number,
-  task: (...args: any) => CBR,
+  task: () => CBR,
   interval?: number,
 ) => {
-  const acquireLock = async () => {
-    const result = await redis.set(
-      LOCK_KEY,
-      'locked',
-      'NX' as TODO,
-      'EX' as TODO,
-      LOCK_TIMEOUT as TODO,
-    );
-    return result === 'OK';
-  };
-
-  const releaseLock = async () => redis.del(LOCK_KEY);
+  const redlock = new Redlock([redis], {
+    retryCount: 0, // No retries to avoid overlap
+  });
 
   const runTask = async () => {
-    const lockAcquired = await acquireLock();
-    if (!lockAcquired) {
-      console.log('Another instance is already running the task.');
-      return;
-    }
-    let ret: CBR;
     try {
-      console.log('Running periodic task...');
-      ret = task();
-    } finally {
-      await releaseLock();
-      console.log('Task completed and lock released.');
+      const lock = await redlock.acquire([LOCK_KEY], LOCK_TIMEOUT);
+      try {
+        console.log('Running periodic task...');
+        task();
+      } finally {
+        await lock.release();
+        console.log('Task completed and lock released.');
+      }
+    } catch (err) {
+      console.log('Another instance is already running the task.');
     }
-    return ret;
   };
 
   interval ? setInterval(runTask, interval) : setTimeout(runTask, 0);
