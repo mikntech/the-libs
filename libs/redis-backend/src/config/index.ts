@@ -34,7 +34,9 @@ export interface RedisSettings {
 
 const port = parseInt(process.env['REDIS_PORT'] || '6379');
 const ip = process.env['REDIS_PROXY_IP'] || undefined;
-const pem = process.env['REDIS_PROXY_PEM'] || undefined;
+const pem = process.env['REDIS_PROXY_PEM']
+  ? process.env['REDIS_PROXY_PEM'].replace(/\\n/g, '\n')
+  : undefined;
 const endpoint = process.env['REDIS_PROXY_ENDPOINT'] || undefined;
 
 let ec2Proxy = undefined;
