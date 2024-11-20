@@ -38,7 +38,7 @@ if (ip && pem && endpoint) {
       '-i',
       '/dev/stdin',
       '-L',
-      `6379:${endpoint}${port}`,
+      `6379:${endpoint}:${port}`,
       `${sshUser}@${ip}`,
       '-N',
     ],
