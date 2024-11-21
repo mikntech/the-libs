@@ -11,7 +11,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
 export const get = async (
   redis: Cluster,
   key: string,
-  timeoutInMs = Infinity,
+  timeoutInMs = 2147483647,
 ) => {
   try {
     return await (timeoutInMs
@@ -27,7 +27,7 @@ export const set = async (
   redis: Cluster,
   key: string,
   value: string,
-  ttlInSecs = Infinity / 1000,
+  ttlInSecs = 2147483647 / 1000,
 ) => {
   try {
     await redis.set(key, value, 'EX', ttlInSecs);
@@ -41,8 +41,8 @@ export const cache = async (
   redis: Cluster,
   key: string,
   computeValue: () => Promise<string>,
-  ttlInSecs = Infinity / 1000,
-  timeout = Infinity / 1000,
+  ttlInSecs = 2147483647 / 1000,
+  timeout = 2147483647 / 1000,
 ): Promise<string> => {
   const cachedValue = await get(redis, key, timeout);
 
@@ -61,7 +61,7 @@ export const raceCache = async (
   redis: Cluster,
   key: string,
   computeValue: () => Promise<string>,
-  ttlInSecs = Infinity / 1000,
+  ttlInSecs = 2147483647 / 1000,
 ): Promise<string> => {
   const getCachedValue = async () => get(redis, key);
 
