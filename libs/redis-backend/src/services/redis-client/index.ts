@@ -7,4 +7,4 @@ import { redisSettings } from '../..';
 export type RedisType = TRedis;
 
 export const createRedisInstance = (): RedisType =>
-  new Redis(redisSettings.uri);
+  new Redis.Cluster(redisSettings.uri);
