@@ -1,10 +1,10 @@
-import { RedisType } from '../redis-client';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { default: Redlock } = require('redlock');
+import type Cluster from 'ioredis';
 
 export const runTaskWithLock = <CBR = any>(
-  redis: RedisType,
+  redis: Cluster,
   LOCK_KEY: string,
   LOCK_TIMEOUT: number,
   task: () => CBR,

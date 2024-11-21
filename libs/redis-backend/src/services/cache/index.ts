@@ -1,16 +1,16 @@
-import { RedisType } from '../redis-client';
+import type { Cluster } from 'ioredis';
 
 export const set = async (
-  redis: RedisType,
+  redis: Cluster,
   key: string,
   value: string,
   ttlInSecs: number,
 ) => redis.set(key, value, 'EX', ttlInSecs);
 
-export const get = async (redis: RedisType, key: string) => redis.get(key);
+export const get = async (redis: Cluster, key: string) => redis.get(key);
 
 export const cache = async (
-  redis: RedisType,
+  redis: Cluster,
   key: string,
   computeValue: () => Promise<string>,
   ttlInSecs: number,
