@@ -62,7 +62,7 @@ async function establishSSHTunnel(
     });
 
     ssh.on('close', (code) => {
-      fs.unlinkSync(pemPath); // Cleanup PEM file here
+      fs.unlinkSync(pemPath);
       if (code === 0) {
         console.log('SSH tunnel closed successfully.');
         reject(new Error('SSH tunnel was unexpectedly closed.'));
@@ -72,7 +72,6 @@ async function establishSSHTunnel(
       }
     });
 
-    // Resolve immediately assuming the tunnel will work; add additional verification logic if needed
     console.log('SSH tunnel process started successfully.');
     resolve();
   });
@@ -91,6 +90,7 @@ if (ip && pem && endpoint) {
   console.log('Establishing SSH tunnel...');
   try {
     await establishSSHTunnel(ip, pem, endpoint, port);
+    console.log('SSH tunnel established successfully.');
   } catch (err: any) {
     console.error('Error establishing SSH tunnel:', err.message);
     process.exit(1);
@@ -103,7 +103,7 @@ const tls = process.env['REDIS_TLS']
 
 export const redisSettings: RedisSettings = {
   uri: {
-    host: process.env['REDIS_HOST'] || 'localhost',
+    host: process.env['REDIS_HOST'] || '127.0.0.1',
     port,
     password: process.env['REDIS_PASSWORD'] || undefined,
     user: process.env['REDIS_USER'] || undefined,

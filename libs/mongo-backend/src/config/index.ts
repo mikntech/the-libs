@@ -32,6 +32,6 @@ export const mongoSettings: MongoSettings = {
     : NodeEnvironment.Development,
   mongoURI:
     process.env['MONGO_URI'] ??
-    (isProduction ? '' : 'mongodb://localhost:27017/error'),
+    (isProduction ? '' : 'mongodb://127.0.0.1:27017/error'),
   defaultDebugAllModels: Boolean(process.env['MONGO_DEFAULT_DEBUG']),
 };

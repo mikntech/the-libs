@@ -36,7 +36,7 @@ export const getBaseURL = (
   return (
     exactDomainURI ||
     (VITE_STAGING_ENV === 'local'
-      ? `http://localhost:${serverPort}/`
+      ? `http://127.0.0.1:${serverPort}/`
       : `https://${prefix}${domain}/`)
   );
 };

@@ -12,7 +12,7 @@ router.get('/s', async (req, res) => {
   document.addEventListener("DOMContentLoaded", function() {
     new window.EmbeddedSandbox({
       target: '#embedded-sandbox',
-      initialEndpoint: 'http://localhost:6555/graphql',
+      initialEndpoint: 'http://127.0.0.1:6555/graphql',
     });
   });
 </script>

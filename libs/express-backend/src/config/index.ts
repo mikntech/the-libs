@@ -39,11 +39,11 @@ const currentStagingEnv = stagingEnv || defaultStagingEnv;
 const generateFullDomain = (base: string, port: string) => {
   return isProduction
     ? `https://${currentStagingEnv === StagingEnvironment.Prod ? '' : currentStagingEnv}${base}`
-    : `http://localhost:${port}`;
+    : `http://127.0.0.1:${port}`;
 };
 
 const myDomain = generateFullDomain(
-  process.env['MY_DOMAIN'] ?? 'localhost',
+  process.env['MY_DOMAIN'] ?? '127.0.0.1',
   String(port),
 );
 
@@ -63,7 +63,7 @@ export const getExpressSettings = <
 
     Object.keys(mutableClientDomains).forEach((key) => {
       mutableClientDomains[key] =
-        'http://localhost:' + mutableClientDomains[key];
+        'http://127.0.0.1:' + mutableClientDomains[key];
     });
 
     clientDomains = mutableClientDomains as CB;
