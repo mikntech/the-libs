@@ -70,15 +70,43 @@ export async function createRedisInstance(): Promise<ClusterType> {
   };
 
   redisCluster.on('connect', () => {
-    console.log('Redis Cluster connected through NAT.');
+    console.log('[DEBUG] Redis Cluster connected.');
+  });
+
+  redisCluster.on('ready', () => {
+    console.log('[DEBUG] Redis Cluster is ready.');
   });
 
   redisCluster.on('error', (err: Error) => {
-    console.error('Redis Cluster connection error:', err);
+    console.error('[ERROR] Redis Cluster error:', err);
   });
 
-  return new Promise((resolve, reject) => {
-    redisCluster.once('connect', () => resolve(redisCluster));
-    redisCluster.once('error', (err: Error) => reject(err));
+  redisCluster.on('end', () => {
+    console.log('[DEBUG] Redis Cluster connection ended.');
   });
+
+  redisCluster.on('reconnecting', () => {
+    console.log('[DEBUG] Redis Cluster reconnecting...');
+  });
+
+  // Continuously log the status until ready
+  const waitForReady = () =>
+    new Promise<void>((resolve, reject) => {
+      const interval = setInterval(() => {
+        console.log(`[DEBUG] Redis client status: ${redisCluster.status}`);
+        if (redisCluster.status === 'ready') {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 1000);
+
+      redisCluster.once('error', (err: Error) => {
+        clearInterval(interval);
+        reject(err);
+      });
+    });
+
+  await waitForReady();
+  console.log('[DEBUG] Redis client is ready for use.');
+  return redisCluster;
 }

@@ -30,24 +30,34 @@ export const set = async (
   ttlInSecs = 10 * 365 * 24 * 60 * 60, // Default TTL: 10 years
 ): Promise<void> => {
   try {
-    // Wait for Redis connection
+    console.log(`[DEBUG] Starting the SET operation for key: "${key}".`);
+
+    // Test Redis status
+    console.log(`[DEBUG] Current Redis client status: "${redis.status}"`);
     if (!redis.status || redis.status !== 'ready') {
-      console.log('[INFO] Waiting for Redis connection...');
+      console.log('[INFO] Redis client not ready. Waiting for connection...');
       await new Promise<void>((resolve, reject) => {
         redis.once('ready', resolve);
-        redis.once('error', (err) => {
-          console.error('[ERROR] Redis connection error:', err);
-          reject(err);
-        });
+        redis.once('error', reject);
       });
       console.log('[INFO] Redis connection established.');
     }
 
-    console.log(`Setting key "${key}" with TTL of ${ttlInSecs} seconds.`);
+    // Test PING
+    const pingResponse = await redis.ping();
+    console.log(`[DEBUG] Redis PING response: "${pingResponse}"`);
+
+    // Perform the SET operation
+    console.log(
+      `[DEBUG] Attempting to set key "${key}" with value "${value}" and TTL "${ttlInSecs}"`,
+    );
     await redis.set(key, value, 'EX', ttlInSecs);
     console.log(`[INFO] Successfully set key: "${key}"`);
   } catch (error) {
-    console.error(`[ERROR] Failed to set key: "${key}"`, error);
+    console.error(
+      `[ERROR] Failed during SET operation for key "${key}"`,
+      error,
+    );
     throw error;
   }
 };
