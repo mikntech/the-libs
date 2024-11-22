@@ -137,8 +137,5 @@
     "vitest": "^2.1.5",
     "web-push": "^3.6.7",
     "zxcvbn": "^4.4.2"
-  },
-  "dependencies": {
-    "ssh2": "^1.16.0"
   }
 }

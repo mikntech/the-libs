@@ -30,10 +30,10 @@ export const set = async (
   ttlInSecs = 10 * 365 * 24 * 60 * 60, // Default TTL: 10 years
 ): Promise<void> => {
   try {
-    console.log(`[DEBUG] Starting the SET operation for key: "${key}".`);
+    console.info(`[DEBUG] Starting the SET operation for key: "${key}".`);
 
     // Test Redis status
-    console.log(`[DEBUG] Current Redis client status: "${redis.status}"`);
+    console.info(`[DEBUG] Current Redis client status: "${redis.status}"`);
     if (!redis.status || redis.status !== 'ready') {
       console.log('[INFO] Redis client not ready. Waiting for connection...');
       await new Promise<void>((resolve, reject) => {
@@ -45,19 +45,15 @@ export const set = async (
 
     // Test PING
     const pingResponse = await redis.ping();
-    console.log(`[DEBUG] Redis PING response: "${pingResponse}"`);
+    console.info(`[DEBUG] Redis PING response: "${pingResponse}"`);
 
     // Perform the SET operation
-    console.log(
+    console.info(
       `[DEBUG] Attempting to set key "${key}" with value "${value}" and TTL "${ttlInSecs}"`,
     );
     await redis.set(key, value, 'EX', ttlInSecs);
-    console.log(`[INFO] Successfully set key: "${key}"`);
   } catch (error) {
-    console.error(
-      `[ERROR] Failed during SET operation for key "${key}"`,
-      error,
-    );
+    console.error(`[ERROR] Failed to set key: ${key}`, error);
     throw error;
   }
 };
@@ -93,9 +89,9 @@ export const raceCache = async (
   const computeAndSet = async () => {
     const value = await computeValue();
     set(redis, key, value, ttlInSecs).then(() =>
-      console.log(`[DEBUG] Updated cache for key: ${key}`),
+      console.info(`[DEBUG] Updated cache for key: ${key}`),
     );
-    console.log(`[DEBUG] Computed cache for key: ${key}`);
+    console.info(`[DEBUG] Computed cache for key: ${key}`);
     return value;
   };
 

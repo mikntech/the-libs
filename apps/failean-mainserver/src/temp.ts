@@ -6,7 +6,7 @@ dotenv.config();
 const axiosInstance = axios.create({
   baseURL:
     process.env.NODE_ENV === 'development'
-      ? 'http://127.0.0.1:6777/'
+      ? 'http://localhost:6777/'
       : 'https://ocserver.failean.com/',
   withCredentials: true,
   headers: {
