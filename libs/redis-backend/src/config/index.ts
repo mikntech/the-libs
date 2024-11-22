@@ -51,7 +51,7 @@ async function establishSSHTunnel(
         '-i',
         pemPath,
         '-L',
-        `127.0.0.1:${port}:${endpoint}:${port}`, // Bind explicitly to 127.0.0.1
+        `127.0.0.1:${port}:${endpoint}:${port}`,
         `${sshUser}@${ip}`,
         '-N',
         '-o',
@@ -127,8 +127,28 @@ if (ip && pem && endpoint) {
   try {
     await establishSSHTunnel(ip, pem, endpoint, port);
     console.log('SSH tunnel established successfully.');
+
+    console.log('Testing connection to Redis via SSH tunnel...');
+    const testConnection = spawn(
+      'redis-cli',
+      ['-h', '127.0.0.1', '-p', '6379', '--tls'],
+      {
+        stdio: 'inherit',
+      },
+    );
+
+    testConnection.on('close', (code) => {
+      if (code === 0) {
+        console.log('Redis connection test successful.');
+      } else {
+        console.error(`Redis connection test failed with code ${code}.`);
+      }
+    });
   } catch (err: any) {
-    console.error('Error establishing SSH tunnel:', err.message);
+    console.error(
+      'Error establishing SSH tunnel or testing Redis:',
+      err.message,
+    );
     process.exit(1);
   }
 }
