@@ -57,7 +57,7 @@ export async function createRedisInstance(): Promise<ClusterType> {
     },
   );
 
-  // Intercept and rewrite CLUSTER.SLOTS response
+  // Force NAT mapping by intercepting CLUSTER.SLOTS responses
   redisCluster.on('node', (node: TODO) => {
     const originalSendCommand = node.sendCommand.bind(node);
 
@@ -68,7 +68,6 @@ export async function createRedisInstance(): Promise<ClusterType> {
       ) {
         console.log('Intercepting CLUSTER.SLOTS command...');
         const response = await originalSendCommand(command);
-        console.log('Original CLUSTER.SLOTS response:', response);
 
         const remappedResponse = response.map(
           ([start, end, ...nodes]: TODO) => [
