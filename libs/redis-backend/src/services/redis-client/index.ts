@@ -1,95 +1,86 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Cluster } = require('ioredis');
-import { redisSettings } from '../..';
+
 import type { Cluster as ClusterType } from 'ioredis';
-import { TODO } from '@the-libs/base-shared';
+import fs from 'fs';
 
-async function generateNatMap() {
-  const { redisNodes, uri } = redisSettings;
-  const { host: tunnelHost, port: tunnelPort } = uri;
+interface RedisClusterConfig {
+  startupNodes: { host: string; port: number }[];
+  natMap?: Record<string, { host: string; port: number }>;
+  useTLS?: boolean;
+}
 
-  if (!redisNodes || redisNodes.length === 0) {
-    throw new Error('REDIS_CLUSTER_NODES is not set.');
-  }
+function loadClusterConfig(): RedisClusterConfig {
+  const useTLS = true;
 
-  const natMap = redisNodes.reduce((map: TODO, node) => {
-    const [host] = node.split(':');
-    map[host] = { host: tunnelHost, port: tunnelPort };
-    return map;
-  }, {});
-
-  console.log('Generated NAT Map:', natMap);
-  return natMap;
+  console.log('[INFO] Using local Redis configuration');
+  return {
+    startupNodes: [
+      { host: '127.0.0.1', port: 6379 }, // Replace with SSH tunnel localhost port
+    ],
+    natMap: {
+      // NAT mapping for SSH tunneled connection
+      'redis-0001-001': { host: '127.0.0.1', port: 6379 },
+      'redis-0001-002': { host: '127.0.0.1', port: 6379 },
+    },
+    useTLS,
+  };
 }
 
 export async function createRedisInstance(): Promise<ClusterType> {
-  const natMap = await generateNatMap();
-  const { host, port, tls } = redisSettings.uri;
+  const config = loadClusterConfig();
 
-  const redisCluster = new Cluster([{ host, port }], {
-    natMap,
-    redisOptions: {
-      tls,
-      connectTimeout: 20000, // 20 seconds timeout,
-      enableReadyCheck: true, // Enable ready check
+  const redisCluster = new Cluster(config.startupNodes, {
+    natMap: config.natMap,
+    redisOptions: config.useTLS
+      ? {
+          tls: {
+            rejectUnauthorized: true,
+            ca: [fs.readFileSync('/path/to/ca.pem')],
+            servername:
+              'redis-0001-001.redis.3pwxex.memorydb.eu-central-1.amazonaws.com',
+          },
+        }
+      : undefined,
+    slotsRefreshInterval: 30000,
+    slotsRefreshTimeout: 5000,
+    enableReadyCheck: true,
+    clusterRetryStrategy: (attempts: number) => {
+      if (attempts > 10) {
+        console.error('[ERROR] Maximum retry attempts reached');
+        return null;
+      }
+      return Math.min(attempts * 100, 2000); // Backoff strategy
     },
-    scaleReads: 'all', // Allow reads from all nodes in the cluster
-    clusterRetryStrategy: (times: number) => {
-      console.warn(`[WARN] Retry attempt: ${times}`);
-      if (times > 10) return null; // Stop after 10 retries
-      return Math.min(times * 100, 2000);
-    },
   });
 
-  // Event Listeners for Debugging
-  redisCluster.on('connect', () => {
-    console.log('[INFO] Redis Cluster connected.');
-  });
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        console.error('[ERROR] Redis Cluster initialization timeout');
+        redisCluster.disconnect();
+        reject(new Error('Initialization timeout'));
+      }, 60000);
 
-  redisCluster.on('ready', () => {
-    console.log('[INFO] Redis Cluster is ready.');
-  });
+      redisCluster.on('ready', () => {
+        clearTimeout(timeout);
+        console.log('[INFO] Redis Cluster is ready');
+        resolve();
+      });
 
-  redisCluster.on('error', (err: Error) => {
-    console.error('[ERROR] Redis Cluster error:', err);
-  });
-
-  redisCluster.on('end', () => {
-    console.error('[ERROR] Redis Cluster connection ended.');
-  });
-
-  redisCluster.on('reconnecting', () => {
-    console.log('[WARN] Redis Cluster is reconnecting...');
-  });
-
-  redisCluster.on('node error', (err: Error, address: string) => {
-    console.error(`[ERROR] Node error for ${address}:`, err);
-  });
-
-  // Wait for Ready
-  await new Promise<void>((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      console.error('[ERROR] Redis client timeout.');
-      redisCluster.disconnect();
-      reject(new Error('Redis client timeout'));
-    }, 30000); // 30 seconds timeout
-
-    redisCluster.once('ready', () => {
-      clearTimeout(timeout);
-      console.log('[INFO] Redis client is ready.');
-      resolve();
+      redisCluster.on('error', (err: Error) => {
+        console.error(
+          '[ERROR] Redis Cluster error during initialization:',
+          err,
+        );
+        reject(err);
+      });
     });
-
-    redisCluster.once('error', (err: Error) => {
-      clearTimeout(timeout);
-      console.error(
-        '[ERROR] Redis connection error during initialization:',
-        err,
-      );
-      reject(err);
-    });
-  });
+  } catch (err) {
+    console.error('[ERROR] Failed to initialize Redis Cluster:', err);
+    throw err;
+  }
 
   return redisCluster;
 }
