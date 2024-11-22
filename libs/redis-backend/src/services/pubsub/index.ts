@@ -1,16 +1,15 @@
 import NodePubSub from 'pubsub-js';
-import { createRedisInstance, RedisType } from '../redis-client';
+import { RedisType } from '../redis-client';
 import { TODO } from '@the-libs/base-shared';
 
 class PubSub {
-  private redisSubscriber: RedisType | null;
-  private redisPublisher: RedisType | null;
-  private fallback: typeof NodePubSub;
+  private readonly redisSubscriber: RedisType | null;
+  private readonly redisPublisher: RedisType | null;
+  private readonly fallback: typeof NodePubSub;
 
-  constructor(redis: RedisType) {
-    // Create separate Redis instances for subscriber and publisher
-    this.redisSubscriber = redis;
-    this.redisPublisher = redis;
+  constructor(pub: RedisType, sub: RedisType) {
+    this.redisSubscriber = sub;
+    this.redisPublisher = pub;
     this.fallback = NodePubSub;
   }
 
@@ -126,4 +125,5 @@ class PubSub {
   }
 }
 
-export const createPubSubInstance = (redis: RedisType) => new PubSub(redis);
+export const createPubSubInstance = (pub: RedisType, sub: RedisType) =>
+  new PubSub(pub, sub);
