@@ -61,20 +61,109 @@ export async function createRedisInstance(): Promise<ClusterType> {
       }),
     ]);
   });
-
   // Disable automatic refresh to prevent overwriting NAT mapping
-  redisCluster.refreshSlotsCache = async function () {
-    console.log('Manually refreshing cluster slots...');
-    const nodes = Object.keys(natMap);
-    this.slots = [
-      [
-        0,
-        16383,
-        ...nodes.map((node) => [natMap[node].host, natMap[node].port]),
-      ],
-    ];
-    console.log('Refreshed slots cache:', this.slots);
+  redisCluster.refreshSlotsCache = function (
+    callback?: (err?: Error | null) => void,
+  ) {
+    try {
+      console.log('[DEBUG] Overwriting CLUSTER.SLOTS behavior...');
+      this.slots = [[0, 16383, ['127.0.0.1', 6379], ['127.0.0.1', 6379]]];
+      console.log('[DEBUG] Slots cache manually set:', this.slots);
+      if (callback) callback(); // Call the callback if defined
+    } catch (err: TODO) {
+      console.error('[ERROR] Failed to set slots cache manually:', err);
+      if (callback) callback(err);
+    }
   };
+
+  // Add persistent connection logic
+  redisCluster.on('end', () => {
+    console.error(
+      '[ERROR] Redis Cluster connection ended. Forcing reconnect...',
+    );
+    redisCluster
+      .connect()
+      .catch((err: Error) =>
+        console.error('[ERROR] Failed to reconnect Redis Cluster:', err),
+      );
+  });
+
+  // Remove the subscriber role to prevent disconnections
+  redisCluster.options.enableOfflineQueue = true;
+  redisCluster.options.enableReadyCheck = false; // Avoid ready checks causing unnecessary closes
+  redisCluster.options.clusterRetryStrategy = () => 1000; // Retry every second
+
+  // Manually initiate slot cache and log connection events
+  try {
+    redisCluster.refreshSlotsCache((err: Error) => {
+      if (err) {
+        console.error(
+          '[ERROR] Initial manual refresh of slots cache failed:',
+          err,
+        );
+      } else {
+        console.log('[INFO] Initial manual refresh of slots cache succeeded.');
+      }
+    });
+
+    redisCluster.on('node error', (err: Error, address: string) => {
+      console.error(`[ERROR] Node error for ${address}:`, err);
+    });
+  } catch (err) {
+    console.error('[ERROR] Manual refresh setup failed:', err);
+  }
+
+  // Monitor connection events for troubleshooting
+  redisCluster.on('connect', () =>
+    console.log('[INFO] Redis Cluster connected.'),
+  );
+  redisCluster.on('ready', () => console.log('[INFO] Redis Cluster is ready.'));
+  redisCluster.on('reconnecting', () =>
+    console.log('[WARN] Redis Cluster is reconnecting...'),
+  );
+  redisCluster.on('error', (err: Error) =>
+    console.error('[ERROR] Redis Cluster error:', err),
+  );
+  redisCluster.on('close', () =>
+    console.warn(
+      '[WARN] Redis Cluster connection closed. Attempting reconnect...',
+    ),
+  );
+
+  // Manually initiate slot cache
+  try {
+    redisCluster.refreshSlotsCache((err: Error) => {
+      if (err) {
+        console.error(
+          '[ERROR] Initial manual refresh of slots cache failed:',
+          err,
+        );
+      } else {
+        console.log('[INFO] Initial manual refresh of slots cache succeeded.');
+      }
+    });
+  } catch (err) {
+    console.error('[ERROR] Manual refresh setup failed:', err);
+  }
+
+  // Disable other cluster options for debugging
+  redisCluster.options.clusterRetryStrategy = () => null; // No retries
+  redisCluster.options.slotsRefreshTimeout = 0; // No automatic refresh
+
+  // Add error handler for disconnected nodes
+  redisCluster.on('node error', (err: Error, address: string) => {
+    console.error(`[ERROR] Node error detected on ${address}:`, err);
+  });
+
+  // Periodically refresh slots cache
+  setInterval(() => {
+    try {
+      redisCluster.refreshSlotsCache();
+      console.log('[INFO] Periodic manual refresh of slots cache succeeded.');
+    } catch (err) {
+      console.error('[ERROR] Failed to refresh slots cache manually:', err);
+    }
+  }, 5000); // Refresh every 5 seconds
 
   redisCluster.on('connect', () => {
     console.log('[DEBUG] Redis Cluster connected.');
