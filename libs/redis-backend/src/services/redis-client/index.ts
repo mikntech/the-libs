@@ -57,40 +57,57 @@ export async function createRedisInstance(): Promise<ClusterType> {
     },
   );
 
-  // Rewrite cluster slots to enforce NAT mapping
-  redisCluster.on('cluster.slots', (slots: TODO) => {
-    console.log('Original CLUSTER.SLOTS response:', slots);
+  // Intercept and rewrite CLUSTER.SLOTS response
+  redisCluster.on('node', (node: TODO) => {
+    const originalSendCommand = node.sendCommand.bind(node);
 
-    const remappedSlots = slots.map(([start, end, ...nodes]: TODO) => [
-      start,
-      end,
-      ...nodes.map(([host, port]: TODO) => {
-        const shortName = host.split('.')[0];
-        const mapped = natMap[host] || natMap[shortName];
-        if (mapped) {
-          console.log(
-            `Remapping node ${host}:${port} to ${mapped.host}:${mapped.port}`,
-          );
-          return [mapped.host, mapped.port];
-        }
-        console.warn(`Node ${host}:${port} not found in NAT map`);
-        return [host, port]; // Fallback to original
-      }),
-    ]);
+    node.sendCommand = async (command: TODO) => {
+      if (
+        command.name === 'cluster' &&
+        command.args[0].toUpperCase() === 'SLOTS'
+      ) {
+        console.log('Intercepting CLUSTER.SLOTS command...');
+        const response = await originalSendCommand(command);
+        console.log('Original CLUSTER.SLOTS response:', response);
 
-    console.log('Remapped CLUSTER.SLOTS response:', remappedSlots);
-    return remappedSlots;
+        const remappedResponse = response.map(
+          ([start, end, ...nodes]: TODO) => [
+            start,
+            end,
+            ...nodes.map(([host, port]: TODO) => {
+              const shortName = host.split('.')[0];
+              const mapped = natMap[host] || natMap[shortName];
+              if (mapped) {
+                console.log(
+                  `Remapping ${host}:${port} to ${mapped.host}:${mapped.port}`,
+                );
+                return [mapped.host, mapped.port];
+              }
+              console.warn(`Node ${host}:${port} not found in NAT map`);
+              return [host, port]; // Fallback to original
+            }),
+          ],
+        );
+
+        console.log('Remapped CLUSTER.SLOTS response:', remappedResponse);
+        return remappedResponse;
+      }
+
+      return originalSendCommand(command);
+    };
+  });
+
+  // Debug connection events
+  redisCluster.on('connect', () => {
+    console.log('Redis Cluster client connected successfully.');
+  });
+
+  redisCluster.on('error', (err: Error) => {
+    console.error('Redis Cluster connection error:', err);
   });
 
   return new Promise((resolve, reject) => {
-    redisCluster.on('connect', () => {
-      console.log('Redis Cluster client connected successfully.');
-      resolve(redisCluster);
-    });
-
-    redisCluster.on('error', (err: Error) => {
-      console.error('Redis Cluster connection error:', err);
-      reject(err);
-    });
+    redisCluster.once('connect', () => resolve(redisCluster));
+    redisCluster.once('error', (err: Error) => reject(err));
   });
 }
