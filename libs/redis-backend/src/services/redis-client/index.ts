@@ -29,11 +29,18 @@ export async function createRedisInstance(): Promise<ClusterType> {
 
   const redisCluster = new Cluster([{ host, port }], {
     natMap,
-    redisOptions: { tls },
+    redisOptions: {
+      tls,
+      connectTimeout: 20000, // 20 seconds timeout,
+      enableReadyCheck: false, // Disable ready check
+    },
     slotsRefreshTimeout: 0, // Disable automatic refresh of cluster slots
-    scaleReads: 'slave', // Optional: Direct read queries to read replicas
-    clusterRetryStrategy: (times: number) =>
-      times > 5 ? null : Math.min(times * 100, 2000),
+    scaleReads: 'all', // Allow reads from all nodes in the cluster
+    clusterRetryStrategy: (times: number) => {
+      console.warn(`[WARN] Retry attempt: ${times}`);
+      if (times > 10) return null; // Stop after 10 retries
+      return Math.min(times * 100, 2000);
+    },
   });
 
   // Forcefully intercept CLUSTER SLOTS response
@@ -90,21 +97,48 @@ export async function createRedisInstance(): Promise<ClusterType> {
   });
 
   // Continuously log the status until ready
-  const waitForReady = () =>
-    new Promise<void>((resolve, reject) => {
-      const interval = setInterval(() => {
-        console.log(`[DEBUG] Redis client status: ${redisCluster.status}`);
-        if (redisCluster.status === 'ready') {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 1000);
+  const waitForReady = async () => {
+    return new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        console.error('[ERROR] Redis client timeout. Forcing reconnection.');
+        redisCluster.disconnect();
+        redisCluster.connect();
+      }, 10000); // 10 seconds timeout
 
-      redisCluster.once('error', (err: Error) => {
-        clearInterval(interval);
+      redisCluster.on('ready', () => {
+        clearTimeout(timeout);
+        console.log('[INFO] Redis client is ready.');
+        resolve();
+      });
+
+      redisCluster.on('error', (err: Error) => {
+        clearTimeout(timeout);
+        console.error('[ERROR] Redis client error:', err);
         reject(err);
       });
     });
+  };
+
+  redisCluster.on('ready', () => console.log('[INFO] Redis Cluster is ready.'));
+  redisCluster.on('connect', () =>
+    console.log('[INFO] Redis Cluster connected.'),
+  );
+  redisCluster.on('close', () =>
+    console.log('[WARN] Redis Cluster connection closed.'),
+  );
+  redisCluster.on('end', () =>
+    console.log('[ERROR] Redis Cluster connection ended.'),
+  );
+  redisCluster.on('error', (err: Error) =>
+    console.error('[ERROR] Redis Cluster error:', err),
+  );
+  redisCluster.on('node error', (err: Error, address: string) => {
+    console.error(`[ERROR] Node error for ${address}:`, err);
+  });
+  redisCluster.on('reconnecting', () =>
+    console.log('[INFO] Redis Cluster is reconnecting...'),
+  );
+  redisCluster.on('slotsRefresh', () => console.log('[INFO] Slots refreshed.'));
 
   await waitForReady();
   console.log('[DEBUG] Redis client is ready for use.');
