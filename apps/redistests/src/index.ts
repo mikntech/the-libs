@@ -12,11 +12,10 @@ console.log('Starting SSH connection setup...');
 ssh
   .on('ready', () => {
     console.log('SSH connection ready');
-    // Forward traffic from local to MemoryDB via EC2
     ssh.forwardOut(
       '127.0.0.1', // Localhost on your machine
       12345, // Arbitrary local port
-      redisSettings.uri.tls.servername, // Replace with MemoryDB cluster endpoint
+      '127.0.0.1', // Force to local endpoint via tunnel
       6379, // MemoryDB port
       (err, stream) => {
         if (err) {
@@ -24,53 +23,39 @@ ssh
           ssh.end();
           return;
         }
-        console.log('SSH tunnel to MemoryDB established');
+        console.log('SSH tunnel established');
 
-        // Connect to MemoryDB via the tunnel
+        // Create Redis client with explicit stream
         const redis = new Redis({
-          stream: stream, // Use the stream from SSH
+          stream,
+          tls: {
+            rejectUnauthorized: false, // Disable for testing, remove in production
+          },
           enableOfflineQueue: false,
-          lazyConnect: true,
-          tls: redisSettings.uri.tls, // MemoryDB requires TLS
         });
 
         redis
-          .on('connect', () => {
-            console.log('Connected to MemoryDB');
+          .on('connect', () => console.log('Connected to MemoryDB'))
+          .on('ready', () => {
+            console.log('MemoryDB connection ready');
+            redis
+              .set('key', 'value')
+              .then(() => console.log('Value set successfully'))
+              .catch((err) => console.error('Error setting value:', err))
+              .finally(() => {
+                redis.quit();
+                ssh.end();
+              });
           })
-          .on('error', (err) => {
-            console.error('MemoryDB connection error:', err);
-          });
-
-        // Perform a Redis operation
-        redis.set('key', 'value', (err) => {
-          if (err) {
-            console.error('Error setting value in MemoryDB:', err);
-          } else {
-            console.log('Value set successfully in MemoryDB');
-          }
-
-          // Cleanup connections
-          redis.quit();
-          ssh.end();
-        });
+          .on('error', (err) => console.error('Redis error:', err));
       },
     );
   })
-  .on('error', (err) => {
-    console.error('SSH connection error:', err);
-  })
-  .on('end', () => {
-    console.log('SSH connection ended');
-  })
-  .on('close', (hadError) => {
-    console.log('SSH connection closed', hadError ? 'with error' : 'cleanly');
-  })
+  .on('error', (err) => console.error('SSH connection error:', err))
+  .on('close', () => console.log('SSH connection closed'))
   .connect({
-    host: redisSettings.ec2Proxy.ip, // EC2 instance IP (bastion)
-    port: 22, // SSH port
-    username: 'ec2-user', // EC2 username
-    privateKey: redisSettings.ec2Proxy.pem.replace(/\\n/g, '\n'), // PEM key
-    readyTimeout: 10000, // Optional: Timeout in ms
-    debug: (info) => console.log('SSH debug info:', info), // Debug logs
+    host: redisSettings.ec2Proxy.ip,
+    port: 22,
+    username: 'ec2-user',
+    privateKey: redisSettings.ec2Proxy.pem.replace(/\\n/g, '\n'),
   });
