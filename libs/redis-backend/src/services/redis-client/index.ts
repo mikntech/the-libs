@@ -17,18 +17,16 @@ async function generateNatMap(): Promise<
     );
   }
 
-  // Parse the original nodes
   const nodes = redisNodes.map((node) => {
     const [host, port] = node.split(':');
     return { host: host.trim(), port: parseInt(port, 10) };
   });
 
-  // Build the NAT map to redirect all node connections through the SSH tunnel
   const natMap: Record<string, { host: string; port: number }> = {};
   nodes.forEach(({ host }) => {
-    const shortName = host.split('.')[0]; // Extract short name
-    natMap[shortName] = { host: tunnelHost, port: tunnelPort }; // Short name remapping
-    natMap[host] = { host: tunnelHost, port: tunnelPort }; // FQDN remapping
+    const shortName = host.split('.')[0];
+    natMap[shortName] = { host: tunnelHost, port: tunnelPort };
+    natMap[host] = { host: tunnelHost, port: tunnelPort };
   });
 
   console.log('Generated NAT Map:', natMap);
@@ -45,17 +43,17 @@ export async function createRedisInstance(): Promise<ClusterType> {
       { host, port }, // Entry point through the SSH tunnel
     ],
     {
-      natMap, // Remaps node addresses to the tunnel
+      natMap,
       redisOptions: {
-        tls, // TLS settings for secure communication
-        connectTimeout: 20000, // Increased timeout for slow connections
+        tls,
+        connectTimeout: 20000,
       },
       clusterRetryStrategy: (times: TODO) => {
         if (times > 5) {
           console.error('Exceeded maximum retry attempts.');
-          return null; // Stop retrying after 5 attempts
+          return null;
         }
-        return Math.min(times * 100, 2000); // Exponential backoff
+        return Math.min(times * 100, 2000);
       },
     },
   );
