@@ -35,7 +35,6 @@ async function generateNatMap(): Promise<
 
 export async function createRedisInstance(): Promise<ClusterType> {
   const natMap = await generateNatMap();
-
   const { host, port, tls } = redisSettings.uri;
 
   const redisCluster = new Cluster(
@@ -57,6 +56,31 @@ export async function createRedisInstance(): Promise<ClusterType> {
       },
     },
   );
+
+  // Rewrite cluster slots to enforce NAT mapping
+  redisCluster.on('cluster.slots', (slots: TODO) => {
+    console.log('Original CLUSTER.SLOTS response:', slots);
+
+    const remappedSlots = slots.map(([start, end, ...nodes]: TODO) => [
+      start,
+      end,
+      ...nodes.map(([host, port]: TODO) => {
+        const shortName = host.split('.')[0];
+        const mapped = natMap[host] || natMap[shortName];
+        if (mapped) {
+          console.log(
+            `Remapping node ${host}:${port} to ${mapped.host}:${mapped.port}`,
+          );
+          return [mapped.host, mapped.port];
+        }
+        console.warn(`Node ${host}:${port} not found in NAT map`);
+        return [host, port]; // Fallback to original
+      }),
+    ]);
+
+    console.log('Remapped CLUSTER.SLOTS response:', remappedSlots);
+    return remappedSlots;
+  });
 
   return new Promise((resolve, reject) => {
     redisCluster.on('connect', () => {
