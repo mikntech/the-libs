@@ -1,64 +1,64 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const { Redis } = require('ioredis');
+const { Cluster } = require('ioredis');
 import { redisSettings } from '../..';
-import type { Cluster } from 'ioredis';
+import type { Cluster as ClusterType } from 'ioredis';
+import { TODO } from '@the-libs/base-shared';
 
-export const createRedisInstance = async (): Promise<Cluster> => {
-  console.log('Initializing Redis Cluster with settings:', redisSettings.uri);
+async function generateNatMap(): Promise<
+  Record<string, { host: string; port: number }>
+> {
+  const { redisNodes, uri } = redisSettings;
+  const { host, port } = uri;
 
-  if (!redisSettings.uri.host || !redisSettings.uri.port) {
-    throw new Error('Redis host or port is not defined in redisSettings.');
+  if (!redisSettings) {
+    throw new Error(
+      'REDIS_CLUSTER_NODES is not set. Please provide a comma-separated list of cluster nodes.',
+    );
   }
 
-  if (!redisSettings.uri.tls) {
-    console.warn('TLS is not configured. MemoryDB requires TLS.');
-  }
+  const natMap: Record<string, { host: string; port: number }> = {};
 
-  const cluster = new Redis.Cluster(
+  redisNodes.forEach((node) => {
+    natMap[node] = { host, port };
+  });
+
+  console.log('Generated NAT Map:', natMap);
+  return natMap;
+}
+
+export async function createRedisInstance(): Promise<ClusterType> {
+  const natMap = await generateNatMap();
+
+  const { host, port, tls } = redisSettings.uri;
+
+  const redisCluster = new Cluster(
     [
-      {
-        host: redisSettings.uri.host,
-        port: redisSettings.uri.port,
-      },
+      { host, port }, // Use the host and port from environment
     ],
     {
+      natMap,
       redisOptions: {
-        tls: redisSettings.uri.tls || {},
+        tls,
+        connectTimeout: 20000, // Increase timeout for slow connections
       },
-      retryDelayOnFailover: 1000, // Retry delay for slot refresh issues
-      maxRetriesPerRequest: 10, // Max retries for a single request
+      clusterRetryStrategy: (times: TODO) => {
+        if (times > 5) {
+          console.error('Exceeded maximum retry attempts.');
+          return null; // Stop retrying
+        }
+        return Math.min(times * 100, 2000); // Retry with exponential backoff
+      },
     },
   );
 
-  return new Promise<Cluster>((resolve, reject) => {
-    let resolved = false;
-
-    const checkState = () => {
-      if (cluster.status === 'ready') {
-        console.log('Redis Cluster client is ready.');
-        resolved = true;
-        resolve(cluster);
-      } else if (cluster.status === 'end') {
-        console.error('Redis Cluster client connection ended unexpectedly.');
-        reject(
-          new Error('Redis Cluster connection ended before becoming ready.'),
-        );
-      }
-    };
-
-    cluster.on('error', (err: any) => {
-      console.error('[Redis Cluster Error]:', err.message);
-      if (!resolved) reject(err);
-    });
-
-    // Poll the cluster's state periodically
-    const interval = setInterval(() => {
-      checkState();
-
-      if (resolved) {
-        clearInterval(interval);
-      }
-    }, 500); // Poll every 500ms
+  redisCluster.on('connect', () => {
+    console.log('Redis Cluster client connected successfully.');
   });
-};
+
+  redisCluster.on('error', (err: Error) => {
+    console.error('Redis Cluster connection error:', err);
+  });
+
+  return redisCluster;
+}

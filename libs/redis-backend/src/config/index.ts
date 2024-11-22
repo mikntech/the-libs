@@ -3,6 +3,11 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import net from 'net'; // Used to test port connectivity
+import { createRequire } from 'module';
+import { TODO } from '@the-libs/base-shared';
+import * as process from 'node:process';
+const require = createRequire(import.meta.url);
+const { Redis } = require('ioredis'); // Importing ioredis for programmatic Redis connection
 
 interface RedisURI {
   host: string;
@@ -19,6 +24,7 @@ export interface RedisSettings {
     pem: string;
     endpoint: string;
   };
+  redisNodes: string[];
 }
 
 function createTempPemFile(pemContent: string): string {
@@ -27,7 +33,7 @@ function createTempPemFile(pemContent: string): string {
     const pemPath = path.join(tempDir, 'temp_key.pem');
     fs.writeFileSync(pemPath, pemContent, { mode: 0o600 });
     return pemPath;
-  } catch (err: any) {
+  } catch (err: TODO) {
     console.error('Error creating temporary PEM file:', err.message);
     throw err;
   }
@@ -122,7 +128,7 @@ function cleanupPemFile(pemPath: string): void {
       fs.unlinkSync(pemPath);
       console.log('Temporary PEM file deleted.');
     }
-  } catch (err: any) {
+  } catch (err: TODO) {
     console.error('Error cleaning up PEM file:', err.message);
   }
 }
@@ -140,11 +146,37 @@ function validateEnvironmentVariables(): void {
   }
 }
 
+async function testRedisConnection(
+  host: string,
+  port: number,
+  tlsOptions: TODO,
+): Promise<void> {
+  console.log('Testing Redis connection programmatically...');
+  const redis = new Redis({
+    host,
+    port,
+    tls: tlsOptions,
+  });
+
+  try {
+    await redis.ping();
+    console.log('Redis connection successful.');
+  } catch (err: TODO) {
+    console.error('Redis connection failed:', err.message);
+    throw err;
+  } finally {
+    redis.disconnect();
+  }
+}
+
 // Main
 const port = parseInt(process.env['REDIS_PORT'] || '6379');
 const ip = process.env['REDIS_PROXY_IP'];
 const pem = process.env['REDIS_PROXY_PEM']?.replace(/\\n/g, '\n');
 const endpoint = process.env['REDIS_PROXY_ENDPOINT'];
+const tls = process.env['REDIS_TLS']
+  ? { servername: process.env['REDIS_TLS'] }
+  : undefined;
 
 validateEnvironmentVariables();
 
@@ -158,29 +190,14 @@ if (ip && pem && endpoint) {
     await establishSSHTunnel(ip, pem, endpoint, port);
     console.log('SSH tunnel established successfully.');
 
-    console.log('Testing connection to Redis via SSH tunnel...');
     await waitForPort('127.0.0.1', port);
+    console.log('Confirmed SSH tunnel is operational.');
 
-    console.log('Testing connection to Redis via SSH tunnel...');
+    // Programmatically test Redis connection using ioredis
+    await testRedisConnection('127.0.0.1', port, tls);
 
-    const testConnection = spawn(
-      'redis-cli',
-      ['-h', '127.0.0.1', '-p', '6379', '--tls'],
-      {
-        stdio: 'inherit',
-      },
-    );
-
-    testConnection.on('close', (code) => {
-      if (code === 0) {
-        console.log('Redis connection test successful.');
-      } else {
-        console.error(`Redis connection test failed with code ${code}.`);
-      }
-    });
-
-    console.log('Confirmed SSH tunnel is operational. Proceeding...');
-  } catch (err: any) {
+    console.log('Proceeding with application...');
+  } catch (err: TODO) {
     console.error(
       'Error establishing SSH tunnel or verifying connectivity:',
       err.message,
@@ -188,9 +205,9 @@ if (ip && pem && endpoint) {
   }
 }
 
-const tls = process.env['REDIS_TLS']
-  ? { servername: process.env['REDIS_TLS'] }
-  : undefined;
+const redisNodes = JSON.parse(process.env['REDIS_NODES_JSON'] || '');
+if (!redisNodes || !Array.isArray(redisNodes) || redisNodes.length <= 1)
+  throw new Error('this lib no uses clusters only');
 
 export const redisSettings: RedisSettings = {
   uri: {
@@ -201,4 +218,5 @@ export const redisSettings: RedisSettings = {
     tls: process.env['REDIS_TLS'] === 'true' ? {} : tls,
   },
   ec2Proxy,
+  redisNodes,
 };

@@ -1,5 +1,6 @@
 import NodePubSub from 'pubsub-js';
 import type { Cluster } from 'ioredis';
+import { TODO } from '@the-libs/base-shared';
 
 class PubSub {
   private redisSubscriber: Cluster | null;
@@ -75,10 +76,10 @@ class PubSub {
   }
 
   asyncIterator(channel: string) {
-    const messageQueue: any[] = [];
+    const messageQueue: TODO[] = [];
     let isListening = true;
 
-    const pushMessage = (message: any) => {
+    const pushMessage = (message: TODO) => {
       messageQueue.push(message);
       if (resolveNext) {
         resolveNext(messageQueue.shift()!);
@@ -86,7 +87,7 @@ class PubSub {
       }
     };
 
-    let resolveNext: ((value: any) => void) | null = null;
+    let resolveNext: ((value: TODO) => void) | null = null;
 
     const cleanup = this.subscribe(channel, (message) => {
       if (isListening) {
@@ -96,7 +97,7 @@ class PubSub {
 
     return {
       next: () => {
-        return new Promise<{ value: any; done: boolean }>((resolve) => {
+        return new Promise<{ value: TODO; done: boolean }>((resolve) => {
           if (messageQueue.length > 0) {
             resolve({ value: messageQueue.shift(), done: false });
           } else {
@@ -111,7 +112,7 @@ class PubSub {
         }
         return Promise.resolve({ value: undefined, done: true });
       },
-      throw: (error: any) => {
+      throw: (error: TODO) => {
         isListening = false;
         if (typeof cleanup === 'function') {
           cleanup();
