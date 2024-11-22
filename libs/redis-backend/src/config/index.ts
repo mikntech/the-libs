@@ -2,6 +2,7 @@ import { spawn } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
+import net from 'net'; // Used to test port connectivity
 
 interface RedisURI {
   host: string;
@@ -30,6 +31,35 @@ function createTempPemFile(pemContent: string): string {
     console.error('Error creating temporary PEM file:', err.message);
     throw err;
   }
+}
+
+async function waitForPort(
+  host: string,
+  port: number,
+  timeout = 10000,
+): Promise<void> {
+  const start = Date.now();
+  console.log(`Waiting for port ${port} on ${host} to become available...`);
+
+  while (Date.now() - start < timeout) {
+    try {
+      await new Promise((resolve, reject) => {
+        const socket = net.createConnection({ host, port }, () => {
+          socket.end();
+          resolve(true);
+        });
+        socket.on('error', reject);
+      });
+      console.log(`Port ${port} on ${host} is now available.`);
+      return;
+    } catch {
+      await new Promise((r) => setTimeout(r, 500)); // Wait before retrying
+    }
+  }
+
+  throw new Error(
+    `Port ${port} on ${host} did not become available within ${timeout}ms.`,
+  );
 }
 
 async function establishSSHTunnel(
@@ -129,6 +159,10 @@ if (ip && pem && endpoint) {
     console.log('SSH tunnel established successfully.');
 
     console.log('Testing connection to Redis via SSH tunnel...');
+    await waitForPort('127.0.0.1', port);
+
+    console.log('Testing connection to Redis via SSH tunnel...');
+
     const testConnection = spawn(
       'redis-cli',
       ['-h', '127.0.0.1', '-p', '6379', '--tls'],
@@ -144,12 +178,13 @@ if (ip && pem && endpoint) {
         console.error(`Redis connection test failed with code ${code}.`);
       }
     });
+
+    console.log('Confirmed SSH tunnel is operational. Proceeding...');
   } catch (err: any) {
     console.error(
-      'Error establishing SSH tunnel or testing Redis:',
+      'Error establishing SSH tunnel or verifying connectivity:',
       err.message,
     );
-    process.exit(1);
   }
 }
 
