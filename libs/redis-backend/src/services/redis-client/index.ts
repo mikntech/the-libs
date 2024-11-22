@@ -44,6 +44,14 @@ export async function createRedisInstance(): Promise<ClusterType> {
     redisOptions: { tls, enableReadyCheck: true },
   });
 
+  // Intercept `getInfoFromNode` to prevent duplication of connections
+  const originalGetInfoFromNode = redisCluster.getInfoFromNode;
+  redisCluster.getInfoFromNode = async function (node: TODO, command: TODO) {
+    console.log(`Getting info from node: ${node.host}:${node.port}`);
+    // Directly call the original method to get the info
+    return originalGetInfoFromNode.call(this, node, command);
+  };
+
   // Override `refreshSlotsCache` to use NAT mapping
   redisCluster.refreshSlotsCache = async function () {
     console.log('Intercepting refreshSlotsCache');
