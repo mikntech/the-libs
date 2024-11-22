@@ -1,4 +1,4 @@
-import type { Cluster } from 'ioredis';
+import { RedisType } from '../redis-client';
 
 const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
   Promise.race([
@@ -9,7 +9,7 @@ const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
   ]);
 
 export const get = async (
-  redis: Cluster,
+  redis: RedisType,
   key: string,
   timeoutInMs = 2147483647,
 ) => {
@@ -23,8 +23,10 @@ export const get = async (
   }
 };
 
+
+
 export const set = async (
-  redis: Cluster,
+  redis: RedisType,
   key: string,
   value: string,
   ttlInSecs = 10 * 365 * 24 * 60 * 60, // Default TTL: 10 years
@@ -58,8 +60,10 @@ export const set = async (
   }
 };
 
+
+
 export const cache = async (
-  redis: Cluster,
+  redis: RedisType,
   key: string,
   computeValue: () => Promise<string>,
   ttlInSecs = 2147483647 / 1000,
@@ -79,7 +83,7 @@ export const cache = async (
 };
 
 export const raceCache = async (
-  redis: Cluster,
+  redis: RedisType,
   key: string,
   computeValue: () => Promise<string>,
   ttlInSecs = 2147483647 / 1000,

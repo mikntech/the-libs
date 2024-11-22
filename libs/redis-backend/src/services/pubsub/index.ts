@@ -1,13 +1,13 @@
 import NodePubSub from 'pubsub-js';
-import type { Cluster } from 'ioredis';
+import { createRedisInstance, RedisType } from '../redis-client';
 import { TODO } from '@the-libs/base-shared';
 
 class PubSub {
-  private redisSubscriber: Cluster | null;
-  private redisPublisher: Cluster | null;
+  private redisSubscriber: RedisType | null;
+  private redisPublisher: RedisType | null;
   private fallback: typeof NodePubSub;
 
-  constructor(redis: Cluster) {
+  constructor(redis: RedisType) {
     // Create separate Redis instances for subscriber and publisher
     this.redisSubscriber = redis;
     this.redisPublisher = redis;
@@ -126,4 +126,4 @@ class PubSub {
   }
 }
 
-export const createPubSubInstance = (redis: Cluster) => new PubSub(redis);
+export const createPubSubInstance = (redis: RedisType) => new PubSub(redis);
