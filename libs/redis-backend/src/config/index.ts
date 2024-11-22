@@ -43,7 +43,7 @@ async function establishSSHTunnel(
 
   return new Promise<void>((resolve, reject) => {
     console.log(
-      `Starting SSH tunnel to ${ip}, forwarding port 6379 to ${endpoint}:${port}...`,
+      `Starting SSH tunnel to ${ip}, forwarding 127.0.0.1:${port} to ${endpoint}:${port}...`,
     );
     const ssh = spawn(
       'ssh',
@@ -51,7 +51,7 @@ async function establishSSHTunnel(
         '-i',
         pemPath,
         '-L',
-        `6379:${endpoint}:${port}`,
+        `127.0.0.1:${port}:${endpoint}:${port}`, // Bind explicitly to 127.0.0.1
         `${sshUser}@${ip}`,
         '-N',
         '-o',
