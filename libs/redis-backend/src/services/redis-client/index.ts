@@ -9,24 +9,26 @@ async function generateNatMap(): Promise<
   Record<string, { host: string; port: number }>
 > {
   const { redisNodes, uri } = redisSettings;
-  const { host, port } = uri;
+  const { host: tunnelHost, port: tunnelPort } = uri;
 
-  if (!redisSettings) {
+  if (!redisNodes || redisNodes.length === 0) {
     throw new Error(
-      'REDIS_CLUSTER_NODES is not set. Please provide a comma-separated list of cluster nodes.',
+      'REDIS_CLUSTER_NODES is not set. Please provide a list of cluster nodes.',
     );
   }
 
+  // Parse the original nodes
   const nodes = redisNodes.map((node) => {
     const [host, port] = node.split(':');
     return { host: host.trim(), port: parseInt(port, 10) };
   });
 
+  // Build the NAT map to redirect all node connections through the SSH tunnel
   const natMap: Record<string, { host: string; port: number }> = {};
   nodes.forEach(({ host }) => {
-    const shortName = host.split('.')[0]; // Extract the short name
-    natMap[shortName] = { host, port }; // Short name
-    natMap[host] = { host, port }; // Full FQDN
+    const shortName = host.split('.')[0]; // Extract short name
+    natMap[shortName] = { host: tunnelHost, port: tunnelPort }; // Short name remapping
+    natMap[host] = { host: tunnelHost, port: tunnelPort }; // FQDN remapping
   });
 
   console.log('Generated NAT Map:', natMap);
@@ -40,13 +42,13 @@ export async function createRedisInstance(): Promise<ClusterType> {
 
   const redisCluster = new Cluster(
     [
-      { host, port }, // Single entry point through the tunnel
+      { host, port }, // Entry point through the SSH tunnel
     ],
     {
-      natMap,
+      natMap, // Remaps node addresses to the tunnel
       redisOptions: {
-        tls,
-        connectTimeout: 20000, // Increase timeout for slow connections
+        tls, // TLS settings for secure communication
+        connectTimeout: 20000, // Increased timeout for slow connections
       },
       clusterRetryStrategy: (times: TODO) => {
         if (times > 5) {
@@ -58,13 +60,15 @@ export async function createRedisInstance(): Promise<ClusterType> {
     },
   );
 
-  redisCluster.on('connect', () => {
-    console.log('Redis Cluster client connected successfully.');
-  });
+  return new Promise((resolve, reject) => {
+    redisCluster.on('connect', () => {
+      console.log('Redis Cluster client connected successfully.');
+      resolve(redisCluster);
+    });
 
-  redisCluster.on('error', (err: Error) => {
-    console.error('Redis Cluster connection error:', err);
+    redisCluster.on('error', (err: Error) => {
+      console.error('Redis Cluster connection error:', err);
+      reject(err);
+    });
   });
-
-  return redisCluster;
 }
