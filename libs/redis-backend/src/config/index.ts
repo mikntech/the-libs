@@ -21,10 +21,15 @@ export interface RedisSettings {
 }
 
 function createTempPemFile(pemContent: string): string {
-  const tempDir = os.tmpdir();
-  const pemPath = path.join(tempDir, 'temp_key.pem');
-  fs.writeFileSync(pemPath, pemContent, { mode: 0o600 });
-  return pemPath;
+  try {
+    const tempDir = os.tmpdir();
+    const pemPath = path.join(tempDir, 'temp_key.pem');
+    fs.writeFileSync(pemPath, pemContent, { mode: 0o600 });
+    return pemPath;
+  } catch (err: any) {
+    console.error('Error creating temporary PEM file:', err.message);
+    throw err;
+  }
 }
 
 async function establishSSHTunnel(
@@ -37,6 +42,9 @@ async function establishSSHTunnel(
   const pemPath = createTempPemFile(pem);
 
   return new Promise<void>((resolve, reject) => {
+    console.log(
+      `Starting SSH tunnel to ${ip}, forwarding port 6379 to ${endpoint}:${port}...`,
+    );
     const ssh = spawn(
       'ssh',
       [
@@ -58,11 +66,12 @@ async function establishSSHTunnel(
 
     ssh.on('error', (err) => {
       console.error('Error starting SSH tunnel:', err.message);
+      cleanupPemFile(pemPath);
       reject(err);
     });
 
     ssh.on('close', (code) => {
-      fs.unlinkSync(pemPath);
+      cleanupPemFile(pemPath);
       if (code === 0) {
         console.log('SSH tunnel closed successfully.');
         reject(new Error('SSH tunnel was unexpectedly closed.'));
@@ -77,10 +86,37 @@ async function establishSSHTunnel(
   });
 }
 
+function cleanupPemFile(pemPath: string): void {
+  try {
+    if (fs.existsSync(pemPath)) {
+      fs.unlinkSync(pemPath);
+      console.log('Temporary PEM file deleted.');
+    }
+  } catch (err: any) {
+    console.error('Error cleaning up PEM file:', err.message);
+  }
+}
+
+function validateEnvironmentVariables(): void {
+  const requiredEnvVars = [
+    'REDIS_PROXY_IP',
+    'REDIS_PROXY_PEM',
+    'REDIS_PROXY_ENDPOINT',
+  ];
+  for (const varName of requiredEnvVars) {
+    if (!process.env[varName]) {
+      throw new Error(`Environment variable ${varName} is not defined.`);
+    }
+  }
+}
+
+// Main
 const port = parseInt(process.env['REDIS_PORT'] || '6379');
 const ip = process.env['REDIS_PROXY_IP'];
 const pem = process.env['REDIS_PROXY_PEM']?.replace(/\\n/g, '\n');
 const endpoint = process.env['REDIS_PROXY_ENDPOINT'];
+
+validateEnvironmentVariables();
 
 let ec2Proxy: RedisSettings['ec2Proxy'] = undefined;
 
