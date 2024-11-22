@@ -8,7 +8,7 @@ import {
 } from '@the-libs/redis-backend';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 
-const pubSubInstance = createPubSubInstance(createRedisInstance());
+const pubSubInstance = createPubSubInstance(await createRedisInstance());
 
 export const getLastMessageOfConversation = async (conversationId: string) =>
   await (await message())
