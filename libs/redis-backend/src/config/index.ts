@@ -1,19 +1,8 @@
-import { createRequire } from 'module';
+import Redis from 'ioredis';
+import { spawn } from 'child_process';
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import { spawn } from 'child_process';
-
-const require = createRequire(import.meta.url);
-const { config } = require('dotenv');
-config();
-
-function createTempPemFile(pemContent: string) {
-  const tempDir = os.tmpdir();
-  const pemPath = path.join(tempDir, 'temp_key.pem');
-  fs.writeFileSync(pemPath, pemContent, { mode: 0o600 });
-  return pemPath;
-}
 
 interface RedisURI {
   host: string;
@@ -32,6 +21,13 @@ export interface RedisSettings {
   };
 }
 
+function createTempPemFile(pemContent: string): string {
+  const tempDir = os.tmpdir();
+  const pemPath = path.join(tempDir, 'temp_key.pem');
+  fs.writeFileSync(pemPath, pemContent, { mode: 0o600 });
+  return pemPath;
+}
+
 const port = parseInt(process.env['REDIS_PORT'] || '6379');
 const ip = process.env['REDIS_PROXY_IP'] || undefined;
 const pem = process.env['REDIS_PROXY_PEM']
@@ -42,43 +38,90 @@ const endpoint = process.env['REDIS_PROXY_ENDPOINT'] || undefined;
 let ec2Proxy = undefined;
 
 if (ip && pem && endpoint) {
-  ec2Proxy = { ip, pem, endpoint };
-  const sshUser = 'ec2-user';
+  async function testRedisConnection(): Promise<void> {
+    const redis = new Redis({
+      host: 'localhost', // Tunnel points to localhost
+      port: 6379, // Port of the SSH tunnel
+      tls: {}, // Add if MemoryDB requires TLS, else remove this line
+    });
 
+    return new Promise((resolve, reject) => {
+      redis.on('connect', async () => {
+        try {
+          await redis.set('test-key', 'test-value');
+          const value = await redis.get('test-key');
+          console.log('Redis connection verified. Test value:', value);
+          redis.disconnect();
+          resolve();
+        } catch (err: any) {
+          console.error('Failed to test Redis connection:', err.message);
+          redis.disconnect();
+          reject(err);
+        }
+      });
+
+      redis.on('error', (err) => {
+        console.error('Redis connection error:', err.message);
+        redis.disconnect();
+        reject(err);
+      });
+    });
+  }
+
+  const sshUser = 'ec2-user';
   const pemPath = createTempPemFile(pem);
 
-  const ssh = spawn(
-    'ssh',
-    [
-      '-i',
-      pemPath,
-      '-L',
-      `6379:${endpoint}:${port}`,
-      `${sshUser}@${ip}`,
-      '-N',
-      '-o',
-      'StrictHostKeyChecking=no',
-      '-o',
-      'UserKnownHostsFile=/dev/null',
-    ],
-    {
-      stdio: ['inherit', 'inherit', 'inherit'],
-    },
-  );
+  new Promise((resolve, reject) => {
+    const ssh = spawn(
+      'ssh',
+      [
+        '-i',
+        pemPath,
+        '-L',
+        `6379:${endpoint}:${port}`,
+        `${sshUser}@${ip}`,
+        '-N',
+        '-o',
+        'StrictHostKeyChecking=no',
+        '-o',
+        'UserKnownHostsFile=/dev/null',
+      ],
+      {
+        stdio: 'ignore',
+      },
+    );
 
-  ssh.on('close', (code) => {
-    fs.unlinkSync(pemPath);
+    ssh.on('error', (err) => {
+      fs.unlinkSync(pemPath);
+      console.error('Error starting SSH tunnel:', err.message);
+      reject(err);
+    });
 
-    if (code === 0) {
-      console.log('SSH tunnel closed successfully.');
-    } else {
-      console.error(`SSH process exited with code ${code}`);
-    }
-  });
+    ssh.on('close', (code) => {
+      fs.unlinkSync(pemPath);
 
-  ssh.on('error', (err) => {
-    console.error('Error starting SSH tunnel:', err.message);
-    fs.unlinkSync(pemPath);
+      if (code === 0) {
+        console.log('SSH tunnel closed successfully.');
+        reject(new Error('SSH tunnel was unexpectedly closed.'));
+      } else {
+        console.error(`SSH process exited with code ${code}`);
+        reject(new Error(`SSH tunnel closed with error code ${code}`));
+      }
+    });
+
+    // Test Redis connection after establishing the tunnel
+    testRedisConnection()
+      .then(() => {
+        console.log('SSH tunnel established and Redis connection verified.');
+        resolve();
+      })
+      .catch((err) => {
+        console.error(
+          'Failed to verify Redis connection after SSH tunnel:',
+          err.message,
+        );
+        reject(err);
+      });
   });
 }
 
