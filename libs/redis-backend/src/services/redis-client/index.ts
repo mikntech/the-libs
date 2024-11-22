@@ -19,6 +19,11 @@ async function generateNatMap() {
     return map;
   }, {});
 
+  redisNodes.forEach((node) => {
+    const [host] = node.split(':');
+    natMap[host] = { host: tunnelHost, port: tunnelPort };
+  });
+
   console.log('Generated NAT Map:', natMap);
   return natMap;
 }
@@ -29,38 +34,22 @@ export async function createRedisInstance(): Promise<ClusterType> {
 
   const redisCluster = new Cluster([{ host, port }], {
     natMap,
-    scaleReads: 'slave', // Optional: Direct read queries to read replicas
+    scaleReads: 'slave',
     clusterRetryStrategy: (times: TODO) => {
       if (times > 5) return null;
       return Math.min(times * 100, 2000);
     },
-    slotsRefreshTimeout: 30000, // Set timeout to 30 seconds
-    slotsRefreshInterval: 30000, // Periodically refresh slots every 30 seconds
+    slotsRefreshTimeout: 0,
+    slotsRefreshInterval: null, // Disable auto-refresh
     redisOptions: { tls, enableReadyCheck: true },
   });
 
-  redisCluster.on('cluster.slots', (slots: TODO) => {
-    console.log('Original CLUSTER.SLOTS response:', slots);
-    return slots.map(([start, end, ...nodes]: TODO) => [
-      start,
-      end,
-      ...nodes.map(([host, port]: TODO) => {
-        const mapped = natMap[host];
-        if (mapped) {
-          console.log(
-            `Remapping ${host}:${port} to ${mapped.host}:${mapped.port}`,
-          );
-          return [mapped.host, mapped.port];
-        }
-        return [host, port];
-      }),
-    ]);
-  });
-
+  // Override `refreshSlotsCache` to use NAT mapping
   redisCluster.refreshSlotsCache = async function () {
     console.log('Intercepting refreshSlotsCache');
+
     const originalSlots = await this.getInfoFromNode(
-      { host, port }, // Use the tunnel host and port
+      { host, port },
       'CLUSTER SLOTS',
     );
 
@@ -82,6 +71,24 @@ export async function createRedisInstance(): Promise<ClusterType> {
     console.log('Updated slot cache with NAT mapping:', remappedSlots);
     this.slots = remappedSlots;
   };
+
+  redisCluster.on('cluster.slots', (slots: TODO) => {
+    console.log('Intercepted CLUSTER.SLOTS response:', slots);
+    return slots.map(([start, end, ...nodes]: TODO) => [
+      start,
+      end,
+      ...nodes.map(([host, port]: TODO) => {
+        const mapped = natMap[host];
+        if (mapped) {
+          console.log(
+            `Remapping ${host}:${port} to ${mapped.host}:${mapped.port}`,
+          );
+          return [mapped.host, mapped.port];
+        }
+        return [host, port];
+      }),
+    ]);
+  });
 
   // Debug connection events
   redisCluster.on('connect', () => {
