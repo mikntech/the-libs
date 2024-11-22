@@ -27,12 +27,27 @@ export const set = async (
   redis: Cluster,
   key: string,
   value: string,
-  ttlInSecs = 2147483647 / 1000,
-) => {
+  ttlInSecs = 10 * 365 * 24 * 60 * 60, // Default TTL: 10 years
+): Promise<void> => {
   try {
+    // Wait for Redis connection
+    if (!redis.status || redis.status !== 'ready') {
+      console.log('[INFO] Waiting for Redis connection...');
+      await new Promise<void>((resolve, reject) => {
+        redis.once('ready', resolve);
+        redis.once('error', (err) => {
+          console.error('[ERROR] Redis connection error:', err);
+          reject(err);
+        });
+      });
+      console.log('[INFO] Redis connection established.');
+    }
+
+    console.log(`Setting key "${key}" with TTL of ${ttlInSecs} seconds.`);
     await redis.set(key, value, 'EX', ttlInSecs);
+    console.log(`[INFO] Successfully set key: "${key}"`);
   } catch (error) {
-    console.error(`[ERROR] Failed to set key: ${key}`, error);
+    console.error(`[ERROR] Failed to set key: "${key}"`, error);
     throw error;
   }
 };

@@ -5,4 +5,7 @@ import { redisSettings } from '../..';
 import type { Cluster } from 'ioredis';
 
 export const createRedisInstance = (): Cluster =>
-  new Redis.Cluster(redisSettings.uri);
+  new Redis.Cluster(
+    [{ host: redisSettings.uri.host, port: redisSettings.uri.port }],
+    { tls: redisSettings.uri.tls },
+  );

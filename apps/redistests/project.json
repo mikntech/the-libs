@@ -1,0 +1,62 @@
+{
+  "name": "redistests",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/redistests/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/redistests",
+        "format": ["esm"],
+        "bundle": true,
+        "main": "apps/redistests/src/index.ts",
+        "tsConfig": "apps/redistests/tsconfig.app.json",
+        "external": ["aws-sdk", "mock-aws-s3", "nock"],
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".mjs"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "minify": true,
+            "outExtension": {
+              ".js": ".mjs"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "redistests:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "redistests:build:development"
+        },
+        "production": {
+          "buildTarget": "redistests:build:production"
+        }
+      },
+      "dependsOn": [
+        {
+          "projects": "dependencies",
+          "target": "build"
+        }
+      ]
+    }
+  },
+  "tags": []
+}
