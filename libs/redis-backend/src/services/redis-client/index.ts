@@ -15,14 +15,9 @@ async function generateNatMap() {
 
   const natMap = redisNodes.reduce((map: TODO, node) => {
     const [host] = node.split(':');
-    map[host] = { host: tunnelHost, port: tunnelPort }; // Directly map to tunnelHost and tunnelPort
+    map[host] = { host: tunnelHost, port: tunnelPort };
     return map;
   }, {});
-
-  redisNodes.forEach((node) => {
-    const [host] = node.split(':');
-    natMap[host] = { host: tunnelHost, port: tunnelPort };
-  });
 
   console.log('Generated NAT Map:', natMap);
   return natMap;
@@ -34,31 +29,17 @@ export async function createRedisInstance(): Promise<ClusterType> {
 
   const redisCluster = new Cluster([{ host, port }], {
     natMap,
-    scaleReads: 'slave',
-    clusterRetryStrategy: (times: TODO) => {
-      if (times > 5) return null;
-      return Math.min(times * 100, 2000);
-    },
-    slotsRefreshTimeout: 0,
-    slotsRefreshInterval: null, // Disable auto-refresh
-    redisOptions: { tls, enableReadyCheck: true },
+    redisOptions: { tls },
+    slotsRefreshTimeout: 0, // Disable automatic refresh of cluster slots
+    scaleReads: 'slave', // Optional: Direct read queries to read replicas
+    clusterRetryStrategy: (times: number) =>
+      times > 5 ? null : Math.min(times * 100, 2000),
   });
 
-  const originalGetInfoFromNode = redisCluster.getInfoFromNode;
-  redisCluster.getInfoFromNode = async function (node: TODO, command: TODO) {
-    console.log(`Getting info from node: ${node.host}:${node.port}`);
-    // Call the original method directly
-    return originalGetInfoFromNode.call(this, node, command);
-  };
-
-  redisCluster.refreshSlotsCache = async function () {
-    console.log('Intercepting refreshSlotsCache');
-    const originalSlots = await this.getInfoFromNode(
-      { host, port },
-      'CLUSTER SLOTS',
-    );
-
-    const remappedSlots = originalSlots.map(([start, end, ...nodes]: TODO) => [
+  // Forcefully intercept CLUSTER SLOTS response
+  redisCluster.on('cluster.slots', (slots: TODO) => {
+    console.log('Intercepting CLUSTER.SLOTS response');
+    return slots.map(([start, end, ...nodes]: TODO) => [
       start,
       end,
       ...nodes.map(([nodeHost, nodePort]: TODO) => {
@@ -72,31 +53,24 @@ export async function createRedisInstance(): Promise<ClusterType> {
         return [nodeHost, nodePort];
       }),
     ]);
-    console.log('Updated slot cache with NAT mapping:', remappedSlots);
-    this.slots = remappedSlots;
-  };
-
-  redisCluster.on('cluster.slots', (slots: TODO) => {
-    console.log('Intercepted CLUSTER.SLOTS response:', slots);
-    return slots.map(([start, end, ...nodes]: TODO) => [
-      start,
-      end,
-      ...nodes.map(([host, port]: TODO) => {
-        const mapped = natMap[host];
-        if (mapped) {
-          console.log(
-            `Remapping ${host}:${port} to ${mapped.host}:${mapped.port}`,
-          );
-          return [mapped.host, mapped.port];
-        }
-        return [host, port];
-      }),
-    ]);
   });
 
-  // Debug connection events
+  // Disable automatic refresh to prevent overwriting NAT mapping
+  redisCluster.refreshSlotsCache = async function () {
+    console.log('Manually refreshing cluster slots...');
+    const nodes = Object.keys(natMap);
+    this.slots = [
+      [
+        0,
+        16383,
+        ...nodes.map((node) => [natMap[node].host, natMap[node].port]),
+      ],
+    ];
+    console.log('Refreshed slots cache:', this.slots);
+  };
+
   redisCluster.on('connect', () => {
-    console.log('Redis Cluster client connected successfully.');
+    console.log('Redis Cluster connected through NAT.');
   });
 
   redisCluster.on('error', (err: Error) => {
