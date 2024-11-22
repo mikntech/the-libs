@@ -17,10 +17,16 @@ async function generateNatMap(): Promise<
     );
   }
 
-  const natMap: Record<string, { host: string; port: number }> = {};
+  const nodes = redisNodes.map((node) => {
+    const [host, port] = node.split(':');
+    return { host: host.trim(), port: parseInt(port, 10) };
+  });
 
-  redisNodes.forEach((node) => {
-    natMap[node] = { host, port };
+  const natMap: Record<string, { host: string; port: number }> = {};
+  nodes.forEach(({ host }) => {
+    const shortName = host.split('.')[0]; // Extract the short name
+    natMap[shortName] = { host, port }; // Short name
+    natMap[host] = { host, port }; // Full FQDN
   });
 
   console.log('Generated NAT Map:', natMap);
@@ -34,7 +40,7 @@ export async function createRedisInstance(): Promise<ClusterType> {
 
   const redisCluster = new Cluster(
     [
-      { host, port }, // Use the host and port from environment
+      { host, port }, // Single entry point through the tunnel
     ],
     {
       natMap,
@@ -45,9 +51,9 @@ export async function createRedisInstance(): Promise<ClusterType> {
       clusterRetryStrategy: (times: TODO) => {
         if (times > 5) {
           console.error('Exceeded maximum retry attempts.');
-          return null; // Stop retrying
+          return null; // Stop retrying after 5 attempts
         }
-        return Math.min(times * 100, 2000); // Retry with exponential backoff
+        return Math.min(times * 100, 2000); // Exponential backoff
       },
     },
   );
