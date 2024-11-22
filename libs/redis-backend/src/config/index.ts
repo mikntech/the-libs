@@ -178,13 +178,15 @@ const tls = process.env['REDIS_TLS']
   ? { servername: process.env['REDIS_TLS'] }
   : undefined;
 
+/*
 validateEnvironmentVariables();
+*/
 
 let ec2Proxy: RedisSettings['ec2Proxy'] = undefined;
 
 if (ip && pem && endpoint) {
   ec2Proxy = { ip, pem, endpoint };
-
+  /*
   console.log('Establishing SSH tunnel...');
   try {
     await establishSSHTunnel(ip, pem, endpoint, port);
@@ -202,7 +204,7 @@ if (ip && pem && endpoint) {
       'Error establishing SSH tunnel or verifying connectivity:',
       err.message,
     );
-  }
+  }*/
 }
 
 const redisNodes = JSON.parse(process.env['REDIS_NODES_JSON'] || '');

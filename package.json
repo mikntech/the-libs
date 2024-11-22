@@ -121,6 +121,7 @@
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.4.1",
     "react-router-dom": "^6.28.0",
+    "redlock": "^5.0.0-beta.2",
     "sass": "1.81.0",
     "stripe": "^17.3.1",
     "swc-loader": "0.2.6",
@@ -135,7 +136,9 @@
     "vite-plugin-dts": "^4.3.0",
     "vitest": "^2.1.5",
     "web-push": "^3.6.7",
-    "redlock": "^5.0.0-beta.2",
     "zxcvbn": "^4.4.2"
+  },
+  "dependencies": {
+    "ssh2": "^1.16.0"
   }
 }
