@@ -33,6 +33,7 @@ class PubSub {
 
       this.redisSubscriber.on('message', messageListener);
 
+      // Return a cleanup function to remove the listener
       return () => {
         this.redisSubscriber?.unsubscribe(
           channel,
