@@ -5,6 +5,7 @@ import { SomeEnum } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import type { Request } from 'express';
+import { createDoc } from '@the-libs/mongo-backend';
 
 export const analyticsRouterGenerator = <ENUM>(
   AnalyticEventEnum: SomeEnum<ENUM>,
@@ -15,11 +16,10 @@ export const analyticsRouterGenerator = <ENUM>(
     '/',
     highOrderHandler(async (req: Request) => {
       try {
-        const avent = new (await analyticEvent<ENUM>(AnalyticEventEnum))({
+        await createDoc(await analyticEvent<ENUM>(AnalyticEventEnum), {
           value: req.body.value,
           userNumber: req.body.userNumber,
         });
-        await avent.save();
       } catch (e) {
         console.log(e);
       }

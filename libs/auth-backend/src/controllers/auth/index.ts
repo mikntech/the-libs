@@ -2,7 +2,7 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 import { getExpressSettings } from '@the-libs/express-backend';
-import { InvalidInputError, TODO, SomeEnum } from '@the-libs/base-shared';
+import { InvalidInputError, TODO } from '@the-libs/base-shared';
 import {
   MultiUserType,
   passResetRequest,
@@ -27,6 +27,7 @@ import {
   mongoSettings,
   validateDocument,
   NodeEnvironment,
+  ExtendedModel,
 } from '@the-libs/mongo-backend';
 
 export const JWT_COOKIE_NAME = 'jwt';
@@ -44,10 +45,10 @@ export const genAuthControllers = <
     boolean
   >,
 ) => {
-  const getModel = async (userType: UserType): Promise<Model<User>> => {
+  const getModel = async (userType: UserType): Promise<ExtendedModel<User>> => {
     if (strategy.multiUserType === MultiUserType.MULTI_COLLECTION) {
       const modelMap = strategy.modelMap as {
-        [key in keyof UserType]: () => Promise<Model<User>>;
+        [key in keyof UserType]: () => Promise<ExtendedModel<User>>;
       };
 
       const userSpecificModel = modelMap[userType as unknown as keyof UserType];
@@ -57,7 +58,9 @@ export const genAuthControllers = <
         throw new Error(`Model not found for user type: ${String(userType)}`);
       }
     } else {
-      const singleModel = strategy.modelMap as () => Promise<Model<User>>;
+      const singleModel = strategy.modelMap as () => Promise<
+        ExtendedModel<User>
+      >;
       return await singleModel();
     }
   };
@@ -126,12 +129,9 @@ export const genAuthControllers = <
 
   const validateKey = async (key: string, register: boolean) => {
     const existingRequest = await findDocs<false, SomeRequest<true>>(
-      (register
-        ? await registrationRequest()
-        : await passResetRequest()
-      ).findOne({
+      (await (register ? registrationRequest() : passResetRequest())).findOne({
         key,
-      }),
+      }) as TODO,
       true,
     );
     if (!existingRequest || !validateDocument(existingRequest as TODO)) {

@@ -45,7 +45,12 @@ export const genRegisterControllers = <
   } = genAuthControllers(strategy);
 
   const validateEmailNotInUse = async (email: string, userType: UserType) => {
-    if (await findDocs((await getModel(userType)).findOne({ email }), true))
+    if (
+      await findDocs(
+        (await (await getModel(userType)).findOne({ email })) as TODO,
+        true,
+      )
+    )
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );

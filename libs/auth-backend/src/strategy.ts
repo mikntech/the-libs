@@ -6,6 +6,7 @@ import { SomeEnum } from '@the-libs/base-shared';
 import { GenEmailFunction } from '@the-libs/email-backend';
 import { defaultGenPassResetEmail, defaultGenRegisterEmail } from './services';
 import { StagingEnvironment } from '@the-libs/express-backend';
+import { ExtendedModel } from '@the-libs/mongo-backend';
 
 export enum MultiUserType {
   SINGLE = 'single',
@@ -56,8 +57,8 @@ export interface Strategy<
   mfa: MFA;
   externalIdentityProviders: ExternalIdentityProviders;
   modelMap: multiUserType_is_MULTI_COLLECTION extends true
-    ? Record<UserEnum, () => Promise<Model<User>>>
-    : () => Promise<Model<User>>;
+    ? Record<UserEnum, () => Promise<ExtendedModel<User>>>
+    : () => Promise<ExtendedModel<User>>;
   requiredFields: (keyof RequiredFields)[];
   requiredEnums: (keyof RequiredFields)[];
   optionalFields: (keyof OptionalFields)[];
@@ -101,8 +102,8 @@ export const createStrategy = <
     'modelMap'
   > & {
     modelMap: multiUserType_is_MULTI_COLLECTION extends true
-      ? Record<UserEnum, () => Promise<Model<User>>>
-      : () => Promise<Model<User>>;
+      ? Record<UserEnum, () => Promise<ExtendedModel<User>>>
+      : () => Promise<ExtendedModel<User>>;
   },
 ): Strategy<
   RequiredFields,

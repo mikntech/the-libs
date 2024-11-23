@@ -69,7 +69,7 @@ export const genManageControllers = <
     validateInput({ email });
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
-    const userDoc = await findDocs<false, SCHEMA>(
+    const userDoc = await findDocs<false, User>(
       (await getModel(userType)).findOne({ email }),
     );
     if (!userDoc || !validateDocument(userDoc as SCHEMA))

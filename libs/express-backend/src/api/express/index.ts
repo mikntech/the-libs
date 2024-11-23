@@ -59,7 +59,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   ];
 
   const defaultPostMiddlewares = [
-    serverErrorHandler(getExpressSettings().stagingEnv, await errorLog()),
+    serverErrorHandler(getExpressSettings().stagingEnv, async () => errorLog()),
   ];
 
   try {

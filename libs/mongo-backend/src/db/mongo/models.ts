@@ -62,7 +62,7 @@ interface Optional<DBPart, ComputedPart> {
 type GetCahced = (_id: Types.ObjectId) => Promise<Record<string, any>>;
 
 export class ExtendedModel<DocI extends Document> {
-  private readonly model: Model<DocI>;
+  public readonly model: Model<DocI>;
   private readonly getCached?: GetCahced;
   constructor({
     model,

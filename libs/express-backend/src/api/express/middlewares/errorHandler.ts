@@ -10,11 +10,12 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 import type { Model } from 'mongoose';
+import { createDoc, ExtendedModel } from '@the-libs/mongo-backend';
 
 export const serverErrorHandler =
   <DocI = ErrorLog, SE = StagingEnvironment>(
     stagingEnv: SE,
-    errorLogModel: Model<DocI> = errorLog() as unknown as Model<DocI>,
+    errorLogModel: () => Promise<ExtendedModel<TODO>> = async () => errorLog(),
   ) =>
   async (
     err: Error,
@@ -26,9 +27,9 @@ export const serverErrorHandler =
       if (err instanceof ClientError)
         return res.status(err.statusCode).send(err.message || String(err));
       try {
-        await new errorLogModel({
+        await createDoc(await errorLogModel(), {
           stringifiedError: err.toString(),
-        }).save();
+        });
         console.log('Error was logged to mongo');
         stagingEnv === 'local' && console.log('the error: ', err);
       } catch (e) {
