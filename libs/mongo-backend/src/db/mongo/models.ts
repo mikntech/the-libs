@@ -92,11 +92,11 @@ export class ExtendedModel<DocI extends Document> {
     return this.model.findById(id);
   }
 
-  async find(query: any): Promise<DocI[]> {
+  async find(query?: any): Promise<DocI[]> {
     return this.model.find(query);
   }
 
-  async findOne(query: any): Promise<DocI | null> {
+  async findOne(query?: any): Promise<DocI | null> {
     return this.model.findOne(query);
   }
 

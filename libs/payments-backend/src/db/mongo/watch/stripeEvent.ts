@@ -4,7 +4,7 @@ import type { GenericListener } from 'mongodb';
 
 export const watchStripeEvents = (handler: GenericListener) =>
   WatchDB.add({
-    modelGetter: stripeEvent,
+    modelGetter: async () => (await stripeEvent()).model,
     event: 'change',
     handler: (...args) => handler(...args),
   });
