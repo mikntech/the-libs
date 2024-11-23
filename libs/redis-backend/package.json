@@ -1,12 +1,12 @@
 {
   "name": "@the-libs/redis-backend",
-  "version": "1.1.42",
+  "version": "1.15.8",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.11.5",
-    "@bull-board/express": "^6.5.2",
+    "@the-libs/base-shared": "^1.15.6",
+    "@bull-board/express": "^6.5.3",
     "redlock": "^5.0.0-beta.2",
     "bull": "^4.16.4",
     "dotenv": "^16.4.5",

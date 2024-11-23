@@ -1,17 +1,17 @@
 {
   "name": "@the-libs/chat-backend",
-  "version": "1.1.42",
+  "version": "1.15.8",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/auth-backend": "^1.11.5",
-    "@the-libs/auth-shared": "^1.11.5",
-    "@the-libs/base-shared": "^1.11.5",
-    "@the-libs/chat-shared": "^1.11.5",
-    "@the-libs/express-backend": "^1.11.5",
-    "@the-libs/mongo-backend": "^1.11.5",
-    "@the-libs/redis-backend": "^1.11.5",
+    "@the-libs/auth-backend": "^1.15.6",
+    "@the-libs/auth-shared": "^1.15.6",
+    "@the-libs/base-shared": "^1.15.6",
+    "@the-libs/chat-shared": "^1.15.6",
+    "@the-libs/express-backend": "^1.15.6",
+    "@the-libs/mongo-backend": "^1.15.6",
+    "@the-libs/redis-backend": "^1.15.6",
     "express": "^4.21.1"
   },
   "type": "module",

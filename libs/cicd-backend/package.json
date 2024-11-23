@@ -1,21 +1,21 @@
 {
   "name": "@the-libs/cicd-backend",
-  "version": "1.1.42",
+  "version": "1.15.8",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@aws-sdk/client-acm": "^3.693.0",
-    "@aws-sdk/client-cloudformation": "^3.695.0",
-    "@aws-sdk/client-ec2": "^3.695.0",
-    "@aws-sdk/client-ecr": "^3.693.0",
-    "@aws-sdk/client-ecs": "^3.695.0",
-    "@aws-sdk/client-iam": "^3.693.0",
-    "@aws-sdk/client-elastic-load-balancing-v2": "^3.693.0",
-    "@aws-sdk/client-route-53": "^3.693.0",
-    "@aws-sdk/client-s3": "^3.693.0",
-    "@aws-sdk/client-sts": "^3.693.0",
-    "@the-libs/base-shared": "^1.11.5",
+    "@aws-sdk/client-acm": "^3.699.0",
+    "@aws-sdk/client-cloudformation": "^3.699.0",
+    "@aws-sdk/client-ec2": "^3.699.0",
+    "@aws-sdk/client-ecr": "^3.699.0",
+    "@aws-sdk/client-ecs": "^3.699.0",
+    "@aws-sdk/client-iam": "^3.699.0",
+    "@aws-sdk/client-elastic-load-balancing-v2": "^3.699.0",
+    "@aws-sdk/client-route-53": "^3.699.0",
+    "@aws-sdk/client-s3": "^3.699.0",
+    "@aws-sdk/client-sts": "^3.699.0",
+    "@the-libs/base-shared": "^1.15.6",
     "dotenv": "^16.4.5"
   },
   "type": "module",

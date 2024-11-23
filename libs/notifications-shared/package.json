@@ -1,12 +1,12 @@
 {
   "name": "@the-libs/notifications-shared",
-  "version": "1.1.42",
+  "version": "1.15.8",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
     "mongoose": "^8.8.2",
-    "@the-libs/auth-shared": "^1.11.5"
+    "@the-libs/auth-shared": "^1.15.6"
   },
   "type": "module",
   "main": "./index.js",
