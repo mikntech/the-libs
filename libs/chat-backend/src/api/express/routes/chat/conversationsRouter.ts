@@ -33,7 +33,7 @@ export const generateConversationRouter = <UserType>(
         ],
       });
       if (quantity) {
-        query = query.limit(quantity);
+        query = (query as TODO).limit(quantity);
       }
       const conversations = await query;
 
