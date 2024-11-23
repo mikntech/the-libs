@@ -23,8 +23,6 @@ export const get = async (
   }
 };
 
-
-
 export const set = async (
   redis: RedisType,
   key: string,
@@ -60,14 +58,12 @@ export const set = async (
   }
 };
 
-
-
 export const cache = async (
   redis: RedisType,
   key: string,
   computeValue: () => Promise<string>,
-  ttlInSecs = 2147483647 / 1000,
-  timeout = 2147483647 / 1000,
+  ttlInSecs = 2147483000 / 1000,
+  timeout = 2147483000 / 1000,
 ): Promise<string> => {
   const cachedValue = await get(redis, key, timeout);
 
