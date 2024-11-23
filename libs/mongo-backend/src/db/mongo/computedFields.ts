@@ -11,7 +11,7 @@ import { ChangeStreamDocument } from 'mongodb';
   FILTERED_CHANGE_IN_FIELD,
 }*/
 
-enum LogicalBinaryOperands {
+export enum LogicalBinaryOperands {
   OR = 'or',
   AND = 'and',
 }
