@@ -87,6 +87,30 @@ export class ExtendedModel<DocI extends Document> {
       },
     });
   }
+
+  async findById(id: Types.ObjectId | string): Promise<DocI | null> {
+    return this.model.findById(id);
+  }
+
+  async find(query: any): Promise<DocI[]> {
+    return this.model.find(query);
+  }
+
+  async findOne(query: any): Promise<DocI | null> {
+    return this.model.findOne(query);
+  }
+
+  async create(doc: Partial<DocI>): Promise<DocI> {
+    return this.model.create(doc);
+  }
+
+  async updateOne(filter: any, update: any): Promise<any> {
+    return this.model.updateOne(filter, update);
+  }
+
+  async deleteOne(filter: any): Promise<any> {
+    return this.model.deleteOne(filter);
+  }
 }
 
 export const getModel = async <DBPart extends Document, ComputedPart = any>(
