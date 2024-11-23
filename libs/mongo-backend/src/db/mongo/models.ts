@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 import { WatchDB } from './watch';
-import type {
+import {
   Connection,
   IndexDefinition,
   IndexOptions,
@@ -8,15 +8,13 @@ import type {
   Schema,
   SchemaDefinition,
   Document,
+  Types,
 } from 'mongoose';
 import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
-import {
-  getExpressSettings,
-  StagingEnvironment,
-} from '@the-libs/express-backend';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
+import { getComputed, invalidate, SchemaComputers } from './computedFields';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -26,8 +24,6 @@ const connection: { instance?: Connection } = {};
 const connect = async (
   logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
 ) => {
-  /* (getExpressSettings().stagingEnv ?? StagingEnvironment.Prod) ===
-    StagingEnvironment.Local &&*/
   mongoose.set('debug', logMongoToConsole ?? true);
   try {
     await mongoose.connect(mongoSettings.mongoURI);
@@ -40,7 +36,7 @@ const connect = async (
   }
 };
 
-const initModel = <Interface>(
+const initModel = <DBPart>(
   connection: {
     instance?: Connection;
   },
@@ -48,21 +44,22 @@ const initModel = <Interface>(
   schema: Schema,
 ) => {
   if (!connection.instance) throw new Error('Database not initialized');
-  return connection.instance.model<Interface>(
+  return connection.instance.model<DBPart>(
     name,
     schema.plugin(versioning, { collection: name + 's.history', mongoose }),
   );
 };
 
-interface Optional<T> {
+interface Optional<DBPart, ComputedPart> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
   wrapSchema?: Function[];
   extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
-  pres?: ((schema: Schema) => (model: Model<T>) => Schema)[];
+  pres?: ((schema: Schema) => (model: Model<DBPart>) => Schema)[];
   logMongoToConsole?: boolean;
+  computedFields?: SchemaComputers<ComputedPart>;
 }
 
-export const getModel = async <Interface>(
+export const getModel = async <DBPart, ComputedPart = any>(
   name: string,
   schemaDefinition: SchemaDefinition,
   {
@@ -71,10 +68,11 @@ export const getModel = async <Interface>(
     extraIndexs,
     pres,
     logMongoToConsole,
-  }: Optional<Interface> = {},
+    computedFields,
+  }: Optional<DBPart, ComputedPart> = {},
 ) => {
   if (!connection?.instance) await connect(logMongoToConsole);
-  let model: Model<Interface>;
+  let model: Model<DBPart>;
   let schema = new mongoose.Schema(schemaDefinition, {
     timestamps: true,
   });
@@ -92,7 +90,7 @@ export const getModel = async <Interface>(
   const funcs = pres?.map((fnc) => fnc(schema));
 
   if (mongoose.models[name]) {
-    model = connection!.instance!.model<Interface>(name);
+    model = connection!.instance!.model<DBPart>(name);
   } else {
     model = initModel(connection, name, schema);
   }
@@ -101,7 +99,30 @@ export const getModel = async <Interface>(
     model = initModel(connection, name, fnc(model));
   });
 
-  return model;
+  let getCached = {};
+  if (computedFields)
+    getCached = {
+      getCached: async (_id: Types.ObjectId) =>
+        getComputed(_id, computedFields),
+    };
+  computedFields &&
+    Object.keys(computedFields).forEach((fieldName) =>
+      WatchDB.add({
+        modelGetter: async () => model,
+        handler: (event) =>
+          invalidate(
+            event._id,
+            fieldName,
+            computedFields[fieldName as keyof ComputedPart],
+            event,
+          ),
+      }),
+    );
+
+  return {
+    model,
+    ...getCached,
+  };
 };
 
 export const autoSignS3URIs = (schema: Schema) => {
