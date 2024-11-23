@@ -2,13 +2,10 @@ import { highOrderHandler } from '@the-libs/express-backend';
 import { User } from '@the-libs/auth-shared';
 import { message } from '../../db/mongo/schemas/chat';
 import { Message } from '@the-libs/chat-shared';
-import {
-  createPubSubInstance,
-  createRedisInstance,
-} from '@the-libs/redis-backend';
+import { PubSub, createRedisInstance } from '@the-libs/redis-backend';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 
-const pubSubInstance = createPubSubInstance(
+const pubSubInstance = new PubSub(
   await createRedisInstance(),
   await createRedisInstance(),
 );
@@ -60,10 +57,10 @@ export const subscribeHandler = () =>
     async (req: AuthenticatedRequest, write) => {
       const token = pubSubInstance.subscribe('chats', (data: string) =>
         write(`data: ${JSON.stringify({ message: data })}\n\n`),
-      ) as string;
+      );
 
       req.on('close', () => {
-        pubSubInstance.unsubscribe(token);
+        pubSubInstance.unsubscribe('chats');
       });
     },
     [
