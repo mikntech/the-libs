@@ -36,7 +36,7 @@ const connect = async (
   }
 };
 
-const initModel = <DBPart>(
+const initModel = <DBPart extends Document>(
   connection: {
     instance?: Connection;
   },
@@ -59,7 +59,37 @@ interface Optional<DBPart, ComputedPart> {
   computedFields?: SchemaComputers<ComputedPart>;
 }
 
-export const getModel = async <DBPart, ComputedPart = any>(
+type GetCahced = (_id: Types.ObjectId) => Promise<Record<string, any>>;
+
+export class ExtendedModel<DocI extends Document> {
+  private readonly model: Model<DocI>;
+  private readonly getCached?: GetCahced;
+  constructor({
+    model,
+    getCached,
+  }: {
+    model: Model<DocI>;
+    getCached?: GetCahced;
+  }) {
+    this.model = model;
+    this.getCached = getCached;
+    return new Proxy(this, {
+      get: (target, prop, receiver) => {
+        if (prop in target) {
+          return Reflect.get(target, prop, receiver);
+        }
+        if ((prop in model) as any) {
+          // Bind model methods to preserve context
+          return typeof (model as any)[prop] === 'function'
+            ? ((model as any)[prop] as any).bind(model)
+            : (model as any)[prop];
+        }
+      },
+    });
+  }
+}
+
+export const getModel = async <DBPart extends Document, ComputedPart = any>(
   name: string,
   schemaDefinition: SchemaDefinition,
   {
@@ -92,16 +122,16 @@ export const getModel = async <DBPart, ComputedPart = any>(
   if (mongoose.models[name]) {
     model = connection!.instance!.model<DBPart>(name);
   } else {
-    model = initModel(connection, name, schema);
+    model = initModel<DBPart>(connection, name, schema);
   }
 
   funcs?.map((fnc) => {
-    model = initModel(connection, name, fnc(model));
+    model = initModel<DBPart>(connection, name, fnc(model));
   });
 
-  let getCached = {};
+  let getCachedParent = {};
   if (computedFields)
-    getCached = {
+    getCachedParent = {
       getCached: async (_id: Types.ObjectId) =>
         getComputed(_id, computedFields),
     };
@@ -119,10 +149,10 @@ export const getModel = async <DBPart, ComputedPart = any>(
       }),
     );
 
-  return {
+  return new ExtendedModel<DBPart>({
     model,
-    ...getCached,
-  };
+    ...getCachedParent,
+  });
 };
 
 export const autoSignS3URIs = (schema: Schema) => {

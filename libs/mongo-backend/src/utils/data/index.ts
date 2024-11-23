@@ -9,7 +9,9 @@ export const findDocs = async <
     DocI
   >,
   lean: boolean = true,
-) => (lean ? query.lean() : query);
+) => {
+  return lean ? query.lean() : query;
+};
 
 export const createDoc = async <DocI extends MDocument>(
   model: Model<DocI>,
