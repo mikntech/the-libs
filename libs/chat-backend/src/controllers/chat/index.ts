@@ -48,11 +48,11 @@ export const getNumberOfUnreadMessagesInConversation = async (
   user: User,
 ) =>
   (
-    await (
-      await message()
-    ).find({
-      conversationId,
-    })
+    await findDocs<true, Message>(
+      (await message()).find({
+        conversationId,
+      }),
+    )
   ).filter(
     ({ ownerId, whenQueried }) => ownerId !== String(user._id) && !whenQueried,
   ).length;

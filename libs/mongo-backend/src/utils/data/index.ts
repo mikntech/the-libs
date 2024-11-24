@@ -10,7 +10,8 @@ export const findDocs = async <
     | QueryWithHelpers<isArray extends true ? Array<DocI> : DocI | null, DocI>
     | TODO,
   lean: boolean = true,
-) => (lean ? query.lean() : query);
+): Promise<isArray extends true ? Array<DocI> : DocI | null> =>
+  lean ? query.lean() : query;
 
 export const createDoc = async <DocI extends MDocument>(
   { model }: ExtendedModel<DocI>,
