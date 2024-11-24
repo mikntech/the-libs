@@ -9,5 +9,5 @@ export const stripeEvent = () =>
       ...baseEvent,
       stringifiedStripeEvent: { type: String, required: true },
     },
-    { extraIndexs: [{ fields: { createdAt: 1 } }] },
+    { extraIndexes: [{ fields: { createdAt: 1 } }] },
   );

@@ -54,7 +54,7 @@ const initModel = <DBPart extends Document>(
 interface Optional<DBPart, ComputedPart> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
   wrapSchema?: Function[];
-  extraIndexs?: { fields: IndexDefinition; options?: IndexOptions }[];
+  extraIndexes?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<DBPart>) => Schema)[];
   logMongoToConsole?: boolean;
   computedFields?: SchemaComputers<ComputedPart>;
@@ -104,7 +104,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = any>(
   {
     chainToSchema,
     wrapSchema,
-    extraIndexs,
+    extraIndexes,
     pres,
     logMongoToConsole,
     computedFields,
@@ -122,7 +122,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = any>(
   chainToSchema?.forEach(({ name, params }) =>
     (schema as CHAINABLE as TODO)[name](...params),
   );
-  extraIndexs?.forEach((extraIndex) =>
+  extraIndexes?.forEach((extraIndex) =>
     schema.index(extraIndex.fields, extraIndex.options),
   );
 
