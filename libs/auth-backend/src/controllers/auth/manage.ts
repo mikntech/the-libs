@@ -173,7 +173,7 @@ export const genManageControllers = <
     validateInput({ phone });
 
     const userDoc = (await findDocs(
-      (await getModel(userType)).findById(user._id),
+      (await getModel(userType)).findById(user._id) as TODO,
       false,
     )) as unknown as User | null;
 
@@ -187,7 +187,7 @@ export const genManageControllers = <
     if (!req.userType || !req.user?._id)
       throw new UnauthorizedError('Please log in');
     const userDoc = (await findDocs(
-      (await getModel(req.userType)).findById(req.user?._id),
+      (await getModel(req.userType)).findById(req.user?._id) as TODO,
       false,
     )) as unknown as User | null;
     if (!userDoc) throw new UnauthorizedError('Please login first');

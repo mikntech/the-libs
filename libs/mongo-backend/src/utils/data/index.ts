@@ -1,5 +1,6 @@
-import type { Model, QueryWithHelpers, Document as MDocument } from 'mongoose';
+import type { QueryWithHelpers, Document as MDocument } from 'mongoose';
 import { ExtendedModel } from '../../db/mongo';
+import { TODO } from '@the-libs/base-shared';
 
 export const findDocs = async <
   isArray extends boolean,
@@ -7,18 +8,9 @@ export const findDocs = async <
 >(
   query:
     | QueryWithHelpers<isArray extends true ? Array<DocI> : DocI | null, DocI>
-    | Promise<isArray extends true ? Array<DocI> : DocI | null>,
+    | TODO,
   lean: boolean = true,
-) => {
-  return lean
-    ? (
-        query as QueryWithHelpers<
-          isArray extends true ? Array<DocI> : DocI | null,
-          DocI
-        >
-      ).lean()
-    : query;
-};
+) => (lean ? query.lean() : query);
 
 export const createDoc = async <DocI extends MDocument>(
   { model }: ExtendedModel<DocI>,

@@ -6,7 +6,6 @@ import {
   validateEnum,
 } from '@the-libs/mongo-backend';
 import {
-  SomeEnum,
   InvalidInputError,
   UnauthorizedError,
   TODO,
@@ -45,12 +44,9 @@ export const genRegisterControllers = <
   } = genAuthControllers(strategy);
 
   const validateEmailNotInUse = async (email: string, userType: UserType) => {
-    if (
-      await findDocs(
-        (await (await getModel(userType)).findOne({ email })) as TODO,
-        true,
-      )
-    )
+    const em = await getModel(userType);
+
+    if (await findDocs(em.findOne({ email }), true))
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );

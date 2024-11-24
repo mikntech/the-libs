@@ -9,6 +9,7 @@ import {
   SchemaDefinition,
   Document,
   Types,
+  Query,
 } from 'mongoose';
 import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
@@ -63,7 +64,8 @@ type GetCahced = (_id: Types.ObjectId) => Promise<Record<string, any>>;
 
 export class ExtendedModel<DocI extends Document> {
   public readonly model: Model<DocI>;
-  private readonly getCached?: GetCahced;
+  public readonly getCached?: GetCahced;
+
   constructor({
     model,
     getCached,
@@ -73,44 +75,27 @@ export class ExtendedModel<DocI extends Document> {
   }) {
     this.model = model;
     this.getCached = getCached;
-    return new Proxy(this, {
-      get: (target, prop, receiver) => {
-        if (prop in target) {
-          return Reflect.get(target, prop, receiver);
-        }
-        if ((prop in model) as any) {
-          // Bind model methods to preserve context
-          return typeof (model as any)[prop] === 'function'
-            ? ((model as any)[prop] as any).bind(model)
-            : (model as any)[prop];
-        }
-      },
-    });
   }
 
-  async findById(id: Types.ObjectId | string): Promise<DocI | null> {
-    return this.model.findById(id);
+  // Explicitly handle query-returning methods
+  findOne(
+    ...args: Parameters<Model<DocI>['findOne']>
+  ): Query<DocI | null, DocI> {
+    return this.model.findOne(...args);
   }
 
-  async find(query?: any): Promise<DocI[]> {
-    return this.model.find(query);
+  find(...args: Parameters<Model<DocI>['find']>): Query<DocI[], DocI> {
+    return this.model.find(...args);
   }
 
-  async findOne(query?: any): Promise<DocI | null> {
-    return this.model.findOne(query);
+  // Add other query-returning methods explicitly if needed
+  findById(
+    ...args: Parameters<Model<DocI>['findById']>
+  ): Query<DocI | null, DocI> {
+    return this.model.findById(...args);
   }
 
-  async create(doc: Partial<DocI>): Promise<DocI> {
-    return this.model.create(doc);
-  }
-
-  async updateOne(filter: any, update: any): Promise<any> {
-    return this.model.updateOne(filter, update);
-  }
-
-  async deleteOne(filter: any): Promise<any> {
-    return this.model.deleteOne(filter);
-  }
+  // TODO Add more model methods as needed
 }
 
 export const getModel = async <DBPart extends Document, ComputedPart = any>(
@@ -176,7 +161,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = any>(
   return new ExtendedModel<DBPart>({
     model,
     ...getCachedParent,
-  });
+  }) as TODO;
 };
 
 export const autoSignS3URIs = (schema: Schema) => {

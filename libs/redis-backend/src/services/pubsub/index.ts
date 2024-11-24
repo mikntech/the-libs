@@ -2,7 +2,7 @@ import NodePubSub from 'pubsub-js';
 import { RedisType } from '../redis-client';
 
 export class PubSub {
-  private readonly redisSubscriber: RedisType | null;
+  private readonly redisSubscriber: RedisType | null | any;
   private readonly redisPublisher: RedisType | null;
   private readonly fallback: typeof NodePubSub;
   private activeSubscriptions: Map<
@@ -36,14 +36,14 @@ export class PubSub {
 
       // Define cleanup function explicitly
       const cleanup: () => void = () => {
-        this.redisSubscriber?.unsubscribe(channel, (err) => {
+        this.redisSubscriber?.unsubscribe(channel, (err: Error) => {
           if (err) console.error('Redis unsubscription failed:', err);
         });
         this.redisSubscriber?.off('message', messageListener);
         this.activeSubscriptions.delete(channel);
       };
 
-      this.redisSubscriber?.subscribe(channel, (err) => {
+      this.redisSubscriber?.subscribe(channel, (err: Error) => {
         if (err) console.error('Redis subscription failed:', err);
       });
 
@@ -67,7 +67,7 @@ export class PubSub {
 
   publish(channel: string, message: string) {
     if (this.redisPublisher) {
-      this.redisPublisher.publish(channel, message, (err) => {
+      this.redisPublisher.publish(channel, message, (err: any) => {
         if (err) console.error('Redis publish failed:', err);
       });
     } else {
@@ -77,9 +77,12 @@ export class PubSub {
 
   unsubscribe(tokenOrChannel: string | symbol) {
     if (this.redisSubscriber) {
-      this.redisSubscriber.unsubscribe(tokenOrChannel as string, (err) => {
-        if (err) console.error('Redis unsubscribe failed:', err);
-      });
+      this.redisSubscriber.unsubscribe(
+        tokenOrChannel as string,
+        (err: Error) => {
+          if (err) console.error('Redis unsubscribe failed:', err);
+        },
+      );
     } else {
       this.fallback.unsubscribe(tokenOrChannel as string);
     }

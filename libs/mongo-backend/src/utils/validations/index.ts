@@ -46,9 +46,10 @@ export const findAndValidate = async <
   isArray extends boolean,
   DocI extends MDocument = MDocument,
 >(
-  query:
-    | QueryWithHelpers<isArray extends true ? Array<DocI> : DocI | null, DocI>
-    | Promise<isArray extends true ? Array<DocI> : DocI | null>,
+  query: QueryWithHelpers<
+    isArray extends true ? Array<DocI> : DocI | null,
+    DocI
+  >,
   customDescription: string,
   lean: boolean = true,
 ) => {
