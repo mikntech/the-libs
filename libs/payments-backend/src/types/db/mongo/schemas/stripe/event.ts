@@ -1,5 +1,5 @@
 import type { Stripe } from 'stripe';
-import { BaseEvent } from '../index';
+import { BaseEvent } from '../abstract/event';
 
 export type RawStripeEvent = Stripe.Event;
 

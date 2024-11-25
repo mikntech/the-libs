@@ -325,7 +325,8 @@ export interface Payment extends MDocument {
   method: PaymentMethod;
   amount: number;
   currency: Currency;
-  status: PaymentStatus;
+  manualStatus: PaymentStatus;
+  automaticStatus: PaymentStatus;
   timestamp?: number;
   userId?: string;
   transactionId?: string;
