@@ -12,6 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <meta http-equiv="refresh" content="1;url=https://mikntech.com" />
+      </head>
       <body>{children}</body>
     </html>
   );
