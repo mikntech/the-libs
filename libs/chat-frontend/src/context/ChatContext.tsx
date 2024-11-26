@@ -7,8 +7,12 @@ import {
   useState,
 } from 'react';
 import { Conversation } from '@the-libs/chat-shared';
-import { axiosErrorToaster, ServerContext, useSubscribe } from '../';
 import { Typography } from '@mui/material';
+import {
+  axiosErrorToaster,
+  ServerContext,
+  useSubscribe,
+} from '@the-libs/base-frontend';
 
 interface ChatContextProps {
   children: ReactNode;

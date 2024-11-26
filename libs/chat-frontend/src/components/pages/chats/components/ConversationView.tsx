@@ -22,12 +22,14 @@ import {
 } from 'react';
 import { ArrowBackIosOutlined, Send } from '@mui/icons-material';
 import { AxiosInstance } from 'axios';
-import { ServerContext } from '../../../../context';
 import { Conversation, Message } from '@the-libs/chat-shared';
 import { TODO } from '@the-libs/base-shared';
-import { useSubscribe } from '../../../../hooks';
-import { axiosErrorToaster } from '../../../../utils';
-import { extactNameInitials } from '../../../../utils';
+import {
+  axiosErrorToaster,
+  extactNameInitials,
+  ServerContext,
+  useSubscribe,
+} from '@the-libs/base-frontend';
 
 interface ConversationViewProps {
   VITE_STAGING_ENV: string;

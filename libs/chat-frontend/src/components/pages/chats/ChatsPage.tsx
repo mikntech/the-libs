@@ -1,16 +1,12 @@
 import { Button, Grid2, Typography } from '@mui/material';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import ConversationView from './components/ConversationView';
-import {
-  ChatContext,
-  ConversationButton,
-  ServerContext,
-  useResponsiveness,
-} from '../../../';
+import { ChatContext, ConversationButton } from '../../../';
 import { useLocation } from 'react-router-dom';
 import SendMessageForm from '../../forms/SendMessageForm';
 import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-shared';
+import { ServerContext, useResponsiveness } from '@the-libs/base-frontend';
 
 interface ChatsPageProps {
   VITE_STAGING_ENV: string;

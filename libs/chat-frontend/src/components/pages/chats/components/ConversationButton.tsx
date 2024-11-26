@@ -9,11 +9,10 @@ import {
   Typography,
 } from '@mui/material';
 import { Dispatch, SetStateAction } from 'react';
-import { themeColor, useIsNight } from '../../../../';
 import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-shared';
-import { extactNameInitials } from '../../../../utils/index';
 import { KeyboardArrowRight } from '@mui/icons-material';
+import { extactNameInitials, useIsNight } from '@the-libs/base-frontend';
 // import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
 interface ConversationButtonProps {
