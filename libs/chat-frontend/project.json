@@ -1,0 +1,66 @@
+{
+  "name": "chat-frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/chat-frontend/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/chat-frontend",
+        "tsConfig": "libs/chat-frontend/tsconfig.lib.json",
+        "project": "libs/chat-frontend/package.json",
+        "entryFile": "libs/chat-frontend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/chat-frontend/src",
+            "output": "."
+          }
+        ],
+        "external": [
+          "@mui/x-date-pickers",
+          "dayjs",
+          "react",
+          "@mui/material",
+          "@mui/icons-material",
+          "@the-libs/base-shared",
+          "react-router-dom",
+          "mongoose",
+          "react-hot-toast",
+          "zxcvbn",
+          "axios",
+          "@the-libs/chat-shared",
+          "@the-libs/auth-shared",
+          "@emotion/styled",
+          "graphql-request"
+        ]
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  }
+}
