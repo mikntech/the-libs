@@ -1,29 +1,46 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-
 import type { Document as MDocument, Types } from 'mongoose';
-export type Conversation<
-  side1Name extends string = 'side1',
-  side2Name extends string = 'side2',
+
+export type DBConversation<
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
 > = MDocument & {
-  [key in side1Name]: string;
+  [key in Side1Name]: string;
 } & {
-  [key in side2Name]: string;
+  [key in Side2Name]: string;
 } & {
-  _id: Types.ObjectId;
-  name: string;
-  hiddenFor?: string[];
-  lastMessage?: Message;
-  unReadNumber: number;
-  createdAt: Date;
-  updatedAt: Date;
-};
+  [key in PairName]: string;
+} & (Mediator extends true
+    ? {
+        mediator: string;
+      }
+    : {}) & {
+    _id: Types.ObjectId;
+    title: string;
+    hiddenFor?: string[];
+    createdAt: Date;
+    updatedAt: Date;
+  };
+
+export interface CachedConversation {
+  lastMessage: Message | null;
+}
+
+export type Conversation<
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+> = DBConversation<Mediator, Side1Name, Side2Name, PairName> &
+  CachedConversation;
 
 export interface Message extends MDocument {
   _id: Types.ObjectId;
-  ownerId: string;
-  conversationId: string;
+  owner: Types.ObjectId;
+  conversation: Types.ObjectId;
   message: string;
+  attachments?: string[];
   whenQueried?: number;
   whenMarked?: number;
   createdAt: Date;

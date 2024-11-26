@@ -10,6 +10,7 @@ import {
   Document,
   Types,
   Query,
+  QueryWithHelpers,
 } from 'mongoose';
 import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
@@ -60,18 +61,18 @@ interface Optional<DBPart, ComputedPart> {
   computedFields?: SchemaComputers<ComputedPart>;
 }
 
-type GetCahced = (_id: Types.ObjectId) => Promise<Record<string, any>>;
+type GetCahced<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
-export class ExtendedModel<DocI extends Document> {
+export class ExtendedModel<DocI extends Document, ComputedPart> {
   public readonly model: Model<DocI>;
-  public readonly getCached?: GetCahced;
+  public readonly getCached?: GetCahced<ComputedPart>;
 
   constructor({
     model,
     getCached,
   }: {
     model: Model<DocI>;
-    getCached?: GetCahced;
+    getCached?: GetCahced<ComputedPart>;
   }) {
     this.model = model;
     this.getCached = getCached;
@@ -84,8 +85,12 @@ export class ExtendedModel<DocI extends Document> {
     return this.model.findOne(...args);
   }
 
-  find(...args: Parameters<Model<DocI>['find']>): Query<DocI[], DocI> {
-    return this.model.find(...args);
+  find(
+    filter: any,
+    projection?: any | null | undefined,
+    options?: any | null | undefined,
+  ) {
+    return this.model.find(filter, projection, options);
   }
 
   // Add other query-returning methods explicitly if needed
@@ -95,10 +100,16 @@ export class ExtendedModel<DocI extends Document> {
     return this.model.findById(...args);
   }
 
+  limit(
+    ...args: Parameters<QueryWithHelpers<any, DocI>['limit']>
+  ): Query<DocI[], DocI> {
+    return this.model.find().limit(...args);
+  }
+
   // TODO Add more model methods as needed
 }
 
-export const getModel = async <DBPart extends Document, ComputedPart = any>(
+export const getModel = async <DBPart extends Document, ComputedPart>(
   name: string,
   schemaDefinition: SchemaDefinition,
   {
@@ -158,10 +169,10 @@ export const getModel = async <DBPart extends Document, ComputedPart = any>(
       }),
     );
 
-  return new ExtendedModel<DBPart>({
+  return new ExtendedModel<DBPart, ComputedPart>({
     model,
     ...getCachedParent,
-  }) as TODO;
+  });
 };
 
 export const autoSignS3URIs = (schema: Schema) => {
