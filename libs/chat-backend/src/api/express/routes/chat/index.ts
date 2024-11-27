@@ -8,11 +8,11 @@ import { TODO } from '@the-libs/base-shared';
 
 export const generateChatRouter = (side1Name: string, side2Name: string) => {
   const chatRouter = Router();
-
+  /*
   chatRouter.use(
     '/conversations',
     generateConversationRouter(side1Name, side2Name),
-  );
+  );*/
   chatRouter.use('/messages', generateMessageRouter(side1Name, side2Name));
 
   chatRouter.get('/subscribe', subscribeHandler() as TODO);
