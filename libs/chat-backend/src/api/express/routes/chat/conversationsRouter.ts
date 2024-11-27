@@ -5,14 +5,12 @@ import { highOrderHandler } from '@the-libs/express-backend';
 import { TODO, UnauthorizedError } from '@the-libs/base-shared';
 import {
   conversation,
-  getNameOfUser,
   getNumberOfUnreadMessagesInConversation,
 } from '../../../../';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
-import { Conversation } from '@the-libs/chat-shared';
-import { findDocs } from '@the-libs/mongo-backend';
-import { Model } from 'mongoose';
+import { Conversation, DBConversation } from '@the-libs/chat-shared';
+import { findAndValidate, validateDocument } from '@the-libs/mongo-backend';
 
 export const generateConversationRouter = <
   UserType,
@@ -57,18 +55,12 @@ export const generateConversationRouter = <
 
       quantity && query.limit(quantity);
 
-      const conversations: GenericConversation[] = (await query) as TODO;
+      const dbConversations: GenericConversation[] = (await query) as TODO;
 
       const body = await Promise.all(
-        (await query).map(async (conversation) => ({
+        dbConversations.map(async (conversation) => ({
           ...conversation,
-          lastMessage:
-            (await model.getCached?.(conversation._id))?.lastMessage || 'TODO',
-          title: conversation.title ?? 'TODO',
-          unReadNumber: await getNumberOfUnreadMessagesInConversation(
-            String(conversation._id),
-            req.user as User,
-          ),
+          ...(await model.getCached(conversation._id)),
         })),
       );
 
@@ -76,7 +68,33 @@ export const generateConversationRouter = <
         statusCode: 200,
         body,
       };
-    }) as TODO,
+    }),
+  );
+
+  conversationRouter.get(
+    '/unReadNo/:id?',
+    highOrderHandler(async (req: AuthenticatedRequest<UserType>) => {
+      type GenericConversation = DBConversation<
+        Mediator,
+        Side1Name,
+        Side2Name,
+        PairName
+      >;
+      if (!(req.user as User)) throw new UnauthorizedError('not logged in');
+      const model = await conversation(optional);
+      const doc = await findAndValidate<false, GenericConversation>(
+        model.findById(req.params['id']) as TODO,
+        'a conversation with this id ',
+      );
+
+      return {
+        statusCode: 200,
+        body: await getNumberOfUnreadMessagesInConversation(
+          doc,
+          req.user as User,
+        ),
+      };
+    }),
   );
 
   return conversationRouter;

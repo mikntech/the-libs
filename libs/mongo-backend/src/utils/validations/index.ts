@@ -46,21 +46,30 @@ export const findAndValidate = async <
   isArray extends boolean,
   DocI extends MDocument = MDocument,
 >(
-  query: QueryWithHelpers<
-    isArray extends true ? Array<DocI> : DocI | null,
-    DocI
-  >,
+  query: QueryWithHelpers<isArray extends true ? DocI[] : DocI | null, DocI>,
   customDescription: string,
   lean: boolean = true,
-) => {
+): Promise<isArray extends true ? DocI[] : DocI> => {
   try {
     const res = await findDocs<isArray, DocI>(query, lean);
-    if (
-      Array.isArray(res)
-        ? !res.some((doc) => !validateDocument(doc))
-        : res && validateDocument(res)
-    )
-      return res;
-  } catch {}
-  throw new ResourceNotFoundError(customDescription);
+
+    // Narrow the result type to ensure no null values
+    if (res === null || (Array.isArray(res) && res.length === 0)) {
+      throw new ResourceNotFoundError(customDescription);
+    }
+
+    // Validate the result
+    const isValid = Array.isArray(res)
+      ? res.every((doc) => validateDocument(doc))
+      : validateDocument(res);
+
+    if (!isValid) {
+      throw new Error('Validation failed for one or more documents');
+    }
+
+    // Safe return after validation
+    return res as isArray extends true ? DocI[] : DocI;
+  } catch (err) {
+    throw new ResourceNotFoundError(customDescription);
+  }
 };

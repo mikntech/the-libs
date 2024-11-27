@@ -1,12 +1,12 @@
 import { Button, Grid2, Typography } from '@mui/material';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import ConversationView from './components/ConversationView';
-import { ChatContext, ConversationButton } from '../../../';
+import { ChatContextCreator, ConversationButton } from '../../../';
 import { useLocation } from 'react-router-dom';
 import SendMessageForm from '../../forms/SendMessageForm';
 import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-shared';
-import { ServerContext, useResponsiveness } from '@the-libs/base-frontend';
+import { ServerContext } from '@the-libs/base-frontend';
 
 interface ChatsPageProps {
   VITE_STAGING_ENV: string;
@@ -22,7 +22,12 @@ interface ChatsPageProps {
   };
 }
 
-export const ChatsPage = ({
+export const ChatsPage = <
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+>({
   VITE_STAGING_ENV,
   isMobillized,
   PrimaryText = Typography,
@@ -40,12 +45,9 @@ export const ChatsPage = ({
   if (!customComponents.CloseButton) customComponents.CloseButton = Button;
 
   const [selectedConversation, setSelectedConversation] =
-    useState<Conversation>();
-  const { conversations, totalUnReadCounter } = useContext(ChatContext);
-
-  const { isMobile } = useResponsiveness(!!isMobillized);
-
-  const [open, setOpen] = useState<boolean>(true);
+    useState<Conversation<Mediator, Side1Name, Side2Name, PairName>>();
+  const { conversations, unReadNumbers } =
+    useContext(ChatContextCreator<Mediator, Side1Name, Side2Name, PairName>());
 
   const [sendMessage, setSendMessage] = useState(false);
   const [newId, setNewId] = useState('');
@@ -123,10 +125,9 @@ export const ChatsPage = ({
           wrap="nowrap"
           bgcolor={(theme) => theme.palette.background.default}
           sx={{ flexShrink: 0 }}
-          onClick={() => setOpen(true)}
         >
           {conversations.length > 0 ? (
-            conversations.map((conversation) => (
+            conversations.map((conversation, i) => (
               <Grid2 key={conversation._id?.toString()}>
                 <br />
                 <ConversationButton
@@ -135,6 +136,7 @@ export const ChatsPage = ({
                   conversation={conversation}
                   isTheSelectedConversation={false}
                   setSelectedConversation={setSelectedConversation}
+                  unReadNumber={unReadNumbers[i]}
                   disableDarkMode
                 />
               </Grid2>
@@ -146,12 +148,7 @@ export const ChatsPage = ({
           )}
         </Grid2>
       )}
-      <Grid2
-        height="100%"
-        overflow="scroll"
-        flexGrow={1}
-        onClick={() => setOpen(false)}
-      >
+      <Grid2 height="100%" overflow="scroll" flexGrow={1}>
         {selectedConversation && (
           <ConversationView
             VITE_STAGING_ENV={VITE_STAGING_ENV}

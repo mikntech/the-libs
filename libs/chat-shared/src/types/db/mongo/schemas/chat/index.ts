@@ -28,18 +28,12 @@ export interface CachedConversation {
 }
 
 export type Conversation<
-  X = any,
-  Xx = any,
-  Xxx = any,
-  Xxxx = any,
-  Xxxxx = any,
-> = any; /*<
   Mediator extends boolean,
   Side1Name extends string,
   Side2Name extends string,
   PairName extends string,
 > = DBConversation<Mediator, Side1Name, Side2Name, PairName> &
-  CachedConversation;*/
+  CachedConversation;
 
 export interface Message extends MDocument {
   _id: Types.ObjectId;

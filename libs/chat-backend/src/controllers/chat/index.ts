@@ -1,7 +1,7 @@
 import { highOrderHandler } from '@the-libs/express-backend';
 import { User } from '@the-libs/auth-shared';
 import { message } from '../../db/mongo/schemas/chat';
-import { Message } from '@the-libs/chat-shared';
+import { Conversation, DBConversation, Message } from '@the-libs/chat-shared';
 import { PubSub, createRedisInstance } from '@the-libs/redis-backend';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 import { findDocs } from '@the-libs/mongo-backend';
@@ -33,14 +33,19 @@ export const markMessagesAsRead = async (
       message.save();
     });
 
-export const getNumberOfUnreadMessagesInConversation = async (
-  conversationId: string,
+export const getNumberOfUnreadMessagesInConversation = async <
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+>(
+  { _id }: DBConversation<Mediator, Side1Name, Side2Name, PairName>,
   user: User,
 ) =>
   (
     await findDocs<true, Message>(
       (await message()).find({
-        conversationId,
+        conversation: _id,
       }),
     )
   ).filter(

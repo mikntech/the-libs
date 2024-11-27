@@ -65,14 +65,18 @@ type GetCahced<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
 export class ExtendedModel<DocI extends Document, ComputedPart = any> {
   public readonly model: Model<DocI>;
-  public readonly getCached?: GetCahced<ComputedPart>;
+  public readonly getCached: ComputedPart extends undefined
+    ? undefined
+    : GetCahced<ComputedPart>;
 
   constructor({
     model,
     getCached,
   }: {
     model: Model<DocI>;
-    getCached?: GetCahced<ComputedPart>;
+    getCached: ComputedPart extends undefined
+      ? undefined
+      : GetCahced<ComputedPart>;
   }) {
     this.model = model;
     this.getCached = getCached;
@@ -149,11 +153,15 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     model = initModel<DBPart>(connection, name, fnc(model));
   });
 
-  let getCachedParent = {};
+  let getCachedParent: {
+    getCached: ComputedPart extends undefined
+      ? undefined
+      : GetCahced<ComputedPart>;
+  } = {} as TODO;
   if (computedFields)
     getCachedParent = {
-      getCached: async (_id: Types.ObjectId) =>
-        getComputed(_id, computedFields),
+      getCached: (async (_id: Types.ObjectId) =>
+        getComputed(_id, computedFields)) as TODO,
     };
   computedFields &&
     Object.keys(computedFields).forEach((fieldName) =>

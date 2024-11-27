@@ -31,10 +31,19 @@ import {
   useSubscribe,
 } from '@the-libs/base-frontend';
 
-interface ConversationViewProps {
+interface ConversationViewProps<
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+> {
   VITE_STAGING_ENV: string;
-  conversation: Conversation;
-  setSelectedConversation: Dispatch<SetStateAction<Conversation | undefined>>;
+  conversation: Conversation<Mediator, Side1Name, Side2Name, PairName>;
+  setSelectedConversation: Dispatch<
+    SetStateAction<
+      Conversation<Mediator, Side1Name, Side2Name, PairName> | undefined
+    >
+  >;
   domain: string;
   tenum: { admin: string };
   PrimaryText?: FC<TODO>;
@@ -56,7 +65,12 @@ export const sendMessage = (
       .finally(() => cb());
 };
 
-const ConversationView = ({
+const ConversationView = <
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+>({
   VITE_STAGING_ENV,
   conversation,
   setSelectedConversation,
@@ -64,7 +78,7 @@ const ConversationView = ({
   tenum,
   PrimaryText = Typography,
   Btn = Button,
-}: ConversationViewProps) => {
+}: ConversationViewProps<Mediator, Side1Name, Side2Name, PairName>) => {
   const server = useContext(ServerContext);
 
   const [message, setMessage] = useState('');
@@ -172,9 +186,9 @@ const ConversationView = ({
         </Grid2>
         <Grid2>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <Avatar>{extactNameInitials(conversation.name)} </Avatar>
+            <Avatar>{extactNameInitials(conversation.title)} </Avatar>
             <Typography color="primary.contrastText" fontWeight={700}>
-              {conversation.name}
+              {conversation.title}
             </Typography>
           </Box>
         </Grid2>

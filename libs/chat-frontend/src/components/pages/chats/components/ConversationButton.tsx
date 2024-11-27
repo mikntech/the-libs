@@ -13,24 +13,39 @@ import { TODO } from '@the-libs/base-shared';
 import { Conversation } from '@the-libs/chat-shared';
 import { KeyboardArrowRight } from '@mui/icons-material';
 import { extactNameInitials, useIsNight } from '@the-libs/base-frontend';
-// import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 
-interface ConversationButtonProps {
-  conversation: Conversation;
+interface ConversationButtonProps<
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+> {
+  conversation: Conversation<Mediator, Side1Name, Side2Name, PairName>;
   isTheSelectedConversation: boolean;
-  setSelectedConversation: Dispatch<SetStateAction<Conversation | undefined>>;
+  setSelectedConversation: Dispatch<
+    SetStateAction<
+      Conversation<Mediator, Side1Name, Side2Name, PairName> | undefined
+    >
+  >;
   wide: boolean;
   PrimaryText?: TODO;
   disableDarkMode?: boolean;
+  unReadNumber: number;
 }
 
-export const ConversationButton = ({
+export const ConversationButton = <
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+>({
   conversation,
+  unReadNumber,
   isTheSelectedConversation,
   setSelectedConversation,
   wide,
   disableDarkMode,
-}: ConversationButtonProps) => {
+}: ConversationButtonProps<Mediator, Side1Name, Side2Name, PairName>) => {
   const isNight = useIsNight(disableDarkMode);
   const MAX_NAME_LENGTH = 18;
   const MAX_LAST_MESSAGE_LENGTH = 32;
@@ -81,22 +96,22 @@ export const ConversationButton = ({
         }}
       >
         <Box>
-          {conversation.unReadNumber !== 0 ? (
-            <Badge badgeContent={conversation.unReadNumber} color="error">
+          {unReadNumber !== 0 ? (
+            <Badge badgeContent={unReadNumber} color="error">
               <Avatar sx={{ bgcolor: randomHexNumberGenerator() }}>
-                {extactNameInitials(conversation.name)}{' '}
+                {extactNameInitials(conversation.title)}{' '}
               </Avatar>
             </Badge>
           ) : (
             <Avatar sx={{ bgcolor: randomHexNumberGenerator() }}>
-              {extactNameInitials(conversation.name)}{' '}
+              {extactNameInitials(conversation.title)}{' '}
             </Avatar>
           )}
         </Box>
 
         <Box sx={{ marginLeft: '15px', marginTop: '-5px' }}>
           <Typography>
-            {truncateString(conversation.name, MAX_NAME_LENGTH)}
+            {truncateString(conversation.title, MAX_NAME_LENGTH)}
           </Typography>
           {conversation.lastMessage && (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

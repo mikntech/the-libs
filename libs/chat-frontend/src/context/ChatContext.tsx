@@ -13,23 +13,38 @@ import {
   ServerContext,
   useSubscribe,
 } from '@the-libs/base-frontend';
+import { TODO } from '@the-libs/base-shared';
 
 interface ChatContextProps {
   children: ReactNode;
   VITE_STAGING_ENV: string;
   domain: string;
   MainMessage: (props: { text: string }) => ReactNode;
+  unReadNumbers: number[];
 }
 
-export const ChatContext = createContext<{
-  conversations: Conversation[];
-  totalUnReadCounter: number;
-}>({
-  conversations: [],
-  totalUnReadCounter: 0,
-});
+export const ChatContextCreator = <
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+>() =>
+  createContext<{
+    conversations: Conversation<Mediator, Side1Name, Side2Name, PairName>[];
+    unReadNumbers: number[];
+    totalUnReadCounter: number;
+  }>({
+    conversations: [],
+    unReadNumbers: [],
+    totalUnReadCounter: 0,
+  });
 
-export const ChatContextProvider = ({
+export const ChatContextProvider = <
+  Mediator extends boolean,
+  Side1Name extends string,
+  Side2Name extends string,
+  PairName extends string,
+>({
   children,
   VITE_STAGING_ENV,
   domain,
@@ -37,14 +52,39 @@ export const ChatContextProvider = ({
 }: ChatContextProps) => {
   const [loading, setLoading] = useState(true);
   const server = useContext(ServerContext);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [conversations, setConversations] = useState<
+    Conversation<Mediator, Side1Name, Side2Name, PairName>[]
+  >([]);
+  const [unReadNumbers, setUnReadNumbers] = useState<number[]>([]);
 
   const { res } = useSubscribe(VITE_STAGING_ENV, domain, 'api/chat/subscribe');
 
   const fetchConversations = useCallback(async () => {
     try {
       const res = await server?.axiosInstance.get('api/chat/conversations');
-      res?.data && setConversations(res?.data);
+      const conversations:
+        | Conversation<Mediator, Side1Name, Side2Name, PairName>
+        | undefined = res?.data;
+      conversations && setConversations(conversations as TODO);
+      conversations &&
+        setUnReadNumbers(
+          await Promise.all(
+            (conversations as TODO).map(
+              async ({
+                _id,
+              }: Conversation<Mediator, Side1Name, Side2Name, PairName>) => {
+                try {
+                  const cNRes = await server?.axiosInstance.get(
+                    'api/chat/unReadNo/' + String(_id),
+                  );
+                  return cNRes?.data;
+                } catch {
+                  return 0;
+                }
+              },
+            ),
+          ),
+        );
       setLoading(false);
     } catch (e) {
       axiosErrorToaster(e);
@@ -55,12 +95,15 @@ export const ChatContextProvider = ({
     fetchConversations().then();
   }, [fetchConversations, res]);
 
+  const ChatContext = ChatContextCreator();
+
   return (
     <ChatContext.Provider
       value={{
         conversations,
-        totalUnReadCounter: conversations.reduce(
-          (accumulator, { unReadNumber }) => accumulator + (unReadNumber || 0),
+        unReadNumbers,
+        totalUnReadCounter: unReadNumbers.reduce(
+          (accumulator, unReadNumber) => accumulator + (unReadNumber || 0),
           0,
         ),
       }}
