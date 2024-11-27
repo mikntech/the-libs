@@ -3,16 +3,18 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { AzureOpenAI } = require('openai');
 import type { AzureOpenAI as OpenAI, AzureClientOptions } from 'openai';
-import {
+/*import {
   ChatCompletionCreateParams,
   ChatCompletionCreateParamsBase,
   ChatCompletionCreateParamsNonStreaming,
   ChatCompletionCreateParamsStreaming,
 } from 'openai/src/resources/chat/completions';
-import * as Core from 'openai/src/core';
+import * as Core from 'openai/src/core';*/
 import { TODO } from '@the-libs/base-shared';
 
 const apiVersion = '2024-07-01-preview';
+
+/*
 
 type Params = {
   [0]:
@@ -22,13 +24,14 @@ type Params = {
     | ChatCompletionCreateParams;
   [1]?: Core.RequestOptions;
 };
+*/
 
 export const complete = async ({
   modelConfig,
   params,
 }: {
   modelConfig?: AzureClientOptions;
-  params: Params;
+  params: /*Params*/ TODO;
 }) => {
   const defaultModelConfig = {
     apiKey: agiSettings.azureAPIKey,
