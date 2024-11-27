@@ -39,7 +39,7 @@ export const complete = async ({
   const azureOpenAIInstance: OpenAI = new AzureOpenAI({
     ...defaultModelConfig,
     ...(modelConfig ?? {}),
-  });
+  } as TODO);
   try {
     return azureOpenAIInstance.chat.completions.create(
       params[0] as TODO,
