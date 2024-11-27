@@ -9,13 +9,14 @@ import { errorLog } from '../../../db/mongo';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import type { Model } from 'mongoose';
+import type { Document as MDocument } from 'mongoose';
 import { createDoc, ExtendedModel } from '@the-libs/mongo-backend';
 
 export const serverErrorHandler =
-  <DocI = ErrorLog, SE = StagingEnvironment>(
+  <DocI extends MDocument<any, any, any> = ErrorLog, SE = StagingEnvironment>(
     stagingEnv: SE,
-    errorLogModel: () => Promise<ExtendedModel<TODO>> = async () => errorLog(),
+    errorLogModel: () => Promise<ExtendedModel<DocI, unknown>> = async () =>
+      (await errorLog()) as TODO,
   ) =>
   async (
     err: Error,

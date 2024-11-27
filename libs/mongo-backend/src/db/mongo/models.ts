@@ -63,7 +63,7 @@ interface Optional<DBPart, ComputedPart> {
 
 type GetCahced<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
-export class ExtendedModel<DocI extends Document, ComputedPart> {
+export class ExtendedModel<DocI extends Document, ComputedPart = any> {
   public readonly model: Model<DocI>;
   public readonly getCached?: GetCahced<ComputedPart>;
 
@@ -109,7 +109,7 @@ export class ExtendedModel<DocI extends Document, ComputedPart> {
   // TODO Add more model methods as needed
 }
 
-export const getModel = async <DBPart extends Document, ComputedPart>(
+export const getModel = async <DBPart extends Document, ComputedPart = never>(
   name: string,
   schemaDefinition: SchemaDefinition,
   {

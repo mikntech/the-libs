@@ -14,6 +14,7 @@ export const generateMessageRouter = <UserType>(
   side2Name: string,
 ) => {
   const messageRouter = Router();
+  /*
 
   messageRouter.get(
     '/conversationMessages/:id',
@@ -36,6 +37,7 @@ export const generateMessageRouter = <UserType>(
       return { statusCode: 200, body: messages };
     }) as TODO),
   );
+*/
 
   return messageRouter;
 };
