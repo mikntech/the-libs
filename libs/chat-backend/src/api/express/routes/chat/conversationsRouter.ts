@@ -10,7 +10,7 @@ import {
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
 import { Conversation, DBConversation } from '@the-libs/chat-shared';
-import { findAndValidate, validateDocument } from '@the-libs/mongo-backend';
+import { findAndValidate } from '@the-libs/mongo-backend';
 
 export const generateConversationRouter = <
   UserType,
