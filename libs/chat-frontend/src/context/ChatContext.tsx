@@ -20,7 +20,6 @@ interface ChatContextProps {
   VITE_STAGING_ENV: string;
   domain: string;
   MainMessage: (props: { text: string }) => ReactNode;
-  unReadNumbers: number[];
 }
 
 export const ChatContextCreator = <
