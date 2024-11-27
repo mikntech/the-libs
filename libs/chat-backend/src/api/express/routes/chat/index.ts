@@ -3,7 +3,6 @@ const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import { generateMessageRouter } from './messagesRouter';
 import { subscribeHandler } from '../../../../controllers/chat';
-import { TODO } from '@the-libs/base-shared';
 import { generateConversationRouter } from './conversationsRouter';
 
 export const generateChatRouter = <
@@ -23,7 +22,16 @@ export const generateChatRouter = <
 ) => {
   const chatRouter = Router();
 
-  chatRouter.use('/conversations', generateConversationRouter(optional));
+  chatRouter.use(
+    '/conversations',
+    generateConversationRouter<
+      UserType,
+      Mediator,
+      Side1Name,
+      Side2Name,
+      PairName
+    >(optional),
+  );
   chatRouter.use('/messages', generateMessageRouter(optional));
 
   chatRouter.get('/subscribe', subscribeHandler());

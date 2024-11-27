@@ -7,6 +7,7 @@ import { User } from '@the-libs/auth-shared';
 import { conversation, message, markMessagesAsRead } from '../../../../';
 import { Conversation, Message } from '@the-libs/chat-shared';
 import { findDocs } from '@the-libs/mongo-backend';
+import { TODO } from '@the-libs/base-shared';
 
 export const generateMessageRouter = <
   UserType,
@@ -33,13 +34,17 @@ export const generateMessageRouter = <
       const conversationDoc = await findDocs<
         false,
         Conversation<Mediator, Side1Name, Side2Name, PairName>
-      >(ConversationModel.findById(req.params['id']));
+      >(
+        ConversationModel as TODO,
+        ConversationModel.findById(req.params['id']),
+      );
       /* if (
         String(req.user?._id) !== conversationDoc?.[side1Name] &&
         String(req.user?._id) !== conversationDoc?.[side2Name]
       )
         throw new UnauthorizedError('You are not part of the conversation');*/
       const messages = await findDocs<true, Message>(
+        MessageModel,
         MessageModel.find({
           conversationId: String(conversationDoc?._id),
         }),

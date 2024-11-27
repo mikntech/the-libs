@@ -65,10 +65,9 @@ export const authorizer =
         userType: UserType;
       };
       const { getModel } = genAuthControllers(strategy);
+      const m = await getModel(userType);
       req.user = await signProfilePic<UserI>(
-        await findDocs<false, TODO>(
-          (await getModel(userType)).findById(String(_id)),
-        ),
+        await findDocs<false, TODO>(m, m.findById(String(_id))),
       );
       req.userType = userType;
     } catch (err) {

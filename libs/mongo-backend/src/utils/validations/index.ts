@@ -10,6 +10,7 @@ import {
   SomeEnum,
 } from '@the-libs/base-shared';
 import { findDocs } from '../data';
+import { ExtendedModel } from '../../db/mongo';
 
 export const validateInput = <T = string>(
   input: { [key: string]: T },
@@ -45,13 +46,15 @@ export const validateDocument = (doc: any): boolean =>
 export const findAndValidate = async <
   isArray extends boolean,
   DocI extends MDocument = MDocument,
+  Cached = any,
 >(
+  model: ExtendedModel<DocI, Cached>,
   query: QueryWithHelpers<isArray extends true ? DocI[] : DocI | null, DocI>,
   customDescription: string,
   lean: boolean = true,
 ): Promise<isArray extends true ? DocI[] : DocI> => {
   try {
-    const res = await findDocs<isArray, DocI>(query, lean);
+    const res = await findDocs<isArray, DocI>(model, query, lean);
 
     // Narrow the result type to ensure no null values
     if (res === null || (Array.isArray(res) && res.length === 0)) {

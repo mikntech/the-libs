@@ -58,6 +58,7 @@ export const conversation = async <
         lastMessage: {
           compute: async (_id: Types.ObjectId) =>
             findDocs<false, Message>(
+              await message(),
               (await message())
                 .findOne({ conversation: _id })
                 .sort({ createdAt: -1 })

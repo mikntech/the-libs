@@ -83,6 +83,7 @@ export const generateConversationRouter = <
       if (!(req.user as User)) throw new UnauthorizedError('not logged in');
       const model = await conversation(optional);
       const doc = await findAndValidate<false, GenericConversation>(
+        model as TODO,
         model.findById(req.params['id']) as TODO,
         'a conversation with this id ',
       );

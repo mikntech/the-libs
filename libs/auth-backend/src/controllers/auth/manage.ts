@@ -69,9 +69,8 @@ export const genManageControllers = <
     validateInput({ email });
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
-    const userDoc = await findDocs<false, User>(
-      (await getModel(userType)).findOne({ email }),
-    );
+    const m = await getModel(userType);
+    const userDoc = await findDocs<false, User>(m, m.findOne({ email }));
     if (!userDoc || !validateDocument(userDoc as SCHEMA))
       throw new InvalidInputError('No user found with this email');
     const url = await createKeyForPassReset(email, (userDoc as TODO).userType);
@@ -154,9 +153,10 @@ export const genManageControllers = <
     if (!user) throw new UnauthorizedError('you are not logged in');
 
     validateInput({ newFullName });
-
+    const m = await getModel(userType);
     const userDoc = (await findDocs(
-      (await getModel(userType)).findById(user._id),
+      m,
+      m.findById(user._id),
       false,
     )) as unknown as User | null;
 

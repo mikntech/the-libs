@@ -44,6 +44,7 @@ export const getNumberOfUnreadMessagesInConversation = async <
 ) =>
   (
     await findDocs<true, Message>(
+      await message(),
       (await message()).find({
         conversation: _id,
       }),
