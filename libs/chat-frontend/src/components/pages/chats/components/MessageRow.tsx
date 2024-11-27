@@ -65,7 +65,7 @@ const MessageRow = ({ message, tenum }: MessageRowProps) => {
           flexDirection: 'column-reverse',
         }}
       >
-        {String(user?._id) === String(message.owner) && (
+        {String(user?._id) === message.ownerIdOrRef && (
           <Balloon read={message.whenQueried ? 'yes' : 'no'} isMe="yes">
             {message.message}
             <Typography
@@ -81,7 +81,7 @@ const MessageRow = ({ message, tenum }: MessageRowProps) => {
             </Typography>
           </Balloon>
         )}
-        {String(user?._id) !== String(message.owner) && (
+        {String(user?._id) !== message.ownerIdOrRef && (
           // <Box>
           <Balloon>
             {message.message}

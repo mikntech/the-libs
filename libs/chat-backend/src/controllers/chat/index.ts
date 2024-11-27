@@ -22,10 +22,10 @@ export const markMessagesAsRead = async (
   messages
     .filter(
       level === 'queried'
-        ? ({ whenQueried, owner }) =>
-            String(user._id) !== String(owner) && !whenQueried
-        : ({ whenMarked, owner }) =>
-            String(user._id) !== String(owner) && !whenMarked,
+        ? ({ whenQueried, ownerIdOrRef }) =>
+            String(user._id) !== ownerIdOrRef && !whenQueried
+        : ({ whenMarked, ownerIdOrRef }) =>
+            String(user._id) !== ownerIdOrRef && !whenMarked,
     )
     .forEach((message) => {
       if (level === 'queried') message.whenQueried = Date.now();
@@ -49,8 +49,8 @@ export const getNumberOfUnreadMessagesInConversation = async <
       }),
     )
   ).filter(
-    ({ owner, whenQueried }) =>
-      String(owner) !== String(user._id) && !whenQueried,
+    ({ ownerIdOrRef, whenQueried }) =>
+      ownerIdOrRef !== String(user._id) && !whenQueried,
   ).length;
 
 export const subscribeHandler = () =>
