@@ -16,7 +16,7 @@ export const createProject = async () => {
     nextjss,
   } = await askProjectQuestions();
   const nx = nxGen(nxg);
-  nxg === 'SUDO_INSTALL_GLOBAL' && doCommand('sudo npm i -g nx');
+  nxg === 'SUDO_INSTALL_GLOBAL' && doCommand('sudo npm i --legacy-peer-deps -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${pname} \\
   --preset=ts \\
   --nxCloud=skip \\
@@ -30,17 +30,17 @@ export const createProject = async () => {
   createAFile('.gitignore', gitignoreTemplate, pname);
   doCommandInD(
     pname,
-    `npm i ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
+    `npm i --legacy-peer-deps ${libsToInstall.map((x: string) => '@the-libs/' + x).join(' ')}`,
   );
   doCommandInD(pname, `mkdir apps`);
-  doCommandInD(pname, `npm i -D @nx/esbuild`);
-  doCommandInD(pname, `npm i -D esbuild`);
+  doCommandInD(pname, `npm i --legacy-peer-deps -D @nx/esbuild`);
+  doCommandInD(pname, `npm i --legacy-peer-deps -D esbuild`);
   doCommandInD(pname, `rm -f ./tsconfig.base.json`);
   createAFile('tsconfig.base.json', tsconfigBaseJsonTemplate, './' + pname);
   await modifyJsonFile(`./${pname}/tsconfig.json`, {
     references: null,
   });
-  doCommandInD(pname, 'npm i -D @nx/react');
+  doCommandInD(pname, 'npm i --legacy-peer-deps -D @nx/react');
   log('doing servers');
   await Promise.all(
     servers.map(
@@ -60,7 +60,7 @@ export const createProject = async () => {
   );
   log('doing next if needed');
   nextjss.some((appName: string) => appName !== '') &&
-    doCommandInD(pname, 'npm i -D @nx/next');
+    doCommandInD(pname, 'npm i --legacy-peer-deps -D @nx/next');
   log('doing nexts');
   await Promise.all(
     nextjss.map(

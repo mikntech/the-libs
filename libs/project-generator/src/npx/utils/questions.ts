@@ -68,7 +68,7 @@ const askName = async () =>
 
 const askWhatLibsToInstall = async () =>
   askListFromOptions(
-    'Select @the-libs you plan to use, I will "npm i" them for you',
+    'Select @the-libs you plan to use, I will "npm i --legacy-peer-deps" them for you',
     getSrcLibraries().map((name: string) => ({ name, value: name })),
   );
 

@@ -18,7 +18,7 @@ export const generateBaseDockerfile = (
 FROM node:${nodeTag} AS base
 WORKDIR /app
 COPY package.json ./
-${customInstallLine ?? 'RUN npm i'}
+${customInstallLine ?? 'RUN npm i --legacy-peer-deps'}
 `;
   log && console.log(ret);
   return ret;
