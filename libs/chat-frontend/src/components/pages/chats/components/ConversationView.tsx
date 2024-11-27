@@ -65,7 +65,7 @@ export const sendMessage = (
       .finally(() => cb());
 };
 
-const ConversationView = <
+export const ConversationView = <
   Mediator extends boolean,
   Side1Name extends string,
   Side2Name extends string,
