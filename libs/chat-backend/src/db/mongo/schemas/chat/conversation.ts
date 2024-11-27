@@ -5,7 +5,7 @@ import {
   Message,
 } from '@the-libs/chat-shared';
 import { TODO } from '@the-libs/base-shared';
-import { Types } from 'mongoose';
+import type { Types } from 'mongoose';
 import { message } from './message';
 import type { ChangeStreamInsertDocument } from 'mongodb';
 

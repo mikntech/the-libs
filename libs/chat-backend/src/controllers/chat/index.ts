@@ -1,7 +1,7 @@
 import { highOrderHandler } from '@the-libs/express-backend';
 import { User } from '@the-libs/auth-shared';
 import { message } from '../../db/mongo/schemas/chat';
-import { Conversation, DBConversation, Message } from '@the-libs/chat-shared';
+import { DBConversation, Message } from '@the-libs/chat-shared';
 import { PubSub, createRedisInstance } from '@the-libs/redis-backend';
 import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 import { findDocs } from '@the-libs/mongo-backend';
