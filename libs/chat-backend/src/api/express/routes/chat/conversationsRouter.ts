@@ -97,5 +97,9 @@ export const generateConversationRouter = <
     }),
   );
 
+  conversationRouter.post('/', (_: AuthenticatedRequest<UserType>) =>
+    console.log('todo'),
+  );
+
   return conversationRouter;
 };

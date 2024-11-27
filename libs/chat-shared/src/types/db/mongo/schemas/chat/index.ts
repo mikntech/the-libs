@@ -37,7 +37,7 @@ export type Conversation<
 
 export interface Message extends MDocument {
   _id: Types.ObjectId;
-  owner: Types.ObjectId;
+  ownerIdOrRef: string;
   conversation: Types.ObjectId;
   message: string;
   attachments?: string[];

@@ -4,8 +4,8 @@ import { Schema } from 'mongoose';
 
 export const message = () =>
   getModel<Message>('message', {
-    owner: {
-      type: Schema.Types.ObjectId,
+    ownerIdOrRef: {
+      type: String,
       required: true,
     },
     conversation: {
