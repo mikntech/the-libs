@@ -62,10 +62,11 @@ export const generateConversationRouter = <
       const body = await Promise.all(
         (await query).map(async (conversation) => ({
           ...conversation,
-          lastMessage: (await model.getCached(conversation._id)).lastMessage,
-          title: conversation.title ?? findUserName //todo todo todo
+          lastMessage:
+            (await model.getCached?.(conversation._id))?.lastMessage || 'TODO',
+          title: conversation.title ?? 'TODO',
           unReadNumber: await getNumberOfUnreadMessagesInConversation(
-            c._id.toString(),
+            String(conversation._id),
             req.user as User,
           ),
         })),
