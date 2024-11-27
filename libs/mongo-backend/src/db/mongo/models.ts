@@ -16,7 +16,7 @@ import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
-import { getComputed, invalidate, SchemaComputers } from './computedFields';
+import { getComputed, refreshCache, SchemaComputers } from './computedFields';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -160,7 +160,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
       WatchDB.add({
         modelGetter: async () => model,
         handler: (event) =>
-          invalidate(
+          refreshCache(
             event._id,
             fieldName,
             computedFields[fieldName as keyof ComputedPart],

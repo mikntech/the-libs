@@ -2,13 +2,15 @@ import type { Types } from 'mongoose';
 import { createRedisInstance, cache } from '@the-libs/redis-backend';
 import { ChangeStreamDocument } from 'mongodb';
 
+export type Compute<FieldType> = (_id: Types.ObjectId) => Promise<FieldType>;
+
 type Invalidate = (
   event: ChangeStreamDocument,
   _id: Types.ObjectId,
 ) => Promise<boolean>;
 
 interface FieldDefinition<FieldType> {
-  compute: (_id: Types.ObjectId) => Promise<FieldType>;
+  compute: Compute<FieldType>;
   invalidate?: Invalidate;
 }
 
@@ -18,18 +20,15 @@ export type SchemaComputers<ComputedPartOfSchema> = {
   >;
 };
 
-const cacheH = async <ComputedPartOfSchema>(
+const cacheField = async <FieldType>(
   _id: Types.ObjectId,
   key: string,
-  computers: SchemaComputers<ComputedPartOfSchema>,
+  compute: Compute<FieldType>,
 ) =>
   cache(
     await createRedisInstance(),
     JSON.stringify({ _id: String(_id), key }),
-    async () =>
-      JSON.stringify(
-        await computers[key as keyof ComputedPartOfSchema].compute(_id),
-      ),
+    async () => JSON.stringify(await compute(_id)),
   );
 
 export const getComputed = async <ComputedPartOfSchema>(
@@ -40,7 +39,14 @@ export const getComputed = async <ComputedPartOfSchema>(
     (
       await Promise.all(
         Object.keys(computers).map(async (key) =>
-          JSON.parse((await cacheH(_id, key, computers)) ?? 'null'),
+          JSON.parse(
+            (await cacheField(
+              _id,
+              key,
+              computers[key as keyof SchemaComputers<ComputedPartOfSchema>]
+                .compute,
+            )) ?? 'null',
+          ),
         ),
       )
     ).map(
@@ -60,11 +66,11 @@ export const getComputed = async <ComputedPartOfSchema>(
   );
 };
 
-export const invalidate = async <FieldType>(
+export const refreshCache = async <FieldType>(
   _id: Types.ObjectId,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType>,
   event?: ChangeStreamDocument,
 ) =>
   (!invalidate || !event || (await invalidate(event, _id))) &&
-  (await cacheH(_id, fieldName, compute));
+  (await cacheField(_id, fieldName, compute));
