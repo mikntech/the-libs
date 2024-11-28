@@ -16,8 +16,7 @@ import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
-import { getComputed, refreshCache, SchemaComputers } from './computedFields';
-import { markModelAsWatched, registerModel } from './modelRegistry';
+import { getCached, SchemaComputers } from './computedFields';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -62,13 +61,13 @@ interface Optional<DBPart, ComputedPart> {
   computedFields?: SchemaComputers<ComputedPart>;
 }
 
-type GetCahced<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
+type GetCached<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
 export class ExtendedModel<DocI extends Document, ComputedPart = any> {
   public readonly model: Model<DocI>;
   public readonly getCached: ComputedPart extends undefined
     ? undefined
-    : GetCahced<ComputedPart>;
+    : GetCached<ComputedPart>;
 
   constructor({
     model,
@@ -77,7 +76,7 @@ export class ExtendedModel<DocI extends Document, ComputedPart = any> {
     model: Model<DocI>;
     getCached: ComputedPart extends undefined
       ? undefined
-      : GetCahced<ComputedPart>;
+      : GetCached<ComputedPart>;
   }) {
     this.model = model;
     this.getCached = getCached;
@@ -154,30 +153,16 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     model = initModel<DBPart>(connection, name, fnc(model));
   });
 
-  let getCachedParent: {
+  const getCachedParent: {
     getCached: ComputedPart extends undefined
       ? undefined
-      : GetCahced<ComputedPart>;
+      : GetCached<ComputedPart>;
   } = {} as TODO;
   if (computedFields)
-    getCachedParent = {
-      getCached: (async (_id: Types.ObjectId) =>
-        getComputed(_id, computedFields)) as TODO,
-    };
-  computedFields &&
-    Object.keys(computedFields).forEach((fieldName) =>
-      WatchDB.add({
-        modelGetter: async () => model,
-        handler: (event) =>
-          refreshCache(
-            event._id,
-            fieldName,
-            computedFields[fieldName as keyof ComputedPart],
-            event,
-          ),
-      }),
-    );
-  markModelAsWatched(name); // Mark the model as watched
+    getCachedParent.getCached = (async (_id: Types.ObjectId) =>
+      getCached(_id, computedFields)) as TODO;
+
+  // markModelAsWatched(name); // Mark the model as watched
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,

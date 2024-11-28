@@ -1,3 +1,4 @@
+/*
 import type { Model } from 'mongoose';
 
 const modelMap = new Map<string, { model: Model<any>; isWatched: boolean }>();
@@ -26,3 +27,6 @@ export const isModelWatched = (name: string): boolean => {
 export const getModelFromMap = (name: string): Model<any> | undefined => {
   return modelMap.get(name)?.model;
 };
+*/
+
+console.log('Optinal');
