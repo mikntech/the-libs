@@ -17,6 +17,7 @@ import { TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
 import { getComputed, refreshCache, SchemaComputers } from './computedFields';
+import { markModelAsWatched, registerModel } from './modelRegistry';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -176,6 +177,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
           ),
       }),
     );
+  markModelAsWatched(name); // Mark the model as watched
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,

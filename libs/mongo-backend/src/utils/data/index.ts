@@ -2,7 +2,7 @@ import type { QueryWithHelpers, Document as MDocument, Types } from 'mongoose';
 import { ExtendedModel } from '../../db/mongo';
 import { TODO } from '@the-libs/base-shared';
 
-const mergeCacheToDocs = async <
+export const mergeCacheToDocs = async <
   DocI extends MDocument & { _id: Types.ObjectId } = MDocument & {
     _id: Types.ObjectId;
   },
@@ -18,7 +18,9 @@ const mergeCacheToDocs = async <
           ...(getCached ? await getCached(d._id) : {}),
         })),
       )
-    : { ...doc, ...(getCached ? await getCached(doc._id) : {}) };
+    : doc === null
+      ? null
+      : { ...doc, ...(getCached ? await getCached(doc._id) : {}) };
 
 export const findDocs = async <
   isArray extends boolean,
@@ -31,7 +33,7 @@ export const findDocs = async <
     | TODO,
   lean: boolean = true,
 ): Promise<isArray extends true ? Array<DocI> : DocI | null> =>
-  mergeCacheToDocs(await (lean ? query.lean() : query), m);
+  lean ? mergeCacheToDocs(await query.lean(), m) : query;
 
 export const createDoc = async <DocI extends MDocument>(
   { model }: ExtendedModel<DocI, any>,

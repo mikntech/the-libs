@@ -1,6 +1,10 @@
 import type { Types } from 'mongoose';
 import { createRedisInstance, cache } from '@the-libs/redis-backend';
-import { ChangeStreamDocument } from 'mongodb';
+import type { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
+import { getModelFromMap } from './modelRegistry';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { models } = require('mongoose');
 
 export type Compute<FieldType> = (_id: Types.ObjectId) => Promise<FieldType>;
 
@@ -70,7 +74,36 @@ export const refreshCache = async <FieldType>(
   _id: Types.ObjectId,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType>,
-  event?: ChangeStreamDocument,
-) =>
-  (!invalidate || !event || (await invalidate(event, _id))) &&
-  (await cacheField(_id, fieldName, compute));
+  event?: ChangeStreamUpdateDocument,
+) => {
+  if (event?.updateDescription?.updatedFields?.['_cacheUpdated']) {
+    console.log('Skipping cache-originated change');
+    return;
+  }
+  const collectionName = event?.ns?.coll;
+  if (!collectionName) return;
+
+  const model = getModelFromMap(collectionName) || models[collectionName];
+  if (!model)
+    throw new Error(`No model found for collection: ${collectionName}`);
+
+  const documentId = event?.documentKey._id;
+  if (!documentId) return;
+
+  console.log(
+    `Handling change for collection: ${collectionName}, ID: ${documentId}`,
+  );
+  const doc = await model.findById(documentId);
+  console.log('Document from model:', doc);
+
+  const cacheUpdate = !invalidate || !event || (await invalidate(event, _id));
+
+  if (cacheUpdate) {
+    await cacheField(_id, fieldName, compute);
+
+    // Add a marker to avoid triggering watchers
+    await model.updateOne({ _id }, { $set: { _cacheUpdated: true } });
+  }
+
+  return cacheUpdate;
+};

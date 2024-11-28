@@ -128,8 +128,10 @@ export const genAuthControllers = <
   };
 
   const validateKey = async (key: string, register: boolean) => {
+    const m = await (register ? registrationRequest() : passResetRequest());
     const existingRequest = await findDocs<false, SomeRequest<true>>(
-      (await (register ? registrationRequest() : passResetRequest())).findOne({
+      m,
+      m.findOne({
         key,
       }) as TODO,
       true,

@@ -171,9 +171,10 @@ export const genManageControllers = <
   ) => {
     if (!user) throw new UnauthorizedError('you are not logged in');
     validateInput({ phone });
-
+    const m = await getModel(userType);
     const userDoc = (await findDocs(
-      (await getModel(userType)).findById(user._id) as TODO,
+      m,
+      m.findById(user._id) as TODO,
       false,
     )) as unknown as User | null;
 
@@ -186,10 +187,12 @@ export const genManageControllers = <
       throw new ClientError('No file received');
     if (!req.userType || !req.user?._id)
       throw new UnauthorizedError('Please log in');
-    const userDoc = (await findDocs(
-      (await getModel(req.userType)).findById(req.user?._id) as TODO,
+    const m = await getModel(req.userType);
+    const userDoc = await findDocs<false, User>(
+      m,
+      m.findById(req.user?._id),
       false,
-    )) as unknown as User | null;
+    );
     if (!userDoc) throw new UnauthorizedError('Please login first');
     const file = req.files[0];
     const uri = `${String(userDoc._id)}/profilepicture/${file.originalname}`;
