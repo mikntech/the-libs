@@ -5,7 +5,9 @@ import type {
 } from 'express';
 import { StagingEnvironment } from '../../../config';
 import { ClientError, ErrorLog, TODO } from '@the-libs/base-shared';
+
 import { errorLog } from '../../../db/mongo';
+
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -17,6 +19,7 @@ export const serverErrorHandler =
     stagingEnv: SE,
     errorLogModel: () => Promise<ExtendedModel<DocI, unknown>> = async () =>
       (await errorLog()) as TODO,
+    dontLogToMongo: boolean = false,
   ) =>
   async (
     err: Error,
@@ -28,9 +31,10 @@ export const serverErrorHandler =
       if (err instanceof ClientError)
         return res.status(err.statusCode).send(err.message || String(err));
       try {
-        await createDoc(await errorLogModel(), {
-          stringifiedError: err.toString(),
-        });
+        !dontLogToMongo &&
+          (await createDoc(await errorLogModel(), {
+            stringifiedError: err.toString(),
+          }));
         console.log('Error was logged to mongo');
         stagingEnv === 'local' && console.log('the error: ', err);
       } catch (e) {

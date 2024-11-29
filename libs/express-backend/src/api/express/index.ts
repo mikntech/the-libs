@@ -40,6 +40,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   disableCors: boolean = false,
   dontListen: boolean = false,
   extraCorsOrigins: string[] = [],
+  dontLogToMongo: boolean = false,
 ) => {
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
@@ -59,7 +60,11 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   ];
 
   const defaultPostMiddlewares = [
-    serverErrorHandler(getExpressSettings().stagingEnv, async () => errorLog()),
+    serverErrorHandler(
+      getExpressSettings().stagingEnv,
+      async () => errorLog(),
+      dontLogToMongo,
+    ),
   ];
 
   try {
