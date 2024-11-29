@@ -36,3 +36,6 @@ export const stringifyIfNeeded = (o: TODO) => {
     return 'stringification is needed but not possible';
   }
 };
+
+export const makeArray = <T = any>(element: T): T[] =>
+  Array.isArray(element) ? element : [element];
