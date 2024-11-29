@@ -1,6 +1,12 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-import type { JobOptions, ProcessCallbackFunction, Queue } from 'bull';
+import type {
+  Job,
+  JobOptions,
+  JobStatus,
+  ProcessCallbackFunction,
+  Queue,
+} from 'bull';
 const BullClass = require('bull');
 import { redisSettings } from '../../config';
 
@@ -17,3 +23,19 @@ export const createQueue = <DATA>(
 
 export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
   queue.add(data, opts);
+
+export const checkStatus = async <DATA, R>(
+  queue: Queue<DATA>,
+  customLogic: (allJobs: Job<DATA>[]) => Promise<R>,
+) => {
+  const possibleStatuses: JobStatus[] = [
+    'completed',
+    'waiting',
+    'active',
+    'delayed',
+    'failed',
+    'paused',
+  ];
+  const allJobs = await queue.getJobs(possibleStatuses);
+  return customLogic(allJobs);
+};
