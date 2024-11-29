@@ -6,14 +6,13 @@ const { exec } = require('child_process');
 
 const { region, keyID, secretKey } = cicdSettings.aws;
 
-if (!region || !keyID || !secretKey) {
-  console.error(
-    'Please ensure AWS_KEY_ID, AWS_SECRET_KEY, AWS_REGION are set in the .env file.',
-  );
-  process.exit(1);
-}
-
 export const enableRegion = (regionToEnable: string) => {
+  if (!region || !keyID || !secretKey) {
+    console.error(
+      'Please ensure AWS_KEY_ID, AWS_SECRET_KEY, AWS_REGION are set in the .env file.',
+    );
+    process.exit(1);
+  }
   // Explicitly set credentials and region in the AWS CLI command
   const command = `aws configure set aws_access_key_id ${keyID} && \
                      aws configure set aws_secret_access_key ${secretKey} && \
