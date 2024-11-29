@@ -1,15 +1,15 @@
 {
   "name": "@the-libs/mongo-backend",
-  "version": "1.15.8",
+  "version": "1.16.32",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.15.6",
-    "@the-libs/s3-backend": "^1.15.6",
-    "@the-libs/redis-backend": "^1.15.6",
+    "@the-libs/base-shared": "^1.16.32",
+    "@the-libs/s3-backend": "^1.16.32",
+    "@the-libs/redis-backend": "^1.16.32",
     "dotenv": "^16.4.5",
-    "mongoose": "^8.8.2"
+    "mongoose": "^8.8.3"
   },
   "type": "module",
   "main": "./index.js",
