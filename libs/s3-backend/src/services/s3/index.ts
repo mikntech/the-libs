@@ -12,13 +12,14 @@ const {
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { Upload } = require('@aws-sdk/lib-storage');
 
-export const s3Client = new S3Client({
-  region: s3Settings.aws.region,
-  credentials: {
-    accessKeyId: s3Settings.aws.keyID,
-    secretAccessKey: s3Settings.aws.secretKey,
-  },
-});
+export const createS3Client = () =>
+  new S3Client({
+    region: s3Settings.aws.region,
+    credentials: {
+      accessKeyId: s3Settings.aws.keyID,
+      secretAccessKey: s3Settings.aws.secretKey,
+    },
+  });
 
 export const streamFile = async (
   key: string,
@@ -27,7 +28,7 @@ export const streamFile = async (
 ) => {
   try {
     const upload = new Upload({
-      client: s3Client,
+      client: createS3Client(),
       params: {
         Bucket: s3Settings.s3BucketName!,
         Key: key,
@@ -45,7 +46,7 @@ export const streamFile = async (
 };
 
 export const uploadFile = async (key: string, buffer: TODO, mimetype: string) =>
-  s3Client.send(
+  createS3Client().send(
     new PutObjectCommand({
       Bucket: s3Settings.s3BucketName,
       Key: key,
@@ -61,7 +62,7 @@ export const preSignFile = async (
   filePath = filePath.split('s3://')[1] ?? filePath.split('s3://')[0];
   if (!filePath) throw new Error('file not found at path "' + filePath + '"');
   return await getSignedUrl(
-    s3Client,
+    createS3Client(),
     new GetObjectCommand({
       Bucket: s3Settings.s3BucketName,
       Key: filePath,
@@ -127,7 +128,7 @@ export const recursivelySignUrls = async <T = any>(
 };
 
 export const downloadFile = async (key: string) =>
-  await s3Client.send(
+  await createS3Client().send(
     new GetObjectCommand({
       Bucket: s3Settings.s3BucketName,
       Key: key,
