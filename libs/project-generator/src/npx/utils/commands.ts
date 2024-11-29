@@ -1,6 +1,5 @@
 import { execSync } from 'child_process';
 import { NXGOptions } from './questions.js';
-import { TODO } from '@the-libs/base-shared';
 
 export const nxGen = (option: keyof typeof NXGOptions) =>
   option === 'USE_NPX' ? 'npx nx' : 'nx';
@@ -13,14 +12,14 @@ export const doCommand = (cmnd: string, retries = MAX_RETRIES) => {
       return execSync(cmnd, {
         stdio: 'inherit',
       });
-    } catch (error: TODO) {
+    } catch (error: any) {
       const errorOutput = error?.stderr?.toString() || error?.message || '';
       if (errorOutput.includes('NX   LOCK_FILES_CHANGED')) {
         console.warn(`Lock file changed. Retrying... (Attempt ${attempt + 1})`);
         try {
           // Attempt to re-install dependencies
           execSync('npm install', { stdio: 'inherit' });
-        } catch (installError: TODO) {
+        } catch (installError: any) {
           console.error(
             'Failed to resolve lock file issue:',
             installError.message,
