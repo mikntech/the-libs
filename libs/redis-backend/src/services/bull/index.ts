@@ -17,7 +17,7 @@ export const createQueue = <DATA>(
   const queue: Queue<DATA> = new BullClass(queueName, {
     redis: redisSettings.uri,
   });
-  queue.process(howToProcess);
+  queue.process(howToProcess).then();
   return queue;
 };
 
@@ -26,7 +26,10 @@ export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
 
 export const checkStatus = async <DATA, R>(
   queue: Queue<DATA>,
-  customLogic: (allJobs: Job<DATA>[]) => Promise<R>,
+  customLogic: (
+    allJobs: Job<DATA>[],
+    possibleStatuses: JobStatus[],
+  ) => Promise<R>,
 ) => {
   const possibleStatuses: JobStatus[] = [
     'completed',
@@ -37,5 +40,5 @@ export const checkStatus = async <DATA, R>(
     'paused',
   ];
   const allJobs = await queue.getJobs(possibleStatuses);
-  return customLogic(allJobs);
+  return customLogic(allJobs, possibleStatuses);
 };
