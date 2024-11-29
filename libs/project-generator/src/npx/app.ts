@@ -87,6 +87,7 @@ export const createApp = async (
         doCommandInD(pname, 'npm uninstall jest-environment-jsdom --force');
         doCommandInD(`${pname}`, 'rm -rf nx.json');
         createAFile('nx.json', nxJsonTemplate, './' + pname);
+        doCommandInD(`${pname}/apps/${appName}`, 'rm -rf eslint.config.js');
         break;
     }
 };
