@@ -30,3 +30,11 @@ export interface SomeRequest<WithUserType extends boolean> extends MDocument {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface OTP extends MDocument {
+  _id: Types.ObjectId;
+  user: Types.ObjectId;
+  otp: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
