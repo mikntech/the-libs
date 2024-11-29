@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@the-libs/base-shared": "^1.15.6",
+    "@the-libs/mongo-backend": "^1.15.6",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

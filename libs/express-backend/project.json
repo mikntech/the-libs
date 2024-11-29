@@ -34,7 +34,8 @@
           "cookie-parser",
           "cors",
           "dotenv",
-          "@the-libs/base-shared"
+          "@the-libs/base-shared",
+          "@the-libs/mongo-backend"
         ]
       },
       "dependsOn": [
