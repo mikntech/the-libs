@@ -37,5 +37,5 @@ export const stringifyIfNeeded = (o: TODO) => {
   }
 };
 
-export const makeArray = <T = any>(element: T): T[] =>
-  Array.isArray(element) ? element : [element];
+export const makeArray = <E>(element: E | E[]): E[] =>
+  Array.isArray(element) ? (element as E[]) : [element as E];

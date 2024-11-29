@@ -32,8 +32,13 @@ export const findDocs = async <
     | QueryWithHelpers<isArray extends true ? Array<DocI> : DocI | null, DocI>
     | TODO,
   lean: boolean = true,
+  withCache: boolean = true,
 ): Promise<isArray extends true ? Array<DocI> : DocI | null> =>
-  lean ? mergeCacheToDocs(await query.lean(), m) : query;
+  lean
+    ? withCache
+      ? await mergeCacheToDocs(await query.lean(), m)
+      : query.lean()
+    : query;
 
 export const createDoc = async <DocI extends MDocument>(
   { model }: ExtendedModel<DocI, any>,

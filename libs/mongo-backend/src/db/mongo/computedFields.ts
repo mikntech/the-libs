@@ -36,33 +36,44 @@ export const getCached = async <ComputedPartOfSchema>(
   _id: Types.ObjectId,
   computers: SchemaComputers<ComputedPartOfSchema>,
 ): Promise<ComputedPartOfSchema> => {
+  const redisInstance = await createRedisInstance(); // Create Redis instance once
+  const keys = Object.keys(computers);
+  const redisKeys = keys.map((key) =>
+    JSON.stringify({ _id: String(_id), key }),
+  );
+
+  // Batch Redis GET operations
   const restoredValues = await Promise.all(
-    await Promise.all(
-      Object.keys(computers).map(async (key) =>
-        JSON.parse(
-          (await get(
-            await createRedisInstance(),
-            JSON.stringify({ _id: String(_id), key }),
-          )) ?? 'null',
-        ),
+    redisKeys.map(async (redisKey) =>
+      JSON.parse((await get(redisInstance, redisKey)) ?? 'null'),
+    ),
+  );
+
+  // Compute missing fields in parallel
+  const missingFields = keys.filter(
+    (_, index) => restoredValues[index] === null,
+  );
+  const computedValues = await Promise.all(
+    missingFields.map((key) =>
+      computers[key as keyof SchemaComputers<ComputedPartOfSchema>].compute(
+        _id,
       ),
     ),
   );
-  const validValues = await Promise.all(
-    restoredValues.map(
-      async (field, index) =>
-        field ??
-        (await computers[
-          Object.keys(computers)[
-            index
-          ] as keyof SchemaComputers<ComputedPartOfSchema>
-        ].compute(_id)),
-    ),
+
+  // Merge restored and computed values
+  const finalValues = keys.reduce(
+    (acc, key, index) => {
+      acc[key] =
+        restoredValues[index] !== null
+          ? restoredValues[index]
+          : computedValues[missingFields.indexOf(key)];
+      return acc;
+    },
+    {} as Record<string, unknown>,
   );
-  return Object.keys(computers).reduce((acc, key, index) => {
-    acc[key] = validValues[index];
-    return acc;
-  }, {} as TODO) as ComputedPartOfSchema;
+
+  return finalValues as ComputedPartOfSchema;
 };
 
 export const refreshCacheIfNeeded = async <FieldType>(

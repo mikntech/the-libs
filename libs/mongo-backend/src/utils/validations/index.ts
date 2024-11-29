@@ -52,9 +52,10 @@ export const findAndValidate = async <
   query: QueryWithHelpers<isArray extends true ? DocI[] : DocI | null, DocI>,
   customDescription: string,
   lean: boolean = true,
+  withCache: boolean = true,
 ): Promise<isArray extends true ? DocI[] : DocI> => {
   try {
-    const res = await findDocs<isArray, DocI>(model, query, lean);
+    const res = await findDocs<isArray, DocI>(model, query, lean, withCache);
 
     // Narrow the result type to ensure no null values
     if (res === null || (Array.isArray(res) && res.length === 0)) {
