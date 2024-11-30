@@ -1,5 +1,5 @@
 import { stringifyIfNeeded } from '@the-libs/base-shared';
-import { stripeInstance } from '../../services';
+import { createStripeInstance } from '../../services';
 
 import type { Stripe as StripeType } from 'stripe';
 
@@ -12,7 +12,7 @@ export const createPayment = async (
   connectedAccountId: string,
   successUrl: string,
 ) => {
-  await stripeInstance.checkout.sessions.create({
+  await createStripeInstance().checkout.sessions.create({
     line_items: [
       {
         price_data: {
@@ -39,7 +39,7 @@ export const createPayment = async (
 export const createConnectedAccount =
   async (): Promise<StripeType.Account | null> => {
     try {
-      return await stripeInstance.accounts.create({
+      return await createStripeInstance().accounts.create({
         controller: {
           stripe_dashboard: {
             type: 'none',
@@ -73,7 +73,7 @@ export const createConnectedAccountLink = async (
 ): Promise<StripeType.AccountLink | null> => {
   try {
     return stringifyIfNeeded(
-      await stripeInstance.accountLinks.create({
+      await createStripeInstance().accountLinks.create({
         account: accountId,
         return_url: returnUrl,
         refresh_url: refreshUrl,
