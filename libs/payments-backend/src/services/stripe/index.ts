@@ -10,10 +10,12 @@ import { TODO } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 const { json } = require('express');
 const { Stripe } = require('stripe');
+import type StripeInstance from 'stripe';
 
-export const stripeInstance = new Stripe(paymentsSettings.stripeApiKey, {
-  apiVersion: paymentsSettings.stripeApiVersion as any,
-});
+export const createStripeInstance = (): StripeInstance =>
+  new Stripe(paymentsSettings.stripeApiKey, {
+    apiVersion: paymentsSettings.stripeApiVersion,
+  });
 
 const saveStripeEventToDB = async (event: RawStripeEvent) => {
   try {
@@ -33,8 +35,8 @@ const saveStripeEventToDB = async (event: RawStripeEvent) => {
 
 export const webhookHandler = async (rawEvent: RawStripeEvent) => {
   try {
-    saveStripeEventToDB(rawEvent).then();
-    triggerSync().then();
+    await saveStripeEventToDB(rawEvent);
+    await triggerSync();
   } catch (e) {
     console.log('stipe webhook error');
   }
@@ -65,7 +67,7 @@ const getLastRecordedEventTS = async (): Promise<number> => {
 
 const triggerSync = async () =>
   (
-    await stripeInstance.events.list({
+    await createStripeInstance().events.list({
       created: { gt: await getLastRecordedEventTS() },
     })
   ).data.forEach((newEvent: RawStripeEvent) => saveStripeEventToDB(newEvent));
