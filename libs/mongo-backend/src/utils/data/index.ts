@@ -41,8 +41,8 @@ export const findDocs = async <
     : query;
 
 export const createDoc = async <DocI extends MDocument>(
-  { model }: ExtendedModel<DocI, any>,
-  fields: {},
+  { model }: ExtendedModel<DocI>,
+  fields: Partial<DocI>,
   save: boolean = true,
 ) => {
   const doc = new model({
