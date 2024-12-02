@@ -10,19 +10,31 @@ import type {
 const BullClass = require('bull');
 import { redisSettings } from '../../config';
 
-export const createQueue = <DATA>(
-  queueName: string,
-  howToProcess: ProcessCallbackFunction<DATA>,
-) => {
-  const queue: Queue<DATA> = new BullClass(queueName, {
+export const createQueue = <DATA>(queueName: string): Queue<DATA> =>
+  new BullClass(queueName + '{shared}', {
     redis: redisSettings.uri,
   });
-  queue.process(howToProcess).then();
+
+export const createAndAutoProcessQueue = <DATA>(
+  queueName: string,
+  howToProcess: ProcessCallbackFunction<DATA>,
+  sucCB?: () => any,
+  errCb?: () => any,
+) => {
+  const queue: Queue<DATA> = createQueue(queueName);
+  queue.process(howToProcess).then(sucCB).catch(errCb);
   return queue;
 };
 
 export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
   queue.add(data, opts);
+
+export const process = <DATA>(
+  queue: Queue<DATA>,
+  howToProcess: ProcessCallbackFunction<DATA>,
+  sucCB?: () => any,
+  errCb?: () => any,
+) => queue.process(howToProcess).then(sucCB).catch(errCb);
 
 export const checkStatus = async <DATA, R>(
   queue: Queue<DATA>,
