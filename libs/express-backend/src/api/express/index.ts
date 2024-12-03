@@ -41,6 +41,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   dontListen: boolean = false,
   extraCorsOrigins: string[] = [],
   dontLogToMongo: boolean = false,
+  timeout?: number,
 ) => {
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
@@ -101,6 +102,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
       expressApp.listen(port, '0.0.0.0', () => {
         console.log('Server is ready at ' + getExpressSettings().myDomain);
       });
+    timeout && expressApp.timeout(timeout);
     return { app: expressApp, httpServer };
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));

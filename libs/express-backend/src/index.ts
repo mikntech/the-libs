@@ -17,6 +17,7 @@ export const startExpressServer = async <CB extends { [s: string]: string }>(
   dontListen: boolean = false,
   extraCorsOrigins: string[] = [],
   dontLogToMongo: boolean = false,
+  timeout?: number,
 ) => {
   console.log('Starting express server MongoDB...');
   return startExpress<CB>(
@@ -27,5 +28,6 @@ export const startExpressServer = async <CB extends { [s: string]: string }>(
     dontListen,
     extraCorsOrigins,
     dontLogToMongo,
+    timeout,
   ).catch((e) => console.log(e));
 };
