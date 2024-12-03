@@ -5,17 +5,18 @@ import type {
 } from 'express';
 import { StagingEnvironment } from '../../../config';
 import { ClientError, ErrorLog, TODO } from '@the-libs/base-shared';
-
 import { errorLog } from '../../../db/mongo';
-
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
 
 import type { Document as MDocument } from 'mongoose';
 import { createDoc, ExtendedModel } from '@the-libs/mongo-backend';
 
 export const serverErrorHandler =
-  <DocI extends MDocument<any, any, any> = ErrorLog, SE = StagingEnvironment>(
+  <
+    DocI extends {
+      stringifiedError: string;
+    } & MDocument<any, any, any> = ErrorLog,
+    SE = StagingEnvironment,
+  >(
     stagingEnv: SE,
     errorLogModel: () => Promise<ExtendedModel<DocI, unknown>> = async () =>
       (await errorLog()) as TODO,
@@ -34,7 +35,7 @@ export const serverErrorHandler =
         !dontLogToMongo &&
           (await createDoc(await errorLogModel(), {
             stringifiedError: err.toString(),
-          }));
+          } as Partial<DocI>));
         console.log('Error was logged to mongo');
         stagingEnv === 'local' && console.log('the error: ', err);
       } catch (e) {
