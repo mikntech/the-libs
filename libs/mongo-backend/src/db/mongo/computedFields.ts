@@ -1,7 +1,6 @@
 import type { Types } from 'mongoose';
 import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
 import type { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
-import { TODO } from '@the-libs/base-shared';
 
 export type Compute<FieldType> = (_id: Types.ObjectId) => Promise<FieldType>;
 
@@ -76,6 +75,7 @@ export const getCached = async <ComputedPartOfSchema>(
   return finalValues as ComputedPartOfSchema;
 };
 
+// Remember to use this function only with locking in watch handler
 export const refreshCacheIfNeeded = async <FieldType>(
   _id: Types.ObjectId,
   fieldName: string,
