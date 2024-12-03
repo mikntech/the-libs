@@ -56,7 +56,7 @@ export const genRegisterControllers = <
     const key = v4();
     await createDoc(await registrationRequest(), {
       email,
-      userType: userType as unknown as UserType,
+      userType,
       key,
     });
     return generateURLWithParams(
@@ -95,7 +95,7 @@ export const genRegisterControllers = <
     createDoc(await getModel(userType), {
       email,
       full_name,
-      userType,
+      userType: userType as TODO,
       password,
       ...requiredFields,
       ...(strategy.onCreateFields || {}),
