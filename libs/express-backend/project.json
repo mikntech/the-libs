@@ -35,7 +35,8 @@
           "cors",
           "dotenv",
           "@the-libs/base-shared",
-          "@the-libs/mongo-backend"
+          "@the-libs/mongo-backend",
+          "connect-timeout"
         ]
       },
       "dependsOn": [
