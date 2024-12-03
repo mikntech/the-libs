@@ -3,7 +3,7 @@ export * from './routes';
 
 import { getExpressSettings } from '../../config';
 
-import type { Router } from 'express';
+import type { Router, Express, RequestHandler } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
 import { TODO } from '@the-libs/base-shared';
 import { errorLog } from '../../db/mongo';
@@ -31,7 +31,9 @@ const { version: Version } = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
 
 const express = require('express');
 
-export const expressApp = express();
+const timeout = require('connect-timeout');
+
+export const expressApp: Express = express();
 
 export const startExpress = async <CB extends { [s: string]: string }>(
   apiRouter: Router,
@@ -41,7 +43,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   dontListen: boolean = false,
   extraCorsOrigins: string[] = [],
   dontLogToMongo: boolean = false,
-  timeout?: number,
+  timeoutInMS?: number,
 ) => {
   console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
@@ -102,7 +104,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
       expressApp.listen(port, '0.0.0.0', () => {
         console.log('Server is ready at ' + getExpressSettings().myDomain);
       });
-    timeout && expressApp.timeout(timeout);
+    timeoutInMS && expressApp.use(timeout(timeoutInMS) as RequestHandler);
     return { app: expressApp, httpServer };
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));
