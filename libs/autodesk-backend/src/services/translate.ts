@@ -3,6 +3,7 @@ import { downloadFile, s3Settings } from '@the-libs/s3-backend';
 import { uploadToForge } from './upload';
 import { encodeUrn, getToken } from '../controllers/autodesk';
 import type { Job } from 'bull';
+import { autodeskSettings } from '../config';
 
 const waitForTranslationStatus = async (
   encodedUrn: string,
@@ -53,11 +54,7 @@ const streamToBuffer = async (stream: any): Promise<Buffer> => {
   }
   return Buffer.concat(chunks);
 };
-export const translate = async (
-  s3Key: string,
-  job?: Job,
-  forgeBucketKey: string = s3Settings.s3BucketName,
-) => {
+export const translate = async (s3Key: string, job?: Job) => {
   try {
     const fileBuffer = await streamToBuffer((await downloadFile(s3Key)).Body);
     if (fileBuffer.length === 0) {
@@ -67,6 +64,7 @@ export const translate = async (
     if (!fileName) {
       throw new Error('Invalid S3 key, unable to extract file name.');
     }
+    const forgeBucketKey = autodeskSettings.autodeskBucketName;
     await uploadToForge(forgeBucketKey, fileName, fileBuffer);
     const encodedUrn = encodeUrn(forgeBucketKey, fileName);
     await derivativesApi.translate(
