@@ -53,13 +53,16 @@ const streamToBuffer = async (stream: any): Promise<Buffer> => {
   }
   return Buffer.concat(chunks);
 };
-export const translate = async (s3Key: string, job?: Job) => {
+export const translate = async (
+  s3Key: string,
+  job?: Job,
+  forgeBucketKey: string = s3Settings.s3BucketName,
+) => {
   try {
     const fileBuffer = await streamToBuffer((await downloadFile(s3Key)).Body);
     if (fileBuffer.length === 0) {
       throw new Error('Downloaded file is empty');
     }
-    const forgeBucketKey = s3Settings.s3BucketName;
     const fileName = s3Key;
     if (!fileName) {
       throw new Error('Invalid S3 key, unable to extract file name.');
