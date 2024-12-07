@@ -19,7 +19,6 @@ export const createStripeInstance = (): StripeInstance =>
 
 const saveStripeEventToDB = async (event: RawStripeEvent) => {
   try {
-    console.log('got stripe event from webhook, trying to save to db...');
     await createDoc(await stripeEvent(), {
       stringifiedStripeEvent: JSON.stringify(event),
       idOnSource: event.id,
@@ -27,9 +26,10 @@ const saveStripeEventToDB = async (event: RawStripeEvent) => {
       wasHandled: false,
       wasProcessed: false,
     });
-    console.log('stripe event from webhook saved to db');
   } catch (e) {
-    console.log(e);
+    !String(e).startsWith(
+      'MongoServerError: E11000 duplicate key error collection',
+    ) && console.log(e);
   }
 };
 
