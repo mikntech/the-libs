@@ -27,7 +27,7 @@ export class WatchDB {
     this.callbacks.forEach(({ modelGetter, event, handler }) => {
       const modelPromise = modelGetter();
       modelPromise.then((model) => {
-        const changeStream = model.watch().on(event || 'change', handler);
+        const changeStream = model.watch().on(event ?? 'change', handler);
         const { collectionName } = model.collection;
         if (!this.activeWatches.has(collectionName)) {
           this.activeWatches.set(collectionName, changeStream as TODO);
