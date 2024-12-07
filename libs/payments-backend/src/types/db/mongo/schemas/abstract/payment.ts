@@ -313,7 +313,7 @@ export enum Currency {
 
 export enum PaymentStatus {
   UNKNOWN = 'Unknown',
-  Completed = 'Completed',
+  COMPLETED = 'Completed',
   FINAL = 'Final',
   PENDING = 'Pending',
   REVERSED = 'Reversed',
