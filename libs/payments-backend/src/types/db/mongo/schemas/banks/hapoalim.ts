@@ -1,5 +1,5 @@
-import { Payment } from '../abstract';
+import { BasePayment } from '../abstract';
 
-export interface HapoalimTransfer extends Payment {
+export interface HapoalimTransfer extends BasePayment {
   sender: string;
 }
