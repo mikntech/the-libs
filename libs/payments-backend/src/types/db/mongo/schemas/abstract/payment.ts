@@ -321,7 +321,7 @@ export enum PaymentStatus {
   REFUSED = 'Refused',
 }
 
-export interface Payment extends MDocument {
+export interface BasePayment extends MDocument {
   method: PaymentMethod;
   amount: number;
   currency: Currency;
