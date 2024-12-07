@@ -34,7 +34,6 @@
           "jsonwebtoken",
           "mongoose",
           "@the-libs/base-shared",
-          "@the-libs/base-backend",
           "@the-libs/base-shared",
           "@the-libs/s3-backend",
           "multer",

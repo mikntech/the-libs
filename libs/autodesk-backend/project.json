@@ -33,7 +33,6 @@
           "axios",
           "bull",
           "qs",
-          "@the-libs/base-backend",
           "@the-libs/base-shared",
           "dotenv",
           "forge-apis"
