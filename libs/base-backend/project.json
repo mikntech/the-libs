@@ -1,0 +1,47 @@
+{
+  "name": "base-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/base-backend/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/base-backend",
+        "tsConfig": "libs/base-backend/tsconfig.lib.json",
+        "project": "libs/base-backend/package.json",
+        "entryFile": "libs/base-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/base-backend/src",
+            "output": "."
+          }
+        ],
+        "external": ["express", "mongoose" ,"cookie-parser", "cors", "dotenv", "@the-libs/base-shared"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}
