@@ -38,6 +38,7 @@
           "@mui/icons-material",
           "@the-libs/base-shared",
           "react-router-dom",
+          "react-dom",
           "mongoose",
           "react-hot-toast",
           "zxcvbn",
