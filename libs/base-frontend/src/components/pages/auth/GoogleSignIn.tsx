@@ -25,7 +25,7 @@ const GoogleSignIn = ({
 
     const handleCredentialResponse = (response: any) => {
       // This function is called when the Google API successfully authenticates a user
-      console.log('Encoded JWT ID token: ', response.credential);
+      // console.log('Encoded JWT ID token: ', response.credential);
       onLoginSuccess(response);
     };
 
