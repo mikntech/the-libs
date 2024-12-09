@@ -39,3 +39,6 @@ export const stringifyIfNeeded = (o: TODO) => {
 
 export const makeArray = <E>(element: E | E[]): E[] =>
   Array.isArray(element) ? (element as E[]) : [element as E];
+
+export const removePrefix = (str: string, prefix: string) =>
+  str.startsWith(prefix) ? str.slice(prefix.length) : str;
