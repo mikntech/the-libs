@@ -7,7 +7,7 @@
   "description": "A custom Nx generator library",
   "dependencies": {
     "@nx/devkit": "^20.2.1",
-    "inquirer": "^12.1.0"
+    "inquirer": "^12.2.0"
   },
   "type": "module",
   "main": "./src/index.js",
