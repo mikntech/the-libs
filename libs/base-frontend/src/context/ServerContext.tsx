@@ -13,7 +13,7 @@ interface ServerProviderProps<FESOutput> {
   domain: string;
   exactDomainURI?: string;
   frontendSettings: () => FESOutput;
-  MainMessage: (props: { text: string }) => ReactNode;
+  MainMessage?: (props: { text: string }) => ReactNode;
   serverPort?: number;
   tryInterval?: number;
   gqlCheck?: boolean;
