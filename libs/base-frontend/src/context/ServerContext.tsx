@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
 import axios, { AxiosInstance } from 'axios';
-import { Typography } from '@mui/material';
 import { request, gql } from 'graphql-request';
+import { MainMessage as DefaultMainMessage } from '../components';
 
 const DEFAULT_TRY_INTERVAL = 3000;
 const GOOD_STATUS = 'good';
@@ -48,7 +48,7 @@ export const ServerProvider = <FESOutput extends { STAGING_ENV: string }>({
   exactDomainURI,
   serverPort,
   gqlCheck,
-  MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
+  MainMessage = DefaultMainMessage,
   tryInterval = DEFAULT_TRY_INTERVAL,
 }: ServerProviderProps<FESOutput>) => {
   const { STAGING_ENV } = frontendSettings();
