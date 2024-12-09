@@ -30,10 +30,10 @@
         ],
         "external": [
           "express",
-          "@the-libs/base-shared",
           "dotenv",
           "mongoose",
           "@the-libs/base-shared",
+          "@the-libs/mongo-backend",
           "web-push",
           "@the-libs/notifications-shared"
         ]
