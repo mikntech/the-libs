@@ -15,7 +15,7 @@ export enum WhatToDo {
   NEW_LIB = "create a lib - im in my monorepo's root now",
 }
 
-const askOneString = async (message: string): Promise<string> =>
+export const askOneString = async (message: string): Promise<string> =>
   (
     await inquirer.prompt({
       type: 'input',
@@ -35,7 +35,7 @@ const askListOfStrings = async (message: string): Promise<string[]> =>
   ).askListOfStrings
     .split(',')
     .map((input: string) => input.trim());
-const askOneFromOptions = async <
+export const askOneFromOptions = async <
   CHOICES_ENUM = string,
   CHOICES = CHOICES_ENUM[],
 >(
