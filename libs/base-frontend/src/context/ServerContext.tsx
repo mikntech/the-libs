@@ -8,11 +8,11 @@ const GOOD_STATUS = 'good';
 const BAD_MESSAGE = 'Server is not available. Please try again later.';
 const FIRST_MESSAGE = 'Connecting to server...';
 
-interface ServerProviderProps<FES> {
+interface ServerProviderProps<FESOutput> {
   children: ReactNode;
   domain: string;
   exactDomainURI?: string;
-  frontendSettings: () => FES;
+  frontendSettings: () => FESOutput;
   MainMessage: (props: { text: string }) => ReactNode;
   serverPort?: number;
   tryInterval?: number;
@@ -28,20 +28,20 @@ export const ServerContext = createContext<ServerContextProps | null>(null);
 
 export const getBaseURL = (
   domain: string,
-  VITE_STAGING_ENV: string,
+  STAGING_ENV: string,
   serverPort = 5556,
   exactDomainURI?: string,
 ) => {
-  const prefix = VITE_STAGING_ENV === 'preprod' ? 'pre' : '';
+  const prefix = STAGING_ENV === 'preprod' ? 'pre' : '';
   return (
     exactDomainURI ||
-    (VITE_STAGING_ENV === 'local'
+    (STAGING_ENV === 'local'
       ? `http://127.0.0.1:${serverPort}/`
       : `https://${prefix}${domain}/`)
   );
 };
 
-export const ServerProvider = <FES extends { VITE_STAGING_ENV: string }>({
+export const ServerProvider = <FESOutput extends { STAGING_ENV: string }>({
   children,
   domain,
   frontendSettings,
@@ -50,14 +50,14 @@ export const ServerProvider = <FES extends { VITE_STAGING_ENV: string }>({
   gqlCheck,
   MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
   tryInterval = DEFAULT_TRY_INTERVAL,
-}: ServerProviderProps<FES>) => {
-  const { VITE_STAGING_ENV } = frontendSettings();
+}: ServerProviderProps<FESOutput>) => {
+  const { STAGING_ENV } = frontendSettings();
 
   const [status, setStatus] = useState<string>(FIRST_MESSAGE);
   const [version, setVersion] = useState<string>('');
 
   const axiosInstance = axios.create({
-    baseURL: getBaseURL(domain, VITE_STAGING_ENV, serverPort, exactDomainURI),
+    baseURL: getBaseURL(domain, STAGING_ENV, serverPort, exactDomainURI),
     withCredentials: true,
     headers: { 'Content-Type': 'application/json' },
   });
@@ -74,7 +74,7 @@ export const ServerProvider = <FES extends { VITE_STAGING_ENV: string }>({
         let gqlLive = false;
         try {
           await request(
-            getBaseURL(domain, VITE_STAGING_ENV, serverPort, exactDomainURI) +
+            getBaseURL(domain, STAGING_ENV, serverPort, exactDomainURI) +
               '/graphql',
             gql`query adxnxnxnnxnxjjjd (){}`,
           );
