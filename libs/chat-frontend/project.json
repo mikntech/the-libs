@@ -37,6 +37,7 @@
           "@mui/material",
           "@mui/icons-material",
           "@the-libs/base-shared",
+          "@emotion/react",
           "react-router-dom",
           "mongoose",
           "react-hot-toast",
