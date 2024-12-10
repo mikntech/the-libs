@@ -167,7 +167,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     registerComputedFields(computedFields);
     WatchDB.cancelWholeDBWatch();
     await WatchDB.addToWholeDB(
-      model.db,
+      connection.instance?.db,
       async (event: ChangeStreamDocument) => {
         mongoPubSubInstance.publish('mr.allDB', 'null');
         (event as ChangeStreamUpdateDocument).ns?.coll &&

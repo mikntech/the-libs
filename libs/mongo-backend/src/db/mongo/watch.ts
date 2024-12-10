@@ -1,6 +1,7 @@
 import type { ChangeStream, GenericListener } from 'mongodb';
 import type { Document, Model } from 'mongoose';
 import { TODO } from '@the-libs/base-shared';
+import type { Db } from 'mongodb';
 
 interface WatchCallback<T extends Document> {
   modelGetter: () => Promise<Model<T>>;
@@ -43,12 +44,12 @@ export class WatchDB {
 
   /**
    * Watches the entire database for changes.
-   * @param db The Mongoose database connection object.
+   * @param dbConnection The Mongoose database connection object.
    * @param handler The handler to call for database-wide events.
    * @param options Options for the change stream.
    */
   static async addToWholeDB(
-    db: TODO, // Replace TODO with the actual type for the Mongoose connection object
+    dbConnection: Db,
     handler: GenericListener,
     options?: TODO, // Replace TODO with the actual type for options if needed
   ): Promise<void> {
@@ -58,7 +59,6 @@ export class WatchDB {
     }
 
     try {
-      const dbConnection = await db.connection.db; // Access the MongoDB native connection
       this.wholeDBChangeStream = dbConnection
         .watch([], options)
         .on('change', handler);
