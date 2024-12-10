@@ -165,40 +165,42 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   } else {
     model = initModel<DBPart>(connection, name, schema);
     registerComputedFields(computedFields);
-    WatchDB.cancelWholeDBWatch();
-    await WatchDB.addToWholeDB(
-      connection.instance?.db,
-      async (event: ChangeStreamDocument) => {
-        mongoPubSubInstance.publish('mr.allDB', 'null');
-        (event as ChangeStreamUpdateDocument).ns?.coll &&
-          mongoPubSubInstance.publish(
-            'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
-            'null',
-          );
-        await Promise.all(
-          allComputedFields.map(async (collection: {}) =>
-            Promise.all(
-              Object.keys(collection).map(async (fieldName) =>
-                refreshCacheIfNeeded(
-                  event._id as Types.ObjectId,
-                  fieldName,
-                  collection[fieldName as keyof typeof collection],
-                  event,
-                  () =>
-                    mongoPubSubInstance.publish(
-                      'mr.cache.' +
-                        (event as ChangeStreamUpdateDocument).ns.coll +
-                        '.' +
-                        fieldName,
-                      'null',
-                    ),
+    if (connection.instance?.db) {
+      WatchDB.cancelWholeDBWatch();
+      await WatchDB.addToWholeDB(
+        connection.instance.db,
+        async (event: ChangeStreamDocument) => {
+          mongoPubSubInstance.publish('mr.allDB', 'null');
+          (event as ChangeStreamUpdateDocument).ns?.coll &&
+            mongoPubSubInstance.publish(
+              'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
+              'null',
+            );
+          await Promise.all(
+            allComputedFields.map(async (collection: {}) =>
+              Promise.all(
+                Object.keys(collection).map(async (fieldName) =>
+                  refreshCacheIfNeeded(
+                    event._id as Types.ObjectId,
+                    fieldName,
+                    collection[fieldName as keyof typeof collection],
+                    event,
+                    () =>
+                      mongoPubSubInstance.publish(
+                        'mr.cache.' +
+                          (event as ChangeStreamUpdateDocument).ns.coll +
+                          '.' +
+                          fieldName,
+                        'null',
+                      ),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
+    }
   }
 
   funcs?.map((fnc) => {
