@@ -48,11 +48,11 @@ export class WatchDB {
    * @param handler The handler to call for database-wide events.
    * @param options Options for the change stream.
    */
-  static async addToWholeDB(
+  static addToWholeDB(
     dbConnection: Db,
     handler: GenericListener,
     options?: TODO, // Replace TODO with the actual type for options if needed
-  ): Promise<void> {
+  ): void {
     if (this.wholeDBChangeStream) {
       console.warn('A database-wide change stream is already active.');
       return;
@@ -71,12 +71,11 @@ export class WatchDB {
   /**
    * Cancels the database-wide change stream if it's active.
    */
-  static cancelWholeDBWatch(): void {
+  static async cancelWholeDBWatch(): Promise<void> {
     if (this.wholeDBChangeStream) {
-      this.wholeDBChangeStream.close().then(() => {
-        this.wholeDBChangeStream = null;
-        console.log('Database-wide change stream canceled.');
-      });
+      await this.wholeDBChangeStream.close();
+      this.wholeDBChangeStream = null;
+      console.log('Database-wide change stream canceled.');
     } else {
       console.warn('No active database-wide change stream to cancel.');
     }
