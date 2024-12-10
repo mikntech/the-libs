@@ -4,7 +4,7 @@ const { Router } = require('express');
 import { highOrderHandler } from '@the-libs/express-backend';
 import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { encodeUrn, getToken } from '../../../../controllers/autodesk';
-import { s3Settings } from '@the-libs/s3-backend';
+import { autodeskSettings } from '../../../../config';
 
 export const autodeskRouter = Router();
 
@@ -20,6 +20,6 @@ autodeskRouter.get(
   '/encodedUrn/:fileUrn',
   highOrderHandler(async (req: AuthenticatedRequest) => ({
     statusCode: 200,
-    body: encodeUrn(s3Settings.s3BucketName, req.params['fileUrn']),
+    body: encodeUrn(autodeskSettings.autodeskBucketName, req.params['fileUrn']),
   })),
 );
