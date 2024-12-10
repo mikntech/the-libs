@@ -1,7 +1,7 @@
 {
-  "name": "payments-backend",
+  "name": "payments-shared",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/payments-backend/src",
+  "sourceRoot": "libs/payments-shared/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -17,26 +17,18 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "format": ["esm"],
-        "outputPath": "dist/libs/payments-backend",
-        "tsConfig": "libs/payments-backend/tsconfig.lib.json",
-        "project": "libs/payments-backend/package.json",
-        "entryFile": "libs/payments-backend/src/index.ts",
+        "outputPath": "dist/libs/payments-shared",
+        "tsConfig": "libs/payments-shared/tsconfig.lib.json",
+        "project": "libs/payments-shared/package.json",
+        "entryFile": "libs/payments-shared/src/index.ts",
         "assets": [
           {
             "glob": "**/*.json",
-            "input": "libs/payments-backend/src",
+            "input": "libs/payments-shared/src",
             "output": "."
           }
         ],
         "external": [
-          "express",
-          "@the-libs/express-backend",
-          "@the-libs/auth-backend",
-          "@the-libs/payments-shared",
-          "dotenv",
-          "@the-libs/base-shared",
-          "@the-libs/mongo-backend",
-          "mongodb",
           "mongoose",
           "stripe"
         ]
