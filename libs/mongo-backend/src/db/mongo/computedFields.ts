@@ -2,7 +2,9 @@ import type { Types } from 'mongoose';
 import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
 import type { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
 
-export type Compute<FieldType> = (_id: Types.ObjectId) => Promise<FieldType>;
+export type Compute<FieldType> = (
+  _id: Types.ObjectId | string,
+) => Promise<FieldType>;
 
 type Invalidate = (
   event: ChangeStreamDocument,
@@ -32,7 +34,7 @@ const cacheField = async <FieldType>(
   );
 
 export const getCached = async <ComputedPartOfSchema>(
-  _id: Types.ObjectId,
+  _id: Types.ObjectId | string,
   computers: SchemaComputers<ComputedPartOfSchema>,
 ): Promise<ComputedPartOfSchema> => {
   const redisInstance = await createRedisInstance(); // Create Redis instance once
