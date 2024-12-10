@@ -6,10 +6,10 @@
   },
   "dependencies": {
 
-    "@the-libs/auth-shared": "^1.18.27",
-    "@the-libs/base-shared": "^1.18.27",
-    "@the-libs/email-backend": "^1.18.27",
-    "@the-libs/s3-backend": "^1.18.27",
+    "@the-libs/auth-shared": "^1.18.28",
+    "@the-libs/base-shared": "^1.18.28",
+    "@the-libs/email-backend": "^1.18.28",
+    "@the-libs/s3-backend": "^1.18.28",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

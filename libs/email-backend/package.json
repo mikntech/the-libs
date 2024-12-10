@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@sendgrid/mail": "^8.1.4",
-    "@the-libs/base-shared": "^1.18.27",
+    "@the-libs/base-shared": "^1.18.28",
 
     "dotenv": "^16.4.7"
   },
