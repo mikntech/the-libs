@@ -325,7 +325,7 @@ export enum PaymentStatus {
 export interface BasePayment extends MDocument {
   method: PaymentMethod;
   amount: number;
-  currency: keyof Currency;
+  currency: keyof typeof Currency;
   manualStatus: PaymentStatus;
   automaticStatus: PaymentStatus;
   timestamp?: number;
