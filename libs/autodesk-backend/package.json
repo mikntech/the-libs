@@ -2,7 +2,7 @@
   "name": "@the-libs/autodesk-backend",
   "version": "1.16.32",
   "scripts": {
-  "update": "npx --yes npm-check-updates -u && node -e \"const fs = require('fs'); const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8')); Object.keys(packageJson.dependencies || {}).forEach(dep => { if (dep.startsWith('@the-libs/')) { const versionParts = packageJson.dependencies[dep].replace('^', '').split('.'); versionParts[2] = parseInt(versionParts[2], 10) + 1; packageJson.dependencies[dep] = '^' + versionParts.join('.'); } }); fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2)); console.log('Updated @the-libs/... dependencies to the next patch version.');\""
+    "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
     "@the-libs/base-shared": "^1.18.28",

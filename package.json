@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf node_modules && npm run clean:em",
     "clean:em": "rm -rf dist tmp package-lock.json ./.nx && for d in libs/*/ ; do rm -rf $d/.next ; done && for d in apps/*/ ; do rm -rf $d/.next ; done",
-    "update": "npx --yes npm-check-updates -u && node -e \"const fs = require('fs'); const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8')); Object.keys(packageJson.dependencies || {}).forEach(dep => { if (dep.startsWith('@the-libs/')) { const versionParts = packageJson.dependencies[dep].replace('^', '').split('.'); versionParts[2] = parseInt(versionParts[2], 10) + 1; packageJson.dependencies[dep] = '^' + versionParts.join('.'); } }); fs.writeFileSync('package.json', JSON.stringify(packageJson, null, 2)); console.log('Updated @the-libs/... dependencies to the next patch version.');\"",
+    "update": "npx --yes npm-check-updates -u",
     "update-all": "for d in libs/*/ ; do (cd \"$d\" && npm run update) ; done",
     "sync-versions": "node sync-version-script.js",
     "build": "for d in libs/*/ ; do nx build $(basename $d) ; done",
