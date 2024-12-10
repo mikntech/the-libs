@@ -80,7 +80,7 @@ interface Optional<DBPart, ComputedPart> {
 
 type GetCached<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
-class ExtendedModel<DocI extends Document, ComputedPart = any> {
+export class ExtendedModel<DocI extends Document, ComputedPart = any> {
   public readonly model: Model<DocI>;
   public readonly getCached: ComputedPart extends undefined
     ? undefined
