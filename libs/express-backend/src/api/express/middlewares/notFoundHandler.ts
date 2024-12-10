@@ -1,9 +1,4 @@
-import type {
-  NextFunction,
-  Request as ExpressRequest,
-  Response,
-} from 'express';
-import { TODO } from '@the-libs/base-shared';
+import { NextFunction, Request as ExpressRequest, Response } from 'express';
 
 interface Layer {
   route?: {
@@ -14,6 +9,12 @@ interface Layer {
   regexp?: { source: string };
 }
 
+/**
+ * Extracts all routes from the given router stack.
+ * @param layers - The router layers to process.
+ * @param basePath - The base path for nested routers.
+ * @returns A list of formatted routes.
+ */
 const extractRoutes = (layers?: Layer[], basePath: string = ''): string[] =>
   layers?.flatMap((layer) => {
     if (layer.route) {
@@ -30,6 +31,11 @@ const extractRoutes = (layers?: Layer[], basePath: string = ''): string[] =>
     }
   }) ?? [];
 
+/**
+ * Formats a raw route path by removing regex and optional characters.
+ * @param source - The raw route path regex source.
+ * @returns The cleaned route path.
+ */
 const formatRoutePath = (source: string): string =>
   source
     .replace(/^\^\\/, '') // Remove the leading ^\ which marks the start of the string
@@ -40,15 +46,49 @@ const formatRoutePath = (source: string): string =>
     .replace(/\\/g, '') // Remove backslashes used for escaping
     .replace(/\/+$/, ''); // Remove any trailing slashes
 
-const filterRoutes = (routes: string[], filter: string): string[] => {
-  return routes.filter((route) => {
-    const pathSegments = route.split('/');
-    pathSegments.shift();
-    const final = pathSegments.join('/');
-    return final.startsWith(filter);
+/**
+ * Filters routes based on a given base path.
+ * @param routes - The list of routes to filter.
+ * @param filter - The base path to match against.
+ * @returns A filtered list of routes.
+ */
+const filterRoutes = (routes: string[], filter: string): string[] =>
+  routes.filter((route) => {
+    const [_, routePath] = route.split(' ', 2);
+    return routePath.startsWith(filter);
   });
+
+/**
+ * Builds a hierarchical route tree from a list of routes.
+ * @param routes - The list of routes.
+ * @returns The constructed route tree.
+ */
+const buildRouteTree = (routes: string[]): Record<string, any> => {
+  const routeTree: Record<string, any> = {};
+
+  routes.forEach((route) => {
+    const [method, path = ''] = route.trim().split(' ');
+
+    let current: any = routeTree;
+    const segments = path.split('/').filter(Boolean);
+
+    segments.forEach((segment) => {
+      if (!current[segment]) {
+        current[segment] = {};
+      }
+      current = current[segment];
+    });
+
+    current.method = current.method || [];
+    current.method.push(method);
+  });
+
+  return routeTree;
 };
 
+/**
+ * Middleware to handle auto-generated helper responses.
+ */
 export const autoHelper = (
   req: ExpressRequest,
   res: Response,
@@ -56,60 +96,48 @@ export const autoHelper = (
 ): void => {
   if (!res.headersSent) {
     const basePath = req.baseUrl;
-    const allRoutes = extractRoutes((req.app as TODO)._router.stack).map(
-      (route) => {
-        const cleanedRoute = formatRoutePath(route);
-        return `${cleanedRoute}`.replace(/\/\/+/g, '/');
-      },
-    );
 
-    const relevantRoutes = filterRoutes(allRoutes, basePath);
-
-    const availableRoutes =
-      relevantRoutes.length > 0
-        ? relevantRoutes
-        : ['No available routes under this path'];
-
-    let inTree: TODO = 'error';
     try {
-      inTree = buildRouteTree(availableRoutes);
-    } catch {}
+      // Extract routes from the application router stack
+      const allRoutes = extractRoutes(req.app._router.stack);
+      console.log('Extracted Routes:', allRoutes);
 
-    res.status(404).json({
-      message: 'Route not found',
-      availableRoutes,
-      inTree,
-    });
+      // Filter routes based on the base path
+      const relevantRoutes = filterRoutes(allRoutes, basePath);
+      console.log('Relevant Routes:', relevantRoutes);
+
+      // Determine available routes
+      const availableRoutes =
+        relevantRoutes.length > 0
+          ? relevantRoutes
+          : ['No available routes under this path'];
+
+      // Build a route tree if valid routes are available
+      let inTree: Record<string, any> | { error: string } = {
+        error: 'Could not build route tree',
+      };
+      if (availableRoutes[0] !== 'No available routes under this path') {
+        try {
+          inTree = buildRouteTree(availableRoutes);
+        } catch (error) {
+          console.error('Error building route tree:', error);
+        }
+      }
+
+      // Respond with the results
+      res.status(404).json({
+        message: 'Route not found',
+        availableRoutes,
+        inTree,
+      });
+    } catch (error: any) {
+      console.error('Error processing autoHelper middleware:', error);
+      res.status(500).json({
+        message: 'An unexpected error occurred in the autoHelper middleware',
+        error: error.message,
+      });
+    }
   } else {
     next();
   }
 };
-
-function buildRouteTree(routes: string[]) {
-  const routeTree: TODO = {};
-
-  routes.forEach((route) => {
-    // Split the route by space to separate method and path
-    const [method, path = ''] = route.trim().split(' ');
-
-    // Start at the root of the tree
-    let current = routeTree;
-
-    // Split the path into segments
-    const segments = path.split('/').filter(Boolean);
-
-    // Traverse the tree, creating nodes as necessary
-    segments.forEach((segment, index) => {
-      if (!current[segment]) {
-        current[segment] = {};
-      }
-      current = current[segment];
-    });
-
-    // Add the method to the final node in the path
-    current.method = current.method || [];
-    current.method.push(method);
-  });
-
-  return routeTree;
-}
