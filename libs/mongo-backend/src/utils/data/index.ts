@@ -15,12 +15,15 @@ export const mergeCacheToDocs = async <
     ? Promise.all(
         doc.map(async (d) => ({
           ...d,
-          ...(getCached ? await getCached(d._id) : {}),
+          ...(getCached ? await (getCached as Function)(d)(d._id) : {}),
         })),
       )
     : doc === null
       ? null
-      : { ...doc, ...(getCached ? await getCached(doc._id) : {}) };
+      : {
+          ...doc,
+          ...(getCached ? await (getCached as Function)(doc)(doc._id) : {}),
+        };
 
 export const findDocs = async <
   isArray extends boolean,

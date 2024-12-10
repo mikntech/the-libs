@@ -34,10 +34,10 @@ const sub = await createRedisInstance();
 
 export const mongoPubSubInstance = new PubSub(pub, sub);
 
-const allComputedFields: SchemaComputers<any>[] = [];
+const allComputedFields: SchemaComputers<any, any>[] = [];
 
-const registerComputedFields = <ComputedPart>(
-  computedFields?: SchemaComputers<ComputedPart>,
+const registerComputedFields = <ComputedPart, DBFullDoc extends Document>(
+  computedFields?: SchemaComputers<ComputedPart, DBFullDoc>,
 ) => computedFields && allComputedFields.push(computedFields);
 
 const connect = async (
@@ -69,31 +69,31 @@ const initModel = <DBPart extends Document>(
   );
 };
 
-interface Optional<DBPart, ComputedPart> {
+interface Optional<DBPart extends Document, ComputedPart> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
   wrapSchema?: Function[];
   extraIndexes?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<DBPart>) => Schema)[];
   logMongoToConsole?: boolean;
-  computedFields?: SchemaComputers<ComputedPart>;
+  computedFields?: SchemaComputers<ComputedPart, DBPart>;
 }
 
 type GetCached<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
 export class ExtendedModel<DocI extends Document, ComputedPart = any> {
   public readonly model: Model<DocI>;
-  public readonly getCached: ComputedPart extends undefined
-    ? undefined
-    : GetCached<ComputedPart>;
+  public readonly getCached: (
+    dbDoc: DocI,
+  ) => ComputedPart extends undefined ? undefined : GetCached<ComputedPart>;
 
   constructor({
     model,
     getCached,
   }: {
     model: Model<DocI>;
-    getCached: ComputedPart extends undefined
-      ? undefined
-      : GetCached<ComputedPart>;
+    getCached: (
+      dbDoc: DocI,
+    ) => ComputedPart extends undefined ? undefined : GetCached<ComputedPart>;
   }) {
     this.model = model;
     this.getCached = getCached;
@@ -182,6 +182,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
                 Object.keys(collection).map(async (fieldName) =>
                   refreshCacheIfNeeded(
                     event._id as Types.ObjectId,
+                    (event as ChangeStreamUpdateDocument).fullDocument as TODO,
                     fieldName,
                     collection[fieldName as keyof typeof collection],
                     event,
@@ -208,13 +209,14 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   });
 
   const getCachedParent: {
-    getCached: ComputedPart extends undefined
-      ? undefined
-      : GetCached<ComputedPart>;
+    getCached: (
+      dbDoc: DBPart,
+    ) => ComputedPart extends undefined ? undefined : GetCached<ComputedPart>;
   } = {} as TODO;
   if (computedFields)
-    getCachedParent.getCached = (async (_id: Types.ObjectId) =>
-      getCached(_id, computedFields)) as TODO;
+    getCachedParent.getCached = (dbDoc: DBPart) =>
+      (async (_id: Types.ObjectId) =>
+        getCached(_id, computedFields, dbDoc)) as TODO;
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,
