@@ -24,7 +24,6 @@ const saveStripeEventToDB = async (event: RawStripeEvent) => {
       idOnSource: event.id,
       tsOnSource: event.created,
       wasHandled: false,
-      wasProcessed: false,
     });
   } catch (e) {
     !String(e).startsWith(

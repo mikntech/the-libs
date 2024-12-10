@@ -5,7 +5,6 @@ export interface BaseEvent extends MDocument {
   idOnSource: string;
   tsOnSource: number;
   wasHandled: boolean;
-  wasProcessed: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
