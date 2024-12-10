@@ -2,7 +2,7 @@ import { PaymentMethod, Currency, PaymentStatus } from '../../../../types';
 
 export const basePayment = {
   amount: { type: Number, required: true },
-  currency: { type: String, enum: Object.values(Currency), required: true },
+  currency: { type: String, enum: Object.keys(Currency), required: true },
   method: {
     type: String,
     enum: Object.values(PaymentMethod),
