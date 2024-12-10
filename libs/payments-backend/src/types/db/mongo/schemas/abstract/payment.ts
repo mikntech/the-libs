@@ -1,7 +1,8 @@
 import type { Document as MDocument } from 'mongoose';
 
 export enum PaymentMethod {
-  STRIPE = 'STRIPE',
+  CARD_STRIPE = 'Stripe',
+  BANK_MANUAL = 'manualBank',
 }
 
 export enum Currency {
