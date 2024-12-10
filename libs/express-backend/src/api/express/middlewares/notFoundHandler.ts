@@ -100,11 +100,11 @@ export const autoHelper = (
     try {
       // Extract routes from the application router stack
       const allRoutes = extractRoutes(req.app._router.stack);
-      console.log('Extracted Routes:', allRoutes);
+      // console.log('Extracted Routes:', allRoutes);
 
       // Filter routes based on the base path
       const relevantRoutes = filterRoutes(allRoutes, basePath);
-      console.log('Relevant Routes:', relevantRoutes);
+      // console.log('Relevant Routes:', relevantRoutes);
 
       // Determine available routes
       const availableRoutes =
