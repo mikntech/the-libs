@@ -80,7 +80,7 @@ export const refreshCacheIfNeeded = async <FieldType>(
   _id: Types.ObjectId,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType>,
-  event: ChangeStreamUpdateDocument,
+  event: ChangeStreamDocument,
 ) =>
   (await invalidate(event, _id)) &&
   cacheField(_id, fieldName, compute).then(() =>

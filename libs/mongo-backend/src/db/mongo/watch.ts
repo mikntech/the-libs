@@ -12,18 +12,19 @@ export class WatchDB {
   private static ready: boolean = false;
   private static callbacks: WatchCallback<any>[] = [];
   private static activeWatches: Map<string, ChangeStream<any>> = new Map();
+  private static wholeDBChangeStream: ChangeStream | null = null;
 
   static add(callback: WatchCallback<any>): void {
     this.callbacks.push(callback);
     this.ready && this.run();
   }
 
-  static start() {
+  static start(): void {
     this.ready = true;
     this.run();
   }
 
-  static run() {
+  static run(): void {
     this.callbacks.forEach(({ modelGetter, event, handler }) => {
       const modelPromise = modelGetter();
       modelPromise.then((model) => {
@@ -38,5 +39,46 @@ export class WatchDB {
         }
       });
     });
+  }
+
+  /**
+   * Watches the entire database for changes.
+   * @param db The Mongoose database connection object.
+   * @param handler The handler to call for database-wide events.
+   * @param options Options for the change stream.
+   */
+  static async addToWholeDB(
+    db: TODO, // Replace TODO with the actual type for the Mongoose connection object
+    handler: GenericListener,
+    options?: TODO, // Replace TODO with the actual type for options if needed
+  ): Promise<void> {
+    if (this.wholeDBChangeStream) {
+      console.warn('A database-wide change stream is already active.');
+      return;
+    }
+
+    try {
+      const dbConnection = await db.connection.db; // Access the MongoDB native connection
+      this.wholeDBChangeStream = dbConnection
+        .watch([], options)
+        .on('change', handler);
+      console.log('Database-wide change stream started.');
+    } catch (err) {
+      console.error('Failed to start database-wide change stream:', err);
+    }
+  }
+
+  /**
+   * Cancels the database-wide change stream if it's active.
+   */
+  static cancelWholeDBWatch(): void {
+    if (this.wholeDBChangeStream) {
+      this.wholeDBChangeStream.close().then(() => {
+        this.wholeDBChangeStream = null;
+        console.log('Database-wide change stream canceled.');
+      });
+    } else {
+      console.warn('No active database-wide change stream to cancel.');
+    }
   }
 }

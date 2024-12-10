@@ -16,12 +16,29 @@ import { versioning } from './autoVersioning';
 import { TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
-import { getCached, SchemaComputers } from './computedFields';
+import {
+  getCached,
+  refreshCacheIfNeeded,
+  SchemaComputers,
+} from './computedFields';
+import { ChangeStreamDocument } from 'mongodb';
+import { createRedisInstance, PubSub } from '@the-libs/redis-backend';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
 
 const connection: { instance?: Connection } = {};
+
+const pub = await createRedisInstance();
+const sub = await createRedisInstance();
+
+const pubSubInstance = new PubSub(pub, sub);
+
+const allComputedFields: SchemaComputers<any>[] = [];
+
+const registerComputedFields = <ComputedPart>(
+  computedFields?: SchemaComputers<ComputedPart>,
+) => computedFields && allComputedFields.push(computedFields);
 
 const connect = async (
   logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
@@ -63,7 +80,7 @@ interface Optional<DBPart, ComputedPart> {
 
 type GetCached<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
 
-export class ExtendedModel<DocI extends Document, ComputedPart = any> {
+class ExtendedModel<DocI extends Document, ComputedPart = any> {
   public readonly model: Model<DocI>;
   public readonly getCached: ComputedPart extends undefined
     ? undefined
@@ -147,6 +164,28 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     model = connection!.instance!.model<DBPart>(name);
   } else {
     model = initModel<DBPart>(connection, name, schema);
+    registerComputedFields(computedFields);
+    WatchDB.cancelWholeDBWatch();
+    await WatchDB.addToWholeDB(
+      model.db,
+      async (event: ChangeStreamDocument) => {
+        pubSubInstance.publish('dbOrCacheUpdate', 'null');
+        await Promise.all(
+          allComputedFields.map(async (collection: {}) =>
+            Promise.all(
+              Object.keys(collection).map(async (fieldName) =>
+                refreshCacheIfNeeded(
+                  event._id as Types.ObjectId,
+                  fieldName,
+                  collection[fieldName as keyof typeof collection],
+                  event,
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   funcs?.map((fnc) => {
@@ -161,8 +200,6 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   if (computedFields)
     getCachedParent.getCached = (async (_id: Types.ObjectId) =>
       getCached(_id, computedFields)) as TODO;
-
-  // markModelAsWatched(name); // Mark the model as watched
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,
