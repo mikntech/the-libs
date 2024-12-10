@@ -21,7 +21,7 @@ import {
   refreshCacheIfNeeded,
   SchemaComputers,
 } from './computedFields';
-import { ChangeStreamDocument } from 'mongodb';
+import { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
 import { createRedisInstance, PubSub } from '@the-libs/redis-backend';
 
 const require = createRequire(import.meta.url);
@@ -32,7 +32,7 @@ const connection: { instance?: Connection } = {};
 const pub = await createRedisInstance();
 const sub = await createRedisInstance();
 
-const pubSubInstance = new PubSub(pub, sub);
+export const mongoPubSubInstance = new PubSub(pub, sub);
 
 const allComputedFields: SchemaComputers<any>[] = [];
 
@@ -169,7 +169,12 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     await WatchDB.addToWholeDB(
       model.db,
       async (event: ChangeStreamDocument) => {
-        pubSubInstance.publish('dbOrCacheUpdate', 'null');
+        mongoPubSubInstance.publish('mr.allDB', 'null');
+        (event as ChangeStreamUpdateDocument).ns?.coll &&
+          mongoPubSubInstance.publish(
+            'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
+            'null',
+          );
         await Promise.all(
           allComputedFields.map(async (collection: {}) =>
             Promise.all(
@@ -179,6 +184,14 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
                   fieldName,
                   collection[fieldName as keyof typeof collection],
                   event,
+                  () =>
+                    mongoPubSubInstance.publish(
+                      'mr.cache.' +
+                        (event as ChangeStreamUpdateDocument).ns.coll +
+                        '.' +
+                        fieldName,
+                      'null',
+                    ),
                 ),
               ),
             ),

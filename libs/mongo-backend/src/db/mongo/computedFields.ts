@@ -81,8 +81,9 @@ export const refreshCacheIfNeeded = async <FieldType>(
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType>,
   event: ChangeStreamDocument,
+  extraCallBack: () => void,
 ) =>
   (await invalidate(event, _id)) &&
-  cacheField(_id, fieldName, compute).then(() =>
-    console.log(fieldName + ' on ' + _id + ' was renewed'),
-  );
+  cacheField(_id, fieldName, compute)
+    .then(() => console.log(fieldName + ' on ' + _id + ' was renewed'))
+    .then(() => extraCallBack());
