@@ -56,7 +56,7 @@ export const conversation = async <
     {
       computedFields: {
         lastMessage: {
-          compute: async (_id: Types.ObjectId) =>
+          compute: async (_id) =>
             findDocs<false, Message>(
               await message(),
               (await message())
