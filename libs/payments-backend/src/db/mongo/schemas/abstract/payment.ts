@@ -1,4 +1,8 @@
-import { PaymentMethod, Currency, PaymentStatus } from '../../../../types';
+import {
+  PaymentMethod,
+  Currency,
+  PaymentStatus,
+} from '@the-libs/payments-shared';
 
 export const basePayment = {
   amount: { type: Number, required: true },

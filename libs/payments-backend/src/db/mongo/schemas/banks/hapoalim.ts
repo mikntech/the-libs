@@ -1,5 +1,5 @@
 import { getModel } from '@the-libs/mongo-backend';
-import { HapoalimTransfer } from '../../../../types';
+import { HapoalimTransfer } from '@the-libs/payments-shared';
 import { basePayment } from '../abstract';
 
 export const hapoalimTransfer = () =>
