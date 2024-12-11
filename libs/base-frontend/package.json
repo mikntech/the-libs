@@ -25,6 +25,7 @@
   },
   "type": "module",
   "main": "./index.js",
+  "module": "./dist/index.es.js",
   "types": "./src/index.d.ts",
   "publishConfig": {
     "access": "public"

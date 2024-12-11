@@ -26,6 +26,9 @@ export default defineConfig({
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
   build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
     outDir: '../dist/libs/base-frontend',
     reportCompressedSize: true,
     sourcemap: true, // This enables source maps
