@@ -5,9 +5,7 @@ import {
   Message,
 } from '@the-libs/chat-shared';
 import { TODO } from '@the-libs/base-shared';
-import type { Types } from 'mongoose';
 import { message } from './message';
-import type { ChangeStreamInsertDocument } from 'mongodb';
 
 const REF_OR_ID = 'RefOrId';
 
@@ -64,12 +62,9 @@ export const conversation = async <
                 .sort({ createdAt: -1 })
                 .exec(),
             ),
-          invalidate: async (event, _id) =>
-            (event as ChangeStreamInsertDocument).ns.coll === 'messages' &&
-            String(
-              ((event as ChangeStreamInsertDocument).fullDocument as Message)
-                .conversation,
-            ) === String(_id),
+          invalidate: async (id, coll, fullDoc) =>
+            coll === 'messages' &&
+            String((fullDoc as unknown as Message)?.conversation) === id,
         },
       },
     },

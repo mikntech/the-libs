@@ -1,24 +1,23 @@
 import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
-import type { ChangeStreamDocument } from 'mongodb';
-import type { Document as MDocument, Types } from 'mongoose';
+import type { Document as MDocument } from 'mongoose';
 import { createRequire } from 'module';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
 
 export type Compute<FieldType, FullDoc extends MDocument> = (
-  _id: Types.ObjectId | string,
   fullDoc: FullDoc,
 ) => Promise<FieldType>;
 
-type Invalidate = (
-  event: ChangeStreamDocument,
-  _id: Types.ObjectId | string,
+export type Invalidate<FullDoc extends MDocument> = (
+  _id: string,
+  coll: string,
+  fullDoc: FullDoc,
 ) => Promise<boolean>;
 
 interface FieldDefinition<FieldType, FullDoc extends MDocument> {
   compute: Compute<FieldType, FullDoc>;
-  invalidate: Invalidate;
+  invalidate: Invalidate<FullDoc>;
 }
 
 export type SchemaComputers<
@@ -33,23 +32,21 @@ export type SchemaComputers<
 
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   _id: string,
-  coll: string,
-  key: string,
+  fieldName: string,
+  fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
-) => {
-  const fullDoc = mongoose.connection.db[coll].findById(_id);
+) =>
   await cache(
     await createRedisInstance(),
-    JSON.stringify({ _id: _id, key }),
-    async () => JSON.stringify(fullDoc ? await compute(_id, fullDoc) : null),
+    JSON.stringify({ _id: _id, fieldName }),
+    async () => JSON.stringify(fullDoc ? await compute(fullDoc) : null),
   );
-};
 
 export const getCached = async <
   ComputedPartOfSchema,
   DBFullDoc extends MDocument,
 >(
-  _id: Types.ObjectId | string,
+  _id: string,
   computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc>,
   fullDoc: DBFullDoc,
 ): Promise<ComputedPartOfSchema> => {
@@ -74,7 +71,7 @@ export const getCached = async <
     missingFields.map((key) =>
       computers[
         key as keyof SchemaComputers<ComputedPartOfSchema, DBFullDoc>
-      ].compute(_id, fullDoc),
+      ].compute(fullDoc),
     ),
   );
 
@@ -102,10 +99,13 @@ export const refreshCacheIfNeeded = async <
   coll: string,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc>,
-  event: ChangeStreamDocument,
   extraCallBack: () => void,
-) =>
-  (await invalidate(event, _id)) &&
-  cacheField(_id, coll, fieldName, compute)
-    .then(() => console.log(fieldName + ' on ' + _id + ' was renewed'))
-    .then(() => extraCallBack());
+) => {
+  const fullDoc = await mongoose.connection.db
+    .collection(coll)
+    .findOne({ _id: new mongoose.Types.ObjectId(_id) });
+  (await invalidate(_id, coll, fullDoc)) &&
+    cacheField(_id, fieldName, fullDoc, compute)
+      .then(() => console.log(fieldName + ' on ' + _id + ' was renewed'))
+      .then(() => extraCallBack());
+};

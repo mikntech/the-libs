@@ -126,8 +126,6 @@ export class ExtendedModel<DocI extends Document, ComputedPart = any> {
   ): Query<DocI[], DocI> {
     return this.model.find().limit(...args);
   }
-
-  // TODO Add more model methods as needed
 }
 
 export const getModel = async <DBPart extends Document, ComputedPart = never>(
@@ -161,7 +159,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   const funcs = pres?.map((fnc) => fnc(schema));
 
   if (mongoose.models[name]) {
-    model = connection!.instance!.model<DBPart>(name);
+    model = connection.instance!.model<DBPart>(name);
   } else {
     model = initModel<DBPart>(connection, name, schema);
     registerComputedFields(computedFields);
@@ -190,7 +188,6 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
                       (event as ChangeStreamUpdateDocument).ns.coll,
                       fieldName,
                       collection[fieldName as keyof typeof collection],
-                      event,
                       () =>
                         mongoPubSubInstance.publish(
                           'mr.cache.' +
@@ -220,8 +217,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   } = {} as TODO;
   if (computedFields)
     getCachedParent.getCached = (dbDoc: DBPart) =>
-      (async (_id: Types.ObjectId) =>
-        getCached(_id, computedFields, dbDoc)) as TODO;
+      (async (_id: string) => getCached(_id, computedFields, dbDoc)) as TODO;
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,
