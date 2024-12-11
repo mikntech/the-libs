@@ -36,7 +36,7 @@ export const mongoPubSubInstance = new PubSub(pub, sub);
 
 interface Reg {
   model: Model<any>;
-  computedFields: SchemaComputers<any, any>;
+  computedFields: SchemaComputers<any, any, any>;
 }
 const allComputedFields: Reg[] = [];
 
@@ -79,7 +79,7 @@ interface Optional<DBPart extends Document, ComputedPart> {
   extraIndexes?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<DBPart>) => Schema)[];
   logMongoToConsole?: boolean;
-  computedFields?: SchemaComputers<ComputedPart, DBPart>;
+  computedFields?: SchemaComputers<ComputedPart, DBPart, any>;
 }
 
 type GetCached<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;

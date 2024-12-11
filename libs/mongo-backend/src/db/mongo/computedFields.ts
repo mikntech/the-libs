@@ -9,13 +9,17 @@ export type Compute<FieldType, FullDoc extends MDocument> = (
   fromDoc: FullDoc,
 ) => Promise<FieldType>;
 
-export type Invalidate<FullDoc extends MDocument> = (
+export type Invalidate<ChangedDoc extends MDocument> = (
   myId: string,
   collChangedDoc: string,
-  fullChangedDoc: FullDoc,
+  fullChangedDoc: ChangedDoc,
 ) => Promise<boolean>;
 
-interface FieldDefinition<FieldType, FullDoc extends MDocument> {
+interface FieldDefinition<
+  FieldType,
+  FullDoc extends MDocument,
+  ChangedDoc extends MDocument,
+> {
   compute: Compute<FieldType, FullDoc>;
   invalidate: Invalidate<FullDoc>;
 }
@@ -23,10 +27,12 @@ interface FieldDefinition<FieldType, FullDoc extends MDocument> {
 export type SchemaComputers<
   ComputedPartOfSchema,
   DBFullDoc extends MDocument,
+  ChangedDoc extends MDocument,
 > = {
   [Key in keyof ComputedPartOfSchema]: FieldDefinition<
     ComputedPartOfSchema[Key],
-    DBFullDoc
+    DBFullDoc,
+    ChangedDoc
   >;
 };
 
@@ -46,7 +52,7 @@ export const getCached = async <
   DBFullDoc extends MDocument,
 >(
   _id: string,
-  computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc>,
+  computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
   fullDoc: DBFullDoc,
 ): Promise<ComputedPartOfSchema> => {
   const redisInstance = await createRedisInstance(); // Create Redis instance once
@@ -69,7 +75,7 @@ export const getCached = async <
   const computedValues = await Promise.all(
     missingFields.map((key) =>
       computers[
-        key as keyof SchemaComputers<ComputedPartOfSchema, DBFullDoc>
+        key as keyof SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>
       ].compute(fullDoc),
     ),
   );
@@ -98,7 +104,7 @@ export const refreshCacheIfNeeded = async <
   changed_Id: string,
   changedColl: string,
   fieldName: string,
-  { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc>,
+  { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc, any>,
   extraCallBack: () => void,
 ) => {
   const changedDcc = await mongoose.connection.db
