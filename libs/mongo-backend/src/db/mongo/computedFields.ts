@@ -1,7 +1,10 @@
-import type { Types } from 'mongoose';
 import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
 import type { ChangeStreamDocument } from 'mongodb';
-import type { Document as MDocument } from 'mongoose';
+import type { Document as MDocument, Types } from 'mongoose';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const mongoose = require('mongoose');
 
 export type Compute<FieldType, FullDoc extends MDocument> = (
   _id: Types.ObjectId | string,
@@ -30,15 +33,17 @@ export type SchemaComputers<
 
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   _id: string,
-  fullDoc: DBFullDoc | undefined,
+  coll: string,
   key: string,
   compute: Compute<FieldType, DBFullDoc>,
-) =>
-  cache(
+) => {
+  const fullDoc = mongoose.connection.db[coll].findById(_id);
+  await cache(
     await createRedisInstance(),
     JSON.stringify({ _id: _id, key }),
     async () => JSON.stringify(fullDoc ? await compute(_id, fullDoc) : null),
   );
+};
 
 export const getCached = async <
   ComputedPartOfSchema,
@@ -93,16 +98,14 @@ export const refreshCacheIfNeeded = async <
   FieldType,
   DBFullDoc extends MDocument,
 >(
-  dbFullDoc: DBFullDoc | undefined,
+  _id: string,
+  coll: string,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc>,
   event: ChangeStreamDocument,
   extraCallBack: () => void,
 ) =>
-  dbFullDoc &&
-  (await invalidate(event, String(dbFullDoc._id))) &&
-  cacheField(String(dbFullDoc._id), dbFullDoc, fieldName, compute)
-    .then(() =>
-      console.log(fieldName + ' on ' + String(dbFullDoc._id) + ' was renewed'),
-    )
+  (await invalidate(event, _id)) &&
+  cacheField(_id, coll, fieldName, compute)
+    .then(() => console.log(fieldName + ' on ' + _id + ' was renewed'))
     .then(() => extraCallBack());
