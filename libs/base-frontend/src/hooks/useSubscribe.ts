@@ -2,16 +2,20 @@ import { useEffect, useState } from 'react';
 import { getBaseURL } from '../';
 
 export const useSubscribe = <T = string>(
-  VITE_STAGING_ENV: string,
-  domain: string,
-  endpoint: string,
+  VITE_STAGING_ENV?: string,
+  domain?: string,
+  endpoint?: string,
   serverPort = 5556,
+  fullURI?: string,
 ) => {
   const [res, setRes] = useState<T>();
 
   useEffect(() => {
     const eventSource = new EventSource(
-      getBaseURL(domain, VITE_STAGING_ENV, serverPort) + endpoint,
+      fullURI ??
+        (domain && VITE_STAGING_ENV
+          ? getBaseURL(domain, VITE_STAGING_ENV, serverPort) + endpoint
+          : 'error calling useSubscribe'),
       {
         withCredentials: true,
       },
