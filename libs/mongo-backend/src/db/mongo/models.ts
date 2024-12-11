@@ -34,11 +34,15 @@ const sub = await createRedisInstance();
 
 export const mongoPubSubInstance = new PubSub(pub, sub);
 
-const allComputedFields: SchemaComputers<any, any>[] = [];
+interface Reg {
+  model: Model<any>;
+  computedFields: SchemaComputers<any, any>;
+}
+const allComputedFields: Reg[] = [];
 
 const registerComputedFields = <ComputedPart, DBFullDoc extends Document>(
-  computedFields?: SchemaComputers<ComputedPart, DBFullDoc>,
-) => computedFields && allComputedFields.push(computedFields);
+  r: Reg,
+) => allComputedFields.push(r);
 
 const connect = async (
   logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
@@ -162,7 +166,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     model = connection.instance!.model<DBPart>(name);
   } else {
     model = initModel<DBPart>(connection, name, schema);
-    registerComputedFields(computedFields);
+    computedFields && registerComputedFields({ model, computedFields });
     if (connection.instance?.db) {
       await WatchDB.cancelWholeDBWatch();
       WatchDB.addToWholeDB(
@@ -175,28 +179,35 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
               'null',
             );
           await Promise.all(
-            allComputedFields.map(async (collection: {}) =>
+            allComputedFields.map(async ({ model, computedFields }) =>
               Promise.all(
-                Object.keys(collection).map(
-                  async (fieldName) =>
-                    (event as ChangeStreamUpdateDocument)?.documentKey?._id &&
-                    (event as ChangeStreamUpdateDocument).ns &&
-                    refreshCacheIfNeeded(
-                      String(
-                        (event as ChangeStreamUpdateDocument).documentKey._id,
-                      ),
-                      (event as ChangeStreamUpdateDocument).ns.coll,
-                      fieldName,
-                      collection[fieldName as keyof typeof collection],
-                      () =>
-                        mongoPubSubInstance.publish(
-                          'mr.cache.' +
-                            (event as ChangeStreamUpdateDocument).ns.coll +
-                            '.' +
-                            fieldName,
-                          'null',
+                Object.keys(computedFields).map(async (fieldName) =>
+                  Promise.all(
+                    (await model.find()).map(
+                      async (doc) =>
+                        (event as ChangeStreamUpdateDocument)?.documentKey
+                          ?._id &&
+                        (event as ChangeStreamUpdateDocument).ns &&
+                        refreshCacheIfNeeded(
+                          doc,
+                          String(
+                            (event as ChangeStreamUpdateDocument).documentKey
+                              ._id,
+                          ),
+                          (event as ChangeStreamUpdateDocument).ns.coll,
+                          fieldName,
+                          computedFields[fieldName],
+                          () =>
+                            mongoPubSubInstance.publish(
+                              'mr.cache.' +
+                                (event as ChangeStreamUpdateDocument).ns.coll +
+                                '.' +
+                                fieldName,
+                              'null',
+                            ),
                         ),
                     ),
+                  ),
                 ),
               ),
             ),
