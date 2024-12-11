@@ -33,12 +33,14 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fullDoc: DBFullDoc | undefined,
   key: string,
   compute: Compute<FieldType, DBFullDoc>,
-) =>
+) => {
+  console.log('String(_id): ', String(_id));
   cache(
     await createRedisInstance(),
     JSON.stringify({ _id: String(_id), key }),
     async () => JSON.stringify(fullDoc ? await compute(_id, fullDoc) : null),
   );
+};
 
 export const getCached = async <
   ComputedPartOfSchema,
