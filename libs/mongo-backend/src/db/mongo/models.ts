@@ -181,7 +181,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
               Promise.all(
                 Object.keys(collection).map(async (fieldName) =>
                   refreshCacheIfNeeded(
-                    event._id as Types.ObjectId,
+                    String(event._id),
                     (event as ChangeStreamUpdateDocument).fullDocument as TODO,
                     fieldName,
                     collection[fieldName as keyof typeof collection],

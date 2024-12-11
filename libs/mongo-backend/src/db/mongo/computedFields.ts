@@ -10,7 +10,7 @@ export type Compute<FieldType, FullDoc extends MDocument> = (
 
 type Invalidate = (
   event: ChangeStreamDocument,
-  _id: Types.ObjectId,
+  _id: Types.ObjectId | string,
 ) => Promise<boolean>;
 
 interface FieldDefinition<FieldType, FullDoc extends MDocument> {
@@ -29,18 +29,16 @@ export type SchemaComputers<
 };
 
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
-  _id: Types.ObjectId,
+  _id: Types.ObjectId | string,
   fullDoc: DBFullDoc | undefined,
   key: string,
   compute: Compute<FieldType, DBFullDoc>,
-) => {
-  console.log('String(_id): ', String(_id));
+) =>
   cache(
     await createRedisInstance(),
     JSON.stringify({ _id: String(_id), key }),
     async () => JSON.stringify(fullDoc ? await compute(_id, fullDoc) : null),
   );
-};
 
 export const getCached = async <
   ComputedPartOfSchema,
@@ -95,7 +93,7 @@ export const refreshCacheIfNeeded = async <
   FieldType,
   DBFullDoc extends MDocument,
 >(
-  _id: Types.ObjectId,
+  _id: string,
   dbFullDoc: DBFullDoc | undefined,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc>,
