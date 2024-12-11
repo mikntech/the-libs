@@ -29,14 +29,14 @@ export type SchemaComputers<
 };
 
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
-  _id: Types.ObjectId | string,
+  _id: string,
   fullDoc: DBFullDoc | undefined,
   key: string,
   compute: Compute<FieldType, DBFullDoc>,
 ) =>
   cache(
     await createRedisInstance(),
-    JSON.stringify({ _id: String(_id), key }),
+    JSON.stringify({ _id: _id, key }),
     async () => JSON.stringify(fullDoc ? await compute(_id, fullDoc) : null),
   );
 
@@ -93,14 +93,16 @@ export const refreshCacheIfNeeded = async <
   FieldType,
   DBFullDoc extends MDocument,
 >(
-  _id: string,
   dbFullDoc: DBFullDoc | undefined,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc>,
   event: ChangeStreamDocument,
   extraCallBack: () => void,
 ) =>
-  (await invalidate(event, _id)) &&
-  cacheField(_id, dbFullDoc, fieldName, compute)
-    .then(() => console.log(fieldName + ' on ' + _id + ' was renewed'))
+  dbFullDoc &&
+  (await invalidate(event, String(dbFullDoc._id))) &&
+  cacheField(String(dbFullDoc._id), dbFullDoc, fieldName, compute)
+    .then(() =>
+      console.log(fieldName + ' on ' + String(dbFullDoc._id) + ' was renewed'),
+    )
     .then(() => extraCallBack());

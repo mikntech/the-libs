@@ -179,22 +179,24 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
           await Promise.all(
             allComputedFields.map(async (collection: {}) =>
               Promise.all(
-                Object.keys(collection).map(async (fieldName) =>
-                  refreshCacheIfNeeded(
-                    String(event._id),
-                    (event as ChangeStreamUpdateDocument).fullDocument as TODO,
-                    fieldName,
-                    collection[fieldName as keyof typeof collection],
-                    event,
-                    () =>
-                      mongoPubSubInstance.publish(
-                        'mr.cache.' +
-                          (event as ChangeStreamUpdateDocument).ns.coll +
-                          '.' +
-                          fieldName,
-                        'null',
-                      ),
-                  ),
+                Object.keys(collection).map(
+                  async (fieldName) =>
+                    (event as ChangeStreamUpdateDocument).fullDocument &&
+                    refreshCacheIfNeeded(
+                      (event as ChangeStreamUpdateDocument)
+                        .fullDocument as TODO,
+                      fieldName,
+                      collection[fieldName as keyof typeof collection],
+                      event,
+                      () =>
+                        mongoPubSubInstance.publish(
+                          'mr.cache.' +
+                            (event as ChangeStreamUpdateDocument).ns.coll +
+                            '.' +
+                            fieldName,
+                          'null',
+                        ),
+                    ),
                 ),
               ),
             ),
