@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState, ReactNode } from 'react';
 import axios, { AxiosInstance } from 'axios';
 import { request, gql } from 'graphql-request';
-import { MainMessage as DefaultMainMessage } from '../components';
+import { MainMessage as DefaultMainMessage } from '../';
 
 const DEFAULT_TRY_INTERVAL = 3000;
 const GOOD_STATUS = 'good';
