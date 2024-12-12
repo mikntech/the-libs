@@ -35,6 +35,7 @@
           "dayjs",
           "react",
           "@mui/material",
+          "@react-oauth/google",
           "@mui/icons-material",
           "@the-libs/base-shared",
           "react-router-dom",

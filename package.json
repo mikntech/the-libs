@@ -56,6 +56,7 @@
     "@nx/react": "^20.2.1",
     "@nx/vite": "^20.2.1",
     "@nx/web": "^20.2.1",
+    "@react-oauth/google": "^0.12.1",
     "@sendgrid/mail": "^8.1.4",
     "@swc-node/register": "~1.10.9",
     "@swc/cli": "~0.5.2",

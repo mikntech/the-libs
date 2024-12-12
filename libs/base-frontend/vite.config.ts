@@ -51,6 +51,7 @@ export default defineConfig({
         '@mui/icons-material',
         '@the-libs/base-shared',
         'react-router-dom',
+        '@react-oauth/google',
         'mongoose',
         'react-hot-toast',
         'zxcvbn',
