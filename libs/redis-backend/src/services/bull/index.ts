@@ -18,11 +18,12 @@ export const createQueue = <DATA>(queueName: string): Queue<DATA> =>
 export const createAndAutoProcessQueue = <DATA>(
   queueName: string,
   howToProcess: ProcessCallbackFunction<DATA>,
+  concurrency = 10,
   sucCB?: () => any,
   errCb?: () => any,
 ) => {
   const queue: Queue<DATA> = createQueue(queueName);
-  queue.process(howToProcess).then(sucCB).catch(errCb);
+  queue.process(concurrency, howToProcess).then(sucCB).catch(errCb);
   return queue;
 };
 
@@ -32,9 +33,10 @@ export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
 export const process = <DATA>(
   queue: Queue<DATA>,
   howToProcess: ProcessCallbackFunction<DATA>,
+  concurrency = 10,
   sucCB?: () => any,
   errCb?: () => any,
-) => queue.process(howToProcess).then(sucCB).catch(errCb);
+) => queue.process(concurrency, howToProcess).then(sucCB).catch(errCb);
 
 export const checkStatus = async <DATA, R>(
   queue: Queue<DATA>,
