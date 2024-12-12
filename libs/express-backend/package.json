@@ -1,12 +1,12 @@
 {
   "name": "@the-libs/express-backend",
-  "version": "1.16.32",
+  "version": "1.18.65",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.18.36",
-    "@the-libs/mongo-backend": "^1.18.36",
+    "@the-libs/base-shared": "^1.18.66",
+    "@the-libs/mongo-backend": "^1.18.66",
     "cookie-parser": "^1.4.7",
     "connect-timeout": "^1.9.0",
     "cors": "^2.8.5",

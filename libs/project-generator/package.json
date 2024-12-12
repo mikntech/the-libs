@@ -1,12 +1,12 @@
 {
   "name": "@the-libs/project-generator",
-  "version": "1.16.32",
+  "version": "1.18.65",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "description": "A custom Nx generator library",
   "dependencies": {
-    "@nx/devkit": "^20.2.1",
+    "@nx/devkit": "^20.2.2",
     "inquirer": "^12.2.0"
   },
   "type": "module",
