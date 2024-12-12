@@ -28,10 +28,7 @@
             "output": "."
           }
         ],
-        "external": [
-          "mongoose",
-          "stripe"
-        ]
+        "external": ["mongoose", "stripe"]
       }
     },
     "nx-release-publish": {

@@ -13,7 +13,8 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "inlineSources": true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["**/*.spec.ts", "**/*.test.ts", "node_modules", "dist"]

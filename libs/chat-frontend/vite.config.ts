@@ -14,6 +14,8 @@ export default defineConfig({
       tsconfigPath: './tsconfig.lib.json',
       outDir: '../../dist', // Where to output .d.ts files
       insertTypesEntry: true, // Insert `types` entry into package.json
+      copyDtsFiles: true, // Copy .d.ts files to the output
+      include: ['src/**/*.ts', 'src/**/*.tsx'], // Ensure inclusion of source files
     }),
     nxViteTsPaths(),
   ],
@@ -69,5 +71,7 @@ export default defineConfig({
         warn(warning);
       },
     },
+    minify: false, // Disable minification for easier debugging
+    emptyOutDir: true,
   },
 });

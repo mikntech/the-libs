@@ -28,7 +28,12 @@
             "output": "."
           }
         ],
-        "external": ["mongoose", "dotenv", "@the-libs/base-shared", "@the-libs/redis-backend"]
+        "external": [
+          "mongoose",
+          "dotenv",
+          "@the-libs/base-shared",
+          "@the-libs/redis-backend"
+        ]
       },
       "dependsOn": [
         {

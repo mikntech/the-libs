@@ -5,7 +5,7 @@ import ModeNightRoundedIcon from '@mui/icons-material/ModeNightRounded';
 import { TODO } from '@the-libs/base-shared';
 
 interface ToggleColorModeProps {
-  mode: "dark" | "light";
+  mode: 'dark' | 'light';
   toggleColorMode(...args: unknown[]): unknown;
 }
 

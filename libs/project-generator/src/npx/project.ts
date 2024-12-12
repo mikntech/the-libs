@@ -16,7 +16,8 @@ export const createProject = async () => {
     nextjss,
   } = await askProjectQuestions();
   const nx = nxGen(nxg);
-  nxg === 'SUDO_INSTALL_GLOBAL' && doCommand('sudo npm i --legacy-peer-deps -g nx');
+  nxg === 'SUDO_INSTALL_GLOBAL' &&
+    doCommand('sudo npm i --legacy-peer-deps -g nx');
   doCommand(`npx --yes create-nx-workspace@latest ${pname} \\
   --preset=ts \\
   --nxCloud=skip \\

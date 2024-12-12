@@ -200,13 +200,11 @@ router.get('/tasks', async (req, res) => {
     if (!user) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
-    return res
-      .status(200)
-      .json({
-        data: (await getAITaskModel().find()).filter(
-          ({ userID }) => userID === user._id.toString(),
-        ),
-      });
+    return res.status(200).json({
+      data: (await getAITaskModel().find()).filter(
+        ({ userID }) => userID === user._id.toString(),
+      ),
+    });
   } catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ message: 'An error occurred' });

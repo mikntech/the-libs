@@ -12,7 +12,8 @@
     "declaration": true,
     "declarationMap": true,
     "emitDeclarationOnly": false,
-    "sourceMap": true
+    "sourceMap": true,
+    "inlineSources": true // Embed sources into the source map for better debugging
   },
   "files": [],
   "include": [],
