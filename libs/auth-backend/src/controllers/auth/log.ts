@@ -102,9 +102,5 @@ export const genLogControllers = <
     cookie: generateSecureCookie(JWT_COOKIE_NAME, '', 'userType', 0),
   });
 
-  return {
-    validateAndProtect,
-    logIn,
-    logOut,
-  };
+  return { generateJWT, validateAndProtect, logIn, logOut };
 };
