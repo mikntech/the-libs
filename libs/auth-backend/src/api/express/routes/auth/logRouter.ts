@@ -3,8 +3,9 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import { highOrderHandler } from '@the-libs/express-backend';
-import { SomeEnum, TODO } from '@the-libs/base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { genLogControllers } from '../../../../controllers/auth/log';
+import { genGoogleControllers } from '../../../../controllers/auth/oauth/google';
 
 export const logRouter = <
   UserTypeEnum extends string | number | symbol,
@@ -22,6 +23,7 @@ export const logRouter = <
   const router = Router();
 
   const { validateAndProtect, logIn, logOut } = genLogControllers(strategy);
+  const { google } = genGoogleControllers(strategy);
 
   router.get(
     '/',
@@ -43,6 +45,14 @@ export const logRouter = <
     '/out',
     highOrderHandler(((_: AuthenticatedRequest<UserTypeEnum>) =>
       logOut()) as TODO),
+  );
+
+  router.post(
+    '/google',
+    highOrderHandler(({ body }: AuthenticatedRequest<UserTypeEnum>) => {
+      const { token, userType } = body;
+      return google(token, userType);
+    }),
   );
 
   return router;
