@@ -15,7 +15,7 @@ export const mergeCacheToDocs = async <
     ? Promise.all(
         doc.map(async (d) => ({
           ...d,
-          ...(getCached ? await (getCached as Function)(d)(d._id) : {}),
+          ...(getCached ? await getCached(d) : {}),
         })),
       )
     : doc === null
