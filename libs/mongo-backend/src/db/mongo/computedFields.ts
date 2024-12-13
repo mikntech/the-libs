@@ -51,14 +51,13 @@ export const getCached = async <
   ComputedPartOfSchema,
   DBFullDoc extends MDocument,
 >(
-  _id: string,
-  computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
   fullDoc: DBFullDoc,
+  computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
 ): Promise<ComputedPartOfSchema> => {
   const redisInstance = await createRedisInstance(); // Create Redis instance once
   const keys = Object.keys(computers);
   const redisKeys = keys.map((key) =>
-    JSON.stringify({ _id: String(_id), key }),
+    JSON.stringify({ _id: String(fullDoc._id), key }),
   );
 
   // Batch Redis GET operations

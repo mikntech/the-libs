@@ -228,7 +228,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   } = {} as TODO;
   if (computedFields)
     getCachedParent.getCached = (dbDoc: DBPart) =>
-      (async (_id: string) => getCached(_id, computedFields, dbDoc)) as TODO;
+      (async (_id: string) => getCached(dbDoc, computedFields)) as TODO;
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,

@@ -60,7 +60,7 @@ export const generateConversationRouter = <
       const body = await Promise.all(
         dbConversations.map(async (conversation) => ({
           ...conversation,
-          ...(await model.getCached(conversation)(conversation._id)),
+          ...(await model.getCached(conversation)),
         })),
       );
 
