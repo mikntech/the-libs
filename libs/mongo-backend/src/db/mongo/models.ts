@@ -82,22 +82,24 @@ interface Optional<DBPart extends Document, ComputedPart> {
   computedFields?: SchemaComputers<ComputedPart, DBPart, any>;
 }
 
-type GetCached<ComputedPart> = (_id: Types.ObjectId) => Promise<ComputedPart>;
+type GetCached<DBPart, ComputedPart> = ComputedPart extends false
+  ? false
+  : (
+      dbDoc: DBPart,
+    ) => ComputedPart extends undefined
+      ? undefined
+      : (fullDoc: DBPart) => Promise<ComputedPart>;
 
-export class ExtendedModel<DocI extends Document, ComputedPart = any> {
+export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   public readonly model: Model<DocI>;
-  public readonly getCached: (
-    dbDoc: DocI,
-  ) => ComputedPart extends undefined ? undefined : GetCached<ComputedPart>;
+  public readonly getCached: GetCached<DocI, ComputedPart>;
 
   constructor({
     model,
     getCached,
   }: {
     model: Model<DocI>;
-    getCached: (
-      dbDoc: DocI,
-    ) => ComputedPart extends undefined ? undefined : GetCached<ComputedPart>;
+    getCached: GetCached<DocI, ComputedPart>;
   }) {
     this.model = model;
     this.getCached = getCached;
@@ -221,14 +223,12 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     model = initModel<DBPart>(connection, name, fnc(model));
   });
 
-  const getCachedParent: {
-    getCached: (
-      dbDoc: DBPart,
-    ) => ComputedPart extends undefined ? undefined : GetCached<ComputedPart>;
-  } = {} as TODO;
+  const getCachedParent: any = {
+    getCached: false,
+  };
   if (computedFields)
     getCachedParent.getCached = (dbDoc: DBPart) =>
-      (async (_id: string) => getCached(dbDoc, computedFields)) as TODO;
+      getCached(dbDoc, computedFields);
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,
