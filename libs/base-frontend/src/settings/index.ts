@@ -21,7 +21,7 @@ export const getFrontendSettings = <
     const envConfig = document.getElementById('mik-env-config')?.textContent;
     res = JSON.parse(envConfig ?? '{}');
   } catch (e) {
-    res = import.meta.env;
+    res = (import as any).meta.env;
   }
   [
     ...(next
