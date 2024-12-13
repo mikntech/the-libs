@@ -8,7 +8,6 @@ import {
   Schema,
   SchemaDefinition,
   Document,
-  Types,
   Query,
   QueryWithHelpers,
 } from 'mongoose';
@@ -84,11 +83,7 @@ interface Optional<DBPart extends Document, ComputedPart> {
 
 type GetCached<DBPart, ComputedPart> = ComputedPart extends false
   ? false
-  : (
-      dbDoc: DBPart,
-    ) => ComputedPart extends undefined
-      ? undefined
-      : (fullDoc: DBPart) => Promise<ComputedPart>;
+  : (dbDoc: DBPart) => Promise<ComputedPart>;
 
 export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   public readonly model: Model<DocI>;
