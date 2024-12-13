@@ -31,7 +31,7 @@ export const getFrontendSettings = <
   ].forEach((key) => {
     if (res[key] === undefined)
       res[key] = removePrefix(
-       ( import.meta as any).env[key as keyof ImportMetaEnv],
+        (import.meta as any).env[key],
         next ? 'NEXT_PUBLIC_' : 'VITE_',
       );
   });
