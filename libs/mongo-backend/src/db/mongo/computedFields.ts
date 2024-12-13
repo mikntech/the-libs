@@ -21,7 +21,7 @@ interface FieldDefinition<
   ChangedDoc extends MDocument,
 > {
   compute: Compute<FieldType, FullDoc>;
-  invalidate: Invalidate<FullDoc>;
+  invalidate: Invalidate<ChangedDoc>;
 }
 
 export type SchemaComputers<

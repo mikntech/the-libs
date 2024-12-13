@@ -18,7 +18,7 @@ export const serverErrorHandler =
     SE = StagingEnvironment,
   >(
     stagingEnv: SE,
-    errorLogModel: () => Promise<ExtendedModel<DocI, false>> = async () =>
+    errorLogModel: () => Promise<ExtendedModel<DocI>> = async () =>
       (await errorLog()) as TODO,
     dontLogToMongo: boolean = false,
   ) =>

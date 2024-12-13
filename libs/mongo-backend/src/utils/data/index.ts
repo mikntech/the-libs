@@ -43,8 +43,8 @@ export const findDocs = async <
       : query.lean()
     : query;
 
-export const createDoc = async <DocI extends MDocument>(
-  { model }: ExtendedModel<DocI>,
+export const createDoc = async <DocI extends MDocument, Computed = false>(
+  { model }: ExtendedModel<DocI, Computed>,
   fields: Partial<DocI>,
   save: boolean = true,
 ) => {
