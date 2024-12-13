@@ -5,16 +5,16 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/auth-shared": "^1.18.66",
-    "@the-libs/base-shared": "^1.18.66",
-    "@the-libs/email-backend": "^1.18.66",
-    "@the-libs/s3-backend": "^1.18.66",
+    "@the-libs/auth-shared": "^1.19.7",
+    "@the-libs/base-shared": "^1.19.7",
+    "@the-libs/email-backend": "^1.19.7",
+    "@the-libs/s3-backend": "^1.19.7",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "google-auth-library": "^9.15.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.8.4",
+    "mongoose": "^8.9.0",
     "multer": "^1.4.5-lts.1",
     "uuid": "^11.0.3",
     "zxcvbn": "^4.4.2"
