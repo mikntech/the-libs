@@ -22,7 +22,7 @@ export const mergeCacheToDocs = async <
       ? null
       : {
           ...doc,
-          ...(getCached ? await (getCached as Function)(doc)(doc._id) : {}),
+          ...(getCached ? await getCached(doc) : {}),
         };
 
 export const findDocs = async <
