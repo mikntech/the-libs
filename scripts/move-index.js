@@ -11,14 +11,14 @@ if (!libName) {
 // Define paths
 const distDir = path.join(__dirname, `../dist/libs/${libName}`);
 const srcDir = path.join(distDir, 'src');
-const indexFile = path.join(distDir, 'index.ts');
+const indexFile = path.join(distDir, 'index.d.ts');
 
 // Create a new index.ts that exports everything from the src folder
 const files = fs.readdirSync(srcDir);
 const exportStatements = files
   .filter(
     (file) =>
-      file !== 'index.ts' && fs.lstatSync(path.join(srcDir, file)).isFile(),
+      file !== 'index.d.ts' && fs.lstatSync(path.join(srcDir, file)).isFile(),
   )
   .map((file) => `export * from './src/${file}';`)
   .join('\n');
