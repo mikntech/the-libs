@@ -18,18 +18,19 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "format": ["esm"],
+        "dts": true,
+        "format": ["esm", "cjs", "umd"],
         "outputPath": "dist/libs/base-frontend",
         "tsConfig": "libs/base-frontend/tsconfig.lib.json",
         "project": "libs/base-frontend/package.json",
         "entryFile": "libs/base-frontend/src/index.ts",
-        "assets": [
-          {
-            "glob": "**/*.json",
-            "input": "libs/base-frontend/src",
-            "output": "."
-          }
-        ],
+        "fileNames": {
+          "esm": "index.es.js",
+          "cjs": "index.cjs.js",
+          "umd": "index.umd.js"
+        },
+        "assets": []
+      ,
         "external": [
           "@mui/x-date-pickers",
           "dayjs",
@@ -48,7 +49,8 @@
           "@the-libs/auth-shared",
           "@emotion/styled",
           "graphql-request"
-        ]
+        ],
+        "cleanOutDir": true
       },
       "configurations": {
         "development": {

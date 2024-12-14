@@ -21,17 +21,22 @@ export default defineConfig({
   ],
 
   build: {
-    commonjsOptions: {
-      include: [/node_modules/],
-    },
-    outDir: '../dist/libs/base-frontend',
-    reportCompressedSize: true,
-    sourcemap: true, // Enable source maps for debugging
     lib: {
       entry: 'src/index.ts',
       name: 'base-frontend',
-      fileName: 'index',
-      formats: ['es'], // Library formats
+      fileName: (format) => {
+        switch (format) {
+          case 'es':
+            return 'index.es.js';
+          case 'cjs':
+            return 'index.cjs.js';
+          case 'umd':
+            return 'index.umd.js';
+          default:
+            return `index.${format}.js`;
+        }
+      },
+      formats: ['es', 'cjs', 'umd'],
     },
     rollupOptions: {
       external: [
@@ -51,6 +56,21 @@ export default defineConfig({
         '@the-libs/auth-shared',
         '@emotion/styled',
       ],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM',
+          '@mui/material': 'MaterialUI',
+          '@mui/icons-material': 'IconsMaterial',
+          '@the-libs/base-shared': 'BaseShared',
+          'react-router-dom': 'ReactRouterDOM',
+          '@mui/x-date-pickers': 'DatePickers',
+          axios: 'Axios',
+          zxcvbn: 'ZXCVBN',
+          'react-hot-toast': 'Toast',
+          '@emotion/styled': 'EmotionStyled',
+        },
+      },
       onwarn(warning, warn) {
         if (
           warning.message.includes(
