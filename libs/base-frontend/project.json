@@ -35,7 +35,10 @@
     "generate-declarations": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["node scripts/move-index.js base-frontend"]
+        "commands": [
+          "tsc --project libs/base-frontend/tsconfig.declarations.json",
+          "node scripts/move-index.js base-frontend"
+        ]
       }
     }
   },
