@@ -15,7 +15,7 @@ const indexDtsFile = path.join(distDir, 'index.d.ts');
 const indexTsFile = path.join(distDir, 'index.ts');
 
 // Create an index.d.ts that exports types from the .d.ts files
-const typeExportStatements = `export type * from './src/index.d.ts';`;
+const typeExportStatements = `export * from './src/index.d.ts';`;
 
 // Create the index.d.ts file in the root of dist/libs/base-frontend
 fs.writeFileSync(indexDtsFile, typeExportStatements);
