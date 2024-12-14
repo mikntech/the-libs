@@ -20,11 +20,16 @@ const exportStatements = files
     (file) =>
       file !== 'index.ts' && fs.lstatSync(path.join(srcDir, file)).isFile(),
   )
-  .map((file) => `export * from './src/${file}';`)
+  .map((file) => {
+    // Make sure we only export .ts files (excluding .d.ts files)
+    if (file.endsWith('.ts')) {
+      return `export * from './src/${file}';`;
+    }
+    return '';
+  })
+  .filter(Boolean) // Filter out empty strings
   .join('\n');
 
 // Write the new index.ts file to the root of dist/libs/base-frontend
 fs.writeFileSync(indexTsFile, exportStatements);
 console.log(`Created index.ts in the root with re-exports from src/`);
-
-// No need to remove or move files now, since we are simply creating the index.ts
