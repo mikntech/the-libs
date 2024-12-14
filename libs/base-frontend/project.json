@@ -29,8 +29,7 @@
           "cjs": "index.cjs.js",
           "umd": "index.umd.js"
         },
-        "assets": []
-      ,
+        "assets": [],
         "external": [
           "@mui/x-date-pickers",
           "dayjs",
@@ -61,10 +60,22 @@
         }
       }
     },
+    "generate-declarations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --project libs/base-frontend/tsconfig.declarations.json"
+      }
+    },
     "nx-release-publish": {
       "options": {
         "packageRoot": "dist/{projectRoot}"
       }
+    }
+  },
+  "implicitDependencies": [],
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["^build", "generate-declarations"]
     }
   }
 }
