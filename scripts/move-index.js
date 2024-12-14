@@ -15,7 +15,7 @@ const indexFile = path.join(distDir, 'index.ts');
 
 // Create a new index.ts that exports everything from the src folder
 const files = fs.readdirSync(srcDir);
-const exports = files
+const exportStatements = files
   .filter(
     (file) =>
       file !== 'index.ts' && fs.lstatSync(path.join(srcDir, file)).isFile(),
@@ -24,7 +24,7 @@ const exports = files
   .join('\n');
 
 // Write the new index.ts file to the root of dist/libs/base-frontend
-fs.writeFileSync(indexFile, exports);
+fs.writeFileSync(indexFile, exportStatements);
 console.log(`Created index.ts in the root with re-exports from src/`);
 
 // No need to remove or move files now, since we are simply creating the index.ts
