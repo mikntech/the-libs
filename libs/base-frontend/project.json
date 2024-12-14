@@ -22,7 +22,6 @@
         "format": ["esm", "cjs", "umd"],
         "outputPath": "dist/libs/base-frontend",
         "tsConfig": "libs/base-frontend/tsconfig.lib.json",
-        "project": "libs/base-frontend/package.json",
         "entryFile": "libs/base-frontend/src/index.ts",
         "fileNames": {
           "esm": "index.es.js",
@@ -30,46 +29,19 @@
           "umd": "index.umd.js"
         },
         "assets": [],
-        "external": [
-          "@mui/x-date-pickers",
-          "dayjs",
-          "react",
-          "@mui/material",
-          "@react-oauth/google",
-          "@mui/icons-material",
-          "@the-libs/base-shared",
-          "react-router-dom",
-          "react-dom",
-          "mongoose",
-          "react-hot-toast",
-          "zxcvbn",
-          "axios",
-          "@the-libs/chat-shared",
-          "@the-libs/auth-shared",
-          "@emotion/styled",
-          "graphql-request"
-        ],
-        "cleanOutDir": true
-      },
-      "configurations": {
-        "development": {
-          "mode": "development"
-        },
-        "production": {
-          "mode": "production"
-        }
+        "external": ["react", "dayjs", "@react-oauth/google"]
       }
     },
     "generate-declarations": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "tsc --project libs/base-frontend/tsconfig.declarations.json"
+        "commands": ["node scripts/move-index.js base-frontend"]
       }
-    },
-    "nx-release-publish": {
-      "options": {
-        "packageRoot": "dist/{projectRoot}"
-      }
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": ["generate-declarations"]
     }
   },
   "implicitDependencies": [],
