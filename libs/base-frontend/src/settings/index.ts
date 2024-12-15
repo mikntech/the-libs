@@ -17,7 +17,7 @@ export const getFrontendSettings = <
   env: NEXT extends true ? undefined : INPUT,
 ): InputWithoutBundlerPrefix => {
   if (next) return process.env;
-  let res:any;
+  let res;
   try {
     const envConfig = document.getElementById('mik-env-config')?.textContent;
     res = JSON.parse(envConfig ?? '{}');
@@ -32,7 +32,7 @@ export const getFrontendSettings = <
   ].forEach((key) => {
     if (res[key] === undefined)
       res[key] = removePrefix(
-        env[key] ?? (next ? 'NEXT_PUBLIC_' : 'VITE_'),
+        (env as any)[key] ?? (next ? 'NEXT_PUBLIC_' : 'VITE_'),
         next ? 'NEXT_PUBLIC_' : 'VITE_',
       );
   });
