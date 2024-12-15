@@ -29,7 +29,7 @@ export const getFrontendSettings = <
       ? ['NEXT_PUBLIC_NODE_ENV', 'NEXT_PUBLIC_STAGING_ENV']
       : ['VITE_NODE_ENV', 'VITE_STAGING_ENV']),
     ...keys,
-  ].forEach((key) => {
+  ].forEach((key:any) => {
     if (res[key] === undefined)
       res[key] = removePrefix(
         env[key] ?? (next ? 'NEXT_PUBLIC_' : 'VITE_'),
