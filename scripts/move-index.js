@@ -11,7 +11,7 @@ if (!libName) {
 // Define paths
 const distDir = path.join(__dirname, `../dist/libs/${libName}`);
 const srcDir = path.join(distDir, 'src');
-const indexTsFile = path.join(distDir, 'index.d. ts');
+const indexTsFile = path.join(distDir, 'index.d.ts');
 
 // Create an index.d.ts that exports everything from the src folder
 const files = fs.readdirSync(srcDir);
