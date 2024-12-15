@@ -32,9 +32,9 @@
     "@emotion/styled": "^11.14.0"
   },
   "type": "module",
-  "main": "./dist/index.cjs.js",
-  "module": "./dist/index.es.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.cjs.js",
+  "module": "./index.es.js",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
       "types": "./index.d.ts",
