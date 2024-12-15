@@ -11,9 +11,9 @@ if (!libName) {
 // Define paths
 const distDir = path.join(__dirname, `../dist/libs/${libName}`);
 const srcDir = path.join(distDir, 'src');
-const indexTsFile = path.join(distDir, 'index.ts');
+const indexTsFile = path.join(distDir, 'index.d. ts');
 
-// Create an index.ts that exports everything from the src folder
+// Create an index.d.ts that exports everything from the src folder
 const files = fs.readdirSync(srcDir);
 const exportStatements = files
   .filter(
@@ -23,8 +23,8 @@ const exportStatements = files
   .map((file) => `export * from './src/${file}';`)
   .join('\n');
 
-// Write the new index.ts file to the root of dist/libs/base-frontend
+// Write the new index.d.ts file to the root of dist/libs/base-frontend
 fs.writeFileSync(indexTsFile, exportStatements);
-console.log(`Created index.ts in the root with re-exports from src/`);
+console.log(`Created index.d.ts in the root with re-exports from src/`);
 
-// No need to remove or move files now, since we are simply creating the index.ts
+// No need to remove or move files now, since we are simply creating the index.d.ts
