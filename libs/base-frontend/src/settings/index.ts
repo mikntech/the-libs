@@ -21,7 +21,7 @@ export const getFrontendSettings = <
     const envConfig = document.getElementById('mik-env-config')?.textContent;
     res = JSON.parse(envConfig ?? '{}');
   } catch (e) {
-    res = (import.meta as any).env;
+    res = (import.meta as any)?.env ?? {};
   }
   [
     ...(next
@@ -31,7 +31,7 @@ export const getFrontendSettings = <
   ].forEach((key) => {
     if (res[key] === undefined)
       res[key] = removePrefix(
-        (import.meta as any).env[key],
+        (import.meta as any)?.env[key] ?? (next ? 'NEXT_PUBLIC_' : 'VITE_'),
         next ? 'NEXT_PUBLIC_' : 'VITE_',
       );
   });
