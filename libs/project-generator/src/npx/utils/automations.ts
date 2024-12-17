@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 export const getSrcLibraries = () => {
   const packageNamesPath = path.resolve(__dirname, 'packageNames.json');
   if (!fs.existsSync(packageNamesPath)) {
-    
+    console.error(
       'Error: packageNames.json not found. Make sure to generate it at compile time.',
     );
     return [];

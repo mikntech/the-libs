@@ -111,6 +111,6 @@ export const refreshCacheIfNeeded = async <
     .findOne({ _id: new mongoose.Types.ObjectId(changed_Id) });
   (await invalidate(String(myDoc._id), changedColl, changedDcc)) &&
     cacheField(fieldName, myDoc, compute)
-      .then(() => 
+      .then(() => console.log(fieldName + ' on ' + changed_Id + ' was renewed'))
       .then(() => extraCallBack());
 };

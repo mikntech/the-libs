@@ -48,6 +48,8 @@ export const complete = async ({
       params[0] as TODO,
       params[1] as TODO,
     );
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error with chat completion request:', error);
+  }
   return null;
 };

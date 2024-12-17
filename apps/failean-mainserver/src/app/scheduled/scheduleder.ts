@@ -31,7 +31,9 @@ const scheduleWaitingListReadyEmail = () => {
           }
         }
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   }, TEN_MINUTES_IN_MS * 2);
 };
 
@@ -50,7 +52,9 @@ const cleanOldTasks = () => {
           task.save();
         }
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   }, TEN_MINUTES_IN_MS / 3);
 };
 
@@ -59,7 +63,9 @@ const redirectLive = () => {
     try {
       axios.get('https://app.failean.com/');
       axios.get('https://www.failean.com/');
-    } catch (error) {}
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   }, TEN_MINUTES_IN_MS / 2);
 };
 
@@ -76,7 +82,9 @@ const giveSubscribers = () => {
                    }
                })*/
       //// using other method of refilling when charge made
-    } catch (error) {}
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   }, HOUR_IN_MS * 3);
 };
 

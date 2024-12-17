@@ -29,6 +29,7 @@ export const amendTokens = async (
     const saved = await add.save();
     return saved ? 'yes' : 'no';
   } catch (e) {
+    console.log(e);
     return 'no';
   }
 };

@@ -18,6 +18,7 @@ router.get('/data/critiqQuestionire/:ideaID', async (req, res) => {
                 .status(200)
                 .json(ideacritiqQuestionire.map((answer: CritiqDocument) => answer._doc)); */
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -54,6 +55,7 @@ router.post('/data/critiqQuestionire/update', async (req, res) => {
 
     return res.status(200).json({ message: 'Answer updated' });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });

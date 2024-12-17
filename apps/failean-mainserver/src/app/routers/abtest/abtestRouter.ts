@@ -17,6 +17,7 @@ router.post('/failean', async (req, res) => {
     await doc.save();
     return res.status(200).redirect('https://failean.com/suc');
   } catch (error) {
+    console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
   }
 });
@@ -31,6 +32,7 @@ router.post('/scailean', async (req, res) => {
     await doc.save();
     return res.status(200).redirect('https://scailean.com/suc');
   } catch (error) {
+    console.error('An error occurred:', error);
     res.status(500).send('Internal Server Error');
   }
 });

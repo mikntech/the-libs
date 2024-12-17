@@ -19,6 +19,7 @@ router.get<never, API.Accounts.CountTokens.Res>(
 
       return res.status(200).json({ tokens: await tokenCount(user._id) });
     } catch (err) {
+      console.error(err);
       return res.status(500).json({ errorMessage: 'Server error logged' });
     }
   },

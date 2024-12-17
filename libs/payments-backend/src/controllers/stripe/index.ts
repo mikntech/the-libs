@@ -58,7 +58,7 @@ export const createConnectedAccount =
         country: 'US',
       });
     } catch (error) {
-      
+      console.error(
         'An error occurred when calling the Stripe API to create an account',
         error,
       );
@@ -81,7 +81,7 @@ export const createConnectedAccountLink = async (
       }),
     );
   } catch (error) {
-    
+    console.error(
       'An error occurred when calling the Stripe API to create an account link:',
       error,
     );
@@ -100,5 +100,6 @@ export const createConnectedAccountAndAccountLink = async (
   const accountId = await createConnectedAccountAndGetId();
   if (accountId)
     return createConnectedAccountLink(accountId, returnUrl, refreshUrl);
-  else return null;
+  else console.log('error');
+  return null;
 };

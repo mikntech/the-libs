@@ -30,7 +30,9 @@ export const createECSCluster = async (
   try {
     const command = new CreateStackCommand(params);
     const response = await client.send(command);
-
+    console.log('ECS Cluster Stack Creation Initiated:', response);
     return response;
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error creating ECS cluster stack:', error);
+  }
 };

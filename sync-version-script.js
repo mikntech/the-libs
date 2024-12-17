@@ -6,7 +6,7 @@ const rootPackageJson = require(rootPackageJsonPath);
 const rootVersion = rootPackageJson.version;
 
 if (!rootVersion) {
-  
+  console.error('No version found in the root package.json.');
   process.exit(1);
 }
 
@@ -33,14 +33,14 @@ try {
         JSON.stringify(subfolderPackageJson, null, 2),
         'utf-8',
       );
-      
+      console.log(
         `Updated version in ${libName}/package.json to ${rootVersion}`,
       );
     } else {
-      
+      console.log(`No package.json found in ${libName}, skipping...`);
     }
   });
 } catch (error) {
-  
+  console.error(`Failed to update versions:`, error.message);
   process.exit(1);
 }

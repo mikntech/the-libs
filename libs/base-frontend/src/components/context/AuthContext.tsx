@@ -67,7 +67,9 @@ export const AuthContextProvider = ({
     try {
       await server?.axiosInstance.get<undefined>('api/auth/log/out');
       setUser(undefined);
-    } catch (error) {}
+    } catch (error) {
+      console.log('Error during sign out', error);
+    }
     refreshUserData();
   };
 

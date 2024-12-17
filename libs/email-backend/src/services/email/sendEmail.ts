@@ -18,10 +18,10 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
       subject,
       html,
     });
-    
+    console.log('Successfully sent email to ' + to);
   } catch (error) {
-    
+    console.log('Error sending email:', error);
     getExpressSettings().stagingEnv === StagingEnvironment.Local &&
-      
+      console.log('tried to email about ', subject, ': ', html);
   }
 };

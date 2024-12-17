@@ -18,3 +18,5 @@ fs.writeFileSync(
   path.resolve(__dirname, 'packageNames.json'),
   JSON.stringify(libs, null, 2),
 );
+
+console.log('Package names saved to packageNames.json');

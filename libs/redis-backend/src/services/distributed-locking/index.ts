@@ -18,11 +18,15 @@ export const runTaskWithLock = <CBR = any>(
     try {
       const lock = await redlock.acquire([LOCK_KEY], LOCK_TIMEOUT);
       try {
+        console.log('Running periodic task...');
         task();
       } finally {
         await lock.release();
+        console.log('Task completed and lock released.');
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log('Another instance is already running the task.');
+    }
   };
 
   interval ? setInterval(runTask, interval) : setTimeout(runTask, 0);

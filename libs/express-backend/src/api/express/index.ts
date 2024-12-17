@@ -45,12 +45,13 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   dontLogToMongo: boolean = false,
   timeoutInMS?: number,
 ) => {
+  console.log('Starting Server...');
   const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
 
   const origin = disableCors
     ? '*'
     : [...Object.values(clientDomains), ...extraCorsOrigins];
-
+  console.log('cors origin: ', origin);
   expressApp.set('trust proxy', true);
 
   const defaultPreMiddlewares = [
@@ -101,7 +102,10 @@ export const startExpress = async <CB extends { [s: string]: string }>(
     );
 
     const httpServer =
-      !dontListen && expressApp.listen(port, '0.0.0.0', () => {});
+      !dontListen &&
+      expressApp.listen(port, '0.0.0.0', () => {
+        console.log('Server is ready at ' + getExpressSettings().myDomain);
+      });
     timeoutInMS && expressApp.use(timeout(timeoutInMS) as RequestHandler);
     return { app: expressApp, httpServer };
   } catch (e) {

@@ -13,9 +13,11 @@ export async function postToFacebook(message: string) {
     });
 
     if (response.status === 200) {
+      console.log('Post was successful.');
+      console.log('Post ID:', response.data.id);
     }
   } catch (error: any) {
-    
+    console.error(
       'Error posting to Facebook:',
       error.response?.data || error.message,
     );

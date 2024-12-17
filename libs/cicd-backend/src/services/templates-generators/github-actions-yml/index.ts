@@ -320,6 +320,6 @@ jobs:
 `,
       )
       .join('');
-  log && 
+  log && console.log(ret);
   return ret;
 };

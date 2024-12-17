@@ -21,6 +21,7 @@ router.get('/getIdeas', async (req, res) => {
         .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime()),
     });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -49,6 +50,7 @@ router.post('/saveIdea', async (req, res) => {
     }).save();
     return res.status(200).json({ message: 'Idea saved' });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -74,6 +76,7 @@ router.post('/archiveIdea', async (req, res) => {
         .status(401)
         .json({ errorMessage: 'Unauthorized, not your idea' });
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });

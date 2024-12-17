@@ -20,7 +20,7 @@ WORKDIR /app
 COPY package.json ./
 ${customInstallLine ?? 'RUN npm i --legacy-peer-deps'}
 `;
-  log && 
+  log && console.log(ret);
   return ret;
 };
 
@@ -49,7 +49,7 @@ COPY --from=builder /app .
 CMD ["node", "dist/apps/${appName}/index.${customEntryPointExtension ?? 'mjs'}"]
 EXPOSE ${port}
 `;
-  log && 
+  log && console.log(ret);
   return ret;
 };
 
@@ -78,7 +78,7 @@ COPY --from=builder /app .
 CMD ["node", "dist/apps/${appName}/server.${customEntryPointExtension ?? 'js'}"]
 EXPOSE ${port}
 `;
-  log && 
+  log && console.log(ret);
   return ret;
 };
 
@@ -128,6 +128,6 @@ ENV PORT=${String(port)}
 ENV HOSTNAME="0.0.0.0"
 CMD ["node", "server.js"]
 `;
-  log && 
+  log && console.log(ret);
   return ret;
 };

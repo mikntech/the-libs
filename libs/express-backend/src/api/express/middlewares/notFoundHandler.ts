@@ -100,11 +100,11 @@ export const autoHelper = (
     try {
       // Extract routes from the application router stack
       const allRoutes = extractRoutes(req.app._router.stack);
-      //
+      // console.log('Extracted Routes:', allRoutes);
 
       // Filter routes based on the base path
       const relevantRoutes = filterRoutes(allRoutes, basePath);
-      //
+      // console.log('Relevant Routes:', relevantRoutes);
 
       // Determine available routes
       const availableRoutes =
@@ -119,7 +119,9 @@ export const autoHelper = (
       if (availableRoutes[0] !== 'No available routes under this path') {
         try {
           inTree = buildRouteTree(availableRoutes);
-        } catch (error) {}
+        } catch (error) {
+          console.error('Error building route tree:', error);
+        }
       }
 
       // Respond with the results
@@ -129,6 +131,7 @@ export const autoHelper = (
         inTree,
       });
     } catch (error: any) {
+      console.error('Error processing autoHelper middleware:', error);
       res.status(500).json({
         message: 'An unexpected error occurred in the autoHelper middleware',
         error: error.message,

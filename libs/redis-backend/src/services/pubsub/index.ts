@@ -23,6 +23,8 @@ export class PubSub {
 
   subscribe(channel: string, callback: (message: string) => void): () => void {
     if (!this.activeSubscriptions.has(channel)) {
+      console.log(`Subscribing to new channel: ${channel}`);
+
       const messageListeners = new Set<(message: string) => void>();
       const messageListener = (subscribedChannel: string, message: string) => {
         if (subscribedChannel === channel) {
@@ -35,14 +37,14 @@ export class PubSub {
       // Define cleanup function explicitly
       const cleanup: () => void = () => {
         this.redisSubscriber?.unsubscribe(channel, (err: Error) => {
-          if (err) 
+          if (err) console.error('Redis unsubscription failed:', err);
         });
         this.redisSubscriber?.off('message', messageListener);
         this.activeSubscriptions.delete(channel);
       };
 
       this.redisSubscriber?.subscribe(channel, (err: Error) => {
-        if (err) 
+        if (err) console.error('Redis subscription failed:', err);
       });
 
       this.redisSubscriber?.on('message', messageListener);
@@ -66,7 +68,7 @@ export class PubSub {
   publish(channel: string, message: string) {
     if (this.redisPublisher) {
       this.redisPublisher.publish(channel, message, (err: any) => {
-        if (err) 
+        if (err) console.error('Redis publish failed:', err);
       });
     } else {
       this.fallback.publish(channel, message);
@@ -78,7 +80,7 @@ export class PubSub {
       this.redisSubscriber.unsubscribe(
         tokenOrChannel as string,
         (err: Error) => {
-          if (err) 
+          if (err) console.error('Redis unsubscribe failed:', err);
         },
       );
     } else {

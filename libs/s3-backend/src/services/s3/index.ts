@@ -38,7 +38,9 @@ export const streamFile = async (
     });
 
     await upload.done();
+    console.log(`File uploaded successfully to S3: ${key}`);
   } catch (err) {
+    console.error(`Failed to upload file to S3: ${key}`, err);
     throw err;
   }
 };

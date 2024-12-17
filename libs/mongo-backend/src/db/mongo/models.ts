@@ -49,10 +49,11 @@ const connect = async (
   mongoose.set('debug', logMongoToConsole ?? true);
   try {
     await mongoose.connect(mongoSettings.mongoURI);
-
+    console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
   } catch (err) {
+    console.log('mongo connection error:' + err);
     throw new Error(String(err));
   }
 };

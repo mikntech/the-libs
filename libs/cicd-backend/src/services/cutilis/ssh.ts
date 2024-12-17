@@ -33,7 +33,8 @@ export const generateSSHKey = (
         await fsPromises.unlink(privateKeyPath);
         await fsPromises.unlink(publicKeyPath);
         await fsPromises.rmdir(tempDir);
-
+        console.log('Private Key:\n', printLongTextNicely(privateKey));
+        console.log('Public Key:\n', publicKey);
         resolve({ privateKey, publicKey });
       } catch (readError: any) {
         reject(`Error reading keys: ${readError?.message || readError}`);

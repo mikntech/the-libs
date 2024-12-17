@@ -23,6 +23,7 @@ router.get('/getPromptGraph', async (_, res) => {
       graph,
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -34,6 +35,7 @@ router.get('/getDeckPromptGraph', async (_, res) => {
       graph,
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -72,6 +74,7 @@ router.post('/getPromptResult', async (req, res) => {
       promptResult: promptResult[promptResult.length - 1],
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -99,11 +102,12 @@ router.post('/preRunPrompt', async (req, res) => {
             promptName: promptNames,
           })
         ).data.avg;
-
+        console.log();
         if (avg !== 'no') avgx = avg;
         else throw new Error('kakiii');
       }
     } catch (e) {
+      console.log('estimated kaki - ' + e);
       avgx = await Promise.all(
         promptNames.map((promptName) =>
           estimateOpenAI(user, ideaID, promptName, feedback),
@@ -119,6 +123,7 @@ router.post('/preRunPrompt', async (req, res) => {
     }
     return res.status(200).json({ price: avgx });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ clientMessage: 'An error occurred' });
   }
 });
@@ -146,6 +151,7 @@ router.post('/runAndGetPromptResult', async (req, res) => {
 
     return res.status(200).json({ addedJobSequence: true });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ clientMessage: 'An error occurred' });
   }
 });
@@ -183,6 +189,7 @@ router.post('/savePromptResult', async (req, res) => {
       response: savedPromptResult.data,
     });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ errorMessage: JSON.stringify(err) });
   }
 });
@@ -199,6 +206,7 @@ router.get('/tasks', async (req, res) => {
       ),
     });
   } catch (error) {
+    console.error('Error:', error);
     return res.status(500).json({ message: 'An error occurred' });
   }
 });

@@ -40,12 +40,12 @@ router.post('/signupreq', async (req, res) => {
     const { subject, body } = websiteSignup(url);
 
     sendEmail(email, subject, body)
-      .then(() => 
-      .catch((err) => 
+      .then(() => console.log('sent registration email'))
+      .catch((err) => console.error(err));
 
     return res.status(300).redirect(`${clientDomain}/wxwxwx`);
   } catch (err) {
-    
+    console.error(err);
 
     res.status(500).send();
   }

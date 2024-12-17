@@ -19,8 +19,14 @@ const pubsub = new RedisPubSub({
   subscriber: new Redis(redisConnectionString),
 });
 
-pubsub.getSubscriber().on('connect', () => {});
+console.log('trying to connect to Redis.....');
 
-pubsub.getSubscriber().on('error', (error) => {});
+pubsub.getSubscriber().on('connect', () => {
+  console.log('Subscriber connected to Redis');
+});
+
+pubsub.getSubscriber().on('error', (error) => {
+  console.error('Subscriber failed to connect to Redis', error);
+});
 
 export default pubsub;
