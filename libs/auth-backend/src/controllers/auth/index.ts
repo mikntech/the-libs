@@ -100,10 +100,6 @@ export const genAuthControllers = <
     val,
     options: {
       path: '/',
-      domain:
-        mongoSettings.nodeEnv === NodeEnvironment.Production
-          ? getClientDomain(userType).replace(/^https?:\/\//, '')
-          : '127.0.0.1',
       maxAge: expirationTime,
       httpOnly: true,
       sameSite:
