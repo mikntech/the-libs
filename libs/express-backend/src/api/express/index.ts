@@ -52,6 +52,8 @@ export const startExpress = async <CB extends { [s: string]: string }>(
     ? '*'
     : [...Object.values(clientDomains), ...extraCorsOrigins];
   console.log('cors origin: ', origin);
+  expressApp.set('trust proxy', true);
+
   const defaultPreMiddlewares = [
     cookieParser(),
     json({ limit: '50mb' }),
