@@ -15,18 +15,14 @@ export const doCommand = (cmnd: string, retries = MAX_RETRIES) => {
     } catch (error: any) {
       const errorOutput = error?.stderr?.toString() || error?.message || '';
       if (errorOutput.includes('NX   LOCK_FILES_CHANGED')) {
-        console.warn(`Lock file changed. Retrying... (Attempt ${attempt + 1})`);
         try {
           execSync('npm install', { stdio: 'inherit' }); // Or yarn install
         } catch (installError: any) {
-          console.error('Failed to fix lock file issue:', installError.message);
           throw error; // Re-throw if retry fails
         }
       } else if (errorOutput.includes('NX   Failed to process project graph')) {
-        console.warn('Resetting Nx workspace...');
         execSync('nx reset', { stdio: 'inherit' });
       } else {
-        console.error('Command failed for another reason:', errorOutput);
         throw error;
       }
     }

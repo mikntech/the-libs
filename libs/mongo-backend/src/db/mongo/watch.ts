@@ -54,7 +54,6 @@ export class WatchDB {
     options?: TODO, // Replace TODO with the actual type for options if needed
   ): void {
     if (this.wholeDBChangeStream) {
-      console.warn('A database-wide change stream is already active.');
       return;
     }
 
@@ -62,10 +61,7 @@ export class WatchDB {
       this.wholeDBChangeStream = dbConnection
         .watch([], options)
         .on('change', handler);
-      console.log('Database-wide change stream started.');
-    } catch (err) {
-      console.error('Failed to start database-wide change stream:', err);
-    }
+    } catch (err) {}
   }
 
   /**
@@ -75,9 +71,7 @@ export class WatchDB {
     if (this.wholeDBChangeStream) {
       await this.wholeDBChangeStream.close();
       this.wholeDBChangeStream = null;
-      console.log('Database-wide change stream canceled.');
     } else {
-      console.warn('No active database-wide change stream to cancel.');
     }
   }
 }

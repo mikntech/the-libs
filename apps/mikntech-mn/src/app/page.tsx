@@ -10,7 +10,6 @@ export default function Index() {
         window.location.href = 'https://mikntech.com/who';
       })
       .catch((error) => {
-        console.error('Error sending analytics:', error);
         // Optionally still redirect even if the fetch fails
         window.location.href = 'https://mikntech.com/who';
       });

@@ -39,7 +39,7 @@ export const getDefaultSecurityGroupId = async (defaultVpcId: string) => {
     const response = await ec2Client.send(command);
     return response.SecurityGroups[0].GroupId;
   } catch (error) {
-    console.error('Error retrieving default security group:', error);
+    
   }
 };
 
@@ -54,7 +54,7 @@ export const getAllSubnetIds = async (defaultVpcId: string) => {
       (subnet: { SubnetId: string }) => subnet.SubnetId,
     );
   } catch (error) {
-    console.error('Error retrieving subnets:', error);
+    
   }
 };
 
@@ -85,14 +85,14 @@ export const getLatestTaskDefinitionArn = async (familyPrefix: string) => {
 
     const describeResponse = await ecsClient.send(describeCommand);
 
-    console.log(
+    
       'Latest Task Definition Details:',
       describeResponse.taskDefinition,
     );
 
     return latestTaskDefinitionArn;
   } catch (error) {
-    console.error('Error retrieving latest task definition ARN:', error);
+    
   }
 };
 
@@ -134,9 +134,9 @@ export const createECSService = async (
   try {
     const command = new CreateStackCommand(params);
     const response = await cloudFormationClient.send(command);
-    console.log('ECS Service Stack Creation Initiated:', response);
+    
     return response;
   } catch (error) {
-    console.error('Error creating ECS service stack:', error);
+    
   }
 };

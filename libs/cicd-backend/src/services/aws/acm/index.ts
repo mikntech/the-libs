@@ -33,11 +33,11 @@ const getHostedZoneId = async (domainName: string) => {
       );
 
       if (hostedZone) {
-        console.log('Found hosted zone ID:', hostedZone.Id);
+        
         return hostedZone.Id.replace('/hostedzone/', ''); // Clean ID
       }
     } catch (error) {
-      console.error(
+      
         `Error retrieving hosted zone ID for ${searchDomain}:`,
         error,
       );
@@ -56,7 +56,7 @@ export const requestCertificate = async (domainName: string) => {
 
   const hostedZoneId = await getHostedZoneId(domainName);
   if (!hostedZoneId) {
-    console.error('Hosted zone ID not found, aborting certificate request.');
+    
     return;
   }
 
@@ -70,7 +70,7 @@ export const requestCertificate = async (domainName: string) => {
     const requestCommand = new RequestCertificateCommand(certParams);
     const certResponse = await acmClient.send(requestCommand);
     const certificateArn = certResponse.CertificateArn;
-    console.log('Certificate requested:', certificateArn);
+    
 
     // Step 2: Poll ACM to ensure DNS validation options are available
     let validationOptions;
@@ -86,7 +86,7 @@ export const requestCertificate = async (domainName: string) => {
       if (validationOptions.every((option: TODO) => option.ResourceRecord)) {
         break;
       }
-      console.log(
+      
         `Waiting for DNS validation records... Attempt ${attempt + 1}`,
       );
     }
@@ -114,16 +114,16 @@ export const requestCertificate = async (domainName: string) => {
 
         const dnsCommand = new ChangeResourceRecordSetsCommand(dnsParams);
         await route53Client.send(dnsCommand);
-        console.log('DNS validation record created for:', domainName);
+        
         return certificateArn;
       } else {
-        console.error('Validation record is missing in ACM response.');
+        
       }
     }
 
-    console.log('Certificate request and DNS validation setup completed.');
+    
   } catch (error) {
-    console.error(
+    
       'Error requesting certificate or creating DNS record:',
       error,
     );
@@ -146,14 +146,14 @@ export const checkValidationStatus = async (
     const certDetails = await acmClient.send(describeCommand);
     const status = certDetails.Certificate.Status;
 
-    console.log(`Validation status: ${status} (Attempt ${attempt + 1})`);
+    
 
     if (status === 'ISSUED') {
-      console.log('Certificate successfully validated and issued.');
+      
       return;
     }
   }
-  console.log(
+  
     'Validation is still pending. Check the ACM console for more details.',
   );
 };

@@ -8,7 +8,7 @@ const { region, keyID, secretKey } = cicdSettings.aws;
 
 export const enableRegion = (regionToEnable: string) => {
   if (!region || !keyID || !secretKey) {
-    console.error(
+    
       'Please ensure AWS_KEY_ID, AWS_SECRET_KEY, AWS_REGION are set in the .env file.',
     );
     process.exit(1);
@@ -21,13 +21,12 @@ export const enableRegion = (regionToEnable: string) => {
 
   exec(command, (error: any, stdout: any, stderr: any) => {
     if (error) {
-      console.error(`Error enabling region: ${error.message}`);
+      
       return;
     }
     if (stderr) {
-      console.error(`stderr: ${stderr}`);
+      
       return;
     }
-    console.log(`Region enabled successfully: ${stdout}`);
   });
 };

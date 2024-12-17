@@ -6,7 +6,6 @@ export const GoogleExp = () => (
   <GoogleOAuthProvider clientId="27110426580-bejd6ljp9aaiqi65jt93kvedsfsr9pgg.apps.googleusercontent.com">
     <GoogleLogin
       onSuccess={(credentialResponse) => {
-        console.log(credentialResponse);
         fetch('http://127.0.0.1:4321/api/auth/log/google', {
           method: 'POST', // HTTP method
           headers: {
@@ -20,16 +19,10 @@ export const GoogleExp = () => (
             }
             return response.json(); // Assuming the server responds with JSON
           })
-          .then((data) => {
-            console.log('Success:', data); // Handle the response data
-          })
-          .catch((error) => {
-            console.error('Error:', error); // Handle any errors
-          });
+          .then((data) => {})
+          .catch((error) => {});
       }}
-      onError={() => {
-        console.log('Login Failed');
-      }}
+      onError={() => {}}
     />
     ;
   </GoogleOAuthProvider>

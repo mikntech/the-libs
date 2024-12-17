@@ -21,8 +21,5 @@ export const sendPushNotification = async <D extends { domain: string }>(
       subscription,
       JSON.stringify({ ...payload, ...data }),
     );
-    console.log('Notification sent successfully.');
-  } catch (error) {
-    console.log('Error sending notification:', error);
-  }
+  } catch (error) {}
 };

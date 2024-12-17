@@ -89,7 +89,6 @@ export const ServerProvider = <FESOutput extends { STAGING_ENV: string }>({
           setTimeout(checkStatus, tryInterval);
         }
       } catch (error) {
-        console.log('An error occurred while checking the server: ', error);
         setStatus(BAD_MESSAGE);
         setTimeout(checkStatus, tryInterval);
       }

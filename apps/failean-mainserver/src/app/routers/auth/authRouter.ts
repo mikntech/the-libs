@@ -53,12 +53,12 @@ router.post<any, any>('/signupreq', async (req, res) => {
       const { subject, body } = signupreq(url);
 
       sendEmail(email, subject, body)
-        .then(() => console.log('sent registration email - ' + body))
-        .catch((err) => console.error(err));
+        .then(() => 
+        .catch((err) => 
 
       res.json({ result: 'email successfully sent to ' + email });
     } catch (err) {
-      console.error(err);
+      
 
       res.status(500).json({
         serverError:
@@ -159,7 +159,7 @@ router.post<any, any>('/signupfin', async (req, res) => {
         })
         .send();
     } catch (err) {
-      console.error(err);
+      
       res
         .status(500)
         .json({ serverError: 'Unexpected error occurred in the server' });
@@ -184,7 +184,7 @@ router.post<any, any>('/signin', async (req, res) => {
           time,
           reason,
         })
-        .catch((err) => console.error(err));
+        .catch((err) => 
     try {
       const { email, password } = req.body;
       if (!email || !password) {
@@ -233,7 +233,7 @@ router.post<any, any>('/signin', async (req, res) => {
         })
         .send();
     } catch (err) {
-      console.error(err);
+      
       log(
         false,
         req.body.email,
@@ -354,12 +354,12 @@ router.post<any, any>('/passresreq', async (req, res) => {
       const { subject, body } = passreset(url);
 
       sendEmail(email, subject, body)
-        .then(() => console.log('sent password reset email'))
-        .catch((err) => console.error(err));
+        .then(() => 
+        .catch((err) => 
 
       res.json({ result: 'email successfully sent to ' + email });
     } catch (err) {
-      console.error(err);
+      
       res
         .status(500)
         .json({ serverError: 'Unexpected error occurred in the server' });
@@ -403,7 +403,7 @@ router.post<any, any>('/passresfin', async (req, res) => {
       await user.save();
       res.json({ changed: 'yes' });
     } catch (err) {
-      console.error(err);
+      
       res
         .status(500)
         .json({ serverError: 'Unexpected error occurred in the server' });
@@ -433,7 +433,7 @@ router.post<any, any>('/updaten', async (req, res) => {
       await user.save();
       res.json({ changed: 'yes' });
     } catch (err) {
-      console.error(err);
+      
       res
         .status(500)
         .json({ serverError: 'Unexpected error occurred in the server' });

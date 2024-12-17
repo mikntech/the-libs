@@ -21,7 +21,6 @@ export const createS3Bucket = async (
       Bucket: bucketName,
     });
     const createBucketResponse = await client.send(createBucketCommand);
-    console.log('S3 Bucket Created Successfully:', createBucketResponse);
 
     if (enableVersioning) {
       const versioningCommand = new PutBucketVersioningCommand({
@@ -31,7 +30,6 @@ export const createS3Bucket = async (
         },
       });
       await client.send(versioningCommand);
-      console.log(`Versioning enabled for bucket: ${bucketName}`);
     }
 
     if (publicAccess) {
@@ -52,11 +50,8 @@ export const createS3Bucket = async (
         Policy: JSON.stringify(publicPolicy),
       });
       await client.send(policyCommand);
-      console.log(`Public access policy set for bucket: ${bucketName}`);
     }
 
     return createBucketResponse;
-  } catch (error) {
-    console.error('Error creating S3 bucket:', error);
-  }
+  } catch (error) {}
 };

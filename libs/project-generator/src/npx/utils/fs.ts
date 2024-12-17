@@ -46,8 +46,5 @@ export const modifyJsonFile = async (filePath: string, changes: {}) => {
     }
 
     await fs.writeFile(filePath, JSON.stringify(json, null, 2), 'utf-8');
-    console.log(`Modified ${filePath} successfully.`);
-  } catch (error) {
-    console.error(`Error modifying ${filePath}:`, error);
-  }
+  } catch (error) {}
 };

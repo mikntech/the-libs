@@ -73,7 +73,7 @@ openAIQueue.process(async (job) => {
               if (promptPart.content === 'idea') return idea?.idea;
               i++;
               const res = cleanDeps[i - 1]?.x;
-              console.log(
+              
                 promptPart.content + ': ',
                 !(res?.length > 1) ? 'is missing!' : 'is ok so false',
               );
@@ -84,7 +84,7 @@ openAIQueue.process(async (job) => {
         );
 
         if (missing) throw new Error('Missing dependencies');
-        console.log('goooodddddd3');
+        
 
         const promptResult =
           feedback?.length &&
@@ -123,7 +123,7 @@ openAIQueue.process(async (job) => {
         else {
           const { completion, price } = res;
 
-          console.log('goooodddddd2');
+          
 
           const savedResult = new PromptResultModel({
             owner: user?._id,
@@ -162,15 +162,15 @@ openAIQueue.process(async (job) => {
                 ideaID,
                 openAICallReqUUID: reqUUID || 'unknown',
               })
-              .catch((err) => console.error(err));
-            console.log(
+              .catch((err) => 
+            
               'result was: ',
               similarToInvalidGood,
               similarToInvalidBad,
               similarToInvalidBad2,
             );
             throw new Error('invalid');
-            console.log('goooodddddd');
+            
           } else {
             const task = await getAITaskModel().findById(taskID);
             if (task) {
@@ -182,7 +182,7 @@ openAIQueue.process(async (job) => {
             pubsub.publish('JOB_COMPLETED', {
               jobCompleted: (job?.id || '8765') + '',
             });
-            console.log('Published update for job ', {
+            
               jobCompleted: (job?.id || '8765') + '',
             });
           }
@@ -190,7 +190,7 @@ openAIQueue.process(async (job) => {
       });
     }
   } catch (error) {
-    console.error(`An error occurred during job processing: ${error}`);
+    
     pubsub.publish('JOB_COMPLETED', {
       jobCompleted: (job?.id || '8765') + '',
       status: 'error',
@@ -206,7 +206,7 @@ openAIQueue.process(async (job) => {
   }
 });
 openAIQueue.on('error', (error) => {
-  console.error(`A queue error happened: ${error}`);
+  
 });
 
 openAIQueue.on('completed', () => {});

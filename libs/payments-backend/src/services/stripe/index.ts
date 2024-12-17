@@ -28,7 +28,7 @@ const saveStripeEventToDB = async (event: RawStripeEvent) => {
   } catch (e) {
     !String(e).startsWith(
       'MongoServerError: E11000 duplicate key error collection',
-    ) && console.log(e);
+    ) && 
   }
 };
 
@@ -37,12 +37,12 @@ export const webhookHandler = async (rawEvent: RawStripeEvent) => {
     await saveStripeEventToDB(rawEvent);
     await triggerSync();
   } catch (e) {
-    console.log('stipe webhook error');
+    
   }
 };
 
 const stripeWebhookPath = '/stripe-webhook';
-console.log(
+
   `the stripe webhook path is ${getExpressSettings().myDomain}${stripeWebhookPath}`,
 );
 expressApp.post(
@@ -51,7 +51,7 @@ expressApp.post(
   (request: Request, response: Response) => {
     const event = request.body;
     webhookHandler(event).then(() =>
-      console.log('stripe webhook event received'),
+      
     );
     response.json({ received: true });
   },

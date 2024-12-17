@@ -182,7 +182,6 @@ export const validateMap = (map: PromptMap): boolean => {
         part.content !== 'idea' &&
         !(part.content in map)
       ) {
-        console.log(`Invalid content "${part.content}" in prompt "${key}"`);
         return false;
       }
     }

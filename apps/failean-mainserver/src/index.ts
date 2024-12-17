@@ -30,20 +30,20 @@ const connectApolloServer = async () => {
       execute,
       subscribe,
       onConnect: () => {
-        console.log('Client connected');
+        
       },
       onSubscribe: () => {
-        console.log('Received new subscription');
+        
       },
     },
     wsServer,
   );
 
   httpServer.listen(port, '0.0.0.0', () => {
-    /*console.log(
+    /*
                 `Server is ready at http://127.0.0.1:${port}${apolloServer.graphqlPath}`
             );
-            console.log(`Subscriptions ready at ws://127.0.0.1:${port}/graphql`);*/
+            
   });
 };
 
@@ -51,7 +51,7 @@ const setup = async () => {
   try {
     await connectApolloServer();
   } catch (error) {
-    // console.error(error);
+    // 
   }
 };
 

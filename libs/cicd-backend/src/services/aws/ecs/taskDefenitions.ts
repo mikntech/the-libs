@@ -41,15 +41,12 @@ export const createTaskDefinition = async (
           (policy: TODO) => policy.PolicyArn === ecsPolicyArn,
         );
         if (hasECSPolicy) {
-          console.log('Found existing ECS-compatible role:', role.Arn);
           return role.Arn;
         }
       }
 
-      console.log('No ECS-compatible role found. A new role will be created.');
       return null;
     } catch (error) {
-      console.error('Error finding ECS role:', error);
       throw error;
     }
   };
@@ -75,7 +72,6 @@ export const createTaskDefinition = async (
     try {
       const createRoleCommand = new CreateRoleCommand(createRoleParams);
       const createRoleResponse = await iamClient.send(createRoleCommand);
-      console.log('Role created:', createRoleResponse.Role.Arn);
 
       // Attach the AmazonECSTaskExecutionRolePolicy
       const attachPolicyCommand = new AttachRolePolicyCommand({
@@ -83,11 +79,9 @@ export const createTaskDefinition = async (
         PolicyArn: ecsPolicyArn,
       });
       await iamClient.send(attachPolicyCommand);
-      console.log('Policy attached to role:', roleName);
 
       return createRoleResponse.Role.Arn;
     } catch (error) {
-      console.error('Error creating role:', error);
       throw error;
     }
   };
@@ -148,9 +142,7 @@ export const createTaskDefinition = async (
   try {
     const command = new RegisterTaskDefinitionCommand(params);
     const response = await escClient.send(command);
-    console.log('Task Definition Registered Successfully:', response);
+
     return response;
-  } catch (error) {
-    console.error('Error registering task definition:', error);
-  }
+  } catch (error) {}
 };

@@ -29,7 +29,6 @@ export const signProfilePic = async <UserI extends User = User>(
     try {
       user.profilePictureUri = await preSignFile(s3Path, 10 * 60);
     } catch {
-      console.log('no profile picture');
       user.profilePictureUri = s3Path;
     }
   return user;
@@ -56,32 +55,22 @@ export const authorizer =
     next: NextFunction,
   ) => {
     try {
-      console.log("req.cookies['jwt']: ", req.cookies['jwt']);
-      console.log('authSettings.jwtSecret: ', authSettings.jwtSecret);
       const validatedUser = (await jsonwebtoken.verify(
         req.cookies['jwt'],
         authSettings.jwtSecret,
       )) as JwtPayload;
-      console.log('validatedUser: ', validatedUser);
       const { _id, userType } = validatedUser as {
         _id: Types.ObjectId;
         userType: UserType;
       };
-      console.log('_id: ', _id);
-      console.log('userType: ', userType);
       const { getModel } = genAuthControllers(strategy);
-      console.log('getModel: ', getModel);
       const m = await getModel(userType);
-      console.log('m: ', m);
       req.user = await signProfilePic<UserI>(
         await findDocs<false, TODO>(m, m.findById(String(_id))),
       );
-      console.log('req.user: ', req.user);
       req.userType = userType;
-      console.log('req.userType: ', req.userType);
     } catch (err) {
       req.user = null;
-      console.log('err: ', err);
     }
     next();
   };

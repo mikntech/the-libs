@@ -53,7 +53,7 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3 = async (
   await createMultipleECRRepositories(projectName, appNames, DEP_REGION);
 
   const ecrUri = await getEcrUri();
-  console.log(
+  
     printLongText(
       (
         await Promise.all(

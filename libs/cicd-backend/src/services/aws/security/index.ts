@@ -33,7 +33,6 @@ export const updateSecurityGroupInboundRules = async (
         IpPermissions: securityGroup.IpPermissions, // Revoke all existing inbound rules
       });
       await ec2Client.send(revokeCommand);
-      console.log('Existing inbound rules revoked.');
     }
 
     // Step 3: Add new rules
@@ -72,8 +71,5 @@ export const updateSecurityGroupInboundRules = async (
       newRulesParams,
     );
     const response = await ec2Client.send(authorizeCommand);
-    console.log('New inbound rules added:', response);
-  } catch (error) {
-    console.error('Error updating security group:', error);
-  }
+  } catch (error) {}
 };

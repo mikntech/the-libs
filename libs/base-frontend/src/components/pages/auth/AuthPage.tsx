@@ -415,9 +415,7 @@ export const AuthPage = <UserType,>({
      });*/
   };
 
-  const handleLoginFailure = (error: TODO) => {
-    console.error('Failed to login with Google:', error);
-  };
+  const handleLoginFailure = (error: TODO) => {};
 
   const authJSX = (
     <Box sx={{ padding: '20px', width: '75%' }}>

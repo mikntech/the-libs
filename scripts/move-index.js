@@ -4,7 +4,6 @@ const path = require('path');
 // Get the library name or directory from arguments
 const libName = process.argv[2];
 if (!libName) {
-  console.error('Please provide the library name as an argument.');
   process.exit(1);
 }
 
@@ -25,6 +24,5 @@ const exportStatements = files
 
 // Write the new index.d.ts file to the root of dist/libs/base-frontend
 fs.writeFileSync(indexTsFile, exportStatements);
-console.log(`Created index.d.ts in the root with re-exports from src/`);
 
 // No need to remove or move files now, since we are simply creating the index.d.ts

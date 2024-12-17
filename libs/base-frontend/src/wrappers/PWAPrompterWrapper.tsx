@@ -37,9 +37,7 @@ export const PWAPrompterWrapper = ({ children }: PWAPrompterWrapperProps) => {
     installPrompt.prompt();
     installPrompt.userChoice.then((choiceResult: TODO) => {
       if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
       } else {
-        console.log('User dismissed the install prompt');
       }
       setInstallPrompt(null);
     });

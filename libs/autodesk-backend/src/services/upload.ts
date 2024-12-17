@@ -19,7 +19,6 @@ const checkFileAccessibility = async (
       isFileAccessible = true;
       break;
     } else {
-      console.log(`File not found, retrying in ${delay}ms...`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
@@ -47,7 +46,6 @@ export const uploadToForge = async (
       authClient,
       token,
     );
-    console.log('File uploaded successfully to Forge:', fileName);
 
     const isFileAccessible = await checkFileAccessibility(bucketKey, fileName);
     if (!isFileAccessible) {
@@ -56,7 +54,7 @@ export const uploadToForge = async (
 
     return `urn:adsk.objects:os.object:${bucketKey}/${fileName}`;
   } catch (e: any) {
-    console.error('Error uploading to Forge:', e.message || e, {
+    
       responseData: e.response?.data,
       responseStatus: e.response?.status,
     });

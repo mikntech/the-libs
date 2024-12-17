@@ -21,15 +21,15 @@ const waitForTranslationStatus = async (
       const status = manifest.body.status;
 
       if (status === 'complete' || status === 'success') {
-        console.log('Translation completed successfully.');
+        
         return true;
       } else if (status === 'pending' || status === 'inprogress') {
         try {
           job?.progress(40 + (manifest.body.progress / 100) * 60);
         } catch (e) {
-          console.log(e);
+          
         }
-        console.log(
+        
           'Translation not completed. Status:',
           status,
           ' Checking again in 5 seconds...',
@@ -37,12 +37,12 @@ const waitForTranslationStatus = async (
 
         await new Promise((resolve) => setTimeout(resolve, 5000));
       } else {
-        console.error('Translation not completed. Status:', status);
+        
         return false;
       }
     }
   } catch (error: any) {
-    console.error('Error checking translation status:', error.message || error);
+    
     return false;
   }
 };
@@ -79,7 +79,7 @@ export const translate = async (s3Key: string, job?: Job) => {
     await waitForTranslationStatus(encodedUrn, job);
     return { statusCode: 201, body: encodedUrn };
   } catch (e: any) {
-    console.error('Error during translation workflow:', e.message || e, {
+    
       responseData: e.response?.data,
       responseStatus: e.response?.status,
     });

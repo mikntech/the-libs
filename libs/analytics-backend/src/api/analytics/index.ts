@@ -20,9 +20,7 @@ export const analyticsRouterGenerator = <ENUM>(
           value: req.body.value,
           userNumber: req.body.userNumber,
         });
-      } catch (e) {
-        console.log(e);
-      }
+      } catch (e) {}
       return { statusCode: 201, body: 'got it' };
     }),
   );

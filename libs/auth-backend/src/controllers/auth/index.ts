@@ -116,7 +116,7 @@ export const genAuthControllers = <
   ) =>
     (strategy.sendEmails?.[getExpressSettings().stagingEnv] ?? true)
       ? sendEmail(email, subject, body).then()
-      : console.log(link);
+      : 
 
   const validatePasswordStrength = (password: string) => {
     if (zxcvbn(password).score < strategy.MIN_PASSWORD_STRENGTH)

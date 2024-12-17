@@ -36,10 +36,10 @@ export const serverErrorHandler =
           (await createDoc(await errorLogModel(), {
             stringifiedError: err.toString(),
           } as Partial<DocI>));
-        console.log('Error was logged to mongo');
-        stagingEnv === 'local' && console.log('the error: ', err);
+        
+        stagingEnv === 'local' && 
       } catch (e) {
-        console.log('Error logging error to mongo: ', e);
+        
       }
       if (!res.headersSent) {
         return res.status(500).send('Server error');

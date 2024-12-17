@@ -28,7 +28,7 @@ export const createHostedZone = async (domainName: string, region?: string) => {
       tellUserToConfigure: response.DelegationSet.NameServers,
     };
   } catch (error) {
-    console.error('Error creating hosted zone:', error);
+    
     return null;
   }
 };
@@ -59,7 +59,7 @@ export const createDNSRecord = async (
         throw new Error(`Load balancer ${loadBalancerName} not found`);
       }
     } catch (error) {
-      console.error(
+      
         `Error retrieving DNS name for ALB ${loadBalancerName}:`,
         error,
       );
@@ -88,7 +88,7 @@ export const createDNSRecord = async (
         throw new Error(`Load balancer ${loadBalancerName} not found`);
       }
     } catch (error) {
-      console.error(
+      
         `Error retrieving hosted zone ID for ALB ${loadBalancerName}:`,
         error,
       );
@@ -119,9 +119,8 @@ export const createDNSRecord = async (
   try {
     const command = new ChangeResourceRecordSetsCommand(params);
     const response = await client.send(command);
-    console.log('DNS Record Created:', response);
   } catch (error) {
-    console.error('Error creating DNS record:', error);
+    
   }
 };
 
@@ -140,11 +139,10 @@ export const getZoneIdByDomain = async (
     if (hostedZone && hostedZone.Name === `${domainName}.`) {
       return hostedZone.Id.split('/').pop();
     } else {
-      console.log(`No hosted zone found for domain ${domainName}`);
       return null;
     }
   } catch (error) {
-    console.error(`Error retrieving hosted zone for ${domainName}:`, error);
+    
     return null;
   }
 };

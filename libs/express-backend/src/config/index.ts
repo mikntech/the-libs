@@ -81,6 +81,5 @@ export const validateSettings = <CB>(settings: ExpressSettings<CB>) => {
   if (!settings) {
     throw new Error('Configuration settings could not be loaded');
   } else {
-    console.log('settings:', JSON.stringify(settings));
   }
 };
