@@ -17,6 +17,7 @@ export interface ExpressSettings<CD> {
   port: number;
   clientDomains: CD;
   myDomain: string;
+  topDomain: string;
 }
 
 const validStagingEnvs: StagingEnvironment[] =
@@ -73,6 +74,7 @@ export const getExpressSettings = <
     port,
     myDomain,
     clientDomains: clientDomains,
+    topDomain: process.env['TOP_DOMAIN'] ?? '.',
   };
 };
 

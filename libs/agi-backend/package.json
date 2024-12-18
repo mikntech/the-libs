@@ -5,10 +5,10 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.19.16",
+    "@the-libs/base-shared": "^1.19.44",
     "dotenv": "^16.4.7",
     "gpt-tokenizer": "^2.8.1",
-    "openai": "^4.76.3"
+    "openai": "^4.77.0"
   },
   "type": "module",
   "main": "./index.js",
