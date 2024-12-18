@@ -56,9 +56,6 @@ export const authorizer =
     next: NextFunction,
   ) => {
     try {
-      console.log('req.headers.cookie: ', req.headers.cookie);
-      console.log("req.cookies['jwt']: ", req.cookies['jwt']);
-      console.log('authSettings.jwtSecret: ', authSettings.jwtSecret);
       const validatedUser = (await jsonwebtoken.verify(
         req.cookies['jwt'],
         authSettings.jwtSecret,

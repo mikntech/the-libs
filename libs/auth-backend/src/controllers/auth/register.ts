@@ -4,7 +4,6 @@ import {
   findDocs,
   validateInput,
   validateEnum,
-  validateDocument,
 } from '@the-libs/mongo-backend';
 import {
   InvalidInputError,
@@ -19,7 +18,6 @@ import {
   Strategy,
 } from '@the-libs/auth-backend';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
-import { User } from '@the-libs/auth-shared';
 
 export const genRegisterControllers = <
   UserType extends string | number | symbol,
@@ -48,9 +46,7 @@ export const genRegisterControllers = <
   const validateEmailNotInUse = async (email: string, userType: UserType) => {
     const em = await getModel(userType);
 
-    if (
-      validateDocument(await findDocs<false, User>(em, em.findOne({ email })))
-    )
+    if (await findDocs(em, em.findOne({ email }), true))
       throw new InvalidInputError(
         'An account with this email already exists. Please try to login instead.',
       );

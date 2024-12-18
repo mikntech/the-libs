@@ -56,10 +56,17 @@ export const genLogControllers = <
     validateInput({ email });
     validateInput({ password });
     const m = await getModel(userType);
-    const existingUser = await findDocs<false, User>(m, m.findOne({ email }));
-    if (!existingUser || !validateDocument(existingUser))
+    const existingUser = await findDocs<false, User>(
+      m,
+      m.findOne({ email }),
+      true,
+    );
+    if (!existingUser && !validateDocument(existingUser as unknown as User))
       throw new UnauthorizedError('Please register');
-    if (await validateCorrectPassword(existingUser, password))
+    if (
+      existingUser &&
+      (await validateCorrectPassword(existingUser as TODO, password))
+    )
       return generateJWT(existingUser as TODO, userType);
     throw new UnauthorizedError('Wrong password');
   };
