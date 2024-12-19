@@ -100,43 +100,7 @@ jobs:
           git push git@github.com:\${{ github.repository }} HEAD:\${{ github.ref_name }}
 `
       : '') +
-    `
-
-   
-      - name: Extract version from package.json
-        run: |
-          echo "VERSION=$(cat package.json | jq -r .version)" >> $GITHUB_ENV
-
-      - name: Calculate dependencies hash
-        id: dep_hash
-        run: |
-          jq 'del(.version)' package.json > temp_package.json
-          echo "DEP_HASH=$(cat temp_package.json | sha256sum | cut -d' ' -f1)" >> $GITHUB_ENV
-          rm temp_package.json
-
-      - name: Check if base image exists
-        id: check_base_image
-        env:
-          ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
-        run: |
-          IMAGE="\${ECR_REGISTRY}/mik${projectName}/base:\${DEP_HASH}"
-          if docker manifest inspect $IMAGE > /dev/null 2>&1; then
-            echo "BASE_IMAGE_EXISTS=true" >> $GITHUB_ENV
-            echo "Image $IMAGE exists."
-          else
-            echo "BASE_IMAGE_EXISTS=false" >> $GITHUB_ENV
-            echo "Image $IMAGE does not exist."
-          fi
-
-      - name: Build, tag, and push base image to Amazon ECR
-        if: env.BASE_IMAGE_EXISTS == 'false'
-        env:
-          DOCKER_BUILDKIT: 1
-          ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
-        run: |
-          docker build -t $ECR_REGISTRY/mik${projectName}/base:\${DEP_HASH} -f ./Dockerfile .
-          docker push $ECR_REGISTRY/mik${projectName}/base:\${DEP_HASH}
-          
+    ` 
           
   prepare:
     runs-on: ubuntu-latest
