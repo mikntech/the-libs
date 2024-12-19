@@ -250,14 +250,14 @@ const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 
-await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
+/*await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
   DEP_REGION,
   projectName,
   apps,
   stagingENVs,
   nodeTag,
-);
+);*/
 
 //
 //
