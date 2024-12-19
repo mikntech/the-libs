@@ -66,7 +66,7 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3 = async (
                 clusterName: envKey,
                 log: false,
               },
-              'michael@couple-link.com',
+              'admin@' + DOMAIN,
               projectName,
               DEP_REGION,
             ),
@@ -215,19 +215,31 @@ const step3DNSRecords = async (
 
 //
 
-const DOMAIN = 'mikntech.com';
-const DEP_REGION = 'ca-central-1';
+const DOMAIN = 'autodefier.xyz';
+const DEP_REGION = 'eu-north-1';
 if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
-const projectName = 'mn';
+const projectName = 'autodefier';
 const apps = [
   {
-    name: 'mikntech',
+    name: 'backendm',
+    port: 4444,
+    domain: 'api.' + DOMAIN,
+    type: AppType.Server,
+    exactFully: {
+      [Staging.prod]: 'api.' + DOMAIN,
+      [Staging.preprod]: '',
+      [Staging.tst]: '',
+      [Staging.dev]: '',
+    },
+  },
+  {
+    name: 'frontend',
     port: 3000,
     domain: DOMAIN,
     type: AppType.Next,
     exactFully: {
-      [Staging.prod]: 'mikntech.com',
+      [Staging.prod]: DOMAIN,
       [Staging.preprod]: '',
       [Staging.tst]: '',
       [Staging.dev]: '',
@@ -238,7 +250,6 @@ const nodeTag = '18.20.4';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 
-/*
 await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
   DEP_REGION,
@@ -250,7 +261,7 @@ await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
 
 //
 //
-*/
+
 /*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
