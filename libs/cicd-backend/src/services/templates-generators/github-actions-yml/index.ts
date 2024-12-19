@@ -182,7 +182,7 @@ jobs:
       - name: Check if base image exists
         id: check_base_image
         env:
-          ECR_REGISTRY: \${{ steps.login - ecr.outputs.registry }}
+          ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
         run: |
           IMAGE="\${ECR_REGISTRY}/mik${projectName}/base:\${DEP_HASH}"
           if docker manifest inspect $IMAGE > /dev/null 2>&1; then
@@ -197,7 +197,7 @@ jobs:
         if: env.BASE_IMAGE_EXISTS == 'false'
         env:
           DOCKER_BUILDKIT: 1
-          ECR_REGISTRY: \${{ steps.login - ecr.outputs.registry }}
+          ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
         run: |
           docker build -t $ECR_REGISTRY/mik${projectName}/base:\${DEP_HASH} -f ./Dockerfile .
           docker push $ECR_REGISTRY/mik${projectName}/base:\${DEP_HASH}
