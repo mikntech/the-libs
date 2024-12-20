@@ -3,7 +3,7 @@
   "version": "1.18.65",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
-  },
+  },"type": "module",
   "dependencies": {
     "axios": "^1.7.9"
   },
