@@ -37,7 +37,8 @@ export const EditableField = <R,>({
           label={name}
           value={editing}
           onChange={(e: ChangeEvent<HTMLInputElement>) => {
-            setEditing(e.target.value);
+            const target = e.target as HTMLInputElement;
+            setEditing(target.value);
           }}
         />
       </Grid2>

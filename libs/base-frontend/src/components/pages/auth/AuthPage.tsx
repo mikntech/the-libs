@@ -306,6 +306,7 @@ export const AuthPage = <UserType,>({
             }
           };
       }
+    return 'shit';
   };
 
   const renderButtons = () => {
