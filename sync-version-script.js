@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const rootPackageJsonPath = path.join(__dirname, './package.json');
 const rootPackageJson = require(rootPackageJsonPath);
