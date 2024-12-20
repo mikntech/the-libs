@@ -247,7 +247,10 @@ export const AuthPage = <UserType,>({
             setButtonLabel('DOING');
             axiosInstance &&
               axiosInstance
-                .post('api/auth/register/request/' + client, { email })
+                .post(
+                  'api/auth/register/request' + (client ? '/' + client : ''),
+                  { email },
+                )
                 .then(() => setStep(Step.checkEmail))
                 .catch((error) => axiosErrorToaster(error))
                 .finally(() => setButtonLabel('IDLE'));
