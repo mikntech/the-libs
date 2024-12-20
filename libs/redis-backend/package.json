@@ -11,8 +11,7 @@
     "bull": "^4.16.4",
     "dotenv": "^16.4.7",
     "ioredis": "^5.4.1",
-    "pubsub-js": "^1.9.5",
-    "@types/pubsub-js": "^1.8.6"
+    "pubsub-js": "^1.9.5"
   },
   "type": "module",
   "main": "./index.js",

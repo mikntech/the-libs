@@ -33,7 +33,6 @@
           "bull",
           "@the-libs/base-shared",
           "pubsub-js",
-          "@types/pubsub-js",
           "@bull-board/express",
           "ioredis",
           "redlock"
