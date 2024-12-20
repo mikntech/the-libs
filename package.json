@@ -3,6 +3,7 @@
   "version": "1.20.1",
   "license": "MIT",
   "description": "Good unbranded code by Michael Nusair - https://mikntech.com - https://linkedin.com/in/mik-n - https://github.com/MNPCMW6444 - https://the-libs.com - https://michael-nusair.com",
+  "type": "module",
   "scripts": {
     "clean": "rm -rf node_modules && npm run clean:em",
     "clean:em": "rm -rf dist tmp package-lock.json ./.nx && for d in libs/*/ ; do rm -rf $d/.next ; done && for d in apps/*/ ; do rm -rf $d/.next ; done",
