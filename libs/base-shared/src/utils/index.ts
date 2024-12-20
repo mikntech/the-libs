@@ -42,3 +42,7 @@ export const makeArray = <E>(element: E | E[]): E[] =>
 
 export const removePrefix = (str: string, prefix: string) =>
   str.startsWith(prefix) ? str.slice(prefix.length) : str;
+
+export const SECONDS = 1000;
+export const MINUTES = 60 * SECONDS;
+export const HOURS = 60 * MINUTES;
