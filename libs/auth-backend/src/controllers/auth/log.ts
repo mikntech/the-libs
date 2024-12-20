@@ -76,8 +76,13 @@ export const genLogControllers = <
     validateInput({ password });
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateInput({ userType });
-    if (!strategy?.enumValues)
-      throw new Error("Problem with strategy ('enumValues' is falsy)");
+    if (
+      strategy.multiUserType !== MultiUserType.SINGLE &&
+      !strategy?.enumValues
+    )
+      throw new Error(
+        "Problem with strategy ('enumValues' is falsy) while multi user is true",
+      );
     strategy.multiUserType !== MultiUserType.SINGLE &&
       validateEnum<UserType>(userType, strategy.enumValues as unknown as TODO);
     return {
