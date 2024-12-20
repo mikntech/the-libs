@@ -3,7 +3,7 @@
   "version": "1.18.65",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
-  },"type": "module",
+  },
   "dependencies": {
     "@the-libs/auth-backend": "^1.20.0",
     "@the-libs/auth-shared": "^1.20.0",
