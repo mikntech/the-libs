@@ -1,7 +1,6 @@
-export const tsconfigBaseJsonTemplate = `
-{
+export const tsconfigBaseJsonTemplate = `{
   "compilerOptions": {
-  "allowJs": false,
+    "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "declaration": true,
@@ -16,22 +15,20 @@ export const tsconfigBaseJsonTemplate = `
     "incremental": true,
     "isolatedModules": true,
     "lib": ["es2022"],
-    "module": "ES2022",
+    "module": "es2022",
+    "skipLibCheck": true,
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
-    "noUnusedLocals": true,
     "pretty": true,
     "removeComments": false,
     "resolveJsonModule": false,
     "skipDefaultLibCheck": false,
-    "skipLibCheck": true,
     "sourceMap": false,
-    "strict": true,
     "target": "es2022",
     "verbatimModuleSyntax": false
-  }
-}
-
-`;
+  },
+  "include": ["apps/**/*", "libs/**/*"],
+  "exclude": ["node_modules", "**/node_modules", "../node_modules"]
+}`;
