@@ -142,5 +142,8 @@
     "vitest": "^2.1.8",
     "web-push": "^3.6.7",
     "zxcvbn": "^4.4.2"
+  },
+  "dependencies": {
+    "twilio": "^5.4.0"
   }
 }
