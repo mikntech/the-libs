@@ -64,10 +64,7 @@ export const genLogControllers = <
     throw new UnauthorizedError('Wrong password');
   };
 
-  const logIn = async <
-    UserType extends string | number | symbol,
-    SCHEMA extends User = User,
-  >(
+  const logIn = async <UserType extends string | number | symbol>(
     email: string,
     password: string,
     userType: UserType,
@@ -90,14 +87,13 @@ export const genLogControllers = <
       cookie: generateSecureCookie(
         JWT_COOKIE_NAME,
         await getToken(email, password, userType as TODO),
-        String(userType),
       ),
     };
   };
 
   const logOut = async () => ({
     statusCode: 200,
-    cookie: generateSecureCookie(JWT_COOKIE_NAME, '', 'userType', 0),
+    cookie: generateSecureCookie(JWT_COOKIE_NAME, '', 0),
   });
 
   return { generateJWT, validateAndProtect, logIn, logOut };

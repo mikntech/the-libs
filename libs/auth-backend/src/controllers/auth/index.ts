@@ -93,7 +93,6 @@ export const genAuthControllers = <
   const generateSecureCookie = (
     name: string,
     val: string,
-    userType: string,
     expirationTime: number = 24 * 60 * 60 * 1000,
   ) => ({
     name,
