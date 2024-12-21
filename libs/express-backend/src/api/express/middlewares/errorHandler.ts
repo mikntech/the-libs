@@ -3,8 +3,12 @@ import type {
   Request as ExpressRequest,
   Response,
 } from 'express';
-import { StagingEnvironment } from '../../../config';
-import { ClientError, ErrorLog, TODO } from '@the-libs/base-shared';
+import {
+  ClientError,
+  ErrorLog,
+  StagingEnvironment,
+  TODO,
+} from '@the-libs/base-shared';
 import { errorLog } from '../../../db/mongo';
 
 import type { Document as MDocument } from 'mongoose';
@@ -37,7 +41,8 @@ export const serverErrorHandler =
             stringifiedError: err.toString(),
           } as Partial<DocI>));
         console.log('Error was logged to mongo');
-        stagingEnv === 'local' && console.log('the error: ', err);
+        stagingEnv === StagingEnvironment.Local &&
+          console.log('the error: ', err);
       } catch (e) {
         console.log('Error logging error to mongo: ', e);
       }

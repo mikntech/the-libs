@@ -1,12 +1,10 @@
 import { User } from '@the-libs/auth-shared';
-import type { Model } from 'mongoose';
 import { ZXCVBNScore } from 'zxcvbn';
 import { user } from './db/mongo/schemas';
-import { SomeEnum } from '@the-libs/base-shared';
 import { GenEmailFunction } from '@the-libs/email-backend';
 import { defaultGenPassResetEmail, defaultGenRegisterEmail } from './services';
-import { StagingEnvironment } from '@the-libs/express-backend';
 import { ExtendedModel } from '@the-libs/mongo-backend';
+import { StagingEnvironment } from '@the-libs/base-shared';
 
 export enum MultiUserType {
   SINGLE = 'single',

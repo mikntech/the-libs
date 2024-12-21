@@ -1,16 +1,10 @@
 import { createRequire } from 'module';
 import { isProduction } from '@the-libs/mongo-backend';
+import { StagingEnvironment } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 const { config } = require('dotenv');
 const process = require('process');
 config();
-
-export enum StagingEnvironment {
-  Local = 'local',
-  Dev = 'dev',
-  Preprod = 'pre',
-  Prod = 'prod',
-}
 
 export interface ExpressSettings<CD> {
   stagingEnv: StagingEnvironment;

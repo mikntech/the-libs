@@ -3,21 +3,21 @@ export * from './routes';
 
 import { getExpressSettings } from '../../config';
 
-import type { Router, Express, RequestHandler } from 'express';
+import type { Express, RequestHandler, Router } from 'express';
 import { autoHelper, serverErrorHandler } from './middlewares';
-import { TODO } from '@the-libs/base-shared';
+import { StagingEnvironment, TODO } from '@the-libs/base-shared';
 import { errorLog } from '../../db/mongo';
 
 import { createRequire } from 'module';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
+import { readFileSync } from 'fs';
+
 const require = createRequire(import.meta.url);
 const { json, urlencoded } = require('express');
 
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
-import { readFileSync } from 'fs';
 
 // Get the current directory equivalent to `__dirname`
 const __filename = fileURLToPath(import.meta.url);
@@ -89,7 +89,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
 
     expressApp.use('/api', apiRouter);
 
-    getExpressSettings().stagingEnv !== 'prod' &&
+    getExpressSettings().stagingEnv !== StagingEnvironment.Prod &&
       expressApp.use('/api', autoHelper);
 
     [...defaultPostMiddlewares, ...postMiddlewares].forEach(

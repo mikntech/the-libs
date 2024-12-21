@@ -9,3 +9,15 @@ export interface SimpleAddress {
   city?: string;
   country?: string;
 }
+
+export enum NodeEnvironment {
+  Development = 'development',
+  Production = 'production',
+}
+
+export enum StagingEnvironment {
+  Local = 'local',
+  Dev = 'dev',
+  Preprod = 'pre',
+  Prod = 'prod',
+}

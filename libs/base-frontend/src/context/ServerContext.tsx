@@ -2,6 +2,7 @@ import { createContext, useEffect, useState, ReactNode } from 'react';
 import axios, { AxiosInstance } from 'axios';
 import { request, gql } from 'graphql-request';
 import { MainMessage as DefaultMainMessage } from '../components';
+import { StagingEnvironment } from '@the-libs/base-shared';
 
 const DEFAULT_TRY_INTERVAL = 3000;
 const GOOD_STATUS = 'good';
@@ -35,7 +36,7 @@ export const getBaseURL = (
   const prefix = STAGING_ENV === 'preprod' ? 'pre' : '';
   return (
     exactDomainURI ||
-    (STAGING_ENV === 'local'
+    (STAGING_ENV === StagingEnvironment.Local
       ? `http://127.0.0.1:${serverPort}/`
       : `https://${prefix}${domain}/`)
   );

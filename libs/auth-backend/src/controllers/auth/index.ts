@@ -2,7 +2,11 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
 import { getExpressSettings } from '@the-libs/express-backend';
-import { InvalidInputError, TODO } from '@the-libs/base-shared';
+import {
+  InvalidInputError,
+  NodeEnvironment,
+  TODO,
+} from '@the-libs/base-shared';
 import {
   MultiUserType,
   passResetRequest,
@@ -20,13 +24,11 @@ const { sign } = require('jsonwebtoken');
 import type { CookieOptions } from 'express';
 const zxcvbn = require('zxcvbn');
 
-import type { Model } from 'mongoose';
 import { sendEmail } from '@the-libs/email-backend';
 import {
   findDocs,
   mongoSettings,
   validateDocument,
-  NodeEnvironment,
   ExtendedModel,
 } from '@the-libs/mongo-backend';
 

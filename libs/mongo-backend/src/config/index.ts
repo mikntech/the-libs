@@ -1,4 +1,5 @@
 import { createRequire } from 'module';
+import { NodeEnvironment } from '@the-libs/base-shared';
 
 const require = createRequire(import.meta.url);
 
@@ -6,11 +7,6 @@ const { config } = require('dotenv');
 const process = require('process');
 
 config();
-
-export enum NodeEnvironment {
-  Development = 'development',
-  Production = 'production',
-}
 
 export interface MongoSettings {
   nodeEnv: NodeEnvironment;
@@ -21,7 +17,9 @@ export interface MongoSettings {
 const validEnvs: NodeEnvironment[] = Object.values(NodeEnvironment);
 const nodeEnv = process.env['NODE_ENV'] as NodeEnvironment;
 if (!validEnvs.includes(nodeEnv)) {
-  throw new Error("NODE_ENV must be 'development' or 'production'");
+  throw new Error(
+    `NODE_ENV must be '${NodeEnvironment.Development}' or '${NodeEnvironment.Production}'`,
+  );
 }
 
 export const isProduction = nodeEnv === NodeEnvironment.Production;
