@@ -37,7 +37,6 @@ export const genGoogleControllers = <
         cookie: generateSecureCookie(
           JWT_COOKIE_NAME,
           generateJWT(maybeUser, userType as TODO),
-          String(userType),
         ),
       };
     return {
