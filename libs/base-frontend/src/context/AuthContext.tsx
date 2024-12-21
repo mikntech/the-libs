@@ -7,12 +7,12 @@ import {
   useState,
 } from 'react';
 import { ServerContext } from './index';
-import { Typography } from '@mui/material';
 import { User } from '@the-libs/auth-shared';
+import { MainMessage as DefaultMainMessage } from '../';
 
 interface AuthContextProps {
   children: ReactNode;
-  MainMessage: (props: { text: string }) => ReactNode;
+  MainMessage?: (props: { text: string }) => ReactNode;
 }
 
 interface AuthContextType {
@@ -34,7 +34,7 @@ export const AuthContext = createContext<AuthContextType>({
 
 export const AuthContextProvider = ({
   children,
-  MainMessage = ({ text }: { text: string }) => <Typography>{text}</Typography>,
+  MainMessage = DefaultMainMessage,
 }: AuthContextProps) => {
   const [user, setUser] = useState<User>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
