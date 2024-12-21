@@ -38,7 +38,7 @@ export const generateCustomServerDockerfile = (
 ARG DEP_HASH
 FROM ${ecrDomain}/mik${projectName}/base:$DEP_HASH as builder
 WORKDIR /app
-COPY package.json nx.json tsconfig.base.json ./
+COPY package.json nx.json tsconfig.base.json tsconfig.json ./
 COPY libs/ libs/
 COPY apps/${appName}/ apps/${appName}/
 ${customBuildLine ?? `RUN npm run build:${appName}`}
