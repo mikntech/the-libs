@@ -221,7 +221,7 @@ if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
 const projectName = 'autodefier';
 const apps = [
-  {
+  /*{
     name: 'backendm',
     port: 4444,
     domain: 'api.' + DOMAIN,
@@ -232,8 +232,20 @@ const apps = [
       [Staging.tst]: '',
       [Staging.dev]: '',
     },
-  },
+  },*/
   {
+    name: 'worker',
+    port: 4449,
+    domain: 'admin.' + DOMAIN,
+    type: AppType.Server,
+    exactFully: {
+      [Staging.prod]: 'admin.' + DOMAIN,
+      [Staging.preprod]: '',
+      [Staging.tst]: '',
+      [Staging.dev]: '',
+    },
+  },
+  /*{
     name: 'frontend',
     port: 3000,
     domain: DOMAIN,
@@ -244,7 +256,7 @@ const apps = [
       [Staging.tst]: '',
       [Staging.dev]: '',
     },
-  },
+  },*/
 ];
 const nodeTag = '18.20.4';
 
@@ -262,10 +274,8 @@ const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 //
 //
 
-/*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
-*/
 
 //
 
