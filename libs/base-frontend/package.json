@@ -10,9 +10,9 @@
     "@mui/icons-material": "^6.2.1",
     "@mui/material": "^6.2.1",
     "@mui/x-date-pickers": "^7.23.3",
-    "@the-libs/auth-shared": "^1.20.0",
-    "@the-libs/base-shared": "^1.20.0",
-    "@the-libs/chat-shared": "^1.20.0",
+    "@the-libs/auth-shared": "^1.20.18",
+    "@the-libs/base-shared": "^1.20.18",
+    "@the-libs/chat-shared": "^1.20.18",
     "@react-oauth/google": "^0.12.1",
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
@@ -21,7 +21,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.4.1",
-    "react-router-dom": "^7.0.2",
+    "react-router-dom": "^7.1.0",
     "zxcvbn": "^4.4.2"
   },
   "peerDependencies": {

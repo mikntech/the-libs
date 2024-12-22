@@ -5,11 +5,11 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/auth-backend": "^1.20.0",
-    "@the-libs/base-shared": "^1.20.0",
-    "@the-libs/express-backend": "^1.20.0",
-    "@the-libs/mongo-backend": "^1.20.0",
-    "@the-libs/payments-shared": "^1.20.0",
+    "@the-libs/auth-backend": "^1.20.18",
+    "@the-libs/base-shared": "^1.20.18",
+    "@the-libs/express-backend": "^1.20.18",
+    "@the-libs/mongo-backend": "^1.20.18",
+    "@the-libs/payments-shared": "^1.20.18",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mongoose": "^8.9.2",
