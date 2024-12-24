@@ -79,6 +79,7 @@ interface Optional<DBPart extends Document, ComputedPart> {
   pres?: ((schema: Schema) => (model: Model<DBPart>) => Schema)[];
   logMongoToConsole?: boolean;
   computedFields?: SchemaComputers<ComputedPart, DBPart, any>;
+  prepareCache?: boolean;
 }
 
 type GetCached<DBPart, ComputedPart> = ComputedPart extends false
@@ -139,6 +140,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     pres,
     logMongoToConsole,
     computedFields,
+    prepareCache,
   }: Optional<DBPart, ComputedPart> = {},
 ) => {
   if (!connection?.instance) await connect(logMongoToConsole);
@@ -224,6 +226,14 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
   if (computedFields)
     getCachedParent.getCached = (dbDoc: DBPart) =>
       getCached(dbDoc, computedFields);
+
+  computedFields &&
+    prepareCache &&
+    model
+      .find()
+      .then((docs: DBPart[]) =>
+        docs.forEach((doc) => getCached(doc, computedFields)),
+      );
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,
