@@ -44,7 +44,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const val = await compute(fullDoc);
   await cache(
     await createRedisInstance(),
-    JSON.stringify({ _id: String(fullDoc._id), fieldName }),
+    JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
     async () => JSON.stringify(fullDoc ? val : null),
   );
   return val;
