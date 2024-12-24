@@ -40,12 +40,15 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
-) =>
+) => {
+  const val = await compute(fullDoc);
   await cache(
     await createRedisInstance(),
     JSON.stringify({ _id: String(fullDoc._id), fieldName }),
-    async () => JSON.stringify(fullDoc ? await compute(fullDoc) : null),
+    async () => JSON.stringify(fullDoc ? val : null),
   );
+  return val;
+};
 
 export const getCached = async <
   ComputedPartOfSchema,
@@ -72,10 +75,14 @@ export const getCached = async <
     (_, index) => restoredValues[index] === null,
   );
   const computedValues = await Promise.all(
-    missingFields.map((key) =>
-      computers[
-        key as keyof SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>
-      ].compute(fullDoc),
+    missingFields.map(async (key) =>
+      cacheField(
+        key,
+        fullDoc,
+        computers[
+          key as keyof SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>
+        ].compute,
+      ),
     ),
   );
 
