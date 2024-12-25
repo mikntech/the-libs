@@ -74,7 +74,7 @@ export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
  * @param errCb Optional error callback.
  * @returns A promise for the process operation.
  */
-export const process = <DATA>(
+export const processQueue = <DATA>(
   queue: Queue<DATA>,
   howToProcess: ProcessCallbackFunction<DATA>,
   concurrency = 10,
@@ -127,14 +127,15 @@ export const shutdownQueues = async (): Promise<void> => {
   }
 };
 
-(process as any).on('SIGINT', async () => {
-  console.log('Shutting down queues...');
+/**
+ * Handle SIGINT and SIGTERM signals for graceful shutdown.
+ */
+const handleShutdownSignal = async (signal: string) => {
+  console.log(`Received ${signal}, shutting down queues...`);
   await shutdownQueues();
-  (process as any).exit();
-});
+  process.exit();
+};
 
-(process as any).on('SIGTERM', async () => {
-  console.log('Shutting down queues...');
-  await shutdownQueues();
-  (process as any).exit();
-});
+// Register signal handlers
+process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
+process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
