@@ -5,7 +5,7 @@ export class PubSub {
   private readonly redisSubscriber: RedisType | null | any;
   private readonly redisPublisher: RedisType | null;
   private readonly fallback: typeof NodePubSub;
-  private activeSubscriptions: Map<
+  public activeSubscriptions: Map<
     string,
     {
       messageListeners: Set<(message: string) => void>;
@@ -34,8 +34,8 @@ export class PubSub {
         }
       };
 
-      // Define cleanup function explicitly
-      const cleanup: () => void = () => {
+      const cleanup = () => {
+        console.log(`Cleaning up subscription for ${channel}`);
         this.redisSubscriber?.unsubscribe(channel, (err: Error) => {
           if (err) console.error('Redis unsubscription failed:', err);
         });
@@ -49,7 +49,6 @@ export class PubSub {
 
       this.redisSubscriber?.on('message', messageListener);
 
-      // Store cleanup logic in the Map
       this.activeSubscriptions.set(channel, { messageListeners, cleanup });
     }
 
