@@ -12,6 +12,8 @@ const {
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { Upload } = require('@aws-sdk/lib-storage');
 
+const { NodeHttpHandler } = require('@smithy/node-http-handler');
+
 export const createS3Client = () =>
   new S3Client({
     region: s3Settings.aws.region,
@@ -19,6 +21,12 @@ export const createS3Client = () =>
       accessKeyId: s3Settings.aws.keyID,
       secretAccessKey: s3Settings.aws.secretKey,
     },
+    requestHandler: new NodeHttpHandler({
+      connectionTimeout: 600000, // 10 minutes
+      socketTimeout: 600000, // 10 minutes
+    }),
+    maxAttempts: 5, // Retry up to 5 times
+    retryMode: 'adaptive',
   });
 
 export const streamFile = async (
@@ -35,6 +43,8 @@ export const streamFile = async (
         Body: buffer,
         ContentType: mimetype,
       },
+      queueSize: 3, // Parallel uploads
+      partSize: 5 * 1024 * 1024, // 5 MB parts
     });
 
     await upload.done();
