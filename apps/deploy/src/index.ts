@@ -48,7 +48,22 @@ const step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3 = async (
   const appNames = apps.map(({ name }) => name);
 
   await createHostedZone(DOMAIN);
-  enableRegion(DEP_REGION);
+  const already = [
+    'us-east-1',
+    'us-west-2',
+    'us-west-1',
+    'eu-west-1',
+    'eu-central-1',
+    'ap-southeast-1',
+    'ap-northeast-1',
+    'ap-southeast-2',
+    'ap-northeast-2',
+    'sa-east-1',
+    'cn-north-1',
+    'ap-south-1',
+  ];
+
+  !already.some((r) => r === DEP_REGION) && enableRegion(DEP_REGION);
 
   await createMultipleECRRepositories(projectName, appNames, DEP_REGION);
 
@@ -215,52 +230,52 @@ const step3DNSRecords = async (
 
 //
 
-const DOMAIN = 'autodefier.xyz';
-const DEP_REGION = 'eu-north-1';
+const DOMAIN = 'cubebox.co.il';
+const DEP_REGION = 'ap-south-1';
 if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
-const projectName = 'autodefier';
+const projectName = 'cb';
 const apps = [
-  /*{
-    name: 'backendm',
-    port: 4444,
-    domain: 'api.' + DOMAIN,
-    type: AppType.Server,
-    exactFully: {
-      [Staging.prod]: 'api.' + DOMAIN,
-      [Staging.preprod]: '',
-      [Staging.tst]: '',
-      [Staging.dev]: '',
-    },
-  },*/
   {
-    name: 'worker',
-    port: 4449,
-    domain: 'admin.' + DOMAIN,
+    name: 'server',
+    port: 4050,
+    domain: 'server.' + DOMAIN,
     type: AppType.Server,
     exactFully: {
-      [Staging.prod]: 'admin.' + DOMAIN,
-      [Staging.preprod]: '',
+      [Staging.prod]: 'server.' + DOMAIN,
+      [Staging.preprod]: 'preserver.' + DOMAIN,
       [Staging.tst]: '',
       [Staging.dev]: '',
     },
   },
-  /*{
-    name: 'frontend',
+  {
+    name: 'worker',
+    port: 4051,
+    domain: 'admin.' + DOMAIN,
+    type: AppType.Server,
+    exactFully: {
+      [Staging.prod]: 'admin.' + DOMAIN,
+      [Staging.preprod]: 'preadmin.' + DOMAIN,
+      [Staging.tst]: '',
+      [Staging.dev]: '',
+    },
+  },
+  {
+    name: 'client',
     port: 3000,
     domain: DOMAIN,
     type: AppType.Next,
     exactFully: {
       [Staging.prod]: DOMAIN,
-      [Staging.preprod]: '',
+      [Staging.preprod]: 'pre.' + DOMAIN,
       [Staging.tst]: '',
       [Staging.dev]: '',
     },
-  },*/
+  },
 ];
 const nodeTag = '18.20.4';
 
-const stagingENVs: (keyof typeof Staging)[] = ['prod'];
+const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
 
 /*await step1initDNSinitECRGenerateYMLsSSHDockerfilesClustersS3(
   DOMAIN,
@@ -274,8 +289,10 @@ const stagingENVs: (keyof typeof Staging)[] = ['prod'];
 //
 //
 
+/*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
+*/
 
 //
 
