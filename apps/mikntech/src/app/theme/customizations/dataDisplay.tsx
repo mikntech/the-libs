@@ -7,7 +7,6 @@ import { iconButtonClasses } from '@mui/material/IconButton';
 import { gray, red, green } from '../themePrimitives';
 import { TODO } from '@the-libs/base-shared';
 
-/* eslint-disable import/prefer-default-export */
 export const dataDisplayCustomizations = {
   MuiList: {
     styleOverrides: {

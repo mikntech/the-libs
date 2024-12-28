@@ -9,7 +9,6 @@ import RemoveRoundedIcon from '@mui/icons-material/RemoveRounded';
 import { gray, brand } from '../themePrimitives';
 import { TODO } from '@the-libs/base-shared';
 
-/* eslint-disable import/prefer-default-export */
 export const inputsCustomizations = {
   MuiButtonBase: {
     defaultProps: {

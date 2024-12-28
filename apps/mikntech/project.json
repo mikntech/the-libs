@@ -32,12 +32,6 @@
       "options": {
         "buildTarget": "mikntech:build"
       }
-    },
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/mikntech/**/*.{ts,tsx}"]
-      }
     }
   }
 }
