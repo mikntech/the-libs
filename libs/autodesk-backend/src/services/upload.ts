@@ -35,14 +35,11 @@ export const uploadToForge = async (
     if (!Buffer.isBuffer(fileBuffer)) {
       throw new Error('Invalid fileBuffer: Expected a Buffer object');
     }
-    const contentLength = fileBuffer.length;
     const token = await getToken();
 
-    await objectsApi.uploadObject(
+    await objectsApi.uploadResources(
       bucketKey,
-      fileName,
-      contentLength,
-      fileBuffer,
+      [{ objectKey: fileName, data: fileBuffer }],
       {},
       authClient,
       token,
