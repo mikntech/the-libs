@@ -7,7 +7,7 @@ export type BaseFrontendSettings<NEXT extends boolean> = NEXT extends true
 
 export type InputWithoutBundlerPrefix<INPUT> = {
   [K in keyof INPUT]: string;
-};
+} & { STAGING_ENV: string }; // Explicitly include required STAGING_ENV
 
 export const getFrontendSettings = <
   NEXT extends boolean,
@@ -16,21 +16,22 @@ export const getFrontendSettings = <
   keys: (keyof INPUT)[],
   next: NEXT,
   env: NEXT extends true ? undefined : INPUT,
-): InputWithoutBundlerPrefix<Pick<INPUT, (typeof keys)[number]>> => {
+): InputWithoutBundlerPrefix<INPUT> => {
   const defaultKeys = next
     ? (['NEXT_PUBLIC_NODE_ENV', 'NEXT_PUBLIC_STAGING_ENV'] as const)
     : (['VITE_NODE_ENV', 'VITE_STAGING_ENV'] as const);
 
   const combinedKeys = [...defaultKeys, ...keys] as (keyof INPUT)[];
 
-  const result: Partial<
-    InputWithoutBundlerPrefix<Pick<INPUT, (typeof keys)[number]>>
-  > = {};
+  const result: Partial<InputWithoutBundlerPrefix<INPUT>> = {};
 
   if (next) {
     combinedKeys.forEach((key) => {
       const value = process.env[key as string]; // Safely access process.env
-      result[key] = removePrefix(value ?? '', 'NEXT_PUBLIC_'); // Remove NEXT_PUBLIC_ prefix
+      result[key] = removePrefix(
+        value ?? '',
+        'NEXT_PUBLIC_',
+      ) as InputWithoutBundlerPrefix<INPUT>[keyof INPUT];
     });
   } else {
     let parsedEnv: Record<string, any>;
@@ -48,7 +49,7 @@ export const getFrontendSettings = <
       if (parsedEnv[key as string] === undefined) {
         const prefix = next ? 'NEXT_PUBLIC_' : 'VITE_';
         parsedEnv[key as string] = removePrefix(
-          (env as Record<string, any>)[key as string] ||
+          (env as Record<string, any>)[key as string] ??
             `${prefix}${String(key)}`,
           prefix,
         );
@@ -57,14 +58,20 @@ export const getFrontendSettings = <
     });
   }
 
-  // Guarantee all keys in combinedKeys are included in the result
+  // Ensure STAGING_ENV is included in the result
+  if (!result.STAGING_ENV) {
+    result.STAGING_ENV =
+      result.NEXT_PUBLIC_STAGING_ENV ??
+      result.VITE_STAGING_ENV ??
+      'default-staging';
+  }
+
+  // Ensure all keys in combinedKeys are included in the result
   combinedKeys.forEach((key) => {
     if (!result[key]) {
       throw new Error(`Missing key: ${String(key)} in frontend settings`);
     }
   });
 
-  return result as InputWithoutBundlerPrefix<
-    Pick<INPUT, (typeof keys)[number]>
-  >;
+  return result as InputWithoutBundlerPrefix<INPUT>;
 };
