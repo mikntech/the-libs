@@ -24,6 +24,11 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/standalone/apps/mikntech ./
 COPY --from=builder --chown=nextjs:nodejs /app/apps/mikntech/.next/static ./.next/static
 
+# Dynamically remove `"type": "module"` from package.json
+RUN if [ -f "./package.json" ]; then \
+      sed -i '/"type": "module"/d' ./package.json; \
+    fi
+
 USER nextjs
 
 EXPOSE 3000
