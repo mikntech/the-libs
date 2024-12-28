@@ -34,7 +34,7 @@ export default function CV() {
         <Card sx={{ mb: 2 }}>
           <CardContent>
             <Typography variant="h6">
-              IAF - Full-Stack Web Developer (2022-2024)
+              TSG - Full-Stack Web Developer (2022-2024)
             </Typography>
             <Typography variant="body1">
               Developed a real-time aerial picture and air defense control
@@ -48,7 +48,7 @@ export default function CV() {
 
         <Card sx={{ mb: 2 }}>
           <CardContent>
-            <Typography variant="h6">IAF - Product Manager (2021)</Typography>
+            <Typography variant="h6">TSG - Product Manager (2021)</Typography>
             <Typography variant="body1">
               Managed the development and integration process for new systems in
               the air control division, representing hundreds of operational
@@ -184,7 +184,7 @@ export default function CV() {
           I am a problem solver, full-stack developer, and entrepreneur. Open to
           hands-on roles or leadership positions in web, security research, ML,
           or Web3. I started as a product manager before transitioning into
-          development, training through IAF and independent learning.
+          development, training through TSG and independent learning.
         </Typography>
       </Box>
     </Container>
