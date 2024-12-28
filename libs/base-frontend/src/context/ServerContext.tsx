@@ -9,7 +9,7 @@ const GOOD_STATUS = 'good';
 const BAD_MESSAGE = 'Server is not available. Please try again later.';
 const FIRST_MESSAGE = 'Connecting to server...';
 
-interface ServerProviderProps<FESOutput> {
+interface ServerProviderProps<FESOutput extends { STAGING_ENV: string }> {
   children: ReactNode;
   domain: string;
   exactDomainURI?: string;
