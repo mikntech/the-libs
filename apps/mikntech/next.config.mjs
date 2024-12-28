@@ -8,6 +8,7 @@ const nextConfig = {
     esmExternals: true,
   },
   webpack: (config) => {
+    config.experiments.outputModule = true; // Enforces ESM output
     config.output.module = true; // Enforces ESM output
     return config;
   },
