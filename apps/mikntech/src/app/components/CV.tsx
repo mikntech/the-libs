@@ -38,10 +38,10 @@ export default function CV() {
             </Typography>
             <Typography variant="body1">
               Developed a real-time aerial picture and air defense control
-              system at Ofek 324 Unit. The system is a Web UI based on more than
-              30 microservices, using Cesium, DeckGL, AngularJS → React, and
-              Redux. I was responsible for implementing a new feature requiring
-              4 new services and full integration with UX specifications.
+              system at TSG. The system is a Web UI based on more than 30
+              microservices, using Cesium, DeckGL, AngularJS → React, and Redux.
+              I was responsible for implementing a new feature requiring 4 new
+              services and full integration with UX specifications.
             </Typography>
           </CardContent>
         </Card>
