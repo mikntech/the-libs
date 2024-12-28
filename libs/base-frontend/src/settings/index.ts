@@ -1,4 +1,5 @@
 import { removePrefix } from '@the-libs/base-shared';
+import * as process from 'node:process';
 
 export type BaseFrontendSettings<NEXT extends boolean> = NEXT extends true
   ? { NEXT_PUBLIC_NODE_ENV: string; NEXT_PUBLIC_STAGING_ENV: string }
@@ -16,7 +17,19 @@ export const getFrontendSettings = <
   next: NEXT,
   env: NEXT extends true ? undefined : INPUT,
 ): InputWithoutBundlerPrefix => {
-  if (next) return process.env;
+  const ks = [
+    ...(next
+      ? ['NEXT_PUBLIC_NODE_ENV', 'NEXT_PUBLIC_STAGING_ENV']
+      : ['VITE_NODE_ENV', 'VITE_STAGING_ENV']),
+    ...keys,
+  ];
+  if (next) {
+    const ret: any = {};
+    ks.forEach((key) => {
+      ret[key] = process.env[key];
+    });
+    return ret as InputWithoutBundlerPrefix;
+  }
   let res;
   try {
     const envConfig = document.getElementById('mik-env-config')?.textContent;
@@ -24,12 +37,7 @@ export const getFrontendSettings = <
   } catch (e) {
     res = env ?? {};
   }
-  [
-    ...(next
-      ? ['NEXT_PUBLIC_NODE_ENV', 'NEXT_PUBLIC_STAGING_ENV']
-      : ['VITE_NODE_ENV', 'VITE_STAGING_ENV']),
-    ...keys,
-  ].forEach((key) => {
+  ks.forEach((key) => {
     if (res[key] === undefined)
       res[key] = removePrefix(
         (env as any)[key] ?? (next ? 'NEXT_PUBLIC_' : 'VITE_'),
