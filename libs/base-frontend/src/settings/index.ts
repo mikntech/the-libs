@@ -11,7 +11,7 @@ export const getViteSettings = (
 
   try {
     const envConfig =
-      document.getElementById('mik-env-config')?.textContent || '{}';
+      document.getElementById('mik-env-config')?.textContent ?? '{}';
     parsedEnv = JSON.parse(envConfig);
   } catch (error) {
     console.error('Error parsing mik-env-config:', error);
