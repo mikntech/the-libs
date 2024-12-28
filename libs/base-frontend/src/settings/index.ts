@@ -6,7 +6,7 @@ export const getViteSettings = (
 ): Record<string, string> => {
   const result: Record<string, string> = {};
 
-  keys.forEach((key) => {
+  ['VITE_NODE_ENV', 'VITE_STAGING_ENV', ...keys].forEach((key) => {
     result[key] = removePrefix(env[key] ?? '', 'VITE_');
   });
 
