@@ -1,15 +1,12 @@
-import { config } from 'dotenv';
-config();
-
 const nextConfig = {
-  output: 'standalone',
-  typescript: { ignoreBuildErrors: true },
+  output: 'standalone', // Standalone mode for production
   experimental: {
-    esmExternals: true,
+    esmExternals: true, // Use ESM-compatible externals
   },
-  webpack: (config) => {
-    config.experiments.outputModule = true; // Enforces ESM output
-    config.output.module = true; // Enforces ESM output
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.output.libraryTarget = 'commonjs2'; // Force server-side code to use CommonJS
+    }
     return config;
   },
 };
