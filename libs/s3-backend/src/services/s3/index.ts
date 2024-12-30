@@ -13,6 +13,7 @@ const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { Upload } = require('@aws-sdk/lib-storage');
 
 const { NodeHttpHandler } = require('@smithy/node-http-handler');
+import { Readable } from 'stream'; // Needed to work with streams in Node.js
 
 export const createS3Client = () =>
   new S3Client({
@@ -144,3 +145,35 @@ export const downloadFile = async (key: string) =>
       Key: key,
     }),
   );
+
+export const downloadAndExtractFile = async (
+  key: string,
+): Promise<{
+  key: string;
+  fileBuffer: Buffer;
+  mimetype: string | undefined;
+}> => {
+  const response = await downloadFile(key);
+
+  const body = response.Body;
+  if (!body) {
+    throw new Error('No file data returned from S3.');
+  }
+
+  const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
+    const chunks: Uint8Array[] = [];
+    for await (const chunk of stream) {
+      chunks.push(chunk);
+    }
+    return Buffer.concat(chunks);
+  };
+
+  const fileBuffer: Buffer =
+    body instanceof Readable
+      ? await streamToBuffer(body)
+      : Buffer.from(await body.arrayBuffer());
+
+  const mimetype = response.ContentType;
+
+  return { key, fileBuffer, mimetype };
+};
