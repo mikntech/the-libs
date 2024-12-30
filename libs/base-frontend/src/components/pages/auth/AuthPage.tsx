@@ -38,7 +38,7 @@ interface LabelsConstants {
 
 export const LABELS: LabelsConstants = {
   IDLE: {
-    [Step.init]: 'Continiue',
+    [Step.init]: 'Continue',
     [Step.login]: 'Login',
     [Step.registerReq]: 'Send me a Link',
     [Step.registerFin]: 'Register',
@@ -61,7 +61,8 @@ interface AuthPageProps<UserType> {
   backgroundPicture: string;
   nightLogoTextOnly: string;
   dayLogoTextOnly: string;
-  tenum: TODO;
+  clientTypesEnum: TODO;
+  defaultMainClient: string;
   client: UserType;
   disableDarkMode?: boolean;
   customComponents?: {
@@ -75,7 +76,8 @@ export const AuthPage = <UserType,>({
   backgroundPicture,
   nightLogoTextOnly,
   dayLogoTextOnly,
-  tenum,
+  clientTypesEnum,
+  defaultMainClient,
   client,
   disableDarkMode,
   customComponents = {
@@ -110,7 +112,7 @@ export const AuthPage = <UserType,>({
   }, []);
 
   const { isMobileOrTabl } = useResponsiveness(
-    client === tenum.guest || client === tenum.host,
+    client === clientTypesEnum.guest || client === clientTypesEnum.host,
   );
 
   const server = useContext(ServerContext);
@@ -125,16 +127,16 @@ export const AuthPage = <UserType,>({
   const query = useQuery();
 
   useEffect(() => {
-    const emaililing = query.get('email');
+    const emailing = query.get('email');
     const registerKey = query.get('register-code');
     const resetKey = query.get('reset-code');
-    const key = registerKey || resetKey;
+    const key = registerKey ?? resetKey;
     if (key) {
       setKey(key);
       registerKey && setStep(Step.registerFin);
       resetKey && setStep(Step.passResetFin);
     }
-    if (emaililing) setEmail(emaililing);
+    if (emailing) setEmail(emailing);
   }, [query]);
 
   // Validation:
@@ -209,7 +211,7 @@ export const AuthPage = <UserType,>({
 
   const mainClickHandler: TODO = (customStep: Step | undefined) => {
     if (buttonLabel === 'IDLE')
-      switch (customStep || step) {
+      switch (customStep ?? step) {
         case Step.init:
           return () => {
             setButtonLabel('DOING');
@@ -245,15 +247,14 @@ export const AuthPage = <UserType,>({
         case Step.registerReq:
           return () => {
             setButtonLabel('DOING');
-            axiosInstance &&
-              axiosInstance
-                .post(
-                  'api/auth/register/request' + (client ? '/' + client : ''),
-                  { email },
-                )
-                .then(() => setStep(Step.checkEmail))
-                .catch((error) => axiosErrorToaster(error))
-                .finally(() => setButtonLabel('IDLE'));
+            axiosInstance
+              ?.post(
+                'api/auth/register/request' + (client ? '/' + client : ''),
+                { email },
+              )
+              .then(() => setStep(Step.checkEmail))
+              .catch((error) => axiosErrorToaster(error))
+              .finally(() => setButtonLabel('IDLE'));
           };
         case Step.registerFin:
           return () => {
@@ -362,7 +363,7 @@ export const AuthPage = <UserType,>({
         break;
     }
 
-    if (client === tenum.admin) {
+    if (client === clientTypesEnum.admin) {
       navigateButton.exists = false;
       resetButton.exists = false;
     }
@@ -440,7 +441,7 @@ export const AuthPage = <UserType,>({
             />
           </Tooltip>
         </Grid2>
-        {client !== tenum.guest && (
+        {client !== clientTypesEnum[defaultMainClient] && (
           <Grid2>
             <customComponents.PrimaryText variant="h6">
               for {client}s
