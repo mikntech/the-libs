@@ -46,16 +46,17 @@ export const findDocs = async <
 export const quicklyFindByID = async <
   DocType extends MDocument<any, any, any>,
   CP = any,
+  stringable = any,
 >(
   ModelOrGetter:
     | ExtendedModel<DocType, CP>
     | (() => Promise<ExtendedModel<DocType, CP>>),
-  id: string,
+  id: string | stringable,
 ) => {
   const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
     ? ModelOrGetter
     : await (ModelOrGetter as () => Promise<ExtendedModel<DocType, CP>>)();
-  return findDocs<false, DocType, CP>(Model, Model.findById(id));
+  return findDocs<false, DocType, CP>(Model, Model.findById(String(id)));
 };
 
 export const createDoc = async <DocI extends MDocument, Computed = false>(
