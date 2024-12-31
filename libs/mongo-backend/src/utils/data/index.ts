@@ -14,7 +14,7 @@ export const mergeCacheToDocs = async <
   Array.isArray(doc)
     ? Promise.all(
         doc.map(async (d) => ({
-          ...d,
+          ...(d as any),
           ...(getCached ? await getCached(d) : {}),
         })),
       )
@@ -42,6 +42,21 @@ export const findDocs = async <
       ? await mergeCacheToDocs(await query.lean(), m)
       : query.lean()
     : query;
+
+export const quicklyFindByID = async <
+  DocType extends MDocument<any, any, any>,
+  CP = any,
+>(
+  ModelOrGetter:
+    | ExtendedModel<DocType, CP>
+    | (() => Promise<ExtendedModel<DocType, CP>>),
+  id: string,
+) => {
+  const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
+    ? ModelOrGetter
+    : await (ModelOrGetter as () => Promise<ExtendedModel<DocType, CP>>)();
+  return findDocs<false, DocType, CP>(Model, Model.findById(id));
+};
 
 export const createDoc = async <DocI extends MDocument, Computed = false>(
   { model }: ExtendedModel<DocI, Computed>,
