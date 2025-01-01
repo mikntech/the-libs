@@ -73,7 +73,7 @@
     "@types/forge-apis": "^0.9.6",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.3",
     "@types/pubsub-js": "^1.8.6",
     "@types/react": "19.0.2",
     "@types/react-dom": "19.0.2",
