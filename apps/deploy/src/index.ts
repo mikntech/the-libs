@@ -231,7 +231,7 @@ const step3DNSRecords = async (
 //
 
 const DOMAIN = 'cubebox.co.il';
-const DEP_REGION = 'ap-south-1';
+const DEP_REGION = 'eu-west-3';
 if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
 const projectName = 'cb';
