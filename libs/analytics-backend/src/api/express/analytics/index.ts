@@ -1,11 +1,11 @@
 import { createRequire } from 'module';
 import { highOrderHandler } from '@the-libs/express-backend';
-import { analyticEvent } from '../../db/mongo/analytics/analyticEvent';
 import { SomeEnum } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
 import type { Request } from 'express';
 import { createDoc } from '@the-libs/mongo-backend';
+import { analyticEvent } from '../../../';
 
 export const analyticsRouterGenerator = <ENUM>(
   AnalyticEventEnum: SomeEnum<ENUM>,

@@ -32,6 +32,8 @@
           "@the-libs/express-backend",
           "@the-libs/base-shared",
           "express",
+          "zod",
+          "@trpc/server",
           "@the-libs/mongo-backend"
         ]
       },
