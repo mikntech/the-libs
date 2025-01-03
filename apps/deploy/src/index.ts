@@ -273,7 +273,7 @@ const apps = [
     },
   },
 ];
-const nodeTag = '18.20.4';
+const nodeTag = '20.18.1';
 
 const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
 
