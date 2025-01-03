@@ -12,7 +12,7 @@ const {
 export const updateSecurityGroupInboundRules = async (
   securityGroupId: string,
 ) => {
-  const ec2Client = new EC2Client({});
+  const ec2Client = createClient<typeof EC2Client>(EC2Client);
 
   try {
     // Step 1: Get current security group rules
