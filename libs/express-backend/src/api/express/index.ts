@@ -57,7 +57,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
     json({ limit: '50mb' }),
     urlencoded({ limit: '50mb', extended: true }),
     cors({
-      origin,
+      origin: origin.length === 1 ? origin[0] : origin,
       credentials: true,
     }),
   ];
