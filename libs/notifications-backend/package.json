@@ -5,12 +5,12 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.20.18",
-    "@the-libs/notifications-shared": "^1.20.18",
-    "@the-libs/mongo-backend": "^1.20.18",
+    "@the-libs/base-shared": "^1.20.64",
+    "@the-libs/notifications-shared": "^1.20.64",
+    "@the-libs/mongo-backend": "^1.20.64",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "mongoose": "^8.9.2",
+    "mongoose": "^8.9.3",
     "web-push": "^3.6.7"
   },
   "type": "module",
