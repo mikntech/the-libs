@@ -231,7 +231,7 @@ const step3DNSRecords = async (
 //
 
 const DOMAIN = 'cubebox.co.il';
-const DEP_REGION = 'eu-west-3';
+const DEP_REGION = 'ap-south-1';
 if (cicdSettings.aws.region !== DEP_REGION)
   throw new Error('DEP_REGION is not like process.env.AWS_REGION!!!');
 const projectName = 'cb';
@@ -289,8 +289,10 @@ const stagingENVs: (keyof typeof Staging)[] = ['prod', 'preprod'];
 //
 //
 
+/*
 await step2ARNsServices(apps, stagingENVs).then();
 setTimeout(() => step3DNSRecords(DOMAIN, apps, stagingENVs).then(), 20000);
+*/
 
 //
 
