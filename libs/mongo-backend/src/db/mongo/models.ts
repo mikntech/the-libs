@@ -22,6 +22,8 @@ import {
 } from './computedFields';
 import { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
 import { createRedisInstance, PubSub } from '@the-libs/redis-backend';
+import fs from 'fs';
+import https from 'https';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -43,17 +45,58 @@ const registerComputedFields = <ComputedPart, DBFullDoc extends Document>(
   r: Reg,
 ) => allComputedFields.push(r);
 
-const connect = async (
-  logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
-) => {
+// Download the DocumentDB CA Bundle from Amazon (at runtime)
+const fetchCA = async (): Promise<string> => {
+  const caPath = '/tmp/rds-combined-ca-bundle.pem';
+  const caURL =
+    'https://truststore.pki.rds.amazonaws.com/global/global-bundle.pem';
+
+  // Check if already downloaded
+  if (!fs.existsSync(caPath)) {
+    console.log('Downloading Amazon RDS CA certificate...');
+    const file = fs.createWriteStream(caPath);
+    return new Promise((resolve, reject) => {
+      https
+        .get(caURL, (response) => {
+          response.pipe(file);
+          file.on('finish', () => {
+            file.close();
+            resolve(caPath);
+          });
+        })
+        .on('error', (err) => {
+          reject(`Failed to download CA certificate: ${err}`);
+        });
+    });
+  }
+  return caPath;
+};
+
+// Modify the connect function to include TLS and CA
+const connect = async (logMongoToConsole: boolean = false) => {
   mongoose.set('debug', logMongoToConsole ?? true);
   try {
-    await mongoose.connect(mongoSettings.mongoURI);
-    console.log('Mongo DB connected successfully');
+    let connectionOptions: any = {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 50000,
+    };
+
+    // Enable TLS for DocumentDB (since it requires a custom CA file)
+    if (mongoSettings.mongoURI.includes('docdb.amazonaws.com')) {
+      const caFilePath = await fetchCA();
+      connectionOptions.tls = true;
+      connectionOptions.tlsCAFile = caFilePath;
+    } else if (mongoSettings.mongoURI.includes('mongodb.net')) {
+      // For MongoDB Atlas, TLS is already managed, no CA file needed
+      connectionOptions.tls = true;
+    }
+
+    await mongoose.connect(mongoSettings.mongoURI, connectionOptions);
+    console.log('Mongo DB connected successfully with TLS');
     connection.instance = mongoose.connection;
-    WatchDB.start();
   } catch (err) {
-    console.log('mongo connection error:' + err);
+    console.error('MongoDB connection error:', err);
     throw new Error(String(err));
   }
 };
