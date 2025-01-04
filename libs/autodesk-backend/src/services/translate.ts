@@ -51,7 +51,10 @@ const streamToBuffer = async (stream: any): Promise<Buffer> => {
   }
   return Buffer.concat(chunks);
 };
-export const translate = async (s3Key: string, progressCB = async () => {}) => {
+export const translate = async (
+  s3Key: string,
+  progressCB = async (_: number) => {},
+) => {
   try {
     const fileBuffer = await streamToBuffer((await downloadFile(s3Key)).Body);
     if (fileBuffer.length === 0) {
