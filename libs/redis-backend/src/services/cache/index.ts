@@ -60,7 +60,9 @@ export const cache = async (
 ): Promise<string> => {
   const cachedValue = await get(redis, key, timeout);
 
-  if (cachedValue !== null) {
+  const newVal = await computeValue();
+
+  if (cachedValue !== null && newVal === cachedValue) {
     return cachedValue;
   }
 
