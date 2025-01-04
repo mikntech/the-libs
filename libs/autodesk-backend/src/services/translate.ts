@@ -1,13 +1,12 @@
 import { authClient, derivativesApi } from './index';
-import { downloadFile, s3Settings } from '@the-libs/s3-backend';
+import { downloadFile } from '@the-libs/s3-backend';
 import { uploadToForge } from './upload';
 import { encodeUrn, getToken } from '../controllers/autodesk';
-import type { Job } from 'bull';
 import { autodeskSettings } from '../config';
 
 const waitForTranslationStatus = async (
   encodedUrn: string,
-  job?: Job,
+  progressCB = async (_: number) => {},
 ): Promise<boolean> => {
   try {
     while (true) {
@@ -24,11 +23,9 @@ const waitForTranslationStatus = async (
         console.log('Translation completed successfully.');
         return true;
       } else if (status === 'pending' || status === 'inprogress') {
-        try {
-          job?.progress(40 + (manifest.body.progress / 100) * 60);
-        } catch (e) {
-          console.log(e);
-        }
+        progressCB(40 + ((manifest.body.progress ?? 50) / 100) * 60 - 1)
+          .then()
+          .catch();
         console.log(
           'Translation not completed. Status:',
           status,
@@ -54,7 +51,7 @@ const streamToBuffer = async (stream: any): Promise<Buffer> => {
   }
   return Buffer.concat(chunks);
 };
-export const translate = async (s3Key: string, job?: Job) => {
+export const translate = async (s3Key: string, progressCB = async () => {}) => {
   try {
     const fileBuffer = await streamToBuffer((await downloadFile(s3Key)).Body);
     if (fileBuffer.length === 0) {
@@ -76,7 +73,7 @@ export const translate = async (s3Key: string, job?: Job) => {
       authClient,
       await getToken(),
     );
-    await waitForTranslationStatus(encodedUrn, job);
+    await waitForTranslationStatus(encodedUrn, progressCB);
     return { statusCode: 201, body: encodedUrn };
   } catch (e: any) {
     console.error('Error during translation workflow:', e.message || e, {
