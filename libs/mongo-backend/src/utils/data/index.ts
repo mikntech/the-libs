@@ -42,8 +42,8 @@ export const findDocs = async <
   withCacheValue: withCache = true as withCache,
 ): Promise<
   isArray extends true
-    ? Array<withCache extends true ? DBDocI | ComputedPart : DBDocI>
-    : (withCache extends true ? DBDocI | ComputedPart : DBDocI) | null
+    ? Array<withCache extends true ? DBDocI & ComputedPart : DBDocI>
+    : (withCache extends true ? DBDocI & ComputedPart : DBDocI) | null
 > =>
   lean
     ? withCacheValue
