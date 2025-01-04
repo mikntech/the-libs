@@ -27,20 +27,22 @@ export const mergeCacheToDocs = async <
 
 export const findDocs = async <
   isArray extends boolean,
-  DocI extends MDocument = MDocument,
+  DBDocI extends MDocument = MDocument,
   ComputedPart = any,
-  withCache = true,
 >(
-  m: ExtendedModel<DocI, ComputedPart>,
+  m: ExtendedModel<DBDocI, ComputedPart>,
   query:
-    | QueryWithHelpers<isArray extends true ? Array<DocI> : DocI | null, DocI>
+    | QueryWithHelpers<
+        isArray extends true ? Array<DBDocI> : DBDocI | null,
+        DBDocI
+      >
     | TODO,
   lean: boolean = true,
   withCache: boolean = true,
 ): Promise<
   isArray extends true
-    ? Array<withCache extends true ? DocI | ComputedPart : DocI>
-    : (withCache extends true ? DocI | ComputedPart : DocI) | null
+    ? Array<typeof withCache extends true ? DBDocI | ComputedPart : DBDocI>
+    : (typeof withCache extends true ? DBDocI | ComputedPart : DBDocI) | null
 > =>
   lean
     ? withCache
