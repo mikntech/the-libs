@@ -29,6 +29,7 @@ export const findDocs = async <
   isArray extends boolean,
   DBDocI extends MDocument = MDocument,
   ComputedPart = any,
+  withCache extends boolean = true,
 >(
   m: ExtendedModel<DBDocI, ComputedPart>,
   query:
@@ -38,14 +39,14 @@ export const findDocs = async <
       >
     | TODO,
   lean: boolean = true,
-  withCache: boolean = true,
+  withCacheValue: withCache = true as withCache,
 ): Promise<
   isArray extends true
-    ? Array<typeof withCache extends true ? DBDocI | ComputedPart : DBDocI>
-    : (typeof withCache extends true ? DBDocI | ComputedPart : DBDocI) | null
+    ? Array<withCache extends true ? DBDocI | ComputedPart : DBDocI>
+    : (withCache extends true ? DBDocI | ComputedPart : DBDocI) | null
 > =>
   lean
-    ? withCache
+    ? withCacheValue
       ? await mergeCacheToDocs(await query.lean(), m)
       : query.lean()
     : query;

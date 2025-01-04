@@ -47,15 +47,21 @@ export const findAndValidate = async <
   isArray extends boolean,
   DocI extends MDocument = MDocument,
   Cached = any,
+  WithCache extends boolean = true,
 >(
   model: ExtendedModel<DocI, Cached>,
   query: QueryWithHelpers<isArray extends true ? DocI[] : DocI | null, DocI>,
   customDescription: string,
   lean: boolean = true,
-  withCache: boolean = true,
+  withCache: WithCache = true as WithCache,
 ): Promise<isArray extends true ? DocI[] : DocI> => {
   try {
-    const res = await findDocs<isArray, DocI>(model, query, lean, withCache);
+    const res = await findDocs<isArray, DocI, Cached, WithCache>(
+      model,
+      query,
+      lean,
+      withCache,
+    );
 
     // Narrow the result type to ensure no null values
     if (res === null || (Array.isArray(res) && res.length === 0)) {
