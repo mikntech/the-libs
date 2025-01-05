@@ -43,24 +43,38 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
 ) => {
-  // Check for circular dependencies before starting the computation
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
+  const redisInstance = await createRedisInstance();
+
+  // Early Return: Check if already cached to avoid recomputation
+  const cachedValue = await get(
+    redisInstance,
+    JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+  );
+  if (cachedValue !== null) {
+    return JSON.parse(cachedValue);
+  }
+
+  // Circular Dependency Detection (Per Model Basis)
   if (activeComputations.has(docKey)) {
+    console.error(`Circular dependency detected at key: ${docKey}`);
     throw new Error(`Circular dependency detected for: ${docKey}`);
   }
 
-  // Add the current computation to the stack
+  // Track Computation Start
   activeComputations.add(docKey);
   try {
     const val = await compute(fullDoc);
+
+    // Cache Result After Successful Computation
     await cache(
-      await createRedisInstance(),
+      redisInstance,
       JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
       async () => JSON.stringify(fullDoc ? val : null),
     );
     return val;
   } finally {
-    // Ensure the entry is removed after computation
+    // Clean Up Computation Tracking
     activeComputations.delete(docKey);
   }
 };
