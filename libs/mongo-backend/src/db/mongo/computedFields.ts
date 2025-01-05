@@ -49,7 +49,9 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
 
   // NEW: Prevent infinite loops
   if (activeComputations.has(docKey)) {
+    /*
     console.warn(`Circular dependency avoided for: ${docKey}`);
+*/
     return null; // Prevent further recursion
   }
 
