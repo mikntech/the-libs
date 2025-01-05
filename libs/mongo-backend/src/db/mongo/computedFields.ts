@@ -42,30 +42,31 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
-  invalidateCheck?: boolean,
 ) => {
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
 
-  // Conditional Early Return: Skip only if invalidateCheck is FALSE
-  if (!invalidateCheck) {
-    const cachedValue = await get(
-      redisInstance,
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
-    );
-    if (cachedValue !== null) {
-      return JSON.parse(cachedValue); // Return cached if no invalidation requested
-    }
+  // Early Return: Check if already cached to avoid recomputation
+  const cachedValue = await get(
+    redisInstance,
+    JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+  );
+  if (cachedValue !== null) {
+    return JSON.parse(cachedValue);
   }
 
-  // Circular Dependency Check
+  // Circular Dependency Detection (Per Model Basis)
   if (activeComputations.has(docKey)) {
+    console.error(`Circular dependency detected at key: ${docKey}`);
     throw new Error(`Circular dependency detected for: ${docKey}`);
   }
 
+  // Track Computation Start
   activeComputations.add(docKey);
   try {
     const val = await compute(fullDoc);
+
+    // Cache Result After Successful Computation
     await cache(
       redisInstance,
       JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
@@ -73,6 +74,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
     );
     return val;
   } finally {
+    // Clean Up Computation Tracking
     activeComputations.delete(docKey);
   }
 };
@@ -138,19 +140,11 @@ export const refreshCacheIfNeeded = async <
   { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc, any>,
   extraCallBack: () => void,
 ) => {
-  const changedDoc = await mongoose.connection.db
+  const changedDcc = await mongoose.connection.db
     .collection(changedColl)
     .findOne({ _id: new mongoose.Types.ObjectId(changed_Id) });
-
-  const shouldInvalidate = await invalidate(
-    String(myDoc._id),
-    changedColl,
-    changedDoc,
-  );
-
-  if (shouldInvalidate) {
-    // Force recomputation even if cached
-    await cacheField(fieldName, myDoc, compute, true);
-    extraCallBack();
-  }
+  (await invalidate(String(myDoc._id), changedColl, changedDcc)) &&
+    cacheField(fieldName, myDoc, compute)
+      /*.then(() => console.log(fieldName + ' on ' + myDoc._id + ' was renewed'))*/
+      .then(() => extraCallBack());
 };
