@@ -36,36 +36,20 @@ export type SchemaComputers<
   >;
 };
 
-const activeComputations = new Set<string>();
-
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
 ) => {
-  // Check for circular dependencies before starting the computation
-  const docKey = `${String(fullDoc._id)}:${fieldName}`;
-  if (activeComputations.has(docKey)) {
-    throw new Error(`Circular dependency detected for: ${docKey}`);
-  }
-
-  // Add the current computation to the stack
-  activeComputations.add(docKey);
-  try {
-    const val = await compute(fullDoc);
-    await cache(
-      await createRedisInstance(),
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
-      async () => JSON.stringify(fullDoc ? val : null),
-    );
-    return val;
-  } finally {
-    // Ensure the entry is removed after computation
-    activeComputations.delete(docKey);
-  }
+  const val = await compute(fullDoc);
+  await cache(
+    await createRedisInstance(),
+    JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+    async () => JSON.stringify(fullDoc ? val : null),
+  );
+  return val;
 };
 
-// Modify getCached to use the new cacheField with circular detection
 export const getCached = async <
   ComputedPartOfSchema,
   DBFullDoc extends MDocument,
@@ -73,18 +57,20 @@ export const getCached = async <
   fullDoc: DBFullDoc,
   computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
 ): Promise<ComputedPartOfSchema> => {
-  const redisInstance = await createRedisInstance();
+  const redisInstance = await createRedisInstance(); // Create Redis instance once
   const keys = Object.keys(computers);
   const redisKeys = keys.map((key) =>
     JSON.stringify({ _id: String(fullDoc._id), key }),
   );
 
+  // Batch Redis GET operations
   const restoredValues = await Promise.all(
     redisKeys.map(async (redisKey) =>
       JSON.parse((await get(redisInstance, redisKey)) ?? 'null'),
     ),
   );
 
+  // Compute missing fields in parallel
   const missingFields = keys.filter(
     (_, index) => restoredValues[index] === null,
   );
@@ -100,6 +86,7 @@ export const getCached = async <
     ),
   );
 
+  // Merge restored and computed values
   const finalValues = keys.reduce(
     (acc, key, index) => {
       acc[key] =
