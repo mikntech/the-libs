@@ -21,7 +21,11 @@ import {
   SchemaComputers,
 } from './computedFields';
 import { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
-import { createRedisInstance, PubSub } from '@the-libs/redis-backend';
+import {
+  createRedisInstance,
+  PubSub,
+  runTaskWithLock,
+} from '@the-libs/redis-backend';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -171,45 +175,53 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
       WatchDB.addToWholeDB(
         connection.instance.db,
         async (event: ChangeStreamDocument) => {
-          mongoPubSubInstance.publish('mr.allDB', 'null');
-          (event as ChangeStreamUpdateDocument).ns?.coll &&
-            mongoPubSubInstance.publish(
-              'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
-              'null',
-            );
-          await Promise.all(
-            allComputedFields.map(async ({ model, computedFields }) =>
-              Promise.all(
-                Object.keys(computedFields).map(async (fieldName) =>
+          runTaskWithLock(
+            await createRedisInstance(),
+            'refreshCacheIfNeeded',
+            Number.MAX_SAFE_INTEGER,
+            async () => {
+              mongoPubSubInstance.publish('mr.allDB', 'null');
+              (event as ChangeStreamUpdateDocument).ns?.coll &&
+                mongoPubSubInstance.publish(
+                  'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
+                  'null',
+                );
+              await Promise.all(
+                allComputedFields.map(async ({ model, computedFields }) =>
                   Promise.all(
-                    (await model.find()).map(
-                      async (doc) =>
-                        (event as ChangeStreamUpdateDocument)?.documentKey
-                          ?._id &&
-                        (event as ChangeStreamUpdateDocument).ns &&
-                        refreshCacheIfNeeded(
-                          doc,
-                          String(
-                            (event as ChangeStreamUpdateDocument).documentKey
-                              ._id,
-                          ),
-                          (event as ChangeStreamUpdateDocument).ns.coll,
-                          fieldName,
-                          computedFields[fieldName],
-                          () =>
-                            mongoPubSubInstance.publish(
-                              'mr.cache.' +
-                                (event as ChangeStreamUpdateDocument).ns.coll +
-                                '.' +
-                                fieldName,
-                              'null',
+                    Object.keys(computedFields).map(async (fieldName) =>
+                      Promise.all(
+                        (await model.find()).map(
+                          async (doc) =>
+                            (event as ChangeStreamUpdateDocument)?.documentKey
+                              ?._id &&
+                            (event as ChangeStreamUpdateDocument).ns &&
+                            refreshCacheIfNeeded(
+                              doc,
+                              String(
+                                (event as ChangeStreamUpdateDocument)
+                                  .documentKey._id,
+                              ),
+                              (event as ChangeStreamUpdateDocument).ns.coll,
+                              fieldName,
+                              computedFields[fieldName],
+                              () =>
+                                mongoPubSubInstance.publish(
+                                  'mr.cache.' +
+                                    (event as ChangeStreamUpdateDocument).ns
+                                      .coll +
+                                    '.' +
+                                    fieldName,
+                                  'null',
+                                ),
                             ),
                         ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
+              );
+            },
           );
         },
       );
