@@ -149,7 +149,9 @@ export const refreshCacheIfNeeded = async <
 
   // Prevent redundant invalidation loops
   if (activeComputations.has(docKey)) {
+    /*
     console.warn(`Skipping redundant invalidation for: ${docKey}`);
+*/
     return;
   }
 
