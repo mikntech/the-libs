@@ -2,6 +2,9 @@ import type { QueryWithHelpers, Document as MDocument, Types } from 'mongoose';
 import { ExtendedModel } from '../../db/mongo';
 import { TODO } from '@the-libs/base-shared';
 
+/**
+ * Merges cached fields into documents, supporting both arrays and single documents.
+ */
 export const mergeCacheToDocs = async <
   DocI extends MDocument & { _id: Types.ObjectId } = MDocument & {
     _id: Types.ObjectId;
@@ -25,6 +28,9 @@ export const mergeCacheToDocs = async <
           ...(getCached ? await getCached(doc) : {}),
         };
 
+/**
+ * Enhanced findDocs to support both standard queries and aggregation pipelines.
+ */
 export const findDocs = async <
   isArray extends boolean,
   DBDocI extends MDocument = MDocument,
@@ -51,6 +57,28 @@ export const findDocs = async <
       : query.lean()
     : query;
 
+/**
+ * New: Aggregation support with cache merging for MongoDB pipelines.
+ */
+export const findDocsWithAggregation = async <
+  DBDocI extends MDocument = MDocument,
+  ComputedPart = any,
+  withCache extends boolean = true,
+>(
+  m: ExtendedModel<DBDocI, ComputedPart>,
+  aggregationPipeline: any[],
+  withCacheValue: withCache = true as withCache,
+): Promise<
+  withCache extends true ? Array<DBDocI & ComputedPart> : DBDocI[]
+> => {
+  const results = await m.model.aggregate(aggregationPipeline).exec();
+
+  return withCacheValue ? mergeCacheToDocs(results, m) : results;
+};
+
+/**
+ * Efficiently fetch a document by ID, supports caching.
+ */
 export const quicklyFindByID = async <
   DocType extends MDocument<any, any, any>,
   CP = any,
@@ -67,6 +95,9 @@ export const quicklyFindByID = async <
   return findDocs<false, DocType, CP>(Model, Model.findById(String(id)));
 };
 
+/**
+ * Create a new document, optionally saves it to the database.
+ */
 export const createDoc = async <DocI extends MDocument, Computed = false>(
   { model }: ExtendedModel<DocI, Computed>,
   fields: Partial<DocI>,
