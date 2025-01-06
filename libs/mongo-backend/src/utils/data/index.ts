@@ -83,16 +83,49 @@ export const quicklyFindByID = async <
   DocType extends MDocument<any, any, any>,
   CP = any,
   stringable = any,
+  withCache extends boolean = true,
 >(
   ModelOrGetter:
     | ExtendedModel<DocType, CP>
     | (() => Promise<ExtendedModel<DocType, CP>>),
   id: string | stringable,
+  lean: boolean = true,
+  withCacheValue: withCache = true as withCache,
 ) => {
   const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
     ? ModelOrGetter
     : await (ModelOrGetter as () => Promise<ExtendedModel<DocType, CP>>)();
-  return findDocs<false, DocType, CP>(Model, Model.findById(String(id)));
+  return findDocs<false, DocType, CP, withCache>(
+    Model,
+    Model.findById(String(id)),
+    lean,
+    withCacheValue,
+  );
+};
+
+/**
+ * Efficiently fetch all docs, supports caching.
+ */
+export const quicklyFindAll = async <
+  DocType extends MDocument<any, any, any>,
+  CP = any,
+  withCache extends boolean = true,
+>(
+  ModelOrGetter:
+    | ExtendedModel<DocType, CP>
+    | (() => Promise<ExtendedModel<DocType, CP>>),
+  lean: boolean = true,
+  withCacheValue: withCache = true as withCache,
+) => {
+  const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
+    ? ModelOrGetter
+    : await (ModelOrGetter as () => Promise<ExtendedModel<DocType, CP>>)();
+  return findDocs<false, DocType, CP, withCache>(
+    Model,
+    Model.find({}),
+    lean,
+    withCacheValue,
+  );
 };
 
 /**
