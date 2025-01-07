@@ -34,10 +34,6 @@ export const createRedisInstance = async (): Promise<RedisType> => {
     },
   });
 
-  /**
-   * ✅ The FIX: Ensure `.on` handlers always check for null using optional chaining
-   * This prevents the TS18047 error completely!
-   */
   redisInstance?.on('ready', (): void => {
     // console.log('✅ Redis Connected Successfully');
   });

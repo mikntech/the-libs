@@ -32,12 +32,12 @@ export const set = async (
   try {
     // Test Redis status
     if (!redis.status || redis.status !== 'ready') {
-      console.log('[INFO] Redis client not ready. Waiting for connection...');
+      //  console.log('[INFO] Redis client not ready. Waiting for connection...');
       await new Promise<void>((resolve, reject) => {
         redis.once('ready', resolve);
         redis.once('error', reject);
       });
-      console.log('[INFO] Redis connection established.');
+      //  console.log('[INFO] Redis connection established.');
     }
 
     // Test PING
