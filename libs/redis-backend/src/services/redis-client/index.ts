@@ -27,3 +27,12 @@ export const createRedisInstance = async (): Promise<RedisType> => {
     });
   });
 };
+
+// Redis Error Listener
+const redis = await createRedisInstance();
+redis.on('error', (err) => {
+  console.error('❌ Redis Error:', err.message);
+  if (err.message.includes('ECONNRESET')) {
+    console.error('❗️ Redis connection was reset.');
+  }
+});

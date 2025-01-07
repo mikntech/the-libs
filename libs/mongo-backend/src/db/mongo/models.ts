@@ -292,3 +292,11 @@ export const autoSignS3URIs = (schema: Schema) => {
 
   return schema.post(/find/, signS3UrlsMiddleware);
 };
+
+// MongoDB Error Listener
+mongoose.connection.on('error', (err: any) => {
+  console.error('❌ MongoDB Error:', err.message);
+  if (err.message.includes('ECONNRESET')) {
+    console.error('❗️ MongoDB connection was reset.');
+  }
+});
