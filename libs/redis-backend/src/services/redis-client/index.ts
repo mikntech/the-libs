@@ -15,7 +15,7 @@ let redisInstance: RedisType | null = null;
  */
 export const createRedisInstance = async (): Promise<RedisType> => {
   if (redisInstance) {
-    console.log('⚡️ Reusing existing Redis connection');
+    // console.log('⚡️ Reusing existing Redis connection');
     return redisInstance;
   }
 
