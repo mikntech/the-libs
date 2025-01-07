@@ -21,7 +21,7 @@ export const createS3Client = (): S3 =>
     },
     requestHandler: new NodeHttpHandler({
       connectionTimeout: 600000, // 10 minutes
-      socketTimeout: 600000, // 10 minutes
+      requestTimeout: 600000, // 10 minutes
     }),
     maxAttempts: 5, // Retry up to 5 times
     retryMode: 'adaptive',
