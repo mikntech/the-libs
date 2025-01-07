@@ -10,6 +10,10 @@ export const createRedisInstance = async (): Promise<RedisType> => {
   const redis = new Redis({
     ...redisSettings.uri,
     retryStrategy: (times: number) => Math.min(times * 50, 2000),
+    reconnectOnError: (err: any) => {
+      console.error('Reconnect on error:', err);
+      return true;
+    },
   });
 
   return new Promise((resolve, reject) => {
