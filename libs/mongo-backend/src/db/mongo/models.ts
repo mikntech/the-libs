@@ -2,17 +2,17 @@ import { createRequire } from 'module';
 import { WatchDB } from './watch';
 import {
   Connection,
+  Document,
   IndexDefinition,
   IndexOptions,
   Model,
-  Schema,
-  SchemaDefinition,
-  Document,
   Query,
   QueryWithHelpers,
+  Schema,
+  SchemaDefinition,
 } from 'mongoose';
 import { versioning } from './autoVersioning';
-import { TODO } from '@the-libs/base-shared';
+import { StagingEnvironment, TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
 import {
@@ -26,6 +26,7 @@ import {
   PubSub,
   runTaskWithLock,
 } from '@the-libs/redis-backend';
+import { getExpressSettings } from '@the-libs/express-backend';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -53,14 +54,22 @@ const connect = async (
   mongoose.set('debug', logMongoToConsole ?? true);
   try {
     await mongoose.connect(mongoSettings.mongoURI, {
-      socketTimeoutMS: 45000, // Prevents hanging connections
-      keepAlive: true, // Keep the connection alive
-      keepAliveInitialDelay: 300000, // Initial delay before keep-alive kicks in (5 minutes)
-      maxPoolSize: 100, // Manage max concurrent connections
-      minPoolSize: 5, // Maintain a minimum open connection pool
-      serverSelectionTimeoutMS: 5000, // Limit how long it waits for the primary server
-      connectTimeoutMS: 10000, // Limit initial connection time
-      heartbeatFrequencyMS: 10000, // Control frequency of MongoDB heartbeats
+      socketTimeoutMS:
+        getExpressSettings().stagingEnv === StagingEnvironment.Local
+          ? 30000
+          : 45000,
+      maxPoolSize:
+        getExpressSettings().stagingEnv === StagingEnvironment.Local ? 10 : 100,
+      minPoolSize:
+        getExpressSettings().stagingEnv === StagingEnvironment.Local ? 1 : 5,
+      serverSelectionTimeoutMS:
+        getExpressSettings().stagingEnv === StagingEnvironment.Local
+          ? 5000
+          : 10000,
+      connectTimeoutMS:
+        getExpressSettings().stagingEnv === StagingEnvironment.Local
+          ? 5000
+          : 10000,
     });
     console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
