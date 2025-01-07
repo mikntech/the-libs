@@ -26,7 +26,7 @@ export const runTaskWithLock = <CBR = any>(
 */
       }
     } catch (err) {
-      console.log('Another instance is already running the task.');
+      // console.log('Another instance is already running the task.');
     }
   };
 
