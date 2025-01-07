@@ -15,7 +15,7 @@ let redisInstance: RedisType | null = null;
  */
 export const createRedisInstance = async (): Promise<RedisType> => {
   if (redisInstance) {
-    // console.log('⚡️ Reusing existing Redis connection');
+    //  console.log('⚡️ Reusing existing Redis connection');
     return redisInstance;
   }
 
@@ -23,7 +23,7 @@ export const createRedisInstance = async (): Promise<RedisType> => {
     ...redisSettings.uri,
     retryStrategy: (times: number): number => Math.min(times * 50, 2000),
     reconnectOnError: (err: Error): boolean => {
-      console.error('❌ Redis Reconnect Error:', err.message);
+      // console.error('❌ Redis Reconnect Error:', err.message);
       return true; // Attempt to reconnect on error
     },
     socket: {
@@ -39,18 +39,18 @@ export const createRedisInstance = async (): Promise<RedisType> => {
    * This prevents the TS18047 error completely!
    */
   redisInstance?.on('ready', (): void => {
-    console.log('✅ Redis Connected Successfully');
+    // console.log('✅ Redis Connected Successfully');
   });
 
   redisInstance?.on('error', (err: Error): void => {
-    console.error('❌ Redis Connection Error:', err.message);
+    // console.error('❌ Redis Connection Error:', err.message);
     if (err.message.includes('ECONNRESET')) {
-      console.error('❗️ Connection Reset Detected');
+      // console.error('❗️ Connection Reset Detected');
     }
   });
 
   redisInstance?.on('end', (): void => {
-    console.warn('⚠️ Redis Connection Closed');
+    // console.warn('⚠️ Redis Connection Closed');
     redisInstance = null; // Prevent reusing a closed connection
   });
 
@@ -58,10 +58,10 @@ export const createRedisInstance = async (): Promise<RedisType> => {
     // ✅ Explicit null check and safe testing for the connection
     if (!redisInstance) throw new Error('Redis instance failed to initialize');
     await redisInstance.ping(); // Test initial connection
-    console.log('✅ Redis Connection Verified');
+    // console.log('✅ Redis Connection Verified');
     return redisInstance;
   } catch (error) {
-    console.error('❌ Initial Redis Connection Failed:', error);
+    // console.error('❌ Initial Redis Connection Failed:', error);
     redisInstance = null; // Prevent using a failed connection
     throw error;
   }
