@@ -9,12 +9,16 @@ export type RedisType = TRedis;
 export const createRedisInstance = async (): Promise<RedisType> => {
   const redis = new Redis({
     ...redisSettings.uri,
+    retryStrategy: (times: number) => Math.min(times * 50, 2000),
+    reconnectOnError: (err: any) => {
+      console.error('❌ Redis Error (Reconnecting):', err);
+      return true; // Always try to reconnect
+    },
     socket: {
       reconnectStrategy: (retries: number) => Math.min(retries * 50, 1000),
       keepAlive: true,
-      connectTimeout: 10000,
+      connectTimeout: 10000, // 10 seconds timeout
     },
-    retryStrategy: (times: number) => Math.min(times * 50, 2000),
   });
 
   return new Promise((resolve, reject) => {
