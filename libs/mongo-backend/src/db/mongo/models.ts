@@ -52,7 +52,16 @@ const connect = async (
 ) => {
   mongoose.set('debug', logMongoToConsole ?? true);
   try {
-    await mongoose.connect(mongoSettings.mongoURI);
+    await mongoose.connect(mongoSettings.mongoURI, {
+      socketTimeoutMS: 45000, // Prevents hanging connections
+      keepAlive: true, // Keep the connection alive
+      keepAliveInitialDelay: 300000, // Initial delay before keep-alive kicks in (5 minutes)
+      maxPoolSize: 100, // Manage max concurrent connections
+      minPoolSize: 5, // Maintain a minimum open connection pool
+      serverSelectionTimeoutMS: 5000, // Limit how long it waits for the primary server
+      connectTimeoutMS: 10000, // Limit initial connection time
+      heartbeatFrequencyMS: 10000, // Control frequency of MongoDB heartbeats
+    });
     console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
@@ -61,6 +70,12 @@ const connect = async (
     throw new Error(String(err));
   }
 };
+
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  console.log('MongoDB connection closed on app termination');
+  process.exit(0);
+});
 
 const initModel = <DBPart extends Document>(
   connection: {
