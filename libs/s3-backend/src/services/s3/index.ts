@@ -1,21 +1,18 @@
 import { s3Settings } from '../../config';
 import { createRequire } from 'module';
-import { TODO } from '@the-libs/base-shared';
+import { Readable } from 'stream';
+import { S3Client as S3, GetObjectCommandOutput } from '@aws-sdk/client-s3';
 const require = createRequire(import.meta.url);
-
 const {
+  S3Client,
   GetObjectCommand,
   PutObjectCommand,
-  S3Client,
 } = require('@aws-sdk/client-s3');
-
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const { Upload } = require('@aws-sdk/lib-storage');
-
 const { NodeHttpHandler } = require('@smithy/node-http-handler');
-import { Readable } from 'stream'; // Needed to work with streams in Node.js
 
-export const createS3Client = () =>
+export const createS3Client = (): S3 =>
   new S3Client({
     region: s3Settings.aws.region,
     credentials: {
@@ -30,9 +27,17 @@ export const createS3Client = () =>
     retryMode: 'adaptive',
   });
 
+const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
+  const chunks: Uint8Array[] = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
+};
+
 export const streamFile = async (
   key: string,
-  buffer: TODO,
+  buffer: Buffer | Readable,
   mimetype: string,
 ) => {
   try {
@@ -47,7 +52,6 @@ export const streamFile = async (
       queueSize: 3, // Parallel uploads
       partSize: 5 * 1024 * 1024, // 5 MB parts
     });
-
     await upload.done();
     console.log(`File uploaded successfully to S3: ${key}`);
   } catch (err) {
@@ -56,7 +60,11 @@ export const streamFile = async (
   }
 };
 
-export const uploadFile = async (key: string, buffer: TODO, mimetype: string) =>
+export const uploadFile = async (
+  key: string,
+  buffer: Buffer | Readable,
+  mimetype: string,
+) =>
   createS3Client().send(
     new PutObjectCommand({
       Bucket: s3Settings.s3BucketName,
@@ -68,11 +76,11 @@ export const uploadFile = async (key: string, buffer: TODO, mimetype: string) =>
 
 export const preSignFile = async (
   filePath: string,
-  secondsUntilExpiry: number = 300,
+  secondsUntilExpiry = 300,
 ): Promise<string> => {
-  filePath = filePath.split('s3://')[1] ?? filePath.split('s3://')[0];
-  if (!filePath) throw new Error('file not found at path "' + filePath + '"');
-  return await getSignedUrl(
+  filePath = filePath.replace(/^s3:\/\//, '');
+  if (!filePath) throw new Error(`Invalid S3 file path: "${filePath}"`);
+  return getSignedUrl(
     createS3Client(),
     new GetObjectCommand({
       Bucket: s3Settings.s3BucketName,
@@ -88,63 +96,41 @@ const isS3Url = (url: string) => url.startsWith('s3://');
 
 export const recursivelySignUrls = async <T = any>(
   obj: T,
-  secondsUntilExpiry: number = 300,
+  secondsUntilExpiry = 300,
 ): Promise<T> => {
   const process = async (input: any): Promise<any> => {
-    if (typeof input === 'string') {
-      if (isS3Url(input)) {
-        // Replace S3 URL with signed URL
-        return await preSignFile(input, secondsUntilExpiry);
-      }
-      return input;
+    if (typeof input === 'string' && isS3Url(input)) {
+      return preSignFile(input, secondsUntilExpiry);
     }
 
     if (Array.isArray(input)) {
-      let changed = false;
-      const result = await Promise.all(
-        input.map(async (item) => {
-          const newItem = await process(item);
-          if (newItem !== item) {
-            changed = true;
-          }
-          return newItem;
-        }),
-      );
-      return changed ? result : input;
+      return Promise.all(input.map(process));
     }
 
     if (input && typeof input === 'object') {
-      let changed = false;
-      const result: TODO = {};
+      const result: Record<string, any> = {};
       for (const [key, value] of Object.entries(input)) {
-        const newValue = await process(value);
-        if (newValue !== value) {
-          changed = true;
-        }
-        result[key] = newValue;
+        result[key] = await process(value);
       }
-      if (changed) {
-        // Clone the object while preserving its prototype
-        const clonedObj = Object.create(Object.getPrototypeOf(input));
-        Object.assign(clonedObj, input, result);
-        return clonedObj;
-      }
-      return input;
+      return result;
     }
 
     return input;
   };
 
-  return await process(obj);
+  return process(obj);
 };
 
-export const downloadFile = async (key: string) =>
-  await createS3Client().send(
+export const downloadFile = async (
+  key: string,
+): Promise<GetObjectCommandOutput> => {
+  return createS3Client().send(
     new GetObjectCommand({
       Bucket: s3Settings.s3BucketName,
       Key: key,
     }),
   );
+};
 
 export const downloadAndExtractFile = async (
   key: string,
@@ -155,25 +141,34 @@ export const downloadAndExtractFile = async (
 }> => {
   const response = await downloadFile(key);
 
-  const body = response.Body;
-  if (!body) {
-    throw new Error('No file data returned from S3.');
+  if (!response.Body) {
+    throw new Error(`No file data returned from S3 for key: ${key}`);
   }
 
-  const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
+  let fileBuffer: Buffer;
+
+  // Fix for ReadableStream check (Node.js)
+  if (response.Body instanceof Readable) {
+    fileBuffer = await streamToBuffer(response.Body);
+  }
+  // Fix for Blob check (Browser)
+  else if (response.Body instanceof Blob) {
+    fileBuffer = Buffer.from(await response.Body.arrayBuffer());
+  }
+  // Fix for ReadableStream check (Browser without Blob support)
+  else if (typeof response.Body.getReader === 'function') {
+    const reader = response.Body.getReader();
     const chunks: Uint8Array[] = [];
-    for await (const chunk of stream) {
-      chunks.push(chunk);
+    let done = false;
+    while (!done) {
+      const { value, done: readerDone } = await reader.read();
+      if (value) chunks.push(value);
+      done = readerDone;
     }
-    return Buffer.concat(chunks);
-  };
+    fileBuffer = Buffer.concat(chunks);
+  } else {
+    throw new Error(`Unsupported response body type received.`);
+  }
 
-  const fileBuffer: Buffer =
-    body instanceof Readable
-      ? await streamToBuffer(body)
-      : Buffer.from(await body.arrayBuffer());
-
-  const mimetype = response.ContentType;
-
-  return { key, fileBuffer, mimetype };
+  return { key, fileBuffer, mimetype: response.ContentType };
 };
