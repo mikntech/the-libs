@@ -7,7 +7,10 @@ import { redisSettings } from '../..';
 export type RedisType = TRedis;
 
 export const createRedisInstance = async (): Promise<RedisType> => {
-  const redis = new Redis(redisSettings.uri);
+  const redis = new Redis({
+    ...redisSettings.uri,
+    retryStrategy: (times: number) => Math.min(times * 50, 2000),
+  });
 
   return new Promise((resolve, reject) => {
     redis.on('ready', () => {
