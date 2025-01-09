@@ -22,6 +22,7 @@ interface FieldDefinition<
 > {
   compute: Compute<FieldType, FullDoc>;
   invalidate: Invalidate<ChangedDoc>;
+  dependencies?: string[]; // Added dependencies for proper ordering
 }
 
 export type SchemaComputers<
@@ -38,22 +39,65 @@ export type SchemaComputers<
 
 const activeComputations = new Set<string>();
 
+/**
+ * Generate the correct order of fields to compute based on their dependencies.
+ * Uses topological sorting to resolve fields in the right order.
+ */
+const getComputationOrder = <T>(
+  computedFields: SchemaComputers<T, any, any>,
+): string[] => {
+  const graph: Record<string, string[]> = {};
+  const inDegree: Record<string, number> = {};
+
+  // Build the dependency graph
+  for (const [field, definition] of Object.entries(computedFields)) {
+    graph[field] = definition.dependencies || [];
+    inDegree[field] = 0;
+  }
+
+  // Calculate in-degree
+  for (const deps of Object.values(graph)) {
+    deps.forEach((dep) => {
+      if (inDegree[dep] !== undefined) inDegree[dep]++;
+    });
+  }
+
+  // Perform topological sort
+  const order: string[] = [];
+  const queue = Object.keys(inDegree).filter((key) => inDegree[key] === 0);
+
+  while (queue.length) {
+    const current = queue.shift()!;
+    order.push(current);
+    for (const neighbor of graph[current]) {
+      inDegree[neighbor]--;
+      if (inDegree[neighbor] === 0) queue.push(neighbor);
+    }
+  }
+
+  if (order.length !== Object.keys(graph).length) {
+    throw new Error('Circular dependency detected in computed fields.');
+  }
+
+  return order;
+};
+
+/**
+ * Caches a computed field value in Redis.
+ */
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
-  forceRefresh = false, // NEW: force invalidation to recompute cache
+  forceRefresh = false,
 ) => {
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
 
-  /*  // NEW: Prevent infinite loops
   if (activeComputations.has(docKey)) {
-    /!*
-    console.warn(`Circular dependency avoided for: ${docKey}`);
-*!/
-    return null; // Prevent further recursion
-  }*/
+    //  console.warn(`Circular dependency avoided for: ${docKey}`);
+    return null;
+  }
 
   if (!forceRefresh) {
     const cachedValue = await get(
@@ -61,11 +105,11 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
       JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
     );
     if (cachedValue !== null) {
-      return JSON.parse(cachedValue); // Early return for non-invalidations
+      return JSON.parse(cachedValue); // Early return if cache exists
     }
   }
 
-  // Mark this field as actively being computed
+  // Mark as actively computing to avoid recursion
   activeComputations.add(docKey);
   try {
     const value = await compute(fullDoc);
@@ -80,6 +124,9 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   }
 };
 
+/**
+ * Computes and caches all computed fields based on their dependencies
+ */
 export const getCached = async <
   ComputedPartOfSchema,
   DBFullDoc extends MDocument,
@@ -87,53 +134,24 @@ export const getCached = async <
   fullDoc: DBFullDoc,
   computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
 ): Promise<ComputedPartOfSchema> => {
-  const redisInstance = await createRedisInstance();
-  const keys = Object.keys(computers);
-  const redisKeys = keys.map((key) =>
-    JSON.stringify({ _id: String(fullDoc._id), key }),
-  );
+  const order = getComputationOrder(computers);
+  const finalValues: Partial<ComputedPartOfSchema> = {};
 
-  // Fetch existing cache
-  const restoredValues = await Promise.all(
-    redisKeys.map(async (redisKey) =>
-      JSON.parse((await get(redisInstance, redisKey)) ?? 'null'),
-    ),
-  );
-
-  // Identify which fields need recomputation
-  const missingFields = keys.filter(
-    (_, index) => restoredValues[index] === null,
-  );
-
-  // Prevent recursion for missing fields
-  const computedValues = await Promise.all(
-    missingFields.map(async (key) =>
-      cacheField(
-        key,
-        fullDoc,
-        computers[
-          key as keyof SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>
-        ].compute,
-      ),
-    ),
-  );
-
-  // Merge results
-  const finalValues = keys.reduce(
-    (acc, key, index) => {
-      acc[key] =
-        restoredValues[index] !== null
-          ? restoredValues[index]
-          : computedValues[missingFields.indexOf(key)];
-      return acc;
-    },
-    {} as Record<string, unknown>,
-  );
+  for (const field of order) {
+    const value = await cacheField(
+      field,
+      fullDoc,
+      computers[field as keyof ComputedPartOfSchema].compute,
+    );
+    finalValues[field as keyof ComputedPartOfSchema] = value;
+  }
 
   return finalValues as ComputedPartOfSchema;
 };
 
-// Remember to use this function only with locking in watch handler
+/**
+ * Refresh cache if invalidation conditions are met.
+ */
 export const refreshCacheIfNeeded = async <
   FieldType,
   DBFullDoc extends MDocument,
@@ -147,11 +165,7 @@ export const refreshCacheIfNeeded = async <
 ) => {
   const docKey = `${String(myDoc._id)}:${fieldName}`;
 
-  // Prevent redundant invalidation loops
   if (activeComputations.has(docKey)) {
-    /*
-    console.warn(`Skipping redundant invalidation for: ${docKey}`);
-*/
     return;
   }
 
@@ -166,7 +180,7 @@ export const refreshCacheIfNeeded = async <
   );
 
   if (shouldInvalidate) {
-    activeComputations.add(docKey); // Guard against recursive invalidations
+    activeComputations.add(docKey);
     await cacheField(fieldName, myDoc, compute, true); // Force refresh cache
     activeComputations.delete(docKey);
     extraCallBack();
