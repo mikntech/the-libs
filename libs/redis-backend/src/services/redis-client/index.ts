@@ -13,8 +13,10 @@ let redisInstance: RedisType | null = null;
  * Creates or returns a Redis instance with error handling
  * Ensures a safe singleton pattern and prevents multiple connections.
  */
-export const createRedisInstance = async (): Promise<RedisType> => {
-  if (redisInstance) {
+export const createRedisInstance = async (
+  forceNew = false,
+): Promise<RedisType> => {
+  if (!forceNew && redisInstance) {
     //  console.log('⚡️ Reusing existing Redis connection');
     return redisInstance;
   }

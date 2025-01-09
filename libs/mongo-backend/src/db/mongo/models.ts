@@ -33,8 +33,8 @@ const mongoose = require('mongoose');
 
 const connection: { instance?: Connection } = {};
 
-const pub = await createRedisInstance();
-const sub = await createRedisInstance();
+const pub = await createRedisInstance(true);
+const sub = await createRedisInstance(true);
 
 export const mongoPubSubInstance = new PubSub(pub, sub);
 
