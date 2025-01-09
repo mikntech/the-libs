@@ -137,7 +137,7 @@ export const getCached = async <
   const finalValues: Partial<ComputedPartOfSchema> = {};
 
   for (const field of order) {
-    await cacheField(
+    const value = await cacheField(
       field,
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
