@@ -7,8 +7,8 @@ import { AuthenticatedRequest, user } from '@the-libs/auth-backend';
 import { findDocs } from '@the-libs/mongo-backend';
 
 const pubSubInstance = new PubSub(
-  await createRedisInstance(true),
-  await createRedisInstance(true),
+  await createRedisInstance('pub'),
+  await createRedisInstance('sub'),
 );
 
 export const getNameOfUser = async (userId: string) =>
