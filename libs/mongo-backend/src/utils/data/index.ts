@@ -1,5 +1,5 @@
 import type { QueryWithHelpers, Document as MDocument, Types } from 'mongoose';
-import { ExtendedModel } from '../../db/mongo';
+import { convertIdsToStrings, ExtendedModel } from '../../db/mongo';
 import { TODO } from '@the-libs/base-shared';
 
 /**
@@ -51,11 +51,13 @@ export const findDocs = async <
     ? Array<withCache extends true ? DBDocI & ComputedPart : DBDocI>
     : (withCache extends true ? DBDocI & ComputedPart : DBDocI) | null
 > =>
-  lean
-    ? withCacheValue
-      ? await mergeCacheToDocs(await query.lean(), m)
-      : query.lean()
-    : query;
+  convertIdsToStrings(
+    lean
+      ? withCacheValue
+        ? await mergeCacheToDocs(await query.lean(), m)
+        : query.lean()
+      : query,
+  );
 
 /**
  * New: Aggregation support with cache merging for MongoDB pipelines.
@@ -71,7 +73,9 @@ export const findDocsWithAggregation = async <
 ): Promise<
   withCache extends true ? Array<DBDocI & ComputedPart> : DBDocI[]
 > => {
-  const results = await m.model.aggregate(aggregationPipeline).exec();
+  const results = convertIdsToStrings(
+    await m.model.aggregate(aggregationPipeline).exec(),
+  );
 
   return withCacheValue ? mergeCacheToDocs(results, m) : results;
 };

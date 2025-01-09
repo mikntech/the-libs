@@ -114,6 +114,28 @@ type GetCached<DBPart, ComputedPart> = ComputedPart extends false
   ? false
   : (dbDoc: DBPart) => Promise<ComputedPart>;
 
+export const convertIdsToStrings = <T = any>(doc: T): T => {
+  if (doc && typeof doc === 'object') {
+    Object.keys(doc).forEach((key) => {
+      // Check if the value behaves like an ObjectId
+      if (
+        typeof (doc as any)[key] === 'object' &&
+        (doc as any)[key] !== null &&
+        typeof (doc as any)[key].toHexString === 'function'
+      ) {
+        (doc as any)[key] = (doc as any)[key].toHexString(); // Convert ObjectId to string
+      } else if (Array.isArray((doc as any)[key])) {
+        (doc as any)[key] = (doc as any)[key].map((item: any) =>
+          convertIdsToStrings(item),
+        );
+      } else if (typeof (doc as any)[key] === 'object') {
+        (doc as any)[key] = convertIdsToStrings((doc as any)[key]);
+      }
+    });
+  }
+  return doc;
+};
+
 export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   public readonly model: Model<DocI>;
   public readonly getCached: GetCached<DocI, ComputedPart>;
@@ -133,7 +155,7 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   findOne(
     ...args: Parameters<Model<DocI>['findOne']>
   ): Query<DocI | null, DocI> {
-    return this.model.findOne(...args);
+    return convertIdsToStrings(this.model.findOne(...args));
   }
 
   find(
@@ -141,20 +163,20 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
     projection?: any | null | undefined,
     options?: any | null | undefined,
   ) {
-    return this.model.find(filter, projection, options);
+    return convertIdsToStrings(this.model.find(filter, projection, options));
   }
 
   // Add other query-returning methods explicitly if needed
   findById(
     ...args: Parameters<Model<DocI>['findById']>
   ): Query<DocI | null, DocI> {
-    return this.model.findById(...args);
+    return convertIdsToStrings(this.model.findById(...args));
   }
 
   limit(
     ...args: Parameters<QueryWithHelpers<any, DocI>['limit']>
   ): Query<DocI[], DocI> {
-    return this.model.find().limit(...args);
+    return convertIdsToStrings(this.model.find().limit(...args));
   }
 }
 
