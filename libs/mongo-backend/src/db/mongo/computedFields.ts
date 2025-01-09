@@ -51,7 +51,7 @@ const getComputationOrder = <T>(
 
   // Build the dependency graph
   for (const [field, definition] of Object.entries(computedFields)) {
-    graph[field] = definition.dependencies || [];
+    graph[field] = (definition as any).dependencies || [];
     inDegree[field] = 0;
   }
 
@@ -95,7 +95,6 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const redisInstance = await createRedisInstance();
 
   if (activeComputations.has(docKey)) {
-    //  console.warn(`Circular dependency avoided for: ${docKey}`);
     return null;
   }
 
@@ -138,7 +137,7 @@ export const getCached = async <
   const finalValues: Partial<ComputedPartOfSchema> = {};
 
   for (const field of order) {
-    const value = await cacheField(
+    await cacheField(
       field,
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
