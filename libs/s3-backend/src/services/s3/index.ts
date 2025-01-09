@@ -108,6 +108,7 @@ export const recursivelySignUrls = async <T = any>(
     }
 
     if (input && typeof input === 'object') {
+      if (input instanceof Date) return input;
       const result: Record<string, any> = {};
       for (const [key, value] of Object.entries(input)) {
         result[key] = await process(value);
