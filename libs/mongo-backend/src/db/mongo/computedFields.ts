@@ -47,13 +47,13 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
 
-  // NEW: Prevent infinite loops
+  /*  // NEW: Prevent infinite loops
   if (activeComputations.has(docKey)) {
-    /*
+    /!*
     console.warn(`Circular dependency avoided for: ${docKey}`);
-*/
+*!/
     return null; // Prevent further recursion
-  }
+  }*/
 
   if (!forceRefresh) {
     const cachedValue = await get(
