@@ -5,7 +5,7 @@ import type { Db } from 'mongodb';
 
 interface WatchCallback<T extends Document> {
   modelGetter: () => Promise<Model<T>>;
-  event?: string; // defaults to 'change'
+  event?: string;
   handler: GenericListener;
 }
 
@@ -15,46 +15,70 @@ export class WatchDB {
   private static activeWatches: Map<string, ChangeStream<any>> = new Map();
   private static wholeDBChangeStream: ChangeStream | null = null;
 
+  /**
+   * Registers a model-specific change stream.
+   * Prevents duplicate streams and handles reconnection.
+   */
   static add(callback: WatchCallback<any>): void {
     this.callbacks.push(callback);
-    this.ready && this.run();
+    if (this.ready) {
+      this.run();
+    }
   }
 
+  /**
+   * Starts all registered change streams if not already started.
+   */
   static start(): void {
-    this.ready = true;
-    this.run();
+    if (!this.ready) {
+      this.ready = true;
+      this.run();
+    }
   }
 
+  /**
+   * Initializes all registered change streams with reconnection logic.
+   */
   static run(): void {
-    this.callbacks.forEach(({ modelGetter, event, handler }) => {
-      const modelPromise = modelGetter();
-      modelPromise.then((model) => {
-        const changeStream = model.watch().on(event ?? 'change', handler);
+    this.callbacks.forEach(async ({ modelGetter, event, handler }) => {
+      try {
+        const model = await modelGetter();
         const { collectionName } = model.collection;
-        if (!this.activeWatches.has(collectionName)) {
-          this.activeWatches.set(collectionName, changeStream as TODO);
-        } else {
+
+        // Close existing stream before re-watching
+        if (this.activeWatches.has(collectionName)) {
           const oldStream = this.activeWatches.get(collectionName);
-          oldStream?.close().then();
-          this.activeWatches.set(collectionName, changeStream as TODO);
+          await oldStream?.close();
         }
-      });
+
+        // Create new change stream with error handling
+        const changeStream = model.watch().on(event ?? 'change', handler);
+
+        // ✅ Error Handling for ChangeStream Issues
+        changeStream.on('error', (error) => {
+          if (error.message.includes('ChangeStream is closed')) {
+            setTimeout(() => this.run(), 5000); // Restart the stream
+          }
+        });
+
+        changeStream.on('close', () => {
+          setTimeout(() => this.run(), 5000);
+        });
+
+        this.activeWatches.set(collectionName, changeStream);
+      } catch (error) {}
     });
   }
 
   /**
-   * Watches the entire database for changes.
-   * @param dbConnection The Mongoose database connection object.
-   * @param handler The handler to call for database-wide events.
-   * @param options Options for the change stream.
+   * Watches the entire MongoDB database with error handling.
    */
   static addToWholeDB(
     dbConnection: Db,
     handler: GenericListener,
-    options?: TODO, // Replace TODO with the actual type for options if needed
+    options?: TODO,
   ): void {
     if (this.wholeDBChangeStream) {
-      // console.warn('A database-wide change stream is already active.');
       return;
     }
 
@@ -62,22 +86,34 @@ export class WatchDB {
       this.wholeDBChangeStream = dbConnection
         .watch([], options)
         .on('change', handler);
-      //   console.log('Database-wide change stream started.');
-    } catch (err) {
-      //   console.error('Failed to start database-wide change stream:', err);
-    }
+
+      // ✅ Error Handling for WholeDB ChangeStream
+      this.wholeDBChangeStream.on('error', (error) => {
+        if (error.message.includes('ChangeStream is closed')) {
+          setTimeout(
+            () => this.addToWholeDB(dbConnection, handler, options),
+            5000,
+          );
+        }
+      });
+
+      this.wholeDBChangeStream.on('close', () => {
+        setTimeout(
+          () => this.addToWholeDB(dbConnection, handler, options),
+          5000,
+        );
+      });
+    } catch (err) {}
   }
 
   /**
-   * Cancels the database-wide change stream if it's active.
+   * Cancels the entire database change stream safely.
    */
   static async cancelWholeDBWatch(): Promise<void> {
     if (this.wholeDBChangeStream) {
       await this.wholeDBChangeStream.close();
       this.wholeDBChangeStream = null;
-      //  console.log('Database-wide change stream canceled.');
     } else {
-      //  console.warn('No active database-wide change stream to cancel.');
     }
   }
 }
