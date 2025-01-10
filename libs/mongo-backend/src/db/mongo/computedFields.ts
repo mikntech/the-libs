@@ -6,19 +6,19 @@ const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
 
 export type Compute<FieldType, FullDoc extends MDocument> = (
-  fromDoc: FullDoc
+  fromDoc: FullDoc,
 ) => Promise<FieldType>;
 
 export type Invalidate<ChangedDoc extends MDocument> = (
   myId: string,
   collChangedDoc: string,
-  fullChangedDoc: ChangedDoc
+  fullChangedDoc: ChangedDoc,
 ) => Promise<boolean>;
 
 interface FieldDefinition<
   FieldType,
   FullDoc extends MDocument,
-  ChangedDoc extends MDocument
+  ChangedDoc extends MDocument,
 > {
   compute: Compute<FieldType, FullDoc>;
   invalidate: Invalidate<ChangedDoc>;
@@ -28,7 +28,7 @@ interface FieldDefinition<
 export type SchemaComputers<
   ComputedPartOfSchema,
   DBFullDoc extends MDocument,
-  ChangedDoc extends MDocument
+  ChangedDoc extends MDocument,
 > = {
   [Key in keyof ComputedPartOfSchema]: FieldDefinition<
     ComputedPartOfSchema[Key],
@@ -43,13 +43,13 @@ const activeComputations = new Set<string>();
  * Builds a dependency graph and performs topological sort to ensure proper computation order.
  */
 const getComputationOrder = <T>(
-  computedFields: SchemaComputers<T, any, any>
+  computedFields: SchemaComputers<T, any, any>,
 ): string[] => {
   const graph = new Map<string, string[]>();
   const inDegree = new Map<string, number>();
 
   for (const [field, definition] of Object.entries(computedFields)) {
-    graph.set(field, definition.dependencies || []);
+    graph.set(field, (definition as any).dependencies || []);
     inDegree.set(field, 0);
   }
 
@@ -60,7 +60,9 @@ const getComputationOrder = <T>(
     });
   }
 
-  const queue = [...inDegree.entries()].filter(([_, count]) => count === 0).map(([key]) => key);
+  const queue = [...inDegree.entries()]
+    .filter(([_, count]) => count === 0)
+    .map(([key]) => key);
   const order: string[] = [];
 
   while (queue.length) {
@@ -86,7 +88,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
-  forceRefresh = false
+  forceRefresh = false,
 ) => {
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
@@ -98,7 +100,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   if (!forceRefresh) {
     const cachedValue = await get(
       redisInstance,
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName })
+      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
     );
     if (cachedValue !== null) {
       return JSON.parse(cachedValue);
@@ -111,7 +113,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
     await cache(
       redisInstance,
       JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
-      async () => JSON.stringify(value)
+      async () => JSON.stringify(value),
     );
     return value;
   } finally {
@@ -124,10 +126,10 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
  */
 export const getCached = async <
   ComputedPartOfSchema,
-  DBFullDoc extends MDocument
+  DBFullDoc extends MDocument,
 >(
   fullDoc: DBFullDoc,
-  computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>
+  computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
 ): Promise<ComputedPartOfSchema> => {
   const order = getComputationOrder(computers);
   const finalValues: Partial<ComputedPartOfSchema> = {};
@@ -136,7 +138,7 @@ export const getCached = async <
     finalValues[field as keyof ComputedPartOfSchema] = await cacheField(
       field,
       fullDoc,
-      computers[field as keyof ComputedPartOfSchema].compute
+      computers[field as keyof ComputedPartOfSchema].compute,
     );
   }
 
@@ -148,14 +150,14 @@ export const getCached = async <
  */
 export const refreshCacheIfNeeded = async <
   FieldType,
-  DBFullDoc extends MDocument
+  DBFullDoc extends MDocument,
 >(
   myDoc: DBFullDoc,
   changed_Id: string,
   changedColl: string,
   fieldName: string,
   { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc, any>,
-  extraCallBack: () => void
+  extraCallBack: () => void,
 ) => {
   const docKey = `${String(myDoc._id)}:${fieldName}`;
 
@@ -170,7 +172,7 @@ export const refreshCacheIfNeeded = async <
   const shouldInvalidate = await invalidate(
     String(myDoc._id),
     changedColl,
-    changedDoc
+    changedDoc,
   );
 
   if (shouldInvalidate) {
