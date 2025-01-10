@@ -40,49 +40,51 @@ export type SchemaComputers<
 const activeComputations = new Set<string>();
 
 /**
- * Builds a dependency graph and performs topological sort to ensure proper computation order.
+ * Generate computation order using topological sorting.
  */
 const getComputationOrder = <T>(
   computedFields: SchemaComputers<T, any, any>,
 ): string[] => {
-  const graph = new Map<string, string[]>();
-  const inDegree = new Map<string, number>();
+  const graph: Record<string, string[]> = {};
+  const inDegree: Record<string, number> = {};
 
-  for (const [field, definition] of Object.entries(computedFields)) {
-    graph.set(field, (definition as any).dependencies || []);
-    inDegree.set(field, 0);
+  // Build graph with explicit typing
+  for (const [field, definition] of Object.entries(
+    computedFields as Record<string, FieldDefinition<any, any, any>>,
+  )) {
+    graph[field] = definition.dependencies ?? [];
+    inDegree[field] = 0;
   }
 
-  for (const [field, dependencies] of graph.entries()) {
-    dependencies.forEach((dep) => {
-      if (!inDegree.has(dep)) inDegree.set(dep, 0);
-      inDegree.set(dep, (inDegree.get(dep) || 0) + 1);
+  // Compute in-degree for topological sorting
+  for (const deps of Object.values(graph)) {
+    deps.forEach((dep) => {
+      if (inDegree[dep] !== undefined) inDegree[dep]++;
     });
   }
 
-  const queue = [...inDegree.entries()]
-    .filter(([_, count]) => count === 0)
-    .map(([key]) => key);
+  // Perform topological sorting (Kahn's algorithm)
   const order: string[] = [];
+  const queue = Object.keys(inDegree).filter((key) => inDegree[key] === 0);
 
-  while (queue.length) {
+  while (queue.length > 0) {
     const current = queue.shift()!;
     order.push(current);
-    for (const neighbor of graph.get(current) || []) {
-      inDegree.set(neighbor, (inDegree.get(neighbor) || 0) - 1);
-      if (inDegree.get(neighbor) === 0) queue.push(neighbor);
+    for (const neighbor of graph[current]) {
+      inDegree[neighbor]--;
+      if (inDegree[neighbor] === 0) queue.push(neighbor);
     }
   }
 
-  if (order.length !== graph.size) {
-    throw new Error('Circular dependency detected in computed fields.');
+  if (order.length !== Object.keys(graph).length) {
+    throw new Error('❌ Circular dependency detected in computed fields.');
   }
 
   return order;
 };
 
 /**
- * Caches a computed field value in Redis and prevents redundant computations.
+ * Cache computed field values with Redis.
  */
 const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
@@ -94,6 +96,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const redisInstance = await createRedisInstance();
 
   if (activeComputations.has(docKey)) {
+    console.warn(`❗️ Skipping circular computation for: ${docKey}`);
     return null;
   }
 
@@ -107,6 +110,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
     }
   }
 
+  // Prevent further recursion
   activeComputations.add(docKey);
   try {
     const value = await compute(fullDoc);
@@ -122,7 +126,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
 };
 
 /**
- * Computes all fields in the correct order based on their dependencies.
+ * Computes and caches all fields based on dependencies.
  */
 export const getCached = async <
   ComputedPartOfSchema,
@@ -146,7 +150,7 @@ export const getCached = async <
 };
 
 /**
- * Refreshes cache if invalidation conditions are met.
+ * Refresh the cache for a specific field if invalidation conditions met.
  */
 export const refreshCacheIfNeeded = async <
   FieldType,
@@ -162,6 +166,7 @@ export const refreshCacheIfNeeded = async <
   const docKey = `${String(myDoc._id)}:${fieldName}`;
 
   if (activeComputations.has(docKey)) {
+    console.warn(`❗️ Skipping redundant invalidation for: ${docKey}`);
     return;
   }
 
