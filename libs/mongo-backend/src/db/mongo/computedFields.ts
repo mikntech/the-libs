@@ -96,7 +96,6 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const redisInstance = await createRedisInstance();
 
   if (activeComputations.has(docKey)) {
-    console.warn(`❗️ Skipping circular computation for: ${docKey}`);
     return null;
   }
 
@@ -166,7 +165,6 @@ export const refreshCacheIfNeeded = async <
   const docKey = `${String(myDoc._id)}:${fieldName}`;
 
   if (activeComputations.has(docKey)) {
-    console.warn(`❗️ Skipping redundant invalidation for: ${docKey}`);
     return;
   }
 
