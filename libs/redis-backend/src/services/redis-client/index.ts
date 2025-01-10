@@ -50,7 +50,7 @@ export const createRedisInstance = async (
   });
 
   newInstance.on('ready', (): void => {
-    console.log(`✅ Redis ${instanceType} Connected Successfully`);
+    // console.log(`✅ Redis ${instanceType} Connected Successfully`);
   });
 
   newInstance.on('error', (err: Error): void => {
