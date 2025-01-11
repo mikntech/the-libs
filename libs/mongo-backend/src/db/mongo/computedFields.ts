@@ -1,4 +1,10 @@
-import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
+import {
+  createRedisInstance,
+  cache,
+  get,
+  lock,
+  unlock,
+} from '@the-libs/redis-backend';
 import type { Document as MDocument } from 'mongoose';
 import { createRequire } from 'module';
 
