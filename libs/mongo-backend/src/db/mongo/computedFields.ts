@@ -1,10 +1,4 @@
-import {
-  createRedisInstance,
-  cache,
-  get,
-  lock,
-  unlock,
-} from '@the-libs/redis-backend';
+import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
 import type { Document as MDocument } from 'mongoose';
 import { createRequire } from 'module';
 
@@ -101,34 +95,32 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
 
-  const lockKey = `${docKey}:lock`;
-
-  // Attempt to acquire the lock
-  const lockAcquired = await cache(
-    redisInstance,
-    lockKey,
-    async () => 'locked',
-  );
-
-  if (!lockAcquired) {
-    // If lock already exists, return early
+  if (activeComputations.has(docKey)) {
     return null;
   }
 
-  try {
-    if (!forceRefresh) {
-      const cachedValue = await get(redisInstance, docKey);
-      if (cachedValue !== null) {
-        return JSON.parse(cachedValue);
-      }
+  if (!forceRefresh) {
+    const cachedValue = await get(
+      redisInstance,
+      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+    );
+    if (cachedValue !== null) {
+      return JSON.parse(cachedValue);
     }
+  }
 
+  // Prevent further recursion
+  activeComputations.add(docKey);
+  try {
     const value = await compute(fullDoc);
-    await cache(redisInstance, docKey, async () => JSON.stringify(value));
+    await cache(
+      redisInstance,
+      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+      async () => JSON.stringify(value),
+    );
     return value;
   } finally {
-    // Release the lock using the correct lock key
-    await redisInstance.del(lockKey);
+    activeComputations.delete(docKey);
   }
 };
 
@@ -146,23 +138,11 @@ export const getCached = async <
   const finalValues: Partial<ComputedPartOfSchema> = {};
 
   for (const field of order) {
-    const value = await cacheField(
+    finalValues[field as keyof ComputedPartOfSchema] = await cacheField(
       field,
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
     );
-
-    // **NEW:** Handle nested fields recomputation automatically
-    if (value === null) {
-      finalValues[field as keyof ComputedPartOfSchema] = await cacheField(
-        field,
-        fullDoc,
-        computers[field as keyof ComputedPartOfSchema].compute,
-        true, // Force refresh for stale data
-      );
-    } else {
-      finalValues[field as keyof ComputedPartOfSchema] = value;
-    }
   }
 
   return finalValues as ComputedPartOfSchema;

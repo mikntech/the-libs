@@ -55,10 +55,10 @@ export class WatchDB {
         const changeStream = model.watch().on(event ?? 'change', handler);
 
         // ✅ Error Handling for ChangeStream Issues
-        changeStream.on('error', async (error) => {
-          // console.error('Change Stream Error:', error);
-          await changeStream.close(); // Close the old stream before retrying
-          setTimeout(() => this.run(), 5000);
+        changeStream.on('error', (error) => {
+          if (error.message.includes('ChangeStream is closed')) {
+            setTimeout(() => this.run(), 5000); // Restart the stream
+          }
         });
 
         changeStream.on('close', () => {

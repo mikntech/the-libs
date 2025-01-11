@@ -51,8 +51,8 @@ const registerComputedFields = <ComputedPart, DBFullDoc extends Document>(
 const connect = async (
   logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
 ) => {
-  if (!connection.instance || mongoose.connection.readyState !== 1) {
-    mongoose.set('debug', logMongoToConsole ?? true);
+  mongoose.set('debug', logMongoToConsole ?? true);
+  try {
     await mongoose.connect(mongoSettings.mongoURI, {
       socketTimeoutMS:
         getExpressSettings().stagingEnv === StagingEnvironment.Local
@@ -71,15 +71,18 @@ const connect = async (
           ? 5000
           : 10000,
     });
-    // console.log('MongoDB connected successfully');
+    console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
+  } catch (err) {
+    console.log('mongo connection error:' + err);
+    throw new Error(String(err));
   }
 };
 
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
-  // console.log('MongoDB connection closed on app termination');
+  console.log('MongoDB connection closed on app termination');
   process.exit(0);
 });
 
@@ -292,8 +295,8 @@ export const autoSignS3URIs = (schema: Schema) => {
 
 // MongoDB Error Listener
 mongoose.connection.on('error', (err: any) => {
-  // console.error('❌ MongoDB Error:', err.message);
+  console.error('❌ MongoDB Error:', err.message);
   if (err.message.includes('ECONNRESET')) {
-    // console.error('❗️ MongoDB connection was reset.');
+    console.error('❗️ MongoDB connection was reset.');
   }
 });
