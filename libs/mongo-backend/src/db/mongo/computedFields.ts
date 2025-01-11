@@ -101,9 +101,18 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
 
-  // Use Redis lock instead of in-memory Set
-  if (!(await lock(docKey))) {
-    return null; // Avoid duplicate computations
+  const lockKey = `${docKey}:lock`;
+
+  // Attempt to acquire the lock
+  const lockAcquired = await cache(
+    redisInstance,
+    lockKey,
+    async () => 'locked',
+  );
+
+  if (!lockAcquired) {
+    // If lock already exists, return early
+    return null;
   }
 
   try {
@@ -118,7 +127,8 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
     await cache(redisInstance, docKey, async () => JSON.stringify(value));
     return value;
   } finally {
-    await unlock(docKey);
+    // Release the lock using the correct lock key
+    await redisInstance.del(lockKey);
   }
 };
 
