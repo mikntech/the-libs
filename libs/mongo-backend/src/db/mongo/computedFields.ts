@@ -126,41 +126,45 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
 
 const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
   const redisInstance = await createRedisInstance();
-
-  let parsedObj: T;
+  let parsedObj = obj;
   try {
-    parsedObj = typeof obj === 'string' ? JSON.parse(obj) : obj;
+    if (typeof obj === 'string') parsedObj = JSON.parse(obj);
   } catch {
-    return obj; // Return the original if parsing fails
+    parsedObj = obj;
   }
-  if (typeof parsedObj !== 'object' || parsedObj === null) return parsedObj;
+  if (typeof parsedObj !== 'object' || parsedObj === null) return parsedObj; // Early exit for non-Objects
 
-  for (const key in parsedObj) {
-    if (!parsedObj.hasOwnProperty(key)) continue;
+  const keys = Object.keys(parsedObj);
 
-    const value = parsedObj[key];
-    if (value === null) {
+  for (const key of keys) {
+    if (parsedObj[key as keyof T] === null) {
       try {
-        const possibleId = Object.values(parsedObj).find((val) =>
-          mongoose.isValidObjectId(val),
+        // Check if the key might be a MongoDB ObjectID
+        const possibleId = keys.find((key) =>
+          mongoose.isValidObjectId(parsedObj[key as keyof T]),
         );
         if (possibleId) {
           const cachedValue = await get(
             redisInstance,
             JSON.stringify({ _id: possibleId, key }),
           );
-          if (cachedValue) {
-            parsedObj[key] = JSON.parse(cachedValue);
+          if (cachedValue !== null) {
+            parsedObj[key as keyof T] = JSON.parse(cachedValue); // Fix the null
           }
         }
       } catch (error) {
-        console.error(`Error processing key: ${key}`, error);
+        console.error(`Error fixing null for key: ${key}`, error);
       }
-    } else if (typeof value === 'object') {
-      parsedObj[key] = await tryToFixNulls(value); // Recurse deeper
+    } else if (
+      typeof parsedObj[key as keyof T] === 'object' &&
+      parsedObj[key as keyof T] !== null
+    ) {
+      // Recursively attempt to fix nested Objects
+      parsedObj[key as keyof T] = await tryToFixNulls(
+        parsedObj[key as keyof T],
+      );
     }
   }
-
   return parsedObj;
 };
 
