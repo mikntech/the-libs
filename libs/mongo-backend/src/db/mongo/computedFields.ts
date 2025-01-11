@@ -124,6 +124,30 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   }
 };
 
+const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
+  const redisInstance = await createRedisInstance();
+  if (typeof obj === 'object') {
+    const keys = Object.keys(obj);
+    for (const key of keys) {
+      if (obj[key] === null) {
+        try {
+          const id = keys.find((key) => mongoose.isValidObjectId(obj[key]));
+          const value = await get(
+            redisInstance,
+            JSON.stringify({ _id: id, key }),
+            2147483647,
+          );
+          return { ...obj, [key]: value };
+        } catch {
+          return obj;
+        }
+      } else if (typeof obj[key] === 'object')
+        return await tryToFixNulls(obj[key]);
+      else return obj;
+    }
+  }
+};
+
 /**
  * Computes and caches all fields based on dependencies.
  */
@@ -143,6 +167,11 @@ export const getCached = async <
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
     );
+    if (finalValues[field as keyof ComputedPartOfSchema] === null) {
+      finalValues[field as keyof ComputedPartOfSchema] = await tryToFixNulls(
+        finalValues[field as keyof ComputedPartOfSchema],
+      );
+    }
   }
 
   return finalValues as ComputedPartOfSchema;
