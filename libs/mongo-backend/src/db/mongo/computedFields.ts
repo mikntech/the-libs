@@ -126,17 +126,22 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
 
 const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
   const redisInstance = await createRedisInstance();
+  let parsedObj = obj;
+  try {
+    if (typeof obj === 'string') parsedObj = JSON.parse(obj);
+  } catch {
+    parsedObj = obj;
+  }
+  if (typeof parsedObj !== 'object' || parsedObj === null) return parsedObj; // Early exit for non-Objects
 
-  if (typeof obj !== 'object' || obj === null) return obj; // Early exit for non-objects
-
-  const keys = Object.keys(obj);
+  const keys = Object.keys(parsedObj);
 
   for (const key of keys) {
-    if (obj[key as keyof T] === null) {
+    if (parsedObj[key as keyof T] === null) {
       try {
         // Check if the key might be a MongoDB ObjectID
         const possibleId = keys.find((key) =>
-          mongoose.isValidObjectId(obj[key as keyof T]),
+          mongoose.isValidObjectId(parsedObj[key as keyof T]),
         );
         if (possibleId) {
           const cachedValue = await get(
@@ -144,21 +149,23 @@ const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
             JSON.stringify({ _id: possibleId, key }),
           );
           if (cachedValue !== null) {
-            obj[key as keyof T] = JSON.parse(cachedValue); // Fix the null
+            parsedObj[key as keyof T] = JSON.parse(cachedValue); // Fix the null
           }
         }
       } catch (error) {
         console.error(`Error fixing null for key: ${key}`, error);
       }
     } else if (
-      typeof obj[key as keyof T] === 'object' &&
-      obj[key as keyof T] !== null
+      typeof parsedObj[key as keyof T] === 'object' &&
+      parsedObj[key as keyof T] !== null
     ) {
-      // Recursively attempt to fix nested objects
-      obj[key as keyof T] = await tryToFixNulls(obj[key as keyof T]);
+      // Recursively attempt to fix nested Objects
+      parsedObj[key as keyof T] = await tryToFixNulls(
+        parsedObj[key as keyof T],
+      );
     }
   }
-  return obj;
+  return parsedObj;
 };
 
 /**
