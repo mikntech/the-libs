@@ -146,7 +146,6 @@ export const getCached = async <
 
     // **NEW:** Handle nested fields recomputation automatically
     if (value === null) {
-      console.warn(`🔄 Recomputing missing field: ${field}`);
       finalValues[field as keyof ComputedPartOfSchema] = await cacheField(
         field,
         fullDoc,
