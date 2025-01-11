@@ -126,26 +126,39 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
 
 const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
   const redisInstance = await createRedisInstance();
-  if (typeof obj === 'object') {
-    const keys = Object.keys(obj);
-    for (const key of keys) {
-      if (obj[key] === null) {
-        try {
-          const id = keys.find((key) => mongoose.isValidObjectId(obj[key]));
-          const value = await get(
+
+  if (typeof obj !== 'object' || obj === null) return obj; // Early exit for non-objects
+
+  const keys = Object.keys(obj);
+
+  for (const key of keys) {
+    if (obj[key as keyof T] === null) {
+      try {
+        // Check if the key might be a MongoDB ObjectID
+        const possibleId = keys.find((key) =>
+          mongoose.isValidObjectId(obj[key as keyof T]),
+        );
+        if (possibleId) {
+          const cachedValue = await get(
             redisInstance,
-            JSON.stringify({ _id: id, key }),
-            2147483647,
+            JSON.stringify({ _id: possibleId, key }),
           );
-          return { ...obj, [key]: value };
-        } catch {
-          return obj;
+          if (cachedValue !== null) {
+            obj[key as keyof T] = JSON.parse(cachedValue); // Fix the null
+          }
         }
-      } else if (typeof obj[key] === 'object')
-        return await tryToFixNulls(obj[key]);
-      else return obj;
+      } catch (error) {
+        console.error(`Error fixing null for key: ${key}`, error);
+      }
+    } else if (
+      typeof obj[key as keyof T] === 'object' &&
+      obj[key as keyof T] !== null
+    ) {
+      // Recursively attempt to fix nested objects
+      obj[key as keyof T] = await tryToFixNulls(obj[key as keyof T]);
     }
   }
+  return obj;
 };
 
 /**
