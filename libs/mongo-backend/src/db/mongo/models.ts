@@ -71,7 +71,7 @@ const connect = async (
           ? 5000
           : 10000,
     });
-    console.log('MongoDB connected successfully');
+    // console.log('MongoDB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
   }
@@ -79,7 +79,7 @@ const connect = async (
 
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
-  console.log('MongoDB connection closed on app termination');
+  // console.log('MongoDB connection closed on app termination');
   process.exit(0);
 });
 
@@ -292,8 +292,8 @@ export const autoSignS3URIs = (schema: Schema) => {
 
 // MongoDB Error Listener
 mongoose.connection.on('error', (err: any) => {
-  console.error('❌ MongoDB Error:', err.message);
+  // console.error('❌ MongoDB Error:', err.message);
   if (err.message.includes('ECONNRESET')) {
-    console.error('❗️ MongoDB connection was reset.');
+    // console.error('❗️ MongoDB connection was reset.');
   }
 });
