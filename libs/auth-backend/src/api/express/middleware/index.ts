@@ -29,7 +29,6 @@ export const signProfilePic = async <UserI extends User = User>(
     try {
       user.profilePictureUri = await preSignFile(s3Path, 10 * 60);
     } catch {
-      console.log('no profile picture');
       user.profilePictureUri = s3Path;
     }
   return user;
