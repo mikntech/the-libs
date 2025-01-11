@@ -95,32 +95,24 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance();
 
-  if (activeComputations.has(docKey)) {
-    return null;
+  // Use Redis lock instead of in-memory Set
+  if (!(await lock(docKey))) {
+    return null; // Avoid duplicate computations
   }
 
-  if (!forceRefresh) {
-    const cachedValue = await get(
-      redisInstance,
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
-    );
-    if (cachedValue !== null) {
-      return JSON.parse(cachedValue);
-    }
-  }
-
-  // Prevent further recursion
-  activeComputations.add(docKey);
   try {
+    if (!forceRefresh) {
+      const cachedValue = await get(redisInstance, docKey);
+      if (cachedValue !== null) {
+        return JSON.parse(cachedValue);
+      }
+    }
+
     const value = await compute(fullDoc);
-    await cache(
-      redisInstance,
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
-      async () => JSON.stringify(value),
-    );
+    await cache(redisInstance, docKey, async () => JSON.stringify(value));
     return value;
   } finally {
-    activeComputations.delete(docKey);
+    await unlock(docKey);
   }
 };
 

@@ -51,8 +51,8 @@ const registerComputedFields = <ComputedPart, DBFullDoc extends Document>(
 const connect = async (
   logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
 ) => {
-  mongoose.set('debug', logMongoToConsole ?? true);
-  try {
+  if (!connection.instance || mongoose.connection.readyState !== 1) {
+    mongoose.set('debug', logMongoToConsole ?? true);
     await mongoose.connect(mongoSettings.mongoURI, {
       socketTimeoutMS:
         getExpressSettings().stagingEnv === StagingEnvironment.Local
@@ -71,12 +71,9 @@ const connect = async (
           ? 5000
           : 10000,
     });
-    console.log('Mongo DB connected successfully');
+    console.log('MongoDB connected successfully');
     connection.instance = mongoose.connection;
     WatchDB.start();
-  } catch (err) {
-    console.log('mongo connection error:' + err);
-    throw new Error(String(err));
   }
 };
 
