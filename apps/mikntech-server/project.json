@@ -1,0 +1,70 @@
+{
+  "name": "mikntech-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/mikntech-server/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/apps/mikntech-server",
+        "format": [
+          "esm"
+        ],
+        "bundle": true,
+        "main": "apps/mikntech-server/src/index.ts",
+        "tsConfig": "apps/mikntech-server/tsconfig.app.json",
+        "external": [
+          "aws-sdk",
+          "mock-aws-s3",
+          "nock"
+        ],
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".mjs"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "minify": true,
+            "outExtension": {
+              ".js": ".mjs"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "mikntech-server:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "mikntech-server:build:development"
+        },
+        "production": {
+          "buildTarget": "mikntech-server:build:production"
+        }
+      },
+      "dependsOn": [
+        {
+          "projects": "dependencies",
+          "target": "build"
+        }
+      ]
+    }
+  },
+  "tags": []
+}

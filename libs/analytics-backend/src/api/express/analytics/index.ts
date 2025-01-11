@@ -8,7 +8,8 @@ import { createDoc } from '@the-libs/mongo-backend';
 import { analyticEvent } from '../../../';
 
 export const analyticsRouterGenerator = <ENUM>(
-  AnalyticEventEnum: SomeEnum<ENUM>,
+  AnalyticEventEnum?: SomeEnum<ENUM>,
+  enforceValues = false,
 ) => {
   const analyticsRouter = Router();
 
@@ -16,10 +17,13 @@ export const analyticsRouterGenerator = <ENUM>(
     '/',
     highOrderHandler(async (req: Request) => {
       try {
-        await createDoc(await analyticEvent<ENUM>(AnalyticEventEnum), {
-          value: req.body.value,
-          userNumber: req.body.userNumber,
-        });
+        await createDoc(
+          await analyticEvent<ENUM>(AnalyticEventEnum, enforceValues),
+          {
+            value: req.body.value,
+            userNumber: req.body.userNumber,
+          },
+        );
       } catch (e) {
         console.log(e);
       }
