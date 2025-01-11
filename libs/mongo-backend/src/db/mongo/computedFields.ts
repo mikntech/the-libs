@@ -138,11 +138,24 @@ export const getCached = async <
   const finalValues: Partial<ComputedPartOfSchema> = {};
 
   for (const field of order) {
-    finalValues[field as keyof ComputedPartOfSchema] = await cacheField(
+    const value = await cacheField(
       field,
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
     );
+
+    // **NEW:** Handle nested fields recomputation automatically
+    if (value === null) {
+      console.warn(`🔄 Recomputing missing field: ${field}`);
+      finalValues[field as keyof ComputedPartOfSchema] = await cacheField(
+        field,
+        fullDoc,
+        computers[field as keyof ComputedPartOfSchema].compute,
+        true, // Force refresh for stale data
+      );
+    } else {
+      finalValues[field as keyof ComputedPartOfSchema] = value;
+    }
   }
 
   return finalValues as ComputedPartOfSchema;
