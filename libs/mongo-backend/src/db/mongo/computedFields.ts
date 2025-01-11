@@ -126,19 +126,18 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
 
 const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
   const redisInstance = await createRedisInstance();
-
   let parsedObj: T;
   try {
     parsedObj = typeof obj === 'string' ? JSON.parse(obj) : obj;
   } catch {
-    return obj; // Return the original if parsing fails
+    return obj;
   }
   if (typeof parsedObj !== 'object' || parsedObj === null) return parsedObj;
 
-  for (const key in parsedObj) {
-    if (!parsedObj.hasOwnProperty(key)) continue;
+  const keys = Object.keys(parsedObj);
 
-    const value = parsedObj[key];
+  for (const key of keys) {
+    const value = parsedObj[key as keyof T];
     if (value === null) {
       try {
         const possibleId = Object.values(parsedObj).find((val) =>
@@ -150,17 +149,16 @@ const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
             JSON.stringify({ _id: possibleId, key }),
           );
           if (cachedValue) {
-            parsedObj[key] = JSON.parse(cachedValue);
+            parsedObj[key as keyof T] = JSON.parse(cachedValue);
           }
         }
-      } catch (error) {
-        console.error(`Error processing key: ${key}`, error);
-      }
+      } catch {}
     } else if (typeof value === 'object') {
-      parsedObj[key] = await tryToFixNulls(value); // Recurse deeper
+      parsedObj[key as keyof T] = await tryToFixNulls(
+        parsedObj[key as keyof T],
+      );
     }
   }
-
   return parsedObj;
 };
 
@@ -183,11 +181,9 @@ export const getCached = async <
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
     );
-    if (finalValues[field as keyof ComputedPartOfSchema] === null) {
-      finalValues[field as keyof ComputedPartOfSchema] = await tryToFixNulls(
-        finalValues[field as keyof ComputedPartOfSchema],
-      );
-    }
+    finalValues[field as keyof ComputedPartOfSchema] = await tryToFixNulls(
+      finalValues[field as keyof ComputedPartOfSchema],
+    );
   }
 
   return finalValues as ComputedPartOfSchema;
