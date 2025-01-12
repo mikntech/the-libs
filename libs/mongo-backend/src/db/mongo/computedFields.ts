@@ -1,4 +1,9 @@
-import { createRedisInstance, cache, get } from '@the-libs/redis-backend';
+import {
+  createRedisInstance,
+  cache,
+  get,
+  withTimeout,
+} from '@the-libs/redis-backend';
 import type { Document as MDocument } from 'mongoose';
 import { createRequire } from 'module';
 
@@ -102,7 +107,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   if (!forceRefresh) {
     const cachedValue = await get(
       redisInstance,
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+      'mikache_' + JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
     );
     if (cachedValue !== null) {
       return JSON.parse(cachedValue);
@@ -115,7 +120,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
     const value = await compute(fullDoc);
     await cache(
       redisInstance,
-      JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+      'mikache_' + JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
       async () => JSON.stringify(value),
     );
     return value;
@@ -146,7 +151,7 @@ const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
         if (possibleId) {
           const cachedValue = await get(
             redisInstance,
-            JSON.stringify({ _id: possibleId, key }),
+            'mikache_' + JSON.stringify({ _id: possibleId, key }),
           );
           if (cachedValue) {
             parsedObj[key as keyof T] = JSON.parse(cachedValue);
@@ -225,4 +230,17 @@ export const refreshCacheIfNeeded = async <
     activeComputations.delete(docKey);
     extraCallBack();
   }
+};
+
+const clearAllCache = async () => {
+  try {
+    const redis = await createRedisInstance();
+    const keys = await withTimeout(redis.keys('mikache_*'), 5000);
+    if (keys.length === 0) {
+      return;
+    }
+    for (const key of keys) {
+      await withTimeout(redis.del(key), 5000);
+    }
+  } catch (error) {}
 };

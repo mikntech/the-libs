@@ -1,6 +1,6 @@
 import { RedisType } from '../redis-client';
 
-const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
+export const withTimeout = <T>(promise: Promise<T>, ms: number): Promise<T> =>
   Promise.race([
     promise,
     new Promise<T>((_, reject) =>
