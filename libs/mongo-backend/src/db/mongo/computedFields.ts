@@ -232,7 +232,7 @@ export const refreshCacheIfNeeded = async <
   }
 };
 
-const clearAllCache = async () => {
+export const clearAllCache = async () => {
   try {
     const redis = await createRedisInstance();
     const keys = await withTimeout(redis.keys('mikache_*'), 5000);
