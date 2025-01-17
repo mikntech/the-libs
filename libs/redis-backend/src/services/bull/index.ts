@@ -176,21 +176,21 @@ type PrevStage<
 
 export interface BaseJob<
   StagesEnum extends Record<string, string>,
-  StageIOMapping extends InferStageIOMapping<StagesEnum>,
+  TageIOMapping extends InferStageIOMapping<StagesEnum>,
   CurrentStage extends StagesEnum[keyof StagesEnum],
 > {
   runId: string;
   currentStage: CurrentStage;
-  stageData: PrevStage<StagesEnum, CurrentStage> extends keyof StageIOMapping
+  stageData: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
     ? {
-        prevOutput: StageIOMapping[PrevStage<
+        prevOutput: TageIOMapping[PrevStage<
           StagesEnum,
           CurrentStage
         >]['Output'];
       }
-    : Record<string, unknown>; // Input for the first stage
-  prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof StageIOMapping
-    ? StageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
+    : { config: Record<string, unknown> }; // First stage input
+  prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
+    ? TageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
     : never;
 }
 
@@ -270,3 +270,38 @@ export const runStageAsService = <
       }
     },
   );
+
+export const startOrchestratedJob = <
+  StagesEnum extends Record<string, string>,
+  StageIOMapping extends InferStageIOMapping<StagesEnum>,
+  FirstStageInput extends { runId: string },
+>(
+  stages: StagesEnum,
+  firstStage: StagesEnum[keyof StagesEnum],
+  firstStageInput: FirstStageInput,
+  service: (
+    taskData: BaseJob<
+      StagesEnum,
+      StageIOMapping,
+      typeof firstStage
+    >['stageData'],
+  ) => Promise<StageIOMapping[typeof firstStage]['Output']>,
+  pubsub?: PubSub,
+  STAGE_UPDATES_CHANNEL = 'DEFAULT_STAGE_UPDATES_CHANNEL',
+) => {
+  runStageAsService<StagesEnum, typeof firstStage, StageIOMapping>(
+    {
+      stages,
+      stage: firstStage,
+      service,
+    },
+    pubsub,
+    STAGE_UPDATES_CHANNEL,
+  );
+  return add(firstStage, {
+    runId: firstStageInput.runId,
+    currentStage: firstStage,
+    stageData: firstStageInput,
+    prevOutput: null,
+  });
+};
