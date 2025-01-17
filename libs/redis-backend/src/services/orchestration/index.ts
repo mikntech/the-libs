@@ -1,4 +1,8 @@
-import { add, createAndAutoProcessQueue, createQueue, PubSub } from '@the-libs/redis-backend';
+import {
+  add,
+  createAndAutoProcessQueue,
+  PubSub,
+} from '@the-libs/redis-backend';
 
 export interface BaseJob {
   testId: string;
@@ -11,7 +15,10 @@ interface JobType<TD> {
 
 interface StageServiceConfig<
   StageKey extends string,
-  StageMapping,
+  StageMapping extends Record<
+    string,
+    { Input: Record<string, any>; Output: Record<string, any> }
+  >,
   TD extends BaseJob,
 > {
   stage: StageKey;
@@ -22,7 +29,7 @@ interface StageServiceConfig<
 }
 
 export const runStageAsService = <
-  StageKey extends keyof StageMapping,
+  StageKey extends keyof StageMapping & string,
   StageMapping extends Record<
     string,
     { Input: Record<string, any>; Output: Record<string, any> }
@@ -36,21 +43,22 @@ export const runStageAsService = <
   }: StageServiceConfig<StageKey, StageMapping, TD>,
   pubsub?: PubSub,
   STAGE_UPDATES_CHANNEL = 'DEFAULT_STAGE_UPDATES_CHANNEL',
-) => createAndAutoProcessQueue<JobType<TD>>(stage, async (job, done) => {
+) =>
+  createAndAutoProcessQueue<JobType<TD>>(stage, async (job, done) => {
     try {
       const { taskData, currentStage } = job.data;
       if (currentStage !== indexInStages)
         throw new Error(
           'Critical orchestration error - mismatch between ' +
-          'currentStage: ' +
-          currentStage +
-          ' and MY_INDEX: ' +
-          indexInStages,
+            'currentStage: ' +
+            currentStage +
+            ' and MY_INDEX: ' +
+            indexInStages,
         );
 
       const result = await service(taskData);
 
-      await add((job.queue.name), {
+      await add(job.queue.name, {
         ...taskData,
         currentStage: currentStage + 1,
         prevRes: result,
@@ -78,4 +86,3 @@ export const runStageAsService = <
       done(err);
     }
   });
-};
