@@ -155,27 +155,23 @@ process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
 process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
 
 type PrevStage<
-  Stages extends readonly string[],
-  CurrentStage extends Stages[number],
-> = Stages extends readonly [infer First, ...infer Rest]
-  ? CurrentStage extends First
-    ? never // No previous stage if CurrentStage is the first
-    : Rest extends readonly string[]
-      ? CurrentStage extends Rest[number]
-        ? Stages[Rest extends readonly [...infer Previous, CurrentStage]
-            ? Previous['length']
-            : never]
-        : never
+  StagesEnum extends Record<string, string>,
+  CurrentStage extends StagesEnum[keyof StagesEnum],
+> = CurrentStage extends StagesEnum[keyof StagesEnum]
+  ? StagesEnum[keyof StagesEnum] extends infer S
+    ? S extends CurrentStage
+      ? Exclude<S, CurrentStage>
       : never
+    : never
   : never;
 
 export interface BaseJob<
-  StagesEnum extends readonly string[],
+  StagesEnum extends Record<string, string>,
   TageIOMapping extends Record<
-    StagesEnum[number],
+    StagesEnum[keyof StagesEnum],
     { Input: Record<string, unknown>; Output: Record<string, unknown> }
   >,
-  CurrentStage extends StagesEnum[number],
+  CurrentStage extends StagesEnum[keyof StagesEnum],
 > {
   testId: string;
   currentStage: CurrentStage;
@@ -185,10 +181,10 @@ export interface BaseJob<
 }
 
 interface StageServiceConfig<
-  StagesEnum extends readonly string[],
-  Stage extends StagesEnum[number],
+  StagesEnum extends Record<string, string>,
+  Stage extends StagesEnum[keyof StagesEnum],
   TageIOMapping extends Record<
-    StagesEnum[number],
+    StagesEnum[keyof StagesEnum],
     { Input: Record<string, unknown>; Output: Record<string, unknown> }
   >,
 > {
@@ -200,10 +196,10 @@ interface StageServiceConfig<
 }
 
 export const runStageAsService = <
-  StagesEnum extends readonly string[],
-  Stage extends StagesEnum[number],
+  StagesEnum extends Record<string, string>,
+  Stage extends StagesEnum[keyof StagesEnum],
   TageIOMapping extends Record<
-    StagesEnum[number],
+    StagesEnum[keyof StagesEnum],
     { Input: Record<string, unknown>; Output: Record<string, unknown> }
   >,
 >(
@@ -221,22 +217,25 @@ export const runStageAsService = <
       try {
         const { testId, currentStage } = job.data;
         const stagesArray = Object.values(stages);
-        const indexInStages = stages.indexOf(stage);
+        const indexInStages = stagesArray.indexOf(stage);
+
+        if (indexInStages === -1) {
+          throw new Error(
+            `Critical orchestration error - stage '${stage}' not found in stages.`,
+          );
+        }
+
+        if (currentStage !== stage) {
+          throw new Error(
+            `Critical orchestration error - mismatch between currentStage: ${currentStage} and stage: ${stage}.`,
+          );
+        }
 
         const result = await service(job.data);
 
-        if (currentStage !== stage)
-          throw new Error(
-            'Critical orchestration error - mismatch between ' +
-              'currentStage: ' +
-              currentStage +
-              ' and stage: ' +
-              stage,
-          );
-
         await add(job.queue.name, {
           ...job.data,
-          currentStage: stagesArray[indexInStages + 1],
+          currentStage: stagesArray[indexInStages + 1] || null,
           prevOutput: result,
         });
 
