@@ -153,7 +153,7 @@ const handleShutdownSignal = async (signal: string) => {
 process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
 process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
 
-type InferStageIOMapping<StagesEnum extends Record<string, string>> = {
+export type InferStageIOMapping<StagesEnum extends Record<string, string>> = {
   [Stage in StagesEnum[keyof StagesEnum]]: {
     Output: Record<string, unknown> | null; // Default output type for all stages
   };
