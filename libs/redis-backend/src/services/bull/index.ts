@@ -10,6 +10,7 @@ const require = createRequire(import.meta.url);
 const BullClass = require('bull');
 import { redisSettings } from '../../config';
 import { PubSub } from '../pubsub';
+import { SomeEnum } from '@the-libs/base-shared';
 
 const queues = new Map<string, Queue>(); // Store created queues to ensure reuse
 
@@ -153,85 +154,88 @@ const handleShutdownSignal = async (signal: string) => {
 process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
 process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
 
-export interface BaseJob {
+export interface BaseJob<PData> {
   testId: string;
-}
-
-interface JobType<TD> {
-  currentStage: number;
-  taskData: TD;
+  currentIndex: number;
+  prevOutput: PData;
 }
 
 interface StageServiceConfig<
-  StageKey extends string,
-  StageMapping extends Record<
+  StagesEnum extends string,
+  Stage extends StagesEnum,
+  TageIOMapping extends Record<
     string,
     { Input: Record<string, any>; Output: Record<string, any> }
   >,
-  TD extends BaseJob,
 > {
-  stage: StageKey;
-  indexInStages: number;
+  stages: SomeEnum<StagesEnum>;
+  stage: StagesEnum;
   service: (
-    taskData: StageMapping[StageKey]['Input'] & TD,
-  ) => Promise<StageMapping[StageKey]['Output']>;
+    taskData: TageIOMapping[Stage]['Input'],
+  ) => Promise<TageIOMapping[Stage]['Output']>;
 }
 
 export const runStageAsService = <
-  StageKey extends keyof StageMapping & string,
-  StageMapping extends Record<
+  StagesEnum extends string,
+  Stage extends StagesEnum,
+  TageIOMapping extends Record<
     string,
     { Input: Record<string, any>; Output: Record<string, any> }
   >,
-  TD extends BaseJob,
 >(
   {
+    stages,
     stage,
-    indexInStages,
     service,
-  }: StageServiceConfig<StageKey, StageMapping, TD>,
+  }: StageServiceConfig<StagesEnum, Stage, TageIOMapping>,
   pubsub?: PubSub,
   STAGE_UPDATES_CHANNEL = 'DEFAULT_STAGE_UPDATES_CHANNEL',
 ) =>
-  createAndAutoProcessQueue<JobType<TD>>(stage, async (job, done) => {
-    try {
-      const { taskData, currentStage } = job.data;
-      if (currentStage !== indexInStages)
-        throw new Error(
-          'Critical orchestration error - mismatch between ' +
-            'currentStage: ' +
-            currentStage +
-            ' and MY_INDEX: ' +
-            indexInStages,
+  createAndAutoProcessQueue<TageIOMapping[Stage]['Input']>(
+    stage,
+    async (job, done) => {
+      try {
+        const { taskData, currentStage } = job.data;
+        const indexInStages = Object.values(stages).findIndex(
+          (val) => val === stage,
+        );
+        if (currentStage !== indexInStages)
+          throw new Error(
+            'Critical orchestration error - mismatch between ' +
+              'currentStage: ' +
+              currentStage +
+              ' and MY_INDEX: ' +
+              indexInStages,
+          );
+
+        const result = await service(taskData);
+
+        await add(job.queue.name, {
+          ...taskData,
+          currentStage: currentStage + 1,
+          prevRes: result,
+        });
+
+        pubsub?.publish(
+          STAGE_UPDATES_CHANNEL,
+          JSON.stringify({ id: taskData.testId, stage: currentStage }),
         );
 
-      const result = await service(taskData);
+        done();
+      } catch (err: any) {
+        console.error(err);
+        job.failedReason = err.message;
 
-      await add(job.queue.name, {
-        ...taskData,
-        currentStage: currentStage + 1,
-        prevRes: result,
-      });
+        pubsub?.publish(
+          STAGE_UPDATES_CHANNEL,
+          JSON.stringify({
+            id: job.data.testId,
+            stage: job.data.currentStage,
+            error: true,
+          }),
+        );
 
-      pubsub?.publish(
-        STAGE_UPDATES_CHANNEL,
-        JSON.stringify({ id: taskData.testId, stage: currentStage }),
-      );
-
-      done();
-    } catch (err: any) {
-      console.error(err);
-      job.failedReason = err.message;
-
-      pubsub?.publish(
-        STAGE_UPDATES_CHANNEL,
-        JSON.stringify({
-          id: job.data.taskData.testId,
-          stage: job.data.currentStage,
-          error: true,
-        }),
-      );
-
-      done(err);
-    }
-  });
+        done(err);
+      }
+    },
+  );
