@@ -10,7 +10,6 @@ const require = createRequire(import.meta.url);
 const BullClass = require('bull');
 import { redisSettings } from '../../config';
 import { PubSub } from '../pubsub';
-import { SomeEnum } from '@the-libs/base-shared';
 
 const queues = new Map<string, Queue>(); // Store created queues to ensure reuse
 
@@ -173,7 +172,7 @@ export interface BaseJob<
   >,
   CurrentStage extends StagesEnum[keyof StagesEnum],
 > {
-  testId: string;
+  runId: string;
   currentStage: CurrentStage;
   prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
     ? TageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
@@ -215,7 +214,7 @@ export const runStageAsService = <
     stage,
     async (job, done) => {
       try {
-        const { testId, currentStage } = job.data;
+        const { runId, currentStage } = job.data;
         const stagesArray = Object.values(stages);
         const indexInStages = stagesArray.indexOf(stage);
 
@@ -241,7 +240,7 @@ export const runStageAsService = <
 
         pubsub?.publish(
           STAGE_UPDATES_CHANNEL,
-          JSON.stringify({ id: testId, stage: currentStage }),
+          JSON.stringify({ id: runId, stage: currentStage }),
         );
 
         done();
@@ -252,7 +251,7 @@ export const runStageAsService = <
         pubsub?.publish(
           STAGE_UPDATES_CHANNEL,
           JSON.stringify({
-            id: job.data.testId,
+            id: job.data.runId,
             stage: job.data.currentStage,
             error: true,
           }),
