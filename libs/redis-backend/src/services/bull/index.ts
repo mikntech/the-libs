@@ -284,7 +284,6 @@ export const startOrchestratedJob = <
   StageIOMapping extends InferStageIOMapping<StagesEnum, InputMap>,
 >(
   stages: StagesEnum,
-  firstStage: FirstStage,
   firstStageInput: StageIOMapping[FirstStage]['Input'], // First stage input
   service: (
     taskData: BaseJob<
@@ -297,6 +296,7 @@ export const startOrchestratedJob = <
   pubsub?: PubSub,
   STAGE_UPDATES_CHANNEL = 'DEFAULT_STAGE_UPDATES_CHANNEL',
 ) => {
+  const firstStage = Object.values(stages)[0] as FirstStage;
   runStageAsService<StagesEnum, FirstStage, InputMap, StageIOMapping>(
     {
       stages,
