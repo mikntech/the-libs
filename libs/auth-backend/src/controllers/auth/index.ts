@@ -4,8 +4,8 @@ const require = createRequire(import.meta.url);
 import { getExpressSettings } from '@the-libs/express-backend';
 import {
   InvalidInputError,
-  NodeEnvironment,
-  TODO,
+  NodeEnvironment, NotLoggedInError,
+  TODO
 } from '@the-libs/base-shared';
 import {
   MultiUserType,
@@ -157,3 +157,7 @@ export const genAuthControllers = <
     generateURLWithParams,
   };
 };
+
+export const endpointAuthorizer = ({user}:{user:any})=>{
+if (!user) throw new NotLoggedInError();
+}
