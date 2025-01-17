@@ -37,9 +37,8 @@ export const runStageAsService = <
       const { taskData, currentStage } = job.data;
       if (currentStage !== indexInStages)
         throw new Error(
-          'There is a critical orchestration error - mismatch between ' +
-          currentStage +
-          ': ' +
+          'Critical orchestration error - mismatch between ' +
+          'currentStage: ' +
           currentStage +
           ' and MY_INDEX: ' +
           indexInStages,
