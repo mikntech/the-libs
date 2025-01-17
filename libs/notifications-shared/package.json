@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "mongoose": "^8.9.5",
-    "@the-libs/auth-shared": "^1.21.48"
+    "@the-libs/auth-shared": "^1.21.51"
   },
   "type": "module",
   "main": "./index.js",
