@@ -154,10 +154,28 @@ const handleShutdownSignal = async (signal: string) => {
 process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
 process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
 
-export interface BaseJob<PData> {
+type PrevStage<
+  Stages extends readonly string[],
+  CurrentStage extends Stages[number],
+> = Stages extends readonly [infer First, ...infer Rest]
+  ? CurrentStage extends First
+    ? never
+    : Stages[Extract<Rest, readonly string[]>['length']]
+  : never;
+
+export interface BaseJob<
+  StagesEnum extends readonly string[],
+  TageIOMapping extends Record<
+    StagesEnum[number],
+    { Input: Record<string, any>; Output: Record<string, any> }
+  >,
+  CurrentStage extends StagesEnum[number],
+> {
   testId: string;
-  currentIndex: number;
-  prevOutput: PData;
+  currentStage: CurrentStage;
+  prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
+    ? TageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
+    : never;
 }
 
 interface StageServiceConfig<
@@ -180,7 +198,7 @@ export const runStageAsService = <
   Stage extends StagesEnum,
   TageIOMapping extends Record<
     string,
-    { Input: Record<string, any>; Output: Record<string, any> }
+    { Input: BaseJob<any>; Output: BaseJob<any> }
   >,
 >(
   {
