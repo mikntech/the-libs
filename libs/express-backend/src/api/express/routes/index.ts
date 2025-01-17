@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction, CookieOptions } from 'express';
 import { ServerResponse } from 'http';
-import { TODO } from '@the-libs/base-shared';
+import { NotLoggedInError, TODO } from '@the-libs/base-shared';
 
 interface APIResponse {
   statusCode: number;
@@ -17,13 +17,15 @@ export const highOrderHandler = <R extends Request>(
     path: string;
     stat: string;
   }[],
+  validateAuth = true,
 ) =>
-  (async (req: R, res: Response, next: NextFunction) => {
+  (async (req: R & { user?: TODO }, res: Response, next: NextFunction) => {
     try {
       if (wsHeaders) {
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
         await handler(req, res.write.bind(res));
       } else {
+        if (validateAuth && !req.user) next(new NotLoggedInError());
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>
         )(req);
@@ -34,7 +36,11 @@ export const highOrderHandler = <R extends Request>(
           const { name, val, options } = cookie;
           ret.cookie(name, val, options);
         }
-        typeof body === 'string' ? ret.send(body) : ret.json(body);
+        if (typeof body === 'string') {
+          ret.send(body);
+        } else {
+          ret.json(body);
+        }
       }
     } catch (err) {
       next(err);
