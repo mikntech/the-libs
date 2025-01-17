@@ -159,15 +159,21 @@ type PrevStage<
   CurrentStage extends Stages[number],
 > = Stages extends readonly [infer First, ...infer Rest]
   ? CurrentStage extends First
-    ? never
-    : Stages[Extract<Rest, readonly string[]>['length']]
+    ? never // No previous stage if CurrentStage is the first
+    : Rest extends readonly string[]
+      ? CurrentStage extends Rest[number]
+        ? Stages[Rest extends readonly [...infer Previous, CurrentStage]
+            ? Previous['length']
+            : never]
+        : never
+      : never
   : never;
 
 export interface BaseJob<
   StagesEnum extends readonly string[],
   TageIOMapping extends Record<
     StagesEnum[number],
-    { Input: Record<string, any>; Output: Record<string, any> }
+    { Input: Record<string, unknown>; Output: Record<string, unknown> }
   >,
   CurrentStage extends StagesEnum[number],
 > {
@@ -179,26 +185,26 @@ export interface BaseJob<
 }
 
 interface StageServiceConfig<
-  StagesEnum extends string,
-  Stage extends StagesEnum,
+  StagesEnum extends readonly string[],
+  Stage extends StagesEnum[number],
   TageIOMapping extends Record<
-    string,
-    { Input: Record<string, any>; Output: Record<string, any> }
+    StagesEnum[number],
+    { Input: Record<string, unknown>; Output: Record<string, unknown> }
   >,
 > {
-  stages: SomeEnum<StagesEnum>;
-  stage: StagesEnum;
+  stages: StagesEnum;
+  stage: Stage;
   service: (
-    taskData: TageIOMapping[Stage]['Input'],
+    taskData: BaseJob<StagesEnum, TageIOMapping, Stage>,
   ) => Promise<TageIOMapping[Stage]['Output']>;
 }
 
 export const runStageAsService = <
-  StagesEnum extends string,
-  Stage extends StagesEnum,
+  StagesEnum extends readonly string[],
+  Stage extends StagesEnum[number],
   TageIOMapping extends Record<
-    string,
-    { Input: BaseJob<any>; Output: BaseJob<any> }
+    StagesEnum[number],
+    { Input: Record<string, unknown>; Output: Record<string, unknown> }
   >,
 >(
   {
@@ -209,40 +215,40 @@ export const runStageAsService = <
   pubsub?: PubSub,
   STAGE_UPDATES_CHANNEL = 'DEFAULT_STAGE_UPDATES_CHANNEL',
 ) =>
-  createAndAutoProcessQueue<TageIOMapping[Stage]['Input']>(
+  createAndAutoProcessQueue<BaseJob<StagesEnum, TageIOMapping, Stage>>(
     stage,
     async (job, done) => {
       try {
-        const { taskData, currentStage } = job.data;
-        const indexInStages = Object.values(stages).findIndex(
-          (val) => val === stage,
-        );
-        if (currentStage !== indexInStages)
+        const { testId, currentStage } = job.data;
+        const stagesArray = Object.values(stages);
+        const indexInStages = stages.indexOf(stage);
+
+        const result = await service(job.data);
+
+        if (currentStage !== stage)
           throw new Error(
             'Critical orchestration error - mismatch between ' +
               'currentStage: ' +
               currentStage +
-              ' and MY_INDEX: ' +
-              indexInStages,
+              ' and stage: ' +
+              stage,
           );
 
-        const result = await service(taskData);
-
         await add(job.queue.name, {
-          ...taskData,
-          currentStage: currentStage + 1,
-          prevRes: result,
+          ...job.data,
+          currentStage: stagesArray[indexInStages + 1],
+          prevOutput: result,
         });
 
         pubsub?.publish(
           STAGE_UPDATES_CHANNEL,
-          JSON.stringify({ id: taskData.testId, stage: currentStage }),
+          JSON.stringify({ id: testId, stage: currentStage }),
         );
 
         done();
-      } catch (err: any) {
+      } catch (err) {
         console.error(err);
-        job.failedReason = err.message;
+        job.failedReason = (err as Error).message;
 
         pubsub?.publish(
           STAGE_UPDATES_CHANNEL,
@@ -253,7 +259,7 @@ export const runStageAsService = <
           }),
         );
 
-        done(err);
+        done(err as Error);
       }
     },
   );
