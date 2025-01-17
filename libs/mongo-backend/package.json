@@ -5,11 +5,11 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.21.2",
-    "@the-libs/s3-backend": "^1.21.2",
-    "@the-libs/redis-backend": "^1.21.2",
+    "@the-libs/base-shared": "^1.21.47",
+    "@the-libs/s3-backend": "^1.21.47",
+    "@the-libs/redis-backend": "^1.21.47",
     "dotenv": "^16.4.7",
-    "mongoose": "^8.9.3"
+    "mongoose": "^8.9.5"
   },
   "type": "module",
   "main": "./index.js",

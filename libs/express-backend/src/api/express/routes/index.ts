@@ -4,7 +4,7 @@ import { NotLoggedInError, TODO } from '@the-libs/base-shared';
 
 interface APIResponse {
   statusCode: number;
-  body?: object | string;
+  body?: object | string | number;
   cookie?: { name: string; val: string; options: CookieOptions };
 }
 

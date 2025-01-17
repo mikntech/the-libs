@@ -5,7 +5,7 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "mongoose": "^8.9.3",
+    "mongoose": "^8.9.5",
     "stripe": "^17.5.0"
   },
   "type": "module",
