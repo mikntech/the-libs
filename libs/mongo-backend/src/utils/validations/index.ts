@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
-import type { Document as MDocument, QueryWithHelpers } from 'mongoose';
+import type { QueryWithHelpers } from 'mongoose';
 const { isValidObjectId } = require('mongoose');
 import {
   InvalidEnumError,
@@ -9,12 +9,12 @@ import {
   ResourceNotFoundError,
   SomeEnum,
 } from '@the-libs/base-shared';
-import { findDocs } from '../data';
+import { DBDoc, findDocs } from '../data';
 import { ExtendedModel } from '../../db/mongo';
 
 export const validateInput = <T = string>(
   input: { [key: string]: T },
-  extraPath: string = '',
+  extraPath = '',
 ) => {
   const [name, value] = Object.entries(input)[0];
   if (!value)
@@ -45,14 +45,14 @@ export const validateDocument = (doc: any): boolean =>
 
 export const findAndValidate = async <
   isArray extends boolean,
-  DocI extends MDocument = MDocument,
+  DocI extends DBDoc = DBDoc,
   Cached = any,
   WithCache extends boolean = true,
 >(
   model: ExtendedModel<DocI, Cached>,
   query: QueryWithHelpers<isArray extends true ? DocI[] : DocI | null, DocI>,
   customDescription: string,
-  lean: boolean = true,
+  lean = true,
   withCache: WithCache = true as WithCache,
 ): Promise<isArray extends true ? DocI[] : DocI> => {
   try {
