@@ -174,6 +174,7 @@ export interface BaseJob<
 > {
   runId: string;
   currentStage: CurrentStage;
+  stageData: TageIOMapping[CurrentStage]['Input']; // Added current stage input
   prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
     ? TageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
     : never;
