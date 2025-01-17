@@ -9,19 +9,23 @@ interface JobType<TD> {
   taskData: TD;
 }
 
-interface StageAsServiceConfig<TheEnum extends string, Datas, TD, R> {
-  stage: TheEnum;
+interface StageServiceConfig<
+  StageKey extends string,
+  StageMapping,
+  TD extends BaseJob,
+> {
+  stage: StageKey;
   indexInStages: number;
   service: (
-    taskData: Datas[TheEnum]['StageInput'] & TD,
-  ) => Promise<Datas[TheEnum]['StageOutput']>;
+    taskData: StageMapping[StageKey]['Input'] & TD,
+  ) => Promise<StageMapping[StageKey]['Output']>;
 }
 
 export const runStageAsService = <
-  TheEnum extends string,
-  Datas extends Record<
-    TheEnum,
-    { StageInput: Record<string, any>; StageOutput: Record<string, any> }
+  StageKey extends keyof StageMapping,
+  StageMapping extends Record<
+    string,
+    { Input: Record<string, any>; Output: Record<string, any> }
   >,
   TD extends BaseJob,
 >(
@@ -29,7 +33,7 @@ export const runStageAsService = <
     stage,
     indexInStages,
     service,
-  }: StageAsServiceConfig<TheEnum, Datas, TD, any>,
+  }: StageServiceConfig<StageKey, StageMapping, TD>,
   pubsub?: PubSub,
   STAGE_UPDATES_CHANNEL = 'DEFAULT_STAGE_UPDATES_CHANNEL',
 ) => createAndAutoProcessQueue<JobType<TD>>(stage, async (job, done) => {
