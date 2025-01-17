@@ -153,20 +153,13 @@ const handleShutdownSignal = async (signal: string) => {
 process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
 process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
 
-type InferTageIOMapping<
-  StagesEnum extends Record<string, string>,
-  FirstStageInput extends Record<string, unknown>,
-> = {
+type InferTageIOMapping<StagesEnum extends Record<string, string>> = {
   [Stage in StagesEnum[keyof StagesEnum]]: {
-    Input: PrevStage<StagesEnum, Stage> extends StagesEnum[keyof StagesEnum]
-      ? {
-          prevOutput: InferTageIOMapping<StagesEnum, FirstStageInput>[PrevStage<
-            StagesEnum,
-            Stage
-          >]['Output'];
-        }
-      : FirstStageInput;
-    Output: Record<string, unknown> | null; // Ensure compatibility
+    Output: Stage extends keyof StagesEnum
+      ? Stage extends StagesEnum[keyof StagesEnum]
+        ? Record<string, unknown>
+        : null // Last stage has `null` output
+      : never;
   };
 };
 
@@ -183,12 +176,19 @@ type PrevStage<
 
 export interface BaseJob<
   StagesEnum extends Record<string, string>,
-  TageIOMapping extends InferTageIOMapping<StagesEnum, Record<string, unknown>>,
+  TageIOMapping extends InferTageIOMapping<StagesEnum>,
   CurrentStage extends StagesEnum[keyof StagesEnum],
 > {
   runId: string;
   currentStage: CurrentStage;
-  stageData: TageIOMapping[CurrentStage]['Input'];
+  stageData: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
+    ? {
+        prevOutput: TageIOMapping[PrevStage<
+          StagesEnum,
+          CurrentStage
+        >]['Output'];
+      }
+    : Record<string, unknown>; // Input for the first stage
   prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
     ? TageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
     : never;
@@ -197,7 +197,7 @@ export interface BaseJob<
 interface StageServiceConfig<
   StagesEnum extends Record<string, string>,
   Stage extends StagesEnum[keyof StagesEnum],
-  TageIOMapping extends InferTageIOMapping<StagesEnum, Record<string, unknown>>,
+  TageIOMapping extends InferTageIOMapping<StagesEnum>,
 > {
   stages: StagesEnum;
   stage: Stage;
@@ -209,7 +209,7 @@ interface StageServiceConfig<
 export const runStageAsService = <
   StagesEnum extends Record<string, string>,
   Stage extends StagesEnum[keyof StagesEnum],
-  TageIOMapping extends InferTageIOMapping<StagesEnum, Record<string, unknown>>,
+  TageIOMapping extends InferTageIOMapping<StagesEnum>,
 >(
   {
     stages,
