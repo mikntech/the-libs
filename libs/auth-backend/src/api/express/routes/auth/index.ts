@@ -7,6 +7,7 @@ import { registerRouter } from './registerRouter';
 import { Strategy } from '../../../../strategy';
 import { highOrderHandler } from '@the-libs/express-backend';
 import { SomeEnum } from '@the-libs/base-shared';
+import { AuthenticatedRequest } from '../../middleware';
 
 export const authRouter = <
   UserTypeEnum extends string | number | symbol,
@@ -31,9 +32,9 @@ export const authRouter = <
 
   router.get(
     '/ZXCVBNDifficulty',
-    highOrderHandler(() => ({
+    highOrderHandler(async () => ({
       statusCode: 200,
-      body: strategy.MIN_PASSWORD_STRENGTH,
+      body: String(strategy.MIN_PASSWORD_STRENGTH),
     })),
   );
 
