@@ -8,11 +8,13 @@ interface APIResponse {
   cookie?: { name: string; val: string; options: CookieOptions };
 }
 
+type DefaultHandlerType<R> =
+  | ((req: R) => Promise<APIResponse>)
+  | ((req: R) => APIResponse)
+  | ((req: R, write: ServerResponse['write']) => Promise<void>);
+
 interface HighOrderHandlerParams<R> {
-  handler:
-    | ((req: R) => Promise<APIResponse>)
-    | ((req: R) => APIResponse)
-    | ((req: R, write: ServerResponse['write']) => Promise<void>);
+  handler: DefaultHandlerType<R>;
   wsHeaders?: {
     path: string;
     stat: string;
@@ -21,14 +23,12 @@ interface HighOrderHandlerParams<R> {
 }
 
 export const highOrderHandler = <R extends Request>(
-  params:
-    | HighOrderHandlerParams<R>
-    | Pick<HighOrderHandlerParams<R>, 'handler'>,
+  params: HighOrderHandlerParams<R> | DefaultHandlerType<R>,
 ) =>
   (async (req: R & { user?: TODO }, res: Response, next: NextFunction) => {
     const { wsHeaders, validateAuth } = params as HighOrderHandlerParams<R>;
     let { handler } = params as HighOrderHandlerParams<R>;
-    if (!handler) handler = params as typeof handler;
+    if (!handler) handler = params as DefaultHandlerType<R>;
     try {
       if (wsHeaders) {
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
