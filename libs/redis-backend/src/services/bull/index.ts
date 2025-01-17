@@ -153,6 +153,23 @@ const handleShutdownSignal = async (signal: string) => {
 process.on('SIGINT', () => handleShutdownSignal('SIGINT'));
 process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
 
+type InferTageIOMapping<
+  StagesEnum extends Record<string, string>,
+  FirstStageInput extends Record<string, unknown>,
+> = {
+  [Stage in StagesEnum[keyof StagesEnum]]: {
+    Input: PrevStage<StagesEnum, Stage> extends StagesEnum[keyof StagesEnum]
+      ? {
+          prevOutput: InferTageIOMapping<StagesEnum, FirstStageInput>[PrevStage<
+            StagesEnum,
+            Stage
+          >]['Output'];
+        }
+      : FirstStageInput;
+    Output: Record<string, unknown> | null; // Ensure compatibility
+  };
+};
+
 type PrevStage<
   StagesEnum extends Record<string, string>,
   CurrentStage extends StagesEnum[keyof StagesEnum],
@@ -166,15 +183,12 @@ type PrevStage<
 
 export interface BaseJob<
   StagesEnum extends Record<string, string>,
-  TageIOMapping extends Record<
-    StagesEnum[keyof StagesEnum],
-    { Input: Record<string, unknown>; Output: Record<string, unknown> }
-  >,
+  TageIOMapping extends InferTageIOMapping<StagesEnum, Record<string, unknown>>,
   CurrentStage extends StagesEnum[keyof StagesEnum],
 > {
   runId: string;
   currentStage: CurrentStage;
-  stageData: TageIOMapping[CurrentStage]['Input']; // Added current stage input
+  stageData: TageIOMapping[CurrentStage]['Input'];
   prevOutput: PrevStage<StagesEnum, CurrentStage> extends keyof TageIOMapping
     ? TageIOMapping[PrevStage<StagesEnum, CurrentStage>]['Output']
     : never;
@@ -183,25 +197,19 @@ export interface BaseJob<
 interface StageServiceConfig<
   StagesEnum extends Record<string, string>,
   Stage extends StagesEnum[keyof StagesEnum],
-  TageIOMapping extends Record<
-    StagesEnum[keyof StagesEnum],
-    { Input: Record<string, unknown>; Output: Record<string, unknown> }
-  >,
+  TageIOMapping extends InferTageIOMapping<StagesEnum, Record<string, unknown>>,
 > {
   stages: StagesEnum;
   stage: Stage;
   service: (
-    taskData: BaseJob<StagesEnum, TageIOMapping, Stage>,
+    taskData: BaseJob<StagesEnum, TageIOMapping, Stage>['stageData'],
   ) => Promise<TageIOMapping[Stage]['Output']>;
 }
 
 export const runStageAsService = <
   StagesEnum extends Record<string, string>,
   Stage extends StagesEnum[keyof StagesEnum],
-  TageIOMapping extends Record<
-    StagesEnum[keyof StagesEnum],
-    { Input: Record<string, unknown>; Output: Record<string, unknown> }
-  >,
+  TageIOMapping extends InferTageIOMapping<StagesEnum, Record<string, unknown>>,
 >(
   {
     stages,
@@ -215,7 +223,7 @@ export const runStageAsService = <
     stage,
     async (job, done) => {
       try {
-        const { runId, currentStage } = job.data;
+        const { runId, currentStage, stageData } = job.data;
         const stagesArray = Object.values(stages);
         const indexInStages = stagesArray.indexOf(stage);
 
@@ -231,7 +239,7 @@ export const runStageAsService = <
           );
         }
 
-        const result = await service(job.data);
+        const result = await service(stageData);
 
         await add(job.queue.name, {
           ...job.data,
