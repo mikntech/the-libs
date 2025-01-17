@@ -55,15 +55,27 @@ export const createAndAutoProcessQueue = <DATA>(
   return queue;
 };
 
+export const createAndAdd = <DATA>(
+  queueName: string,
+  data: DATA,
+  opts?: JobOptions,
+) => createQueue<DATA>(queueName).add(data, opts);
+
 /**
  * Add a job to a Bull queue.
- * @param queue The queue instance.
+ * @param queueOrName The queue instance, or its name.
  * @param data The data for the job.
  * @param opts Optional job options.
  * @returns The created job.
  */
-export const add = <DATA>(queue: Queue<DATA>, data: DATA, opts?: JobOptions) =>
-  queue.add(data, opts);
+export const add = <DATA>(
+  queueOrName: Queue<DATA> | string,
+  data: DATA,
+  opts?: JobOptions,
+) =>
+  typeof queueOrName === 'string'
+    ? createAndAdd(queueOrName, data, opts)
+    : queueOrName.add(data, opts);
 
 /**
  * Attach a job processing function to a queue.
