@@ -1,5 +1,9 @@
 import { createRequire } from 'module';
-import { isProduction } from '@the-libs/mongo-backend';
+import {
+  currentStagingEnv,
+  isProduction,
+  stagingEnv,
+} from '@the-libs/mongo-backend';
 import { StagingEnvironment } from '@the-libs/base-shared';
 const require = createRequire(import.meta.url);
 const { config } = require('dotenv');
@@ -7,7 +11,6 @@ const process = require('process');
 config();
 
 export interface ExpressSettings<CD> {
-  stagingEnv: StagingEnvironment;
   port: number;
   clientDomains: CD;
   myDomain: string;
@@ -17,24 +20,18 @@ export interface ExpressSettings<CD> {
 const validStagingEnvs: StagingEnvironment[] =
   Object.values(StagingEnvironment);
 
-const stagingEnv = process.env['STAGING_ENV'] as StagingEnvironment;
 if (!validStagingEnvs.includes(stagingEnv)) {
   throw new Error(
     `STAGING_ENV must be one of: ${Object.values(StagingEnvironment).join(', ')}`,
   );
 }
 
-const defaultStagingEnv = isProduction
-  ? StagingEnvironment.Prod
-  : StagingEnvironment.Local;
-
 const port = parseInt(process.env['PORT'] ?? '4050');
-const currentStagingEnv = stagingEnv || defaultStagingEnv;
 
 const generateFullDomain = (base: string, port: string) => {
-  return isProduction
-    ? `https://${currentStagingEnv === StagingEnvironment.Prod ? '' : currentStagingEnv}${base}`
-    : `http://127.0.0.1:${port}`;
+  const prefix =
+    currentStagingEnv === StagingEnvironment.Prod ? '' : currentStagingEnv;
+  return isProduction ? `https://${prefix}${base}` : `http://127.0.0.1:${port}`;
 };
 
 const myDomain = generateFullDomain(
@@ -64,7 +61,6 @@ export const getExpressSettings = <
     clientDomains = mutableClientDomains as CB;
   }
   return {
-    stagingEnv: currentStagingEnv,
     port,
     myDomain,
     clientDomains: clientDomains,
@@ -72,7 +68,6 @@ export const getExpressSettings = <
   };
 };
 
-// TODO: Can create a settings lib
 export const validateSettings = <CB>(settings: ExpressSettings<CB>) => {
   if (!settings) {
     throw new Error('Configuration settings could not be loaded');

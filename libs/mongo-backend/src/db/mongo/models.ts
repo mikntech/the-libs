@@ -26,7 +26,7 @@ import {
   PubSub,
   runTaskWithLock,
 } from '@the-libs/redis-backend';
-import { getExpressSettings } from '@the-libs/express-backend';
+import { DBDoc } from '../../utils';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -44,9 +44,7 @@ interface Reg {
 }
 const allComputedFields: Reg[] = [];
 
-const registerComputedFields = <ComputedPart, DBFullDoc extends Document>(
-  r: Reg,
-) => allComputedFields.push(r);
+const registerComputedFields = (r: Reg) => allComputedFields.push(r);
 
 const connect = async (
   logMongoToConsole: boolean = mongoSettings.defaultDebugAllModels,
@@ -55,21 +53,15 @@ const connect = async (
   try {
     await mongoose.connect(mongoSettings.mongoURI, {
       socketTimeoutMS:
-        getExpressSettings().stagingEnv === StagingEnvironment.Local
-          ? 30000
-          : 45000,
+        mongoSettings.stagingEnv === StagingEnvironment.Local ? 30000 : 45000,
       maxPoolSize:
-        getExpressSettings().stagingEnv === StagingEnvironment.Local ? 10 : 100,
+        mongoSettings.stagingEnv === StagingEnvironment.Local ? 10 : 100,
       minPoolSize:
-        getExpressSettings().stagingEnv === StagingEnvironment.Local ? 1 : 5,
+        mongoSettings.stagingEnv === StagingEnvironment.Local ? 1 : 5,
       serverSelectionTimeoutMS:
-        getExpressSettings().stagingEnv === StagingEnvironment.Local
-          ? 5000
-          : 10000,
+        mongoSettings.stagingEnv === StagingEnvironment.Local ? 5000 : 10000,
       connectTimeoutMS:
-        getExpressSettings().stagingEnv === StagingEnvironment.Local
-          ? 5000
-          : 10000,
+        mongoSettings.stagingEnv === StagingEnvironment.Local ? 5000 : 10000,
     });
     console.log('Mongo DB connected successfully');
     connection.instance = mongoose.connection;
@@ -137,9 +129,9 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   }
 
   find(
-    filter: any,
-    projection?: any | null | undefined,
-    options?: any | null | undefined,
+    filter: TODO,
+    projection?: TODO | null | undefined,
+    options?: TODO | null | undefined,
   ) {
     return this.model.find(filter, projection, options);
   }
@@ -158,7 +150,7 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   }
 }
 
-export const getModel = async <DBPart extends Document, ComputedPart = never>(
+export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
   name: string,
   schemaDefinition: SchemaDefinition,
   {
@@ -193,7 +185,7 @@ export const getModel = async <DBPart extends Document, ComputedPart = never>(
     model = connection.instance!.model<DBPart>(name);
   } else {
     model = initModel<DBPart>(connection, name, schema);
-    computedFields && registerComputedFields({ model, computedFields });
+    if (computedFields) registerComputedFields({ model, computedFields });
     if (connection.instance?.db) {
       await WatchDB.cancelWholeDBWatch();
       WatchDB.addToWholeDB(

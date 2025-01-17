@@ -120,7 +120,7 @@ export const genAuthControllers = <
     body: string,
     link: string,
   ) =>
-    (strategy.sendEmails?.[getExpressSettings().stagingEnv] ?? true)
+    (strategy.sendEmails?.[mongoSettings.stagingEnv] ?? true)
       ? sendEmail(email, subject, body).then()
       : console.log(link);
 

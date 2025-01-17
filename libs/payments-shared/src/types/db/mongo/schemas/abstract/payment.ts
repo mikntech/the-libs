@@ -1,4 +1,4 @@
-import type { Document as MDocument } from 'mongoose';
+import { DBDoc } from '@the-libs/mongo-backend';
 
 export enum PaymentMethod {
   CARD_STRIPE = 'Stripe',
@@ -322,7 +322,7 @@ export enum PaymentStatus {
   REFUSED = 'Refused',
 }
 
-export interface BasePayment extends MDocument {
+export interface BasePayment extends DBDoc {
   method: PaymentMethod;
   amount: number;
   currency: keyof typeof Currency;

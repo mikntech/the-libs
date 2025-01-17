@@ -12,6 +12,7 @@ import { createRequire } from 'module';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import { readFileSync } from 'fs';
+import { mongoSettings } from '@the-libs/mongo-backend';
 
 const require = createRequire(import.meta.url);
 const { json, urlencoded } = require('express');
@@ -39,14 +40,14 @@ export const startExpress = async <CB extends { [s: string]: string }>(
   apiRouter: Router,
   preMiddlewares: (Function | { route: string; func: Function })[] = [],
   postMiddlewares: (Function | { route: string; func: Function })[] = [],
-  disableCors: boolean = false,
-  dontListen: boolean = false,
+  disableCors = false,
+  dontListen = false,
   extraCorsOrigins: string[] = [],
-  dontLogToMongo: boolean = false,
+  dontLogToMongo = false,
   timeoutInMS?: number,
 ) => {
   console.log('Starting Server...');
-  const { port, clientDomains, stagingEnv } = getExpressSettings<CB>();
+  const { port, clientDomains } = getExpressSettings<CB>();
 
   const origin = disableCors
     ? '*'
@@ -64,7 +65,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
 
   const defaultPostMiddlewares = [
     serverErrorHandler(
-      getExpressSettings().stagingEnv,
+      mongoSettings.stagingEnv,
       async () => errorLog(),
       dontLogToMongo,
     ),
@@ -81,7 +82,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
       res.status(200).json({
         'Health Check Status': 'Im alive',
         Version,
-        'Staging Environment': stagingEnv,
+        'Staging Environment': mongoSettings.stagingEnv,
         message: 'call "/api" to start',
       });
 
@@ -89,7 +90,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
 
     expressApp.use('/api', apiRouter);
 
-    getExpressSettings().stagingEnv !== StagingEnvironment.Prod &&
+    if (mongoSettings.stagingEnv !== StagingEnvironment.Prod)
       expressApp.use('/api', autoHelper);
 
     [...defaultPostMiddlewares, ...postMiddlewares].forEach(
@@ -104,7 +105,7 @@ export const startExpress = async <CB extends { [s: string]: string }>(
       expressApp.listen(port, '0.0.0.0', () => {
         console.log('Server is ready at ' + getExpressSettings().myDomain);
       });
-    timeoutInMS && expressApp.use(timeout(timeoutInMS) as RequestHandler);
+    if (timeoutInMS) expressApp.use(timeout(timeoutInMS) as RequestHandler);
     return { app: expressApp, httpServer };
   } catch (e) {
     throw new Error('Express setup failed: ' + JSON.stringify(e));

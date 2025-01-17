@@ -55,8 +55,8 @@ export const getNumberOfUnreadMessagesInConversation = async <
   ).length;
 
 export const subscribeHandler = () =>
-  highOrderHandler(
-    async (req: AuthenticatedRequest, write) => {
+  highOrderHandler({
+    handler: async (req: AuthenticatedRequest, write) => {
       pubSubInstance.subscribe('chats', (data: string) =>
         write(`data: ${JSON.stringify({ message: data })}\n\n`),
       );
@@ -65,9 +65,9 @@ export const subscribeHandler = () =>
         pubSubInstance.unsubscribe('chats');
       });
     },
-    [
+    wsHeaders: [
       { path: 'Content-Type', stat: 'text/event-stream' },
       { path: 'Cache-Control', stat: 'no-cache' },
       { path: 'Connection', stat: 'keep-alive' },
     ],
-  );
+  });

@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-import { NodeEnvironment } from '@the-libs/base-shared';
+import { NodeEnvironment, StagingEnvironment } from '@the-libs/base-shared';
 
 const require = createRequire(import.meta.url);
 
@@ -10,6 +10,7 @@ config();
 
 export interface MongoSettings {
   nodeEnv: NodeEnvironment;
+  stagingEnv: StagingEnvironment;
   mongoURI: string;
   defaultDebugAllModels: boolean;
 }
@@ -24,7 +25,15 @@ if (!validEnvs.includes(nodeEnv)) {
 
 export const isProduction = nodeEnv === NodeEnvironment.Production;
 
+const defaultStagingEnv = isProduction
+  ? StagingEnvironment.Prod
+  : StagingEnvironment.Local;
+
+export const stagingEnv = process.env['STAGING_ENV'] as StagingEnvironment;
+export const currentStagingEnv = stagingEnv || defaultStagingEnv;
+
 export const mongoSettings: MongoSettings = {
+  stagingEnv: currentStagingEnv,
   nodeEnv: isProduction
     ? NodeEnvironment.Production
     : NodeEnvironment.Development,

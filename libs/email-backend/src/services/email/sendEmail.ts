@@ -4,8 +4,8 @@ const require = createRequire(import.meta.url);
 const sendgrid = require('@sendgrid/mail');
 
 import { getEmailSettings } from '../../config';
-import { getExpressSettings } from '@the-libs/express-backend';
 import { StagingEnvironment } from '@the-libs/base-shared';
+import { mongoSettings } from '@the-libs/mongo-backend';
 
 export const sendEmail = async (to: string, subject: string, html: string) => {
   try {
@@ -18,8 +18,8 @@ export const sendEmail = async (to: string, subject: string, html: string) => {
     });
     console.log('Successfully sent email to ' + to);
   } catch (error) {
-    console.log('Error sending email:', error);
-    getExpressSettings().stagingEnv === StagingEnvironment.Local &&
+    console.log('' + 'Error sending email:', error);
+    mongoSettings.stagingEnv === StagingEnvironment.Local &&
       console.log('tried to email about ', subject, ': ', html);
   }
 };

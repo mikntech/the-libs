@@ -39,7 +39,7 @@ export const mergeCacheToDocs = async <
  */
 export const findDocs = async <
   isArray extends boolean,
-  DBDocI extends MDocument = MDocument,
+  DBDocI extends DBDoc = DBDoc,
   ComputedPart = any,
   withCache extends boolean = true,
 >(
@@ -50,7 +50,7 @@ export const findDocs = async <
         DBDocI
       >
     | TODO,
-  lean: boolean = true,
+  lean = true,
   withCacheValue: withCache = true as withCache,
 ): Promise<
   isArray extends true
@@ -86,7 +86,7 @@ export const findDocsWithAggregation = async <
  * Efficiently fetch a document by ID, supports caching.
  */
 export const quicklyFindByID = async <
-  DocType extends MDocument<any, any, any>,
+  DocType extends DBDoc,
   CP = any,
   stringable = any,
   withCache extends boolean = true,
@@ -95,7 +95,7 @@ export const quicklyFindByID = async <
     | ExtendedModel<DocType, CP>
     | (() => Promise<ExtendedModel<DocType, CP>>),
   id: string | stringable,
-  lean: boolean = true,
+  lean = true,
   withCacheValue: withCache = true as withCache,
 ) => {
   const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
@@ -113,14 +113,14 @@ export const quicklyFindByID = async <
  * Efficiently fetch all docs, supports caching.
  */
 export const quicklyFindAll = async <
-  DocType extends MDocument<any, any, any>,
+  DocType extends DBDoc,
   CP = any,
   withCache extends boolean = true,
 >(
   ModelOrGetter:
     | ExtendedModel<DocType, CP>
     | (() => Promise<ExtendedModel<DocType, CP>>),
-  lean: boolean = true,
+  lean = true,
   withCacheValue: withCache = true as withCache,
 ) => {
   const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
@@ -140,7 +140,7 @@ export const quicklyFindAll = async <
 export const createDoc = async <DocI extends MDocument, Computed = false>(
   { model }: ExtendedModel<DocI, Computed>,
   fields: Partial<DocI>,
-  save: boolean = true,
+  save = true,
 ) => {
   const doc = new model({
     ...fields,
