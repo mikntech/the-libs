@@ -1,11 +1,12 @@
-import type { Document as MDocument, Types } from 'mongoose';
+import type { Types } from 'mongoose';
+import { DBDoc } from '@the-libs/mongo-backend';
 
 export type DBConversation<
   Mediator extends boolean,
   Side1Name extends string,
   Side2Name extends string,
   PairName extends string,
-> = MDocument & {
+> = DBDoc & {
   [key in Side1Name]: string;
 } & {
   [key in Side2Name]: string;
@@ -15,12 +16,9 @@ export type DBConversation<
     ? {
         mediator: string;
       }
-    : {}) & {
-    _id: Types.ObjectId;
+    : object) & {
     title: string;
     hiddenFor?: string[];
-    createdAt: Date;
-    updatedAt: Date;
   };
 
 export interface CachedConversation {
@@ -35,14 +33,11 @@ export type Conversation<
 > = DBConversation<Mediator, Side1Name, Side2Name, PairName> &
   CachedConversation;
 
-export interface Message extends MDocument {
-  _id: Types.ObjectId;
+export interface Message extends DBDoc {
   ownerIdOrRef: string;
   conversation: Types.ObjectId;
   message: string;
   attachments?: string[];
   whenQueried?: number;
   whenMarked?: number;
-  createdAt: Date;
-  updatedAt: Date;
 }

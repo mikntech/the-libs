@@ -1,4 +1,5 @@
 import type { Document as MDocument, Types } from 'mongoose';
+import { DBDoc } from '@the-libs/mongo-backend';
 type OptionalIfFalse<IsRequired extends boolean, T> = IsRequired extends true
   ? T
   : T | undefined;
@@ -11,30 +12,21 @@ export interface User<
   NameRequired extends boolean = false,
   MultyAtAll extends boolean = false,
   USERTYPE = undefined,
-> extends MDocument {
-  _id: Types.ObjectId;
+> extends DBDoc {
   email: string;
   password: string;
   full_name: OptionalIfFalse<NameRequired, string>;
   profilePictureUri?: string;
   userType: OptionalIfTrue<MultyAtAll, USERTYPE>;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-export interface SomeRequest<WithUserType extends boolean> extends MDocument {
-  _id: Types.ObjectId;
+export interface SomeRequest<WithUserType extends boolean> extends DBDoc {
   email: string;
   userType: WithUserType extends true ? string : undefined;
   key: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
-export interface OTP extends MDocument {
-  _id: Types.ObjectId;
+export interface OTP extends DBDoc {
   user: Types.ObjectId;
   otp: string;
-  createdAt: Date;
-  updatedAt: Date;
 }

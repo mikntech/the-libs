@@ -2,6 +2,12 @@ import type { QueryWithHelpers, Document as MDocument, Types } from 'mongoose';
 import { ExtendedModel } from '../../db/mongo';
 import { TODO } from '@the-libs/base-shared';
 
+export interface DBDoc extends MDocument {
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 /**
  * Merges cached fields into documents, supporting both arrays and single documents.
  */
