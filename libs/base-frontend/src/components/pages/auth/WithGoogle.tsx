@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 
-// Make sure to update your types globally or locally as needed
+/**
+ * Global declaration so TypeScript knows about `window.google`.
+ * You can put this in a separate `global.d.ts` file if you prefer.
+ */
 declare global {
   interface Window {
     google?: any;
@@ -9,49 +12,49 @@ declare global {
 
 export interface WithGoogleProps {
   GOOGLE_CLIENT_ID: string;
-  onLoginSuccess: (user: any) => void; // Define the correct user type
-  onLoginFailure: (error: any) => void; // Define the error type
+  onLoginSuccess: (user: any) => void; // Adjust types for your actual user object
+  onLoginFailure: (error: any) => void; // Adjust types for your actual errors
 }
 
-export const WithGoogle = ({
+export function WithGoogle({
   GOOGLE_CLIENT_ID,
   onLoginSuccess,
   onLoginFailure,
-}: WithGoogleProps) => {
+}: WithGoogleProps) {
   useEffect(() => {
-    const clientId = GOOGLE_CLIENT_ID; // Ensure this pulls the correct client ID dynamically
+    // If we're on the server (Next.js SSR) or the script isn't loaded yet, do nothing.
+    if (typeof window === 'undefined' || !window.google) {
+      return;
+    }
 
+    // Callback once Google is ready with user credentials
     const handleCredentialResponse = (response: any) => {
-      // This function is called when the Google API successfully authenticates a user
-      // console.log('Encoded JWT ID token: ', response.credential);
+      // Example: response.credential is your JWT token
       onLoginSuccess(response);
     };
 
-    window.onload = function () {
-      if (window.google) {
-        window.google.accounts.id.initialize({
-          client_id: clientId,
-          callback: handleCredentialResponse,
-        });
+    // Initialize the Google "One Tap" or Sign in button
+    window.google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleCredentialResponse,
+    });
 
-        window.google.accounts.id.renderButton(
-          document.getElementById('google-sign-in-btn'),
-          { theme: 'outline', size: 'large' }, // Customize according to your needs
-        );
+    // Render the button on the given DOM element
+    window.google.accounts.id.renderButton(
+      document.getElementById('google-sign-in-btn'),
+      { theme: 'outline', size: 'large' },
+    );
 
-        window.google.accounts.id.prompt(); // Display the One Tap sign-in prompt
-      }
-    };
+    // Optionally show the One Tap prompt if the user is logged in
+    window.google.accounts.id.prompt();
 
-    // Cleanup function to potentially handle sign-out or cleanup resources
+    // Cleanup (optional): if you need to handle sign-out, remove event listeners, etc.
     return () => {
-      // Add any cleanup logic if necessary, typically for logging out the user
+      // e.g., window.google.accounts.id.cancel() if you wanted to kill a prompt
     };
-  }, [onLoginSuccess, onLoginFailure]);
+  }, [GOOGLE_CLIENT_ID, onLoginSuccess, onLoginFailure]);
 
-  return (
-    <div id="google-sign-in-btn">Sign in with Google</div> // This div will automatically be transformed into a sign-in button
-  );
-};
+  return <div id="google-sign-in-btn">Sign in with Google</div>;
+}
 
 export default WithGoogle;
