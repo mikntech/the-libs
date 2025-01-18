@@ -2,7 +2,8 @@ import { Box, Button, Grid2, Typography } from '@mui/material';
 
 import { TODO } from '@the-libs/base-shared';
 import { useResponsiveness } from '../../../hooks';
-import { AuthComponent, AuthCustomComponents } from './AuthComponent';
+import { WithEmail, WithEmailCustomComponents } from './WithEmail';
+import WithGoogle, { WithGoogleProps } from './WithGoogle';
 
 interface AuthPageProps<UserType> {
   backgroundPicture: string;
@@ -12,7 +13,8 @@ interface AuthPageProps<UserType> {
   clientTypesEnum: TODO;
   client: UserType;
   disableDarkMode?: boolean;
-  customComponents?: Partial<AuthCustomComponents>;
+  withEmailCustomComponents?: Partial<WithEmailCustomComponents>;
+  withGoogleProps: WithGoogleProps;
 }
 
 export const AuthPage = <UserType,>({
@@ -23,17 +25,19 @@ export const AuthPage = <UserType,>({
   defaultMainClient,
   disableDarkMode,
   client,
-  customComponents = {
+  withEmailCustomComponents = {
     Btn: Button,
     PrimaryText: Typography,
     Img: Box,
   },
+  withGoogleProps,
 }: AuthPageProps<UserType>) => {
-  if (!customComponents.Btn) customComponents.Btn = Button;
-  if (!customComponents.PrimaryText) customComponents.PrimaryText = Typography;
-  if (!customComponents.Img) customComponents.Img = Box;
-  const newCustomComponents =
-    customComponents as unknown as AuthCustomComponents;
+  if (!withEmailCustomComponents.Btn) withEmailCustomComponents.Btn = Button;
+  if (!withEmailCustomComponents.PrimaryText)
+    withEmailCustomComponents.PrimaryText = Typography;
+  if (!withEmailCustomComponents.Img) withEmailCustomComponents.Img = Box;
+  const newWithEmailCustomComponents =
+    withEmailCustomComponents as unknown as WithEmailCustomComponents;
 
   const { isMobileOrTabl } = useResponsiveness(
     client === clientTypesEnum.guest || client === clientTypesEnum.host,
@@ -50,7 +54,6 @@ export const AuthPage = <UserType,>({
       overflow="hidden"
     >
       <Grid2
-        container
         width={
           isMobileOrTabl || client === 'guest' || client === 'host'
             ? '100%'
@@ -60,8 +63,8 @@ export const AuthPage = <UserType,>({
         justifyContent="center"
         paddingTop="13%"
       >
-        <AuthComponent
-          customComponents={newCustomComponents}
+        <WithEmail
+          customComponents={newWithEmailCustomComponents}
           clientTypesEnum={clientTypesEnum}
           client={client}
           nightLogoTextOnly={nightLogoTextOnly}
@@ -70,9 +73,21 @@ export const AuthPage = <UserType,>({
           disableDarkMode={disableDarkMode}
         />
       </Grid2>
+      <Grid2
+        width={
+          isMobileOrTabl || client === 'guest' || client === 'host'
+            ? '100%'
+            : '40%'
+        }
+        height="100%"
+        justifyContent="center"
+        paddingTop="13%"
+      >
+        <WithGoogle {...withGoogleProps}></WithGoogle>
+      </Grid2>
       {client === 'host' && !isMobileOrTabl && (
         <Grid2 width="60%" height="100%">
-          <customComponents.Img src={backgroundPicture} bg />
+          <newWithEmailCustomComponents.Img src={backgroundPicture} bg />
         </Grid2>
       )}
     </Grid2>

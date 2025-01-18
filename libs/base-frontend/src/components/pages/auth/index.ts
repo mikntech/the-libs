@@ -1,2 +1,2 @@
 export * from './AuthPage';
-export * from './GoogleSignIn';
+export * from './WithGoogle';

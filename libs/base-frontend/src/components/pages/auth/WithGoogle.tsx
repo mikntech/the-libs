@@ -7,19 +7,17 @@ declare global {
   }
 }
 
-export {};
-
-interface GoogleSignInProps {
+export interface WithGoogleProps {
   GOOGLE_CLIENT_ID: string;
   onLoginSuccess: (user: any) => void; // Define the correct user type
   onLoginFailure: (error: any) => void; // Define the error type
 }
 
-const GoogleSignIn = ({
+export const WithGoogle = ({
   GOOGLE_CLIENT_ID,
   onLoginSuccess,
   onLoginFailure,
-}: GoogleSignInProps) => {
+}: WithGoogleProps) => {
   useEffect(() => {
     const clientId = GOOGLE_CLIENT_ID; // Ensure this pulls the correct client ID dynamically
 
@@ -56,4 +54,4 @@ const GoogleSignIn = ({
   );
 };
 
-export default GoogleSignIn;
+export default WithGoogle;

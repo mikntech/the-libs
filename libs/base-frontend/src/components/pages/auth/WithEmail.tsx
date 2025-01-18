@@ -51,14 +51,14 @@ export const LABELS: LabelsConstants = {
   },
 };
 
-export interface AuthCustomComponents {
+export interface WithEmailCustomComponents {
   Btn: TODO;
   PrimaryText: TODO;
   Img: TODO;
 }
 
-interface AuthComponentProps<UserType> {
-  customComponents: AuthCustomComponents;
+interface WithEmailProps<UserType> {
+  customComponents: WithEmailCustomComponents;
   clientTypesEnum: TODO;
   client: UserType;
   disableDarkMode?: boolean;
@@ -67,7 +67,7 @@ interface AuthComponentProps<UserType> {
   defaultMainClient: string;
 }
 
-export const AuthComponent = <UserType,>({
+export const WithEmail = <UserType,>({
   customComponents,
   clientTypesEnum,
   client,
@@ -75,7 +75,7 @@ export const AuthComponent = <UserType,>({
   nightLogoTextOnly,
   dayLogoTextOnly,
   defaultMainClient,
-}: AuthComponentProps<UserType>) => {
+}: WithEmailProps<UserType>) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordAgain, setPasswordAgain] = useState<string>('');
