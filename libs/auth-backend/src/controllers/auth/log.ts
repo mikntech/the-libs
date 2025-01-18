@@ -41,10 +41,7 @@ export const genLogControllers = <
   };
 
   const validateAndProtect = (user: User) => {
-    if (!validateDocument(user))
-      throw new UnauthorizedError(
-        "Your are not logged in or your jwt couldn't parsed, please log in and try again",
-      );
+    if (!validateDocument(user)) return 'not logged in';
     return protectUsersPassword(user);
   };
 
