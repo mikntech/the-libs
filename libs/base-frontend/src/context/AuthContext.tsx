@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from 'react';
 import { ServerContext } from './index';
@@ -48,7 +49,8 @@ export const AuthContextProvider = ({
       const response = await server?.axiosInstance.get<User>(
         'api/auth/log/' /* + client*/,
       );
-      response?.data && setUser(response?.data);
+      if (typeof response?.data === 'object') setUser(response?.data);
+      else setUser(undefined);
     } catch {
       setUser(undefined);
     } finally {
@@ -56,7 +58,7 @@ export const AuthContextProvider = ({
         const urlResponse = await server?.axiosInstance.get(
           'api/auth/get-signed-profile-picture/128',
         );
-        urlResponse?.data && setProfilePictureUrl(urlResponse.data);
+        if (urlResponse?.data) setProfilePictureUrl(urlResponse.data);
       } catch {
         /* no profile picture */
       }
@@ -70,7 +72,7 @@ export const AuthContextProvider = ({
     } catch (error) {
       console.log('Error during sign out', error);
     }
-    refreshUserData();
+    refreshUserData().then();
   };
 
   useEffect(() => {
@@ -82,15 +84,18 @@ export const AuthContextProvider = ({
     initializeData().then();
   }, [refreshUserData]);
 
+  const value = useMemo(
+    () => ({
+      user,
+      refreshUserData,
+      logout,
+      profilePictureUrl,
+    }),
+    [user, profilePictureUrl],
+  );
+
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        refreshUserData,
-        logout,
-        profilePictureUrl,
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {loading ? (
         <MainMessage text="Checking if you are signed in..." />
       ) : (
