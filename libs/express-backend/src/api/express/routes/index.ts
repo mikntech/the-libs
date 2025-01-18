@@ -22,10 +22,11 @@ interface HighOrderHandlerParams<R> {
   validateAuth?: boolean;
 }
 
-export const highOrderHandler = <R extends Request>(
-  params: HighOrderHandlerParams<R> | DefaultHandlerType<R>,
-) =>
-  (async (req: R & { user?: TODO }, res: Response, next: NextFunction) => {
+export const highOrderHandler =
+  <R extends Request>(
+    params: HighOrderHandlerParams<R> | DefaultHandlerType<R>,
+  ) =>
+  async (req: R & { user?: TODO }, res: Response, next: NextFunction) => {
     const { wsHeaders, validateAuth } = params as HighOrderHandlerParams<R>;
     let { handler } = params as HighOrderHandlerParams<R>;
     if (!handler) handler = params as DefaultHandlerType<R>;
@@ -34,12 +35,13 @@ export const highOrderHandler = <R extends Request>(
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
         await handler(req, res.write.bind(res));
       } else {
-        if ((validateAuth ?? true) && !req.user) next(new NotLoggedInError());
+        if ((validateAuth ?? true) && !req.user)
+          return next(new NotLoggedInError());
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>
         )(req);
         const { statusCode, body, cookie } = restResponse;
-        if (statusCode >= 500) next(new Error('Internal Server Error'));
+        if (statusCode >= 500) return next(new Error('Internal Server Error'));
         const ret = res.status(statusCode);
         if (cookie) {
           const { name, val, options } = cookie;
@@ -54,4 +56,4 @@ export const highOrderHandler = <R extends Request>(
     } catch (err) {
       next(err);
     }
-  }) as TODO;
+  };
