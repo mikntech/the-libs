@@ -47,12 +47,11 @@ export const logRouter = <
       logOut()) as TODO),
   );
 
-  router.post(
-    '/google',
-    highOrderHandler(({ body }: AuthenticatedRequest<UserTypeEnum>) => {
-      const { token, userType } = body;
-      return google(token, userType);
-    }),
+  router.get(
+    '/google/:userType',
+    highOrderHandler(({query,params }: AuthenticatedRequest<UserTypeEnum>) => 
+      google(query.token, params.userType)
+    ),
   );
 
   return router;
