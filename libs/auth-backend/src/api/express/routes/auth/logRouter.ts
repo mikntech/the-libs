@@ -50,7 +50,7 @@ export const logRouter = <
   router.get(
     '/google/:userType',
     highOrderHandler(({query,params }: AuthenticatedRequest<UserTypeEnum>) => 
-      google(query['token'], params['userType'])
+      google(query['token'], params['userType'] as UserTypeEnum)
     ),
   );
 
