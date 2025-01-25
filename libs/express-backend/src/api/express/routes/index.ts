@@ -35,7 +35,7 @@ export const highOrderHandler =
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
         await handler(req, res.write.bind(res));
       } else {
-        if ((validateAuth ?? true) && !req.user)
+        if (((validateAuth ?? true) && !req.dontAuth) && !req.user)
           return next(new NotLoggedInError());
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>

@@ -23,6 +23,7 @@ export const authRouter = <
   >,
 ) => {
   const router = Router();
+  router.use((r,_,next)=>{r.dontAuth=true;next();})
   router.use('/log', logRouter(strategy));
   router.use('/manage', manageRouter(strategy));
   router.use(
