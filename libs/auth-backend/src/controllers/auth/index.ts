@@ -37,8 +37,8 @@ export const JWT_COOKIE_NAME = 'jwt';
 
 export const genAuthControllers = <
   UserType extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,

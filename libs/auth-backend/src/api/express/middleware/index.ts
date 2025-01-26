@@ -1,4 +1,4 @@
-import type { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Response } from 'express';
 import { User } from '@the-libs/auth-shared';
 import type { JwtPayload } from 'jsonwebtoken';
 import { createRequire } from 'module';
@@ -6,20 +6,13 @@ const require = createRequire(import.meta.url);
 
 import type { Types } from 'mongoose';
 import { genAuthControllers } from '../../../controllers';
-import { SomeEnum, TODO } from '@the-libs/base-shared';
+import { TODO } from '@the-libs/base-shared';
 import { findDocs } from '@the-libs/mongo-backend';
 import { preSignFile } from '@the-libs/s3-backend';
 import { Strategy } from '../../../strategy';
 import { authSettings } from '../../../config';
+import { AuthenticatedRequest } from '@the-libs/express-backend';
 const jsonwebtoken = require('jsonwebtoken');
-
-export interface AuthenticatedRequest<
-  UserType = string,
-  UserI extends User = User,
-> extends Request {
-  user: UserI | null;
-  userType: UserType;
-}
 
 export const signProfilePic = async <UserI extends User = User>(
   user: UserI,
@@ -37,8 +30,8 @@ export const signProfilePic = async <UserI extends User = User>(
 export const authorizer =
   <
     UserType extends string | number | symbol,
-    RequiredFields extends {},
-    OptionalFields extends {},
+    RequiredFields extends object,
+    OptionalFields extends object,
     UserI extends User,
   >(
     strategy: Strategy<

@@ -5,14 +5,16 @@ import { logRouter } from './logRouter';
 import { manageRouter } from './manageRouter';
 import { registerRouter } from './registerRouter';
 import { Strategy } from '../../../../strategy';
-import { highOrderHandler } from '@the-libs/express-backend';
-import { SomeEnum } from '@the-libs/base-shared';
-import { AuthenticatedRequest } from '../../middleware';
+import {
+  AuthenticatedRequest,
+  highOrderHandler,
+} from '@the-libs/express-backend';
+import type { NextFunction } from 'express';
 
 export const authRouter = <
   UserTypeEnum extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,
@@ -23,7 +25,10 @@ export const authRouter = <
   >,
 ) => {
   const router = Router();
-  router.use((r,_,next)=>{r.dontAuth=true;next();})
+  router.use((r: AuthenticatedRequest, _: Response, next: NextFunction) => {
+    r.dontAuth = true;
+    next();
+  });
   router.use('/log', logRouter(strategy));
   router.use('/manage', manageRouter(strategy));
   router.use(

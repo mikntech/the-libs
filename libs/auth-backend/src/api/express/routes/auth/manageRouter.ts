@@ -9,8 +9,8 @@ const multer = require('multer');
 
 export const manageRouter = <
   UserTypeEnum extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,

@@ -11,8 +11,8 @@ import { User } from '@the-libs/auth-shared';
 
 export const genGoogleControllers = <
   UserType extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,

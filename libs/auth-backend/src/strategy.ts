@@ -40,8 +40,8 @@ export enum DefaultUserType {
 }
 
 export interface Strategy<
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
   UserEnum extends string | number | symbol = never,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
@@ -69,8 +69,8 @@ export interface Strategy<
 }
 
 export const createStrategy = <
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
   UserEnum extends string | number | symbol,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,

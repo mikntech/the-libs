@@ -12,8 +12,8 @@ import { SomeEnum, TODO } from '@the-libs/base-shared';
 
 export const registerRouter = <
   UserTypeEnum extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,

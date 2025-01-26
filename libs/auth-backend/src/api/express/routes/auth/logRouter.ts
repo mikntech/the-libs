@@ -9,8 +9,8 @@ import { genGoogleControllers } from '../../../../controllers/auth/oauth/google'
 
 export const logRouter = <
   UserTypeEnum extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,
@@ -49,8 +49,8 @@ export const logRouter = <
 
   router.get(
     '/google/:userType',
-    highOrderHandler(({query,params }: AuthenticatedRequest<UserTypeEnum>) => 
-      google(query['token'], params['userType'] as UserTypeEnum)
+    highOrderHandler(({ query, params }: AuthenticatedRequest<UserTypeEnum>) =>
+      google(query['token'], params['userType'] as UserTypeEnum),
     ),
   );
 

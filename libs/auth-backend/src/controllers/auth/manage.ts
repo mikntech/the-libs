@@ -25,8 +25,8 @@ import { uploadFile } from '@the-libs/s3-backend';
 
 export const genManageControllers = <
   UserType extends string | number | symbol,
-  RequiredFields extends {},
-  OptionalFields extends {},
+  RequiredFields extends object,
+  OptionalFields extends object,
 >(
   strategy: Strategy<
     RequiredFields,
