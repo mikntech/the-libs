@@ -1,13 +1,15 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { highOrderHandler } from '@the-libs/express-backend';
+import {
+  AuthenticatedRequest,
+  highOrderHandler,
+} from '@the-libs/express-backend';
 import { TODO, UnauthorizedError } from '@the-libs/base-shared';
 import {
   conversation,
   getNumberOfUnreadMessagesInConversation,
 } from '../../../../';
-import { AuthenticatedRequest } from '@the-libs/auth-backend';
 import { User } from '@the-libs/auth-shared';
 import { Conversation, DBConversation } from '@the-libs/chat-shared';
 import { findAndValidate } from '@the-libs/mongo-backend';
@@ -53,7 +55,7 @@ export const generateConversationRouter = <
         ],
       });
 
-      quantity && query.limit(quantity);
+      if (quantity) query.limit(quantity);
 
       const dbConversations: GenericConversation[] = (await query) as TODO;
 

@@ -1,8 +1,10 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { highOrderHandler } from '@the-libs/express-backend';
-import { AuthenticatedRequest } from '@the-libs/auth-backend';
+import {
+  AuthenticatedRequest,
+  highOrderHandler,
+} from '@the-libs/express-backend';
 import { User } from '@the-libs/auth-shared';
 import { conversation, message, markMessagesAsRead } from '../../../../';
 import { Conversation, Message } from '@the-libs/chat-shared';
