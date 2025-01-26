@@ -1,9 +1,11 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
-import { highOrderHandler } from '@the-libs/express-backend';
-import { SomeEnum } from '@the-libs/base-shared';
+import { Strategy } from '../../../../';
+import {
+  AuthenticatedRequest,
+  highOrderHandler,
+} from '@the-libs/express-backend';
 import { genManageControllers } from '../../../../controllers/auth/manage';
 const multer = require('multer');
 

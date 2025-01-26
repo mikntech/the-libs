@@ -1,14 +1,13 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
+import { genRegisterControllers } from '../../../../controllers/auth/register';
 import {
   AuthenticatedRequest,
-  MultiUserType,
-  Strategy,
-} from '@the-libs/auth-backend';
-import { genRegisterControllers } from '../../../../controllers/auth/register';
-import { highOrderHandler } from '@the-libs/express-backend';
-import { SomeEnum, TODO } from '@the-libs/base-shared';
+  highOrderHandler,
+} from '@the-libs/express-backend';
+import { TODO } from '@the-libs/base-shared';
+import { MultiUserType, Strategy } from '../../../../';
 
 export const registerRouter = <
   UserTypeEnum extends string | number | symbol,
