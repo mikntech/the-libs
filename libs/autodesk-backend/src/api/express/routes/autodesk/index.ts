@@ -1,8 +1,10 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { highOrderHandler } from '@the-libs/express-backend';
-import { AuthenticatedRequest } from '@the-libs/auth-backend';
+import {
+  AuthenticatedRequest,
+  highOrderHandler,
+} from '@the-libs/express-backend';
 import { encodeUrn, getToken } from '../../../../controllers/autodesk';
 import { autodeskSettings } from '../../../../config';
 
