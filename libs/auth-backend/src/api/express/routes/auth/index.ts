@@ -5,11 +5,8 @@ import { logRouter } from './logRouter';
 import { manageRouter } from './manageRouter';
 import { registerRouter } from './registerRouter';
 import { Strategy } from '../../../../strategy';
-import {
-  AuthenticatedRequest,
-  highOrderHandler,
-} from '@the-libs/express-backend';
-import type { NextFunction } from 'express';
+import { highOrderHandler } from '@the-libs/express-backend';
+import { dontAuth } from '../../middleware';
 
 export const authRouter = <
   UserTypeEnum extends string | number | symbol,
@@ -25,10 +22,7 @@ export const authRouter = <
   >,
 ) => {
   const router = Router();
-  router.use((r: AuthenticatedRequest, _: Response, next: NextFunction) => {
-    r.dontAuth = true;
-    next();
-  });
+  router.use(dontAuth);
   router.use('/log', logRouter(strategy));
   router.use('/manage', manageRouter(strategy));
   router.use(

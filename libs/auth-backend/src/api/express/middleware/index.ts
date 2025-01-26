@@ -62,8 +62,17 @@ export const authorizer =
         await findDocs<false, TODO>(m, m.findById(String(_id))),
       );
       req.userType = userType;
-    } catch (err) {
+    } catch {
       req.user = null;
     }
     next();
   };
+
+export const dontAuth = (
+  r: AuthenticatedRequest,
+  _: Response,
+  next: NextFunction,
+) => {
+  r.dontAuth = true;
+  next();
+};
