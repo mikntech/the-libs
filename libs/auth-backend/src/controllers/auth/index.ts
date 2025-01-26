@@ -1,3 +1,7 @@
+export * from './log';
+export * from './manage';
+export * from './register';
+
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 
@@ -15,7 +19,7 @@ import {
   Strategy,
   authSettings,
   MultiClientType,
-} from '@the-libs/auth-backend';
+} from '../../';
 import { User, SomeRequest } from '@the-libs/auth-shared';
 
 const { genSalt, hash } = require('bcrypt');

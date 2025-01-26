@@ -45,7 +45,7 @@ export interface Strategy<
   UserEnum extends string | number | symbol = never,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
-  PostRegParams = {},
+  PostRegParams = object,
 > {
   MIN_PASSWORD_STRENGTH: ZXCVBNScore;
   multiUserType: MultiUserType;
@@ -74,7 +74,7 @@ export const createStrategy = <
   UserEnum extends string | number | symbol,
   multiUserType_is_MULTI_COLLECTION extends boolean = false,
   multiUserType_is_SINGLE extends boolean = true,
-  PostRegParams = {},
+  PostRegParams = object,
 >(
   config: Omit<
     multiUserType_is_SINGLE extends true

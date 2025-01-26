@@ -1,10 +1,12 @@
-import { AuthenticatedRequest, Strategy } from '@the-libs/auth-backend';
+import { Strategy, genLogControllers } from '../../../../';
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { Router } = require('express');
-import { highOrderHandler } from '@the-libs/express-backend';
+import {
+  AuthenticatedRequest,
+  highOrderHandler,
+} from '@the-libs/express-backend';
 import { TODO } from '@the-libs/base-shared';
-import { genLogControllers } from '../../../../controllers/auth/log';
 import { genGoogleControllers } from '../../../../controllers/auth/oauth/google';
 
 export const logRouter = <
