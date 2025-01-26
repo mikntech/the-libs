@@ -26,7 +26,11 @@ export const highOrderHandler =
   <R extends Request>(
     params: HighOrderHandlerParams<R> | DefaultHandlerType<R>,
   ) =>
-  async (req: R & { user?: TODO }, res: Response, next: NextFunction) => {
+  async (
+    req: R & { user?: TODO; dontAuth?: boolean },
+    res: Response,
+    next: NextFunction,
+  ) => {
     const { wsHeaders, validateAuth } = params as HighOrderHandlerParams<R>;
     let { handler } = params as HighOrderHandlerParams<R>;
     if (!handler) handler = params as DefaultHandlerType<R>;
@@ -35,7 +39,7 @@ export const highOrderHandler =
         wsHeaders.forEach(({ path, stat }) => res.setHeader(path, stat));
         await handler(req, res.write.bind(res));
       } else {
-        if (((validateAuth ?? true) && !req.dontAuth) && !req.user)
+        if ((validateAuth ?? true) && !req.dontAuth && !req.user)
           return next(new NotLoggedInError());
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>
