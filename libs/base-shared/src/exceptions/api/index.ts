@@ -29,7 +29,7 @@ export class ResourceNotFoundError extends ClientError {
 
 export class UnauthorizedError extends ClientError {
   constructor(
-    public customMessage = 'You are unauthorized to do this operation'
+    public customMessage = 'You are unauthorized to do this operation',
   ) {
     super(customMessage, 401);
     this.name = 'UnauthorizedError';
@@ -37,10 +37,10 @@ export class UnauthorizedError extends ClientError {
 }
 
 export class NotLoggedInError extends UnauthorizedError {
-  constructor(
-  ) {
-    super('This endpoint requires authentication and you are not logged in or your token couldn\'t parsed');
+  constructor() {
+    super(
+      'This endpoint requires authentication, but you are either not logged in or your token could not be parsed',
+    );
     this.name = 'NotLoggedInError';
   }
 }
-
