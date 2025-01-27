@@ -384,7 +384,7 @@ export const WithEmail = <UserType,>({
   const isNight = useIsNight(disableDarkMode);
 
   return (
-    <Box sx={{ padding: '20px', width: '75%' }}>
+    <Box sx={{ padding: '20px' }}>
       <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
         <Grid2>
           <customComponents.PrimaryText variant="h5">
@@ -548,13 +548,6 @@ export const WithEmail = <UserType,>({
             <Box mt={2}>{renderButtons()}</Box>
           </Grid2>
         )}
-      </Grid2>
-      <br />
-      <Grid2>
-        {/* <GoogleSignIn
-          onLoginSuccess={handleLoginSuccess}
-          onLoginFailure={handleLoginFailure}
-        />*/}
       </Grid2>
     </Box>
   );

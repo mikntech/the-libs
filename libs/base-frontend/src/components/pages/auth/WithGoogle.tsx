@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Grid2, Typography } from '@mui/material';
 
 /**
  * Global declaration so TypeScript knows about `window.google`.
@@ -54,7 +55,16 @@ export function WithGoogle({
     };
   }, [GOOGLE_CLIENT_ID, onLoginSuccess, onLoginFailure]);
 
-  return <div id="google-sign-in-btn">Sign in with Google</div>;
+  return (
+    <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
+      <Grid2>
+        <Typography>Or: </Typography>
+      </Grid2>
+      <Grid2>
+        <div id="google-sign-in-btn">Sign in with Google</div>
+      </Grid2>
+    </Grid2>
+  );
 }
 
 export default WithGoogle;

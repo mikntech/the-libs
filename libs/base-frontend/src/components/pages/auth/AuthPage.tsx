@@ -1,12 +1,12 @@
 import { Box, Button, Grid2, Typography } from '@mui/material';
 
 import { TODO } from '@the-libs/base-shared';
-import { useResponsiveness } from '../../../hooks';
+import { useResponsiveness } from '@the-libs/base-frontend';
 import { WithEmail, WithEmailCustomComponents } from './WithEmail';
 import WithGoogle, { WithGoogleProps } from './WithGoogle';
 
 interface AuthPageProps<UserType> {
-  backgroundPicture: string;
+  backgroundPicture?: string;
   nightLogoTextOnly: string;
   dayLogoTextOnly: string;
   defaultMainClient: string;
@@ -32,7 +32,10 @@ export const AuthPage = <UserType,>({
   },
   withGoogleProps,
 }: AuthPageProps<UserType>) => {
-  if (!withEmailCustomComponents.Btn) withEmailCustomComponents.Btn = Button;
+  if (!withEmailCustomComponents.Btn)
+    withEmailCustomComponents.Btn = (props: any) => (
+      <Button variant="contained" {...props} />
+    );
   if (!withEmailCustomComponents.PrimaryText)
     withEmailCustomComponents.PrimaryText = Typography;
   if (!withEmailCustomComponents.Img) withEmailCustomComponents.Img = Box;
@@ -48,10 +51,9 @@ export const AuthPage = <UserType,>({
       container
       justifyContent="center"
       alignItems="center"
-      width="100%"
-      height="100%"
-      wrap="nowrap"
-      overflow="hidden"
+      width="100vw"
+      height="100vh"
+      direction="column"
     >
       <Grid2
         width={
@@ -59,9 +61,7 @@ export const AuthPage = <UserType,>({
             ? '100%'
             : '40%'
         }
-        height="100%"
         justifyContent="center"
-        paddingTop="13%"
       >
         <WithEmail
           customComponents={newWithEmailCustomComponents}
@@ -79,13 +79,11 @@ export const AuthPage = <UserType,>({
             ? '100%'
             : '40%'
         }
-        height="100%"
         justifyContent="center"
-        paddingTop="13%"
       >
         <WithGoogle {...withGoogleProps}></WithGoogle>
       </Grid2>
-      {client === 'host' && !isMobileOrTabl && (
+      {backgroundPicture && client === 'host' && !isMobileOrTabl && (
         <Grid2 width="60%" height="100%">
           <newWithEmailCustomComponents.Img src={backgroundPicture} bg />
         </Grid2>
