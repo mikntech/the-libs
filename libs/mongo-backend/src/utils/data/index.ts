@@ -126,7 +126,7 @@ export const quicklyFindAll = async <
   const Model: any = (ModelOrGetter as ExtendedModel<DocType, CP>).model
     ? ModelOrGetter
     : await (ModelOrGetter as () => Promise<ExtendedModel<DocType, CP>>)();
-  return findDocs<false, DocType, CP, withCache>(
+  return findDocs<true, DocType, CP, withCache>(
     Model,
     Model.find({}),
     lean,
