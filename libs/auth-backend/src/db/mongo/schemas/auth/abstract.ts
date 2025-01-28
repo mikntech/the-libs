@@ -1,12 +1,12 @@
 import {
-  PasswordType,
+  PasswordTypes,
   Strategy,
   VerifiedContactMethod,
 } from '../../../../strategy';
 
 export const userBasicSchema = (
-  { passwordType, verifiedContactMethod }: Partial<Strategy<any, any>>,
-  nameRequired: boolean = false,
+  { passwordTypes, verifiedContactMethod }: Partial<Strategy<any, any>>,
+  nameRequired = false,
 ) => ({
   email: {
     type: String,
@@ -20,7 +20,8 @@ export const userBasicSchema = (
   },
   password: {
     type: String,
-    required: passwordType === PasswordType.HASHED,
+    required:
+      passwordTypes!.length === 1 && passwordTypes![0] === PasswordTypes.HASHED,
   },
   full_name: {
     type: String,

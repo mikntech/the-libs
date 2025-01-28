@@ -22,7 +22,7 @@ export enum VerifiedContactMethod {
   SMS = 'sms',
 }
 
-export enum PasswordType {
+export enum PasswordTypes {
   HASHED = 'hashed',
   OTP = 'one_time',
   EXTERNAL = 'external',
@@ -52,7 +52,7 @@ export interface Strategy<
   multiUserType: MultiUserType;
   multiClientType: MultiClientType;
   verifiedContactMethod: VerifiedContactMethod;
-  passwordType: PasswordType;
+  passwordTypes: PasswordTypes[];
   mfa: MFA;
   externalIdentityProviders: ExternalIdentityProviders[];
   modelMap: multiUserType_is_MULTI_COLLECTION extends true
@@ -123,7 +123,7 @@ export const defaultStrategy = createStrategy({
   multiUserType: MultiUserType.SINGLE,
   multiClientType: MultiClientType.SINGLE,
   verifiedContactMethod: VerifiedContactMethod.EMAIL,
-  passwordType: PasswordType.HASHED,
+  passwordTypes: [PasswordTypes.HASHED],
   mfa: MFA.OFF,
   externalIdentityProviders: [],
   modelMap: async () => user(false, false),
