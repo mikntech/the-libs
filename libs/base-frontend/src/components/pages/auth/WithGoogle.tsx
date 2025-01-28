@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { Grid2, Typography } from '@mui/material';
 import { TODO } from '@the-libs/base-shared';
+import { ServerContext } from '../../../context';
 
 /**
  * Global declaration so TypeScript knows about `window.google`.
@@ -14,21 +15,30 @@ declare global {
 
 export interface WithGoogleProps {
   GOOGLE_CLIENT_ID: string;
-  onLoginSuccess: (user: TODO) => void;
-  onLoginFailure: (error: TODO) => void;
+  onLoginSuccess?: (user: TODO) => void;
+  onLoginFailure?: (error: TODO) => void;
+  userType?: string;
 }
 
 export const WithGoogle = ({
   GOOGLE_CLIENT_ID,
   onLoginSuccess,
-  onLoginFailure,
-}: Readonly<WithGoogleProps>) => {
+  onLoginFailure = (e) => console.log(e),
+  userType = '',
+}: WithGoogleProps) => {
+  const server = useContext(ServerContext);
+
+  const defaultOnLoginSuccess = ({ credential }: { credential: string }) =>
+    server?.axiosInstance.get(
+      '/api/useGoogle/' + userType + '?token=' + credential,
+    );
+
   useEffect(() => {
     if (typeof window === 'undefined' || !window.google) {
       return;
     }
     const handleCredentialResponse = (response: TODO) => {
-      onLoginSuccess(response);
+      (onLoginSuccess ?? defaultOnLoginSuccess)(response);
     };
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,

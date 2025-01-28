@@ -52,7 +52,7 @@ export const logRouter = <
 
   if (
     strategy.externalIdentityProviders.some(
-      // until I refactor to map to check in O(1)
+      // until I refactor to map to check in O(1) - constant time complexity
       (provider) => provider === ExternalIdentityProviders.GOOGLE,
     )
   )
