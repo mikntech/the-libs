@@ -17,7 +17,7 @@ import {
   MultiUserType,
   registrationRequest,
   Strategy,
-} from '../../../';
+} from '../../';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 import { User } from '@the-libs/auth-shared';
 
