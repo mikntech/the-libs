@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Grid2, Typography } from '@mui/material';
+import { TODO } from '@the-libs/base-shared';
 
 /**
  * Global declaration so TypeScript knows about `window.google`.
@@ -7,52 +8,37 @@ import { Grid2, Typography } from '@mui/material';
  */
 declare global {
   interface Window {
-    google?: any;
+    google?: TODO;
   }
 }
 
 export interface WithGoogleProps {
   GOOGLE_CLIENT_ID: string;
-  onLoginSuccess: (user: any) => void; // Adjust types for your actual user object
-  onLoginFailure: (error: any) => void; // Adjust types for your actual errors
+  onLoginSuccess: (user: TODO) => void;
+  onLoginFailure: (error: TODO) => void;
 }
 
-export function WithGoogle({
+export const WithGoogle = ({
   GOOGLE_CLIENT_ID,
   onLoginSuccess,
   onLoginFailure,
-}: WithGoogleProps) {
+}: Readonly<WithGoogleProps>) => {
   useEffect(() => {
-    // If we're on the server (Next.js SSR) or the script isn't loaded yet, do nothing.
     if (typeof window === 'undefined' || !window.google) {
       return;
     }
-
-    // Callback once Google is ready with user credentials
-    const handleCredentialResponse = (response: any) => {
-      // Example: response.credential is your JWT token
+    const handleCredentialResponse = (response: TODO) => {
       onLoginSuccess(response);
     };
-
-    // Initialize the Google "One Tap" or Sign in button
     window.google.accounts.id.initialize({
       client_id: GOOGLE_CLIENT_ID,
       callback: handleCredentialResponse,
     });
-
-    // Render the button on the given DOM element
     window.google.accounts.id.renderButton(
       document.getElementById('google-sign-in-btn'),
       { theme: 'outline', size: 'large' },
     );
-
-    // Optionally show the One Tap prompt if the user is logged in
     window.google.accounts.id.prompt();
-
-    // Cleanup (optional): if you need to handle sign-out, remove event listeners, etc.
-    return () => {
-      // e.g., window.google.accounts.id.cancel() if you wanted to kill a prompt
-    };
   }, [GOOGLE_CLIENT_ID, onLoginSuccess, onLoginFailure]);
 
   return (
@@ -65,6 +51,6 @@ export function WithGoogle({
       </Grid2>
     </Grid2>
   );
-}
+};
 
 export default WithGoogle;
