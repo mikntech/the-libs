@@ -1,7 +1,8 @@
 import { useContext, useEffect } from 'react';
 import { Grid2, Typography } from '@mui/material';
 import { TODO } from '@the-libs/base-shared';
-import { ServerContext } from '../../../context';
+import { AuthContext, ServerContext } from '../../../context';
+import { axiosErrorToaster } from '../../../utils';
 
 /**
  * Global declaration so TypeScript knows about `window.google`.
@@ -27,11 +28,13 @@ export const WithGoogle = ({
   userType = '',
 }: WithGoogleProps) => {
   const server = useContext(ServerContext);
+  const { refreshUserData } = useContext(AuthContext);
 
   const defaultOnLoginSuccess = ({ credential }: { credential: string }) =>
-    server?.axiosInstance.get(
-      '/api/auth/log/useGoogle/' + userType + '?token=' + credential,
-    );
+    server?.axiosInstance
+      .get('/api/auth/log/useGoogle/' + userType + '?token=' + credential)
+      .then(() => refreshUserData())
+      .catch((error) => axiosErrorToaster(error));
 
   useEffect(() => {
     if (typeof window === 'undefined' || !window.google) {
