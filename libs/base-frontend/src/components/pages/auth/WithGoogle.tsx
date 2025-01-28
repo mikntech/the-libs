@@ -30,7 +30,7 @@ export const WithGoogle = ({
 
   const defaultOnLoginSuccess = ({ credential }: { credential: string }) =>
     server?.axiosInstance.get(
-      '/api/useGoogle/' + userType + '?token=' + credential,
+      '/api/auth/useGoogle/' + userType + '?token=' + credential,
     );
 
   useEffect(() => {
