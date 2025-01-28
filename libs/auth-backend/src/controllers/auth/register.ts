@@ -17,7 +17,7 @@ import {
   MultiUserType,
   registrationRequest,
   Strategy,
-} from '@the-libs/auth-backend';
+} from '../../../';
 import { genAuthControllers, JWT_COOKIE_NAME } from './index';
 import { User } from '@the-libs/auth-shared';
 
@@ -75,9 +75,9 @@ export const genRegisterControllers = <
     genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
   ) => {
     validateInput({ email });
-    strategy.multiUserType !== MultiUserType.SINGLE &&
+    if (strategy.multiUserType !== MultiUserType.SINGLE)
       validateInput({ userType });
-    strategy.multiUserType !== MultiUserType.SINGLE &&
+    if (strategy.multiUserType !== MultiUserType.SINGLE)
       validateEnum<UserType>(userType, strategy.enumValues as UserType[]);
     await validateEmailNotInUse(email, userType);
     const url = await createKeyForRegistration(
@@ -91,17 +91,17 @@ export const genRegisterControllers = <
 
   const createUser = async (
     email: string,
-    full_name: string,
-    password: string,
     userType: UserType,
-    requiredFields: RequiredFields,
+    requiredFields?: RequiredFields,
+    full_name?: string,
+    password?: string,
   ) =>
     createDoc(await getModel(userType), {
       email,
       full_name,
       userType: userType as TODO,
       password,
-      ...requiredFields,
+      ...(requiredFields ?? {}),
       ...(strategy.onCreateFields || {}),
     });
 
@@ -118,10 +118,7 @@ export const genRegisterControllers = <
     validateInput({ password });
     validateInput({ passwordAgain });
     strategy.requiredFields.forEach((key) =>
-      validateInput(
-        { [key]: requiredFields?.[key as keyof RequiredFields] },
-        'requiredFields',
-      ),
+      validateInput({ [key]: requiredFields?.[key] }, 'requiredFields'),
     );
     validatePasswordStrength(password);
     if (password !== passwordAgain)
@@ -132,12 +129,12 @@ export const genRegisterControllers = <
     const hashedPassword = await hashPassword(password);
     const savedUser = await createUser(
       doc.email,
-      full_name,
-      hashedPassword,
       doc.userType as unknown as UserType,
       requiredFields,
+      full_name,
+      hashedPassword,
     );
-    strategy.postRegistrationCB &&
+    if (strategy.postRegistrationCB)
       strategy.postRegistrationCB(
         savedUser,
         (optionalFields as TODO).business_hp_id,
@@ -150,8 +147,42 @@ export const genRegisterControllers = <
       ),
     };
   };
+
+  const registerWithExternalProvider = async (
+    verifiedEmail: string,
+    userType: UserType,
+    requiredFields?: RequiredFields,
+    optionalFields?: OptionalFields,
+    full_name?: string,
+  ) => {
+    if (full_name) validateInput({ full_name });
+    strategy.requiredFields.forEach((key) =>
+      validateInput({ [key]: requiredFields?.[key] }, 'requiredFields'),
+    );
+    await validateEmailNotInUse(verifiedEmail, userType);
+    const savedUser = await createUser(
+      verifiedEmail,
+      userType,
+      requiredFields,
+      full_name,
+    );
+    if (strategy.postRegistrationCB)
+      strategy.postRegistrationCB(
+        savedUser,
+        (optionalFields as TODO).business_hp_id,
+      );
+    return {
+      statusCode: 200,
+      cookie: generateSecureCookie(
+        JWT_COOKIE_NAME,
+        generateJWT(savedUser, userType),
+      ),
+    };
+  };
+
   return {
     requestToRegister,
     finishRegistration,
+    registerWithExternalProvider,
   };
 };

@@ -1,19 +1,32 @@
-import { authSettings } from '../../config';
 import { createRequire } from 'module';
+import { MultiClientType, Strategy } from '../../strategy';
+import { authSettings } from '../../config';
 
 const require = createRequire(import.meta.url);
 const { OAuth2Client } = require('google-auth-library');
 
 const client = new OAuth2Client();
-export const verifyGoogleUser = async (token: any) => {
+export const verifyGoogleUser = async <
+  UserType extends string | number | symbol,
+  RequiredFields extends object,
+  OptionalFields extends object,
+>(
+  token: any,
+  strategy?: Strategy<
+    RequiredFields,
+    OptionalFields,
+    UserType,
+    boolean,
+    boolean
+  >,
+) => {
   const ticket = await client.verifyIdToken({
     idToken: token,
-    audience: authSettings.googleClientId, // Specify the CLIENT_ID of the app that accesses the backend
-    // Or, if multiple clients access the backend:
-    //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+    audience:
+      strategy?.multiClientType === MultiClientType.SINGLE
+        ? authSettings.googleClientId
+        : authSettings.googleClientIds,
   });
   const payload = ticket.getPayload();
   return payload.email_verified && payload.email;
-  // If the request specified a Google Workspace domain:
-  // const domain = payload['hd'];
 };

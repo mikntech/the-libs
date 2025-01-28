@@ -1,13 +1,18 @@
-import { Strategy, genLogControllers } from '../../../../';
+import {
+  ExternalIdentityProviders,
+  genLogControllers,
+  Strategy,
+} from '../../../../';
 import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const { Router } = require('express');
 import {
   AuthenticatedRequest,
   highOrderHandler,
 } from '@the-libs/express-backend';
 import { TODO } from '@the-libs/base-shared';
 import { genGoogleControllers } from '../../../../controllers/auth/oauth/google';
+
+const require = createRequire(import.meta.url);
+const { Router } = require('express');
 
 export const logRouter = <
   UserTypeEnum extends string | number | symbol,
@@ -25,7 +30,7 @@ export const logRouter = <
   const router = Router();
 
   const { validateAndProtect, logIn, logOut } = genLogControllers(strategy);
-  const { google } = genGoogleControllers(strategy);
+  const { useGoogle } = genGoogleControllers(strategy);
 
   router.get(
     '/',
@@ -43,18 +48,21 @@ export const logRouter = <
     }) as TODO),
   );
 
-  router.get(
-    '/out',
-    highOrderHandler(((_: AuthenticatedRequest<UserTypeEnum>) =>
-      logOut()) as TODO),
-  );
+  router.get('/out', highOrderHandler((() => logOut()) as TODO));
 
-  router.get(
-    '/google/:userType',
-    highOrderHandler(({ query, params }: AuthenticatedRequest<UserTypeEnum>) =>
-      google(query['token'], params['userType'] as UserTypeEnum),
-    ),
-  );
+  if (
+    strategy.externalIdentityProviders.some(
+      // until I refactor to map to check in O(1)
+      (provider) => provider === ExternalIdentityProviders.GOOGLE,
+    )
+  )
+    router.get(
+      '/useGoogle/:userType',
+      highOrderHandler(
+        ({ query, params }: AuthenticatedRequest<UserTypeEnum>) =>
+          useGoogle(query['token'], params['userType'] as UserTypeEnum),
+      ),
+    );
 
   return router;
 };

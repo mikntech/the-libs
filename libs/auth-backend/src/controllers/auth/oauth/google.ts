@@ -1,9 +1,10 @@
 import {
   genAuthControllers,
+  genRegisterControllers,
   JWT_COOKIE_NAME,
   Strategy,
   verifyGoogleUser,
-} from '@the-libs/auth-backend';
+} from '../../..';
 import { findDocs } from '@the-libs/mongo-backend';
 import { TODO } from '@the-libs/base-shared';
 import { genLogControllers } from '../log';
@@ -24,8 +25,9 @@ export const genGoogleControllers = <
 ) => {
   const { generateJWT } = genLogControllers(strategy);
   const { getModel, generateSecureCookie } = genAuthControllers(strategy);
-  const google = async (token: any, userType: UserType) => {
-    const email = await verifyGoogleUser(token);
+  const { registerWithExternalProvider } = genRegisterControllers(strategy);
+  const useGoogle = async (token: any, userType: UserType) => {
+    const email = await verifyGoogleUser(token, strategy);
     const model = await getModel(userType);
     const maybeUser = await findDocs<false, User>(
       model,
@@ -39,11 +41,8 @@ export const genGoogleControllers = <
           generateJWT(maybeUser, userType as TODO),
         ),
       };
-    return {
-      statusCode: 401,
-      body: 'Please register or fin',
-    };
+    return registerWithExternalProvider(email, userType);
   };
 
-  return { google };
+  return { useGoogle };
 };

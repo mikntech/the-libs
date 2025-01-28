@@ -25,6 +25,7 @@ export enum VerifiedContactMethod {
 export enum PasswordType {
   HASHED = 'hashed',
   OTP = 'one_time',
+  EXTERNAL = 'external',
 }
 
 export enum MFA {
@@ -32,7 +33,7 @@ export enum MFA {
 }
 
 export enum ExternalIdentityProviders {
-  OFF = 'off',
+  GOOGLE = 'google',
 }
 
 export enum DefaultUserType {
@@ -53,7 +54,7 @@ export interface Strategy<
   verifiedContactMethod: VerifiedContactMethod;
   passwordType: PasswordType;
   mfa: MFA;
-  externalIdentityProviders: ExternalIdentityProviders;
+  externalIdentityProviders: ExternalIdentityProviders[];
   modelMap: multiUserType_is_MULTI_COLLECTION extends true
     ? Record<UserEnum, () => Promise<ExtendedModel<User>>>
     : () => Promise<ExtendedModel<User>>;
@@ -124,6 +125,6 @@ export const defaultStrategy = createStrategy({
   verifiedContactMethod: VerifiedContactMethod.EMAIL,
   passwordType: PasswordType.HASHED,
   mfa: MFA.OFF,
-  externalIdentityProviders: ExternalIdentityProviders.OFF,
+  externalIdentityProviders: [],
   modelMap: async () => user(false, false),
 });
