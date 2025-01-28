@@ -26,7 +26,7 @@ export const genGoogleControllers = <
   const { generateJWT } = genLogControllers(strategy);
   const { getModel, generateSecureCookie } = genAuthControllers(strategy);
   const { registerWithExternalProvider } = genRegisterControllers(strategy);
-  const useGoogle = async (token: any, userType: UserType) => {
+  const useGoogle = async (token: any, userType?: UserType) => {
     const email = await verifyGoogleUser(token, strategy);
     const model = await getModel(userType);
     const maybeUser = await findDocs<false, User>(

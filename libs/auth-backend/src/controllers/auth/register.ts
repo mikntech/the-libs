@@ -45,7 +45,7 @@ export const genRegisterControllers = <
     generateURLWithParams,
   } = genAuthControllers(strategy);
 
-  const validateEmailNotInUse = async (email: string, userType: UserType) => {
+  const validateEmailNotInUse = async (email: string, userType?: UserType) => {
     const em = await getModel(userType);
 
     if (
@@ -71,14 +71,14 @@ export const genRegisterControllers = <
 
   const requestToRegister = async (
     email: string,
-    userType: UserType,
+    userType?: UserType,
     genRegisterEmail: GenEmailFunction = defaultGenRegisterEmail,
   ) => {
     validateInput({ email });
     if (strategy.multiUserType !== MultiUserType.SINGLE)
       validateInput({ userType });
     if (strategy.multiUserType !== MultiUserType.SINGLE)
-      validateEnum<UserType>(userType, strategy.enumValues as UserType[]);
+      validateEnum<UserType>(userType!, strategy.enumValues as UserType[]);
     await validateEmailNotInUse(email, userType);
     const url = await createKeyForRegistration(
       email,
@@ -91,7 +91,7 @@ export const genRegisterControllers = <
 
   const createUser = async (
     email: string,
-    userType: UserType,
+    userType?: UserType,
     requiredFields?: RequiredFields,
     full_name?: string,
     password?: string,
@@ -150,7 +150,7 @@ export const genRegisterControllers = <
 
   const registerWithExternalProvider = async (
     verifiedEmail: string,
-    userType: UserType,
+    userType?: UserType,
     requiredFields?: RequiredFields,
     optionalFields?: OptionalFields,
     full_name?: string,

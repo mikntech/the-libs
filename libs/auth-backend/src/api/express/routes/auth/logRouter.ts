@@ -1,6 +1,7 @@
 import {
   ExternalIdentityProviders,
   genLogControllers,
+  MultiUserType,
   Strategy,
 } from '../../../../';
 import { createRequire } from 'module';
@@ -57,7 +58,8 @@ export const logRouter = <
     )
   )
     router.get(
-      '/useGoogle/:userType',
+      '/useGoogle' +
+        (strategy.multiUserType === MultiUserType.SINGLE ? '' : '/:userType'),
       highOrderHandler(
         ({ query, params }: AuthenticatedRequest<UserTypeEnum>) =>
           useGoogle(query['token'], params['userType'] as UserTypeEnum),

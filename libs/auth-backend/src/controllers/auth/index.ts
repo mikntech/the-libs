@@ -52,7 +52,9 @@ export const genAuthControllers = <
     boolean
   >,
 ) => {
-  const getModel = async (userType: UserType): Promise<ExtendedModel<User>> => {
+  const getModel = async (
+    userType?: UserType,
+  ): Promise<ExtendedModel<User>> => {
     if (strategy.multiUserType === MultiUserType.MULTI_COLLECTION) {
       const modelMap = strategy.modelMap as {
         [key in keyof UserType]: () => Promise<ExtendedModel<User>>;
@@ -81,7 +83,7 @@ export const genAuthControllers = <
           }>().clientDomains[userType]
     }/?` + params;
 
-  const generateJWT = ({ _id }: User, userType: UserType) =>
+  const generateJWT = ({ _id }: User, userType?: UserType) =>
     sign(
       {
         _id,
