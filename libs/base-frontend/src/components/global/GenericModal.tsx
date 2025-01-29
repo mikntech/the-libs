@@ -50,13 +50,22 @@ const TheModal = ({ forClose, HighOrderComponent }: TheModalProps) => {
   );
 };
 
-export const GenericModal = (props: Omit<TheModalProps, 'forClose'>) => {
+export const useModal = (HOC?: TheModalProps['HighOrderComponent']) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  return (
-    isModalOpen && (
-      <Modal open={true}>
-        <TheModal forClose={setIsModalOpen} {...props} />
-      </Modal>
-    )
-  );
+  return [
+    ({ HighOrderComponent }: Omit<TheModalProps, 'forClose'>) => {
+      return (
+        isModalOpen && (
+          <Modal open={true}>
+            <TheModal
+              forClose={setIsModalOpen}
+              HighOrderComponent={HOC ?? HighOrderComponent}
+            />
+          </Modal>
+        )
+      );
+    },
+    () => setIsModalOpen(true),
+    () => setIsModalOpen(false),
+  ];
 };
