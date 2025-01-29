@@ -98,7 +98,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   forceRefresh = false,
 ) => {
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
-  const redisInstance = await createRedisInstance();
+  const redisInstance = await createRedisInstance('default', true);
 
   if (activeComputations.has(docKey)) {
     return null;
