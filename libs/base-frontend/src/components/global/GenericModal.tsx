@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { FC, useState } from 'react';
 import { Button, Grid2, SxProps, Modal } from '@mui/material';
 
 export type ForClose = (f: false) => void;
@@ -26,11 +26,11 @@ export const containerSx = (
 });
 
 interface TheModalProps {
-  gridItems: ReactNode;
+  HighOrderComponent: FC<{ close: () => void }>;
   forClose: ForClose;
 }
 
-const TheModal = ({ forClose, gridItems }: TheModalProps) => {
+const TheModal = ({ forClose, HighOrderComponent }: TheModalProps) => {
   return (
     <Grid2
       container
@@ -41,7 +41,11 @@ const TheModal = ({ forClose, gridItems }: TheModalProps) => {
       wrap="nowrap"
     >
       {CloseButton(forClose)}
-      {gridItems}
+      <HighOrderComponent
+        close={() => {
+          forClose(false);
+        }}
+      />
     </Grid2>
   );
 };
