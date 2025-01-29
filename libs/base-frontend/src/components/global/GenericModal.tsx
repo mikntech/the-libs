@@ -50,7 +50,9 @@ const TheModal = ({ forClose, HighOrderComponent }: TheModalProps) => {
   );
 };
 
-export const useModal = (HOC: TheModalProps['HighOrderComponent']) => {
+export const useModal = (
+  HOC: TheModalProps['HighOrderComponent'],
+): [FC, () => void, () => void] => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return [
     () =>
