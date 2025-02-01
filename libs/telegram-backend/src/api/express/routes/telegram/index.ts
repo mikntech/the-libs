@@ -19,13 +19,13 @@ telegramRouter.post(
       return { statusCode: 200 };
     }
 
-    const chatId = message.chat.id;
-    const userMessage = message.text;
+    const chatId = message?.chat?.id;
+    const userMessage = message?.text;
 
     // Check if the bot is mentioned in a group
     if (
-      message.chat.type.includes('group') &&
-      userMessage.includes('@YourBotUsername')
+      message?.chat?.type?.includes?.('group') &&
+      userMessage?.includes?.('@YourBotUsername')
     ) {
       await sendTelegramMessage(
         chatId,
