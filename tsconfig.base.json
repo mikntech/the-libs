@@ -42,7 +42,7 @@
       "@the-libs/project-generator": ["libs/project-generator/src/index.ts"],
       "@the-libs/redis-backend": ["libs/redis-backend/src/index.ts"],
       "@the-libs/s3-backend": ["libs/s3-backend/src/index.ts"],
-      "@the-libs/telgram-backend": ["libs/telegram-backend/src/index.ts"],
+      "@the-libs/telegram-backend": ["libs/telegram-backend/src/index.ts"],
       "@the-libs/twilio-backend": ["libs/twilio-backend/src/index.ts"]
     }
   },
