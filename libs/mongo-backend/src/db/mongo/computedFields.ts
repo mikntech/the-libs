@@ -225,9 +225,7 @@ export const refreshCacheIfNeeded = async <
   );
 
   if (shouldInvalidate) {
-    activeComputations.add(docKey);
     await cacheField(fieldName, myDoc, compute, true);
-    activeComputations.delete(docKey);
     extraCallBack();
   }
 };
