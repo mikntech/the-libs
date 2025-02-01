@@ -196,11 +196,11 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
             'refreshCacheIfNeeded',
             Number.MAX_SAFE_INTEGER,
             async () => {
-              mongoPubSubInstance.publish('mr.allDB', 'null');
+              mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
               (event as ChangeStreamUpdateDocument).ns?.coll &&
                 mongoPubSubInstance.publish(
                   'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
-                  'null',
+                  String(Math.random()),
                 );
               await Promise.all(
                 allComputedFields.map(async ({ model, computedFields }) =>
@@ -228,7 +228,7 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
                                       .coll +
                                     '.' +
                                     fieldName,
-                                  'null',
+                                  String(Math.random()),,
                                 ),
                             ),
                         ),
