@@ -19,6 +19,7 @@ export interface WithGoogleProps {
   onLoginSuccess?: (user: TODO) => void;
   onLoginFailure?: (error: TODO) => void;
   userType?: string;
+  prompt?: boolean;
 }
 
 export const WithGoogle = ({
@@ -26,6 +27,7 @@ export const WithGoogle = ({
   onLoginSuccess,
   onLoginFailure = (e) => console.log(e),
   userType = '',
+  prompt = true,
 }: WithGoogleProps) => {
   const server = useContext(ServerContext);
   const { refreshUserData } = useContext(AuthContext);
@@ -51,7 +53,7 @@ export const WithGoogle = ({
       document.getElementById('google-sign-in-btn'),
       { theme: 'outline', size: 'large' },
     );
-    window.google.accounts.id.prompt();
+    if (prompt) window.google.accounts.id.prompt();
   }, [GOOGLE_CLIENT_ID, onLoginSuccess, onLoginFailure]);
 
   return (
