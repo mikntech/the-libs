@@ -1,20 +1,20 @@
 {
   "name": "@the-libs/auth-backend",
-  "version": "1.18.65",
+  "version": "1.21.119",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/auth-shared": "^1.21.59",
-    "@the-libs/base-shared": "^1.21.59",
-    "@the-libs/email-backend": "^1.21.59",
-    "@the-libs/s3-backend": "^1.21.59",
+    "@the-libs/auth-shared": "^1.21.119",
+    "@the-libs/base-shared": "^1.21.119",
+    "@the-libs/email-backend": "^1.21.119",
+    "@the-libs/s3-backend": "^1.21.119",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "google-auth-library": "^9.15.0",
+    "google-auth-library": "^9.15.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.5",
+    "mongoose": "^8.9.6",
     "multer": "^1.4.5-lts.1",
     "uuid": "^11.0.5",
     "zxcvbn": "^4.4.2"

@@ -1,12 +1,12 @@
 {
   "name": "@the-libs/twilio-backend",
-  "version": "1.18.65",
+  "version": "1.21.119",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "twilio": "^5.4.2"
+    "twilio": "^5.4.3"
   },
   "type": "module",
   "main": "./index.js",

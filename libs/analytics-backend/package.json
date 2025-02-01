@@ -1,13 +1,13 @@
 {
   "name": "@the-libs/analytics-backend",
-  "version": "1.18.65",
+  "version": "1.21.119",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.21.59",
-    "@the-libs/express-backend": "^1.21.59",
-    "@the-libs/mongo-backend": "^1.21.59",
+    "@the-libs/base-shared": "^1.21.119",
+    "@the-libs/express-backend": "^1.21.119",
+    "@the-libs/mongo-backend": "^1.21.119",
     "zod": "^3.24.1",
     "@trpc/server": "^10.45.2",
     "express": "^4.21.2"
