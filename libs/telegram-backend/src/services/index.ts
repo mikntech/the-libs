@@ -1,7 +1,8 @@
-import axios from 'axios';
 import { telegramSettings } from '../config';
 import { TODO } from '@the-libs/base-shared';
-
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const axios = require('axios');
 export const sendTelegramMessage = async (chatId: string, text: string) => {
   try {
     await axios.post(`${telegramSettings.apiUrl}/sendMessage`, {
