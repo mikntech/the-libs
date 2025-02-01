@@ -6,8 +6,10 @@ import {
   AuthenticatedRequest,
   highOrderHandler,
 } from '@the-libs/express-backend';
+import { dontAuth } from '@the-libs/auth-backend';
 
 export const telegramRouter = Router();
+telegramRouter.use(dontAuth);
 
 telegramRouter.post(
   '/webhook',

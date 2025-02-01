@@ -8,6 +8,7 @@
     "dotenv": "^16.4.7",
     "@the-libs/base-shared": "^1.21.59",
     "@the-libs/express-backend": "^1.21.59",
+    "@the-libs/@the-libs/auth-backend": "^1.21.59",
     "axios": "^1.7.9"
   },
   "type": "module",
