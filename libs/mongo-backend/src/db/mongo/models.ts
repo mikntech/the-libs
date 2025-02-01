@@ -228,7 +228,7 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
                                       .coll +
                                     '.' +
                                     fieldName,
-                                  String(Math.random()),,
+                                  String(Math.random()),
                                 ),
                             ),
                         ),
