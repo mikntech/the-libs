@@ -33,7 +33,7 @@ export const manageRouter = <
   } = genManageControllers(strategy);
 
   router.put(
-    '/update-name',
+    '/updateName',
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { newFullName } = req.body;
       return updateFullName(req.user, req.userType, newFullName);
@@ -41,7 +41,7 @@ export const manageRouter = <
   );
 
   router.put(
-    '/update-phone',
+    '/updatePhone',
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { phone } = req.body;
       return updatePhone(req.user, req.userType, phone);
@@ -49,7 +49,7 @@ export const manageRouter = <
   );
 
   router.post(
-    '/request-password-reset',
+    '/requestPasswordReset',
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { email, userType } = req.body;
       return requestPasswordReset(email, userType);
@@ -57,7 +57,7 @@ export const manageRouter = <
   );
 
   router.post(
-    '/reset-password',
+    '/resetPassword',
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) => {
       const { key, password, passwordAgain, userType } = req.body;
       return resetPassword(key, password, passwordAgain, userType);
@@ -67,7 +67,7 @@ export const manageRouter = <
   const upload = multer({ storage: multer.memoryStorage() });
 
   router.post(
-    '/upload-profile-picture',
+    '/uploadProfilePicture',
     upload.array('files', 1),
     highOrderHandler(async (req: AuthenticatedRequest<UserTypeEnum>) =>
       uploadProfilePicture(req),
