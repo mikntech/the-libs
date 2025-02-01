@@ -1,0 +1,41 @@
+{
+  "name": "telegram-backend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/telegram-backend/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/telegram-backend",
+        "tsConfig": "libs/telegram-backend/tsconfig.lib.json",
+        "project": "libs/telegram-backend/package.json",
+        "entryFile": "libs/telegram-backend/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/telegram-backend/src",
+            "output": "."
+          }
+        ],
+        "external": ["dotenv", "@the-libs/base-shared", "@the-libs/express-shared", "axios"]
+      }
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}

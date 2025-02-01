@@ -12,11 +12,17 @@ export interface AuthenticatedRequest<
   dontAuth?: boolean;
 }
 
-interface APIResponse {
+interface FullAPIResponse {
   statusCode: number;
   body?: object | string | number;
   cookie?: { name: string; val: string; options: CookieOptions };
 }
+type SimpleAPIResponse = [
+  Pick<FullAPIResponse, 'statusCode'>,
+  Pick<FullAPIResponse, 'body'>,
+  Pick<FullAPIResponse, 'cookie'>,
+];
+type APIResponse = FullAPIResponse | SimpleAPIResponse;
 
 type DefaultHandlerType<R> =
   | ((req: R) => Promise<APIResponse>)
@@ -50,7 +56,14 @@ export const highOrderHandler =
         const restResponse = await (
           handler as (req: R) => Promise<APIResponse>
         )(req as R);
-        const { statusCode, body, cookie } = restResponse;
+        let { statusCode, body, cookie } = restResponse as FullAPIResponse;
+        if (Array.isArray(restResponse)) {
+          [statusCode, body, cookie] = restResponse as unknown as [
+            number,
+            object | string | number,
+            { name: string; val: string; options: CookieOptions },
+          ];
+        }
         if (statusCode >= 500) return next(new Error('Internal Server Error'));
         const ret = res.status(statusCode);
         if (cookie) {
