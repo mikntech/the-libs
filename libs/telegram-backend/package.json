@@ -6,9 +6,9 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "@the-libs/base-shared": "^1.21.119",
-    "@the-libs/express-backend": "^1.21.119",
-    "@the-libs/auth-backend": "^1.21.119",
+    "@the-libs/base-shared": "^1.21.122",
+    "@the-libs/express-backend": "^1.21.122",
+    "@the-libs/auth-backend": "^1.21.122",
     "axios": "^1.7.9"
   },
   "type": "module",

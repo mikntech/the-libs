@@ -5,13 +5,13 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/auth-backend": "^1.21.119",
-    "@the-libs/auth-shared": "^1.21.119",
-    "@the-libs/base-shared": "^1.21.119",
-    "@the-libs/chat-shared": "^1.21.119",
-    "@the-libs/express-backend": "^1.21.119",
-    "@the-libs/mongo-backend": "^1.21.119",
-    "@the-libs/redis-backend": "^1.21.119",
+    "@the-libs/auth-backend": "^1.21.122",
+    "@the-libs/auth-shared": "^1.21.122",
+    "@the-libs/base-shared": "^1.21.122",
+    "@the-libs/chat-shared": "^1.21.122",
+    "@the-libs/express-backend": "^1.21.122",
+    "@the-libs/mongo-backend": "^1.21.122",
+    "@the-libs/redis-backend": "^1.21.122",
     "express": "^4.21.2"
   },
   "type": "module",

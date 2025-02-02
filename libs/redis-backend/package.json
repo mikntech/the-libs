@@ -5,7 +5,7 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.21.119",
+    "@the-libs/base-shared": "^1.21.122",
     "@bull-board/express": "^6.7.4",
     "redlock": "^5.0.0-beta.2",
     "bull": "^4.16.5",
