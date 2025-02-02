@@ -16,7 +16,7 @@ telegramRouter.post(
   highOrderHandler(async (req: AuthenticatedRequest) => {
     const { message } = req.body;
     if (!message?.chat || !message.text) {
-      return { statusCode: 200 };
+      return { statusCode: 200, body: 'no message chat or text' };
     }
 
     const chatId = message?.chat?.id;
@@ -33,6 +33,6 @@ telegramRouter.post(
       );
     }
 
-    return { statusCode: 200 };
+    return { statusCode: 200, body: 'finished try send message' };
   }),
 );
