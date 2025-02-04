@@ -15,6 +15,7 @@ interface AuthPageProps<UserType> {
   disableDarkMode?: boolean;
   withEmailCustomComponents?: Partial<WithEmailCustomComponents>;
   withGoogleProps: WithGoogleProps;
+  authRoute?: string;
 }
 
 export const AuthPage = <UserType,>({
@@ -25,6 +26,7 @@ export const AuthPage = <UserType,>({
   defaultMainClient,
   disableDarkMode,
   client,
+  authRoute = 'auth/api',
   withEmailCustomComponents = {
     Btn: Button,
     PrimaryText: Typography,
@@ -71,6 +73,7 @@ export const AuthPage = <UserType,>({
           dayLogoTextOnly={dayLogoTextOnly}
           defaultMainClient={defaultMainClient}
           disableDarkMode={disableDarkMode}
+          authRoute={authRoute}
         />
       </Grid2>
       <Grid2
@@ -81,7 +84,7 @@ export const AuthPage = <UserType,>({
         }
         justifyContent="center"
       >
-        <WithGoogle {...withGoogleProps}></WithGoogle>
+        <WithGoogle {...withGoogleProps} authRoute={authRoute}></WithGoogle>
       </Grid2>
       {backgroundPicture && client === 'host' && !isMobileOrTabl && (
         <Grid2 width="60%" height="100%">

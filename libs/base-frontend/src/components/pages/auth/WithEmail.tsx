@@ -65,6 +65,7 @@ interface WithEmailProps<UserType> {
   nightLogoTextOnly: string;
   dayLogoTextOnly: string;
   defaultMainClient: string;
+  authRoute?: string;
 }
 
 export const WithEmail = <UserType,>({
@@ -75,6 +76,7 @@ export const WithEmail = <UserType,>({
   nightLogoTextOnly,
   dayLogoTextOnly,
   defaultMainClient,
+  authRoute = 'auth/api',
 }: WithEmailProps<UserType>) => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -90,7 +92,7 @@ export const WithEmail = <UserType,>({
 
   const setMinPassStrengthFromServer = () =>
     server?.axiosInstance
-      .get('api/auth/ZXCVBNDifficulty')
+      .get(authRoute + '/ZXCVBNDifficulty')
       .then((res) => setMinPassStrength(parseInt(res?.data || '1')))
       .catch((e) => axiosErrorToaster(e));
 
@@ -199,7 +201,7 @@ export const WithEmail = <UserType,>({
           return () => {
             setButtonLabel('DOING');
             axiosInstance
-              ?.post('api/auth/log/in', {
+              ?.post(authRoute + '/log/in', {
                 email,
                 userType: client,
                 password: 'somePassword',
@@ -217,7 +219,7 @@ export const WithEmail = <UserType,>({
           return () => {
             setButtonLabel('DOING');
             axiosInstance
-              ?.post('api/auth/log/in', {
+              ?.post(authRoute + '/log/in', {
                 email,
                 password,
                 userType: client,
@@ -231,7 +233,7 @@ export const WithEmail = <UserType,>({
             setButtonLabel('DOING');
             axiosInstance
               ?.post(
-                'api/auth/register/request' + (client ? '/' + client : ''),
+                authRoute + '/register/request' + (client ? '/' + client : ''),
                 { email },
               )
               .then(() => setStep(Step.checkEmail))
@@ -243,7 +245,7 @@ export const WithEmail = <UserType,>({
             if (buttonLabel === 'IDLE' && key) {
               setButtonLabel('DOING');
               axiosInstance
-                ?.post('api/auth/register/finish', {
+                ?.post(authRoute + '/register/finish', {
                   key,
                   password,
                   passwordAgain,
@@ -261,7 +263,7 @@ export const WithEmail = <UserType,>({
           return () => {
             setButtonLabel('DOING');
             axiosInstance
-              ?.post('api/auth/manage/request-password-reset', {
+              ?.post(authRoute + '/manage/request-password-reset', {
                 email,
                 userType: client,
               })
@@ -274,7 +276,7 @@ export const WithEmail = <UserType,>({
             if (buttonLabel === 'IDLE' && key) {
               setButtonLabel('DOING');
               axiosInstance
-                ?.post('api/auth/manage/reset-password', {
+                ?.post(authRoute + '/manage/reset-password', {
                   key,
                   password,
                   passwordAgain,

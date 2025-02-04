@@ -20,6 +20,7 @@ export interface WithGoogleProps {
   onLoginFailure?: (error: TODO) => void;
   userType?: string;
   prompt?: boolean;
+  authRoute?: string;
 }
 
 export const WithGoogle = ({
@@ -28,13 +29,14 @@ export const WithGoogle = ({
   onLoginFailure = (e) => console.log(e),
   userType = '',
   prompt = true,
+  authRoute = 'auth/api',
 }: WithGoogleProps) => {
   const server = useContext(ServerContext);
   const { refreshUserData } = useContext(AuthContext);
 
   const defaultOnLoginSuccess = ({ credential }: { credential: string }) =>
     server?.axiosInstance
-      .get('/api/auth/log/useGoogle/' + userType + '?token=' + credential)
+      .get(authRoute + '/log/useGoogle/' + userType + '?token=' + credential)
       .then(() => refreshUserData())
       .catch((error) => axiosErrorToaster(error));
 

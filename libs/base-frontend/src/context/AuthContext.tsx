@@ -14,6 +14,7 @@ import { MainMessage as DefaultMainMessage } from '../';
 interface AuthContextProps {
   children: ReactNode;
   MainMessage?: (props: { text: string }) => ReactNode;
+  authRoute?: string;
 }
 
 interface AuthContextType {
@@ -36,6 +37,7 @@ export const AuthContext = createContext<AuthContextType>({
 export const AuthContextProvider = ({
   children,
   MainMessage = DefaultMainMessage,
+  authRoute = 'auth/api',
 }: AuthContextProps) => {
   const [user, setUser] = useState<User>();
   const [profilePictureUrl, setProfilePictureUrl] = useState<string>();
@@ -47,7 +49,7 @@ export const AuthContextProvider = ({
   const refreshUserData = useCallback(async () => {
     try {
       const response = await server?.axiosInstance.get<User>(
-        'api/auth/log/' /* + client*/,
+        authRoute + '/log/' /* + client*/,
       );
       if (typeof response?.data === 'object') setUser(response?.data);
       else setUser(undefined);
@@ -56,7 +58,7 @@ export const AuthContextProvider = ({
     } finally {
       try {
         const urlResponse = await server?.axiosInstance.get(
-          'api/auth/get-signed-profile-picture/128',
+          authRoute + '/get-signed-profile-picture/128',
         );
         if (urlResponse?.data) setProfilePictureUrl(urlResponse.data);
       } catch {
@@ -67,7 +69,7 @@ export const AuthContextProvider = ({
 
   const logout = async () => {
     try {
-      await server?.axiosInstance.get<undefined>('api/auth/log/out');
+      await server?.axiosInstance.get<undefined>(authRoute + '/log/out');
       setUser(undefined);
     } catch (error) {
       console.log('Error during sign out', error);
