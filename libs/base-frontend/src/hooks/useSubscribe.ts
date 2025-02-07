@@ -1,7 +1,8 @@
+'use client';
 import { useEffect, useState } from 'react';
 import { getBaseURL } from '../';
 
-export const useSubscribe = <T = string>(
+export const useSubscribe = <T = string | object>(
   VITE_STAGING_ENV?: string,
   domain?: string,
   endpoint?: string,
@@ -25,9 +26,14 @@ export const useSubscribe = <T = string>(
         },
       );
 
-      eventSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        res !== data && setRes(data);
+      eventSource.onmessage = ({ data }) => {
+        let parsedData: T;
+        try {
+          parsedData = JSON.parse(data);
+        } catch {
+          parsedData = data;
+        }
+        if (res !== parsedData) setRes(parsedData);
       };
 
       eventSource.onerror = (error) => {
