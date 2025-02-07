@@ -16,6 +16,7 @@ import { StagingEnvironment, TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
 import {
+  clearAllCache,
   getCached,
   refreshCacheIfNeeded,
   SchemaComputers,
@@ -255,13 +256,11 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
     getCachedParent.getCached = (dbDoc: DBPart) =>
       getCached(dbDoc, computedFields);
 
-  computedFields &&
-    prepareCache &&
-    model
-      .find()
-      .then((docs: DBPart[]) =>
-        docs.forEach((doc) => getCached(doc, computedFields)),
-      );
+  if (computedFields && prepareCache)
+    model.find().then(async (docs: DBPart[]) => {
+      await clearAllCache(docs.map(({ _id }) => String(_id)));
+      docs.forEach((doc) => getCached(doc, computedFields));
+    });
 
   return new ExtendedModel<DBPart, ComputedPart>({
     model,

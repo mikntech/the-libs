@@ -230,15 +230,26 @@ export const refreshCacheIfNeeded = async <
   }
 };
 
-export const clearAllCache = async () => {
+export const clearAllCache = async (ids: string[]) => {
   try {
     const redis = await createRedisInstance();
-    const keys = await withTimeout(redis.keys('mikache_*'), 5000);
+    const keys = await withTimeout(
+      ids.length === 0
+        ? redis.keys('mikache_*')
+        : (
+            await Promise.all(
+              ids.map(async (id) => redis.keys(`mikache_{"_id":"${id}*`)),
+            )
+          ).flat(),
+      5000,
+    );
     if (keys.length === 0) {
       return;
     }
     for (const key of keys) {
       await withTimeout(redis.del(key), 5000);
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 };
