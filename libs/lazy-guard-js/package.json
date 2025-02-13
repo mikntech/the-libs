@@ -1,0 +1,15 @@
+{
+  "name": "@the-libs/lazy-guard-js",
+  "version": "1.21.119",
+  "scripts": {
+    "update": "npx --yes npm-check-updates -u"
+  },
+  "dependencies": {
+  },
+  "type": "module",
+  "main": "./index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  }
+}

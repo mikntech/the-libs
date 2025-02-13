@@ -1,0 +1,47 @@
+{
+  "name": "lazy-guard-js",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/lazy-guard-js/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "generatorOptions": {
+        "packageRoot": "dist/{projectRoot}",
+        "currentVersionResolver": "git-tag"
+      }
+    }
+  },
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "format": ["esm"],
+        "outputPath": "dist/libs/lazy-guard-js",
+        "tsConfig": "libs/lazy-guard-js/tsconfig.lib.json",
+        "project": "libs/lazy-guard-js/package.json",
+        "entryFile": "libs/lazy-guard-js/src/index.ts",
+        "assets": [
+          {
+            "glob": "**/*.json",
+            "input": "libs/lazy-guard-js/src",
+            "output": "."
+          }
+        ],
+        "external": ["axios"]
+      },
+      "dependsOn": [
+        {
+          "target": "postbuild",
+          "projects": "self"
+        }
+      ]
+    },
+    "nx-release-publish": {
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    }
+  },
+  "tags": []
+}
