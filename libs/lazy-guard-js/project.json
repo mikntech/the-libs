@@ -28,7 +28,7 @@
             "output": "."
           }
         ],
-        "external": ["axios"]
+        "external": []
       },
       "dependsOn": [
         {

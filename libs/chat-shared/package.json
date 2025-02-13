@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/chat-shared",
-  "version": "1.21.119",
+  "version": "1.21.129",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
