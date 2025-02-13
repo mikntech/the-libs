@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/payments-backend",
-  "version": "1.21.129",
+  "version": "1.21.130",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
