@@ -12,8 +12,8 @@
     "sync-versions": "node sync-version-script.js",
     "build": "npm run sync-versions && set -e && for d in libs/*/ ; do nx build $(basename $d) || exit 1 ; done && node scripts/move-index.js base-frontend",
     "postbuild": "set -e && for d in libs/*/ ; do cp -r \"$d/src\" \"dist/$d\" || echo \"No src folder in $d\" ; done && npm run copy:readme && copy:templatedotenv",
-    "copy:readme": "set -e; failed=0; for d in libs/*/; do if [ -f \"$d/README.md\" ]; then cp \"$d/README.md\" \"dist/$d/README.md\"; else echo \"No README.md in $d\"; failed=1; fi; done; exit $failed",
-    "copy:templatedotenv": "set -e; failed=0; for d in libs/*/; do if [ -f \"$d/template.env\" ]; then cp \"$d/template.env\" \"dist/$d/template.env\"; else echo \"No template.env in $d\"; failed=1; fi; done; exit $failed",
+    "copy:readme": "set -e; copied=0; for d in libs/*/; do if [ -f \"$d/README.md\" ]; then cp \"$d/README.md\" \"dist/$d/README.md\"; copied=1; else echo \"No README.md in $d\"; fi; done; [ $copied -eq 1 ] || exit 1",
+    "copy:templatedotenv": "set -e; copied=0; for d in libs/*/; do if [ -f \"$d/template.env\" ]; then cp \"$d/template.env\" \"dist/$d/template.env\"; copied=1; else echo \"No template.env in $d\"; fi; done; [ $copied -eq 1 ] || exit 1",
     "publish-all": "for d in dist/libs/*/ ; do (cd \"$d\" && npm publish --access public) ; done",
     "build-and-publish": "npm i --legacy-peer-deps && npm run build && npm run publish-all"
   },
