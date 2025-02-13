@@ -258,7 +258,6 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
 
   if (computedFields && prepareCache)
     model.find().then(async (docs: DBPart[]) => {
-      await clearAllCache(docs.map(({ _id }) => String(_id)));
       docs.forEach((doc) => getCached(doc, computedFields));
     });
 
