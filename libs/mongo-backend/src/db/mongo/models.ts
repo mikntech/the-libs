@@ -194,7 +194,7 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
         async (event: ChangeStreamDocument) => {
           runTaskWithLock(
             await createRedisInstance(),
-            'refreshCacheIfNeeded',
+            'refreshCacheIfNeeded_' + JSON.stringify(event),
             Number.MAX_SAFE_INTEGER,
             async () => {
               mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
