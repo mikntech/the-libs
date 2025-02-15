@@ -81,9 +81,8 @@ export const runStageAsService = <
     };
     try {
       const { runId, currentStage, stageData } = job.data;
-      const stagesArray = Object.values(stages);
       const stageKeysArray = Object.keys(stages);
-      const indexInStages = stagesArray.indexOf(String(stage));
+      const indexInStages = stageKeysArray.indexOf(String(stage));
 
       if (indexInStages === -1) {
         return handleError(
