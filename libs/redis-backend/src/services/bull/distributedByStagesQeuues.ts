@@ -92,14 +92,6 @@ export const runStageAsService = <
         );
       }
 
-      if (currentStage !== stage) {
-        return handleError(
-          new Error(
-            `Critical orchestration error - mismatch between currentStage: ${String(currentStage)} and stage: ${String(stage)}.`,
-          ),
-        );
-      }
-
       const result = await service(stageData);
 
       await add(job.queue.name, {
