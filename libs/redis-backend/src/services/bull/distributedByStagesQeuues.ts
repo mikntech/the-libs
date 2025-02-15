@@ -82,6 +82,7 @@ export const runStageAsService = <
     try {
       const { runId, currentStage, stageData } = job.data;
       const stagesArray = Object.values(stages);
+      const stageKeysArray = Object.keys(stages);
       const indexInStages = stagesArray.indexOf(String(stage));
 
       if (indexInStages === -1) {
@@ -104,7 +105,7 @@ export const runStageAsService = <
 
       await add(job.queue.name, {
         ...job.data,
-        currentStage: stagesArray[indexInStages + 1] || null,
+        currentStage: stageKeysArray[indexInStages + 1] || null,
         prevOutput: result,
       });
 
