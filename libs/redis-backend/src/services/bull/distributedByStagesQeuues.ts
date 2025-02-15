@@ -97,8 +97,8 @@ export const runStageAsService = <
       const nextQueueName = stageKeysArray[indexInStages + 1];
       await add(createQueue(nextQueueName), {
         ...job.data,
+        stageData: { ...job.data.stageData, prevOutput: result },
         currentStage: nextQueueName || null,
-        prevOutput: result,
       });
 
       pubsub?.publish(
