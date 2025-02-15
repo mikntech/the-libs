@@ -1,5 +1,5 @@
 import { PubSub } from '../pubsub';
-import { add, createAndAutoProcessQueue } from './simpeQueues';
+import { add, createAndAutoProcessQueue, createQueue } from './simpeQueues';
 
 type NextStage<
   StagesEnum extends Record<string, string>,
@@ -94,9 +94,10 @@ export const runStageAsService = <
 
       const result = await service(stageData);
 
-      await add(job.queue.name, {
+      const nextQueueName = stageKeysArray[indexInStages + 1];
+      await add(createQueue(nextQueueName), {
         ...job.data,
-        currentStage: stageKeysArray[indexInStages + 1] || null,
+        currentStage: nextQueueName || null,
         prevOutput: result,
       });
 
