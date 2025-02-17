@@ -1,11 +1,22 @@
-import { getModel } from '@the-libs/mongo-backend';
+import { DBDoc, getModel } from '@the-libs/mongo-backend';
 import { SomeEnum } from '@the-libs/base-shared';
 
-export const analyticEvent = <ENUM>(
+export interface DBIBase<EnforceENUM extends boolean, ENUM> extends DBDoc {
+  value: EnforceENUM extends true ? ENUM : string;
+  userEmail?: string;
+  userNumber?: string;
+  sessionId?: string;
+  custom?: string;
+}
+
+export const analyticEvent = <
+  ENUM,
+  DBI extends DBIBase<boolean, ENUM> = DBIBase<false, ENUM>,
+>(
   AnalyticEventEnum?: SomeEnum<ENUM>,
   enforceValues = false,
 ) =>
-  getModel<any>('analyticEvent', {
+  getModel<DBI>('analyticEvent', {
     value: {
       type: String,
       ...(enforceValues && AnalyticEventEnum
