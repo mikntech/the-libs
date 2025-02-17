@@ -93,7 +93,7 @@ const initModel = <DBPart extends Document>(
   );
 };
 
-interface Optional<DBPart extends Document, ComputedPart> {
+export interface Optional<DBPart extends Document, ComputedPart> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
   wrapSchema?: Function[];
   extraIndexes?: { fields: IndexDefinition; options?: IndexOptions }[];
