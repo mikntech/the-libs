@@ -27,6 +27,7 @@ interface FieldDefinition<
 > {
   compute: Compute<FieldType, FullDoc>;
   invalidate: Invalidate<ChangedDoc>;
+  global?: boolean;
   dependencies?: string[];
 }
 
@@ -95,6 +96,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   fieldName: string,
   fullDoc: DBFullDoc,
   compute: Compute<FieldType, DBFullDoc>,
+  global: boolean,
   forceRefresh = false,
 ) => {
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
@@ -107,7 +109,11 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   if (!forceRefresh) {
     const cachedValue = await get(
       redisInstance,
-      'mikache_' + JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
+      'mikache_' +
+        JSON.stringify({
+          _id: global ? '-global-' : String(fullDoc._id),
+          key: fieldName,
+        }),
     );
     if (cachedValue !== null) {
       return JSON.parse(cachedValue);
@@ -185,6 +191,7 @@ export const getCached = async <
       field,
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
+      computers[field as keyof ComputedPartOfSchema].global ?? false,
     );
     finalValues[field as keyof ComputedPartOfSchema] = await tryToFixNulls(
       finalValues[field as keyof ComputedPartOfSchema],
@@ -205,7 +212,7 @@ export const refreshCacheIfNeeded = async <
   changed_Id: string,
   changedColl: string,
   fieldName: string,
-  { compute, invalidate }: FieldDefinition<FieldType, DBFullDoc, any>,
+  { compute, invalidate, global }: FieldDefinition<FieldType, DBFullDoc, any>,
   extraCallBack: () => void,
 ) => {
   const docKey = `${String(myDoc._id)}:${fieldName}`;
@@ -225,7 +232,7 @@ export const refreshCacheIfNeeded = async <
   );
 
   if (shouldInvalidate) {
-    await cacheField(fieldName, myDoc, compute, true);
+    await cacheField(fieldName, myDoc, compute, global ?? false, true);
     extraCallBack();
   }
 };

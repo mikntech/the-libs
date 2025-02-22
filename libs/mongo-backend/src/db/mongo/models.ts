@@ -16,7 +16,6 @@ import { StagingEnvironment, TODO } from '@the-libs/base-shared';
 import { mongoSettings } from '../../config';
 import { recursivelySignUrls } from '@the-libs/s3-backend';
 import {
-  clearAllCache,
   getCached,
   refreshCacheIfNeeded,
   SchemaComputers,
