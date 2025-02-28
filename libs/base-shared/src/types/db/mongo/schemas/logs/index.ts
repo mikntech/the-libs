@@ -5,3 +5,9 @@ export interface ErrorLog extends MDocument {
   createdAt: Date;
   updatedAt: Date;
 }
+export interface PerformanceLog extends MDocument {
+  _id: Types.ObjectId;
+  stringifiedLog: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

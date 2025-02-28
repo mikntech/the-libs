@@ -2,6 +2,8 @@ import type { Request, Response, NextFunction, CookieOptions } from 'express';
 import { ServerResponse } from 'http';
 import { NotLoggedInError } from '@the-libs/base-shared';
 import { User } from '@the-libs/auth-shared';
+import { createDoc } from '@the-libs/mongo-backend';
+import { performanceLog } from '../../../db/mongo/schemas/logs/performanceLog';
 
 export interface AuthenticatedRequest<
   UserType = string,
@@ -38,6 +40,24 @@ interface HighOrderHandlerParams<R> {
   validateAuth?: boolean;
 }
 
+interface MonitoredReq {
+  uid: { uid: string; time: number };
+}
+
+const logPerformance = (req: AuthenticatedRequest & MonitoredReq) =>
+  performanceLog().then((model) =>
+    createDoc(model, {
+      stringifiedLog: JSON.stringify({
+        uid: req.uid.uid,
+        start: req.uid.time,
+        end: performance.now(),
+        originalUrl: req.originalUrl,
+        user: JSON.stringify(req.user),
+        body: req.body,
+      }),
+    }),
+  );
+
 export const highOrderHandler =
   <R = AuthenticatedRequest>(
     params: HighOrderHandlerParams<R> | DefaultHandlerType<R>,
@@ -71,8 +91,16 @@ export const highOrderHandler =
           ret.cookie(name, val, options);
         }
         if (typeof body === 'string') {
+          if ((req as AuthenticatedRequest & MonitoredReq).uid)
+            logPerformance(req as AuthenticatedRequest & MonitoredReq).catch(
+              (e) => console.error(e),
+            );
           ret.send(body);
         } else {
+          if ((req as AuthenticatedRequest & MonitoredReq).uid)
+            logPerformance(req as AuthenticatedRequest & MonitoredReq).catch(
+              (e) => console.error(e),
+            );
           ret.json(body);
         }
       }
