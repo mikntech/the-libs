@@ -1,7 +1,7 @@
 import { getModel } from '@the-libs/mongo-backend';
 import { PerformanceLog } from '@the-libs/base-shared';
 
-export const performanceLog = () =>
+export const performanceLog = (prepareCache?: boolean) =>
   getModel<
     PerformanceLog,
     {
@@ -20,6 +20,7 @@ export const performanceLog = () =>
       },
     },
     {
+      prepareCache,
       computedFields: {
         didTakeMoreThan1Sec: {
           compute: async ({ stringifiedLog }) => {
