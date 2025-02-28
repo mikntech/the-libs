@@ -60,7 +60,7 @@ export const performanceLog = () =>
           compute: async ({ stringifiedLog }) => {
             const { originalUrl } = JSON.parse(stringifiedLog);
             const queryString = originalUrl.split('?')[1];
-            const params: string[] = queryString.split('&');
+            const params: string[] = queryString?.split('&') ?? [];
             return params.reduce((acc: any, next) => {
               const [key, value] = next.split('=');
               acc[key] = value;
