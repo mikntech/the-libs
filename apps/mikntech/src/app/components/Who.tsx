@@ -120,7 +120,7 @@ export default function Testimonials() {
           {userTestimonials.map((testimonial: any, index: number) => (
             <Grid
               size={{ xs: 12, sm: 6, md: 4 }}
-              key={testimonial?.title}
+              key={testimonial?.name}
               sx={{ display: 'flex' }}
             >
               <Card
