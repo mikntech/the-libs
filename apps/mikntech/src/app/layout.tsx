@@ -3,6 +3,7 @@ import localFont from 'next/font/local';
 import './globals.css';
 import { ReactNode } from 'react';
 import { GoogleAnalytics } from '@next/third-parties/google';
+import { PostHogProvider } from './providers';
 
 const geistSans = localFont({
   src: './fonts/GeistVF.woff',
@@ -28,7 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <PostHogProvider>{children}</PostHogProvider>
       </body>
       <GoogleAnalytics gaId="G-STQDMFDECM" />
     </html>

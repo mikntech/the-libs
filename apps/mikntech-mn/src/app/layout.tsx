@@ -1,4 +1,5 @@
 import './global.css';
+import { PostHogProvider } from './providers';
 
 export const metadata = {
   title: 'Welcome to mikntech-mn',
@@ -12,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <PostHogProvider>
+        <body>{children}</body>
+      </PostHogProvider>
     </html>
   );
 }
