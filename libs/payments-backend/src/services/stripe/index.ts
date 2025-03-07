@@ -74,7 +74,7 @@ const triggerSync = async () =>
     })
   ).data.forEach((newEvent: RawStripeEvent) => saveStripeEventToDB(newEvent));
 
-const startStripeSync = (customMs?: number) =>
+export const startStripeSync = (customMs?: number) =>
   setTimeout(
     () =>
       setInterval(triggerSync, paymentsSettings.syncIntervalInSeconds * 1000),
