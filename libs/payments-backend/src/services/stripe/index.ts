@@ -26,9 +26,12 @@ const saveStripeEventToDB = async (event: RawStripeEvent) => {
       wasHandled: false,
     });
   } catch (e) {
-    !String(e).startsWith(
-      'MongoServerError: E11000 duplicate key error collection',
-    ) && console.log(e);
+    if (
+      !String(e).startsWith(
+        'MongoServerError: E11000 duplicate key error collection',
+      )
+    )
+      console.log(e);
   }
 };
 
@@ -71,7 +74,9 @@ const triggerSync = async () =>
     })
   ).data.forEach((newEvent: RawStripeEvent) => saveStripeEventToDB(newEvent));
 
-setTimeout(
-  () => setInterval(triggerSync, paymentsSettings.syncIntervalInSeconds * 1000),
-  30000,
-);
+const startStripeSync = (customMs?: number) =>
+  setTimeout(
+    () =>
+      setInterval(triggerSync, paymentsSettings.syncIntervalInSeconds * 1000),
+    customMs ?? 30000,
+  );
