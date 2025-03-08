@@ -18,8 +18,8 @@ export type Compute<FieldType, FullDoc extends MDocument> = (
 export type Invalidate<ChangedDoc extends MDocument> = (
   myId: string,
   collChangedDoc: string,
-  fullChangedDoc: ChangedDoc,
-  pubSubEvent: string,
+  fullChangedDoc?: ChangedDoc,
+  pubSubEvent?: string,
 ) => Promise<boolean>;
 
 interface FieldDefinition<
@@ -220,33 +220,39 @@ export const refreshCacheIfNeeded = async <
   DBFullDoc extends MDocument,
 >(
   myDoc: DBFullDoc,
-  changed_Id: string,
-  changedColl: string,
-  fieldName: string,
-  pubSubEvent: string,
-  { compute, invalidate, global }: FieldDefinition<FieldType, DBFullDoc, any>,
-  extraCallBack: () => void,
+  changed_Id?: string,
+  changedColl?: string,
+  fieldName?: string,
+  pubSubEvent?: string,
+  fd?: FieldDefinition<FieldType, DBFullDoc, any>,
+  extraCallBack?: () => void,
 ) => {
+  const compute = fd?.compute;
+  const invalidate = fd?.invalidate;
+  const global = fd?.global;
   const docKey = `${String(myDoc._id)}:${fieldName}`;
 
   if (activeComputations.has(docKey)) {
     return;
   }
+  let changedDoc;
 
-  const changedDoc = await mongoose.connection.db
-    .collection(changedColl)
-    .findOne({ _id: new mongoose.Types.ObjectId(changed_Id) });
+  try {
+    changedDoc = await mongoose.connection.db
+      .collection(changedColl)
+      .findOne({ _id: new mongoose.Types.ObjectId(changed_Id) });
+  } catch {}
 
-  const shouldInvalidate = await invalidate(
+  const shouldInvalidate = await invalidate!(
     String(myDoc._id),
-    changedColl,
+    changedColl ?? '',
     changedDoc,
-    pubSubEvent,
+    pubSubEvent ?? '',
   );
 
   if (shouldInvalidate) {
-    await cacheField(fieldName, myDoc, compute, global ?? false, true);
-    extraCallBack();
+    await cacheField(fieldName ?? '', myDoc, compute!, global ?? false, true);
+    if (extraCallBack) extraCallBack();
   }
 };
 
