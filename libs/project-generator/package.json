@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/project-generator",
-  "version": "1.21.130",
+  "version": "1.22.1",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
