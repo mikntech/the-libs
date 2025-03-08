@@ -5,8 +5,8 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "mongoose": "^8.9.6",
-    "stripe": "^17.6.0"
+    "mongoose": "^8.12.1",
+    "stripe": "^17.7.0"
   },
   "type": "module",
   "main": "./index.js",
