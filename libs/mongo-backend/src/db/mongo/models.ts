@@ -219,7 +219,9 @@ const handleChangeInDBorCahce = async (
                       () =>
                         mongoPubSubInstance.publish(
                           'mr.cache.' +
-                            (event as ChangeStreamUpdateDocument).ns.coll +
+                            '-' +
+                            cacheChange +
+                            '-' +
                             '.' +
                             fieldName,
                           String(Math.random()),
