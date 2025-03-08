@@ -150,6 +150,96 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   }
 }
 
+const handleChangeInDBorCahce = async (
+  event?: ChangeStreamDocument,
+  cacheChange?: string,
+) => {
+  runTaskWithLock(
+    await createRedisInstance(),
+    'refreshCacheIfNeeded_' + JSON.stringify(event ?? cacheChange),
+    Number.MAX_SAFE_INTEGER,
+    async () => {
+      if (event) {
+        mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
+        if ((event as ChangeStreamUpdateDocument).ns?.coll)
+          mongoPubSubInstance.publish(
+            'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
+            String(Math.random()),
+          );
+        await Promise.all(
+          allComputedFields.map(async ({ model, computedFields }) =>
+            Promise.all(
+              Object.keys(computedFields).map(async (fieldName) =>
+                Promise.all(
+                  (await model.find()).map(
+                    async (doc) =>
+                      (event as ChangeStreamUpdateDocument)?.documentKey?._id &&
+                      (event as ChangeStreamUpdateDocument).ns &&
+                      refreshCacheIfNeeded(
+                        doc,
+                        String(
+                          (event as ChangeStreamUpdateDocument).documentKey._id,
+                        ),
+                        (event as ChangeStreamUpdateDocument).ns.coll,
+                        fieldName,
+                        '',
+                        computedFields[fieldName],
+                        () =>
+                          mongoPubSubInstance.publish(
+                            'mr.cache.' +
+                              (event as ChangeStreamUpdateDocument).ns.coll +
+                              '.' +
+                              fieldName,
+                            String(Math.random()),
+                          ),
+                      ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+      if (cacheChange) {
+        mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
+        if ((event as ChangeStreamUpdateDocument).ns?.coll)
+          mongoPubSubInstance.publish(
+            'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
+            String(Math.random()),
+          );
+        await Promise.all(
+          allComputedFields.map(async ({ model, computedFields }) =>
+            Promise.all(
+              Object.keys(computedFields).map(async (fieldName) =>
+                Promise.all(
+                  (await model.find()).map(async (doc) =>
+                    refreshCacheIfNeeded(
+                      doc,
+                      '',
+                      '',
+                      fieldName,
+                      cacheChange,
+                      computedFields[fieldName],
+                      () =>
+                        mongoPubSubInstance.publish(
+                          'mr.cache.' +
+                            (event as ChangeStreamUpdateDocument).ns.coll +
+                            '.' +
+                            fieldName,
+                          String(Math.random()),
+                        ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    },
+  );
+};
+
 export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
   name: string,
   schemaDefinition: SchemaDefinition,
@@ -191,54 +281,7 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
       WatchDB.addToWholeDB(
         connection.instance.db,
         async (event: ChangeStreamDocument) => {
-          runTaskWithLock(
-            await createRedisInstance(),
-            'refreshCacheIfNeeded_' + JSON.stringify(event),
-            Number.MAX_SAFE_INTEGER,
-            async () => {
-              mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
-              (event as ChangeStreamUpdateDocument).ns?.coll &&
-                mongoPubSubInstance.publish(
-                  'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
-                  String(Math.random()),
-                );
-              await Promise.all(
-                allComputedFields.map(async ({ model, computedFields }) =>
-                  Promise.all(
-                    Object.keys(computedFields).map(async (fieldName) =>
-                      Promise.all(
-                        (await model.find()).map(
-                          async (doc) =>
-                            (event as ChangeStreamUpdateDocument)?.documentKey
-                              ?._id &&
-                            (event as ChangeStreamUpdateDocument).ns &&
-                            refreshCacheIfNeeded(
-                              doc,
-                              String(
-                                (event as ChangeStreamUpdateDocument)
-                                  .documentKey._id,
-                              ),
-                              (event as ChangeStreamUpdateDocument).ns.coll,
-                              fieldName,
-                              computedFields[fieldName],
-                              () =>
-                                mongoPubSubInstance.publish(
-                                  'mr.cache.' +
-                                    (event as ChangeStreamUpdateDocument).ns
-                                      .coll +
-                                    '.' +
-                                    fieldName,
-                                  String(Math.random()),
-                                ),
-                            ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
+          handleChangeInDBorCahce();
         },
       );
     }

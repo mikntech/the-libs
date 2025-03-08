@@ -18,6 +18,7 @@ export type Invalidate<ChangedDoc extends MDocument> = (
   myId: string,
   collChangedDoc: string,
   fullChangedDoc: ChangedDoc,
+  pubSubEvent: string,
 ) => Promise<boolean>;
 
 interface FieldDefinition<
@@ -212,6 +213,7 @@ export const refreshCacheIfNeeded = async <
   changed_Id: string,
   changedColl: string,
   fieldName: string,
+  pubSubEvent: string,
   { compute, invalidate, global }: FieldDefinition<FieldType, DBFullDoc, any>,
   extraCallBack: () => void,
 ) => {
@@ -229,6 +231,7 @@ export const refreshCacheIfNeeded = async <
     String(myDoc._id),
     changedColl,
     changedDoc,
+    pubSubEvent,
   );
 
   if (shouldInvalidate) {
