@@ -281,7 +281,7 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
       WatchDB.addToWholeDB(
         connection.instance.db,
         async (event: ChangeStreamDocument) => {
-          handleChangeInDBorCahce(event);
+          await handleChangeInDBorCahce(event);
         },
       );
     }
