@@ -7,7 +7,6 @@ import {
 } from '@the-libs/redis-backend';
 import type { Document as MDocument } from 'mongoose';
 import { createRequire } from 'module';
-import { mongoPubSubInstance } from './models';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
