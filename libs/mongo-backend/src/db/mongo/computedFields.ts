@@ -243,12 +243,14 @@ export const refreshCacheIfNeeded = async <
       .findOne({ _id: new mongoose.Types.ObjectId(changed_Id) });
   } catch {}
 
-  const shouldInvalidate = await invalidate!(
-    String(myDoc._id),
-    changedColl ?? '',
-    changedDoc,
-    pubSubEvent ?? '',
-  );
+  const shouldInvalidate =
+    changedDoc &&
+    (await invalidate!(
+      String(myDoc._id),
+      changedColl ?? '',
+      changedDoc,
+      pubSubEvent ?? '',
+    ));
 
   if (shouldInvalidate) {
     await cacheField(fieldName ?? '', myDoc, compute!, global ?? false, true);
