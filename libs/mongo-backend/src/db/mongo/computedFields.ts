@@ -3,9 +3,11 @@ import {
   cache,
   get,
   withTimeout,
+  PubSub,
 } from '@the-libs/redis-backend';
 import type { Document as MDocument } from 'mongoose';
 import { createRequire } from 'module';
+import { mongoPubSubInstance } from './models';
 
 const require = createRequire(import.meta.url);
 const mongoose = require('mongoose');
@@ -174,6 +176,11 @@ const tryToFixNulls = async <T = any>(obj: T): Promise<T> => {
   return parsedObj;
 };
 
+const pub = await createRedisInstance('pub');
+const sub = await createRedisInstance('sub');
+
+const mongoPubSubInstance = new PubSub(pub, sub);
+
 /**
  * Computes and caches all fields based on dependencies.
  */
@@ -193,6 +200,10 @@ export const getCached = async <
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
       computers[field as keyof ComputedPartOfSchema].global ?? false,
+    );
+    mongoPubSubInstance.publish(
+      'mr.cache.' + '-' + 'getCached' + '-' + '.' + field,
+      String(Math.random()),
     );
     finalValues[field as keyof ComputedPartOfSchema] = await tryToFixNulls(
       finalValues[field as keyof ComputedPartOfSchema],
