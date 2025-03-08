@@ -198,11 +198,6 @@ const handleChangeInDBorCahce = async (
       }
       if (cacheChange) {
         mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
-        if ((event as ChangeStreamUpdateDocument).ns?.coll)
-          mongoPubSubInstance.publish(
-            'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
-            String(Math.random()),
-          );
         await Promise.all(
           allComputedFields.map(async ({ model, computedFields }) =>
             Promise.all(
