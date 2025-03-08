@@ -240,6 +240,10 @@ const handleChangeInDBorCahce = async (
   );
 };
 
+mongoPubSubInstance.psubscribe('.cache.', (channel) =>
+  handleChangeInDBorCahce(undefined, channel),
+);
+
 export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
   name: string,
   schemaDefinition: SchemaDefinition,

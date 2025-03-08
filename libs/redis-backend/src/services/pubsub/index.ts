@@ -12,12 +12,20 @@ export class PubSub {
       cleanup: () => void;
     }
   >;
+  private readonly patternSubscriptions: Map<
+    string,
+    {
+      messageListeners: Set<(channel: string, message: string) => void>;
+      cleanup: () => void;
+    }
+  >;
 
   constructor(pub: RedisType, sub: RedisType) {
     this.redisSubscriber = sub;
     this.redisPublisher = pub;
     this.fallback = NodePubSub;
     this.activeSubscriptions = new Map();
+    this.patternSubscriptions = new Map();
     this.redisSubscriber?.setMaxListeners(50);
   }
 
@@ -84,6 +92,107 @@ export class PubSub {
       );
     } else {
       this.fallback.unsubscribe(tokenOrChannel as string);
+    }
+  }
+
+  subscribeToAll(
+    callback: (channel: string, message: string) => void,
+  ): () => void {
+    console.log(`Subscribing to all channels`);
+
+    const messageListeners = new Set<
+      (channel: string, message: string) => void
+    >();
+    const messageListener = (
+      pattern: string,
+      channel: string,
+      message: string,
+    ) => {
+      for (const cb of messageListeners) {
+        cb(channel, message);
+      }
+    };
+
+    const cleanup = () => {
+      console.log(`Cleaning up global subscription`);
+      this.redisSubscriber?.punsubscribe('*', (err: Error) => {
+        if (err) console.error('Redis punsubscription failed:', err);
+      });
+      this.redisSubscriber?.off('pmessage', messageListener);
+    };
+
+    this.redisSubscriber?.psubscribe('*', (err: Error) => {
+      if (err) console.error('Redis pattern subscription failed:', err);
+    });
+
+    this.redisSubscriber?.on('pmessage', messageListener);
+
+    messageListeners.add(callback);
+
+    return () => {
+      messageListeners.delete(callback);
+      if (messageListeners.size === 0) {
+        cleanup();
+      }
+    };
+  }
+
+  psubscribe(
+    pattern: string,
+    callback: (channel: string, message: string) => void,
+  ): () => void {
+    if (!this.patternSubscriptions.has(pattern)) {
+      console.log(`Pattern subscribing to: ${pattern}`);
+
+      const messageListeners = new Set<
+        (channel: string, message: string) => void
+      >();
+      const messageListener = (
+        matchedPattern: string,
+        channel: string,
+        message: string,
+      ) => {
+        if (matchedPattern === pattern) {
+          for (const cb of messageListeners) {
+            cb(channel, message);
+          }
+        }
+      };
+
+      const cleanup = () => {
+        console.log(`Cleaning up pattern subscription for ${pattern}`);
+        this.redisSubscriber?.punsubscribe(pattern, (err: Error) => {
+          if (err) console.error('Redis pattern unsubscription failed:', err);
+        });
+        this.redisSubscriber?.off('pmessage', messageListener);
+        this.patternSubscriptions.delete(pattern);
+      };
+
+      this.redisSubscriber?.psubscribe(pattern, (err: Error) => {
+        if (err) console.error('Redis pattern subscription failed:', err);
+      });
+
+      this.redisSubscriber?.on('pmessage', messageListener);
+
+      this.patternSubscriptions.set(pattern, { messageListeners, cleanup });
+    }
+
+    const subscription = this.patternSubscriptions.get(pattern)!;
+    subscription.messageListeners.add(callback);
+
+    return () => {
+      subscription.messageListeners.delete(callback);
+      if (subscription.messageListeners.size === 0) {
+        subscription.cleanup();
+      }
+    };
+  }
+
+  punsubscribe(pattern: string) {
+    if (this.redisSubscriber) {
+      this.redisSubscriber.punsubscribe(pattern, (err: Error) => {
+        if (err) console.error('Redis pattern unsubscribe failed:', err);
+      });
     }
   }
 
