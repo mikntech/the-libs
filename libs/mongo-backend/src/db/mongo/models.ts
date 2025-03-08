@@ -128,11 +128,7 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
     return this.model.findOne(...args);
   }
 
-  find(
-    filter: TODO,
-    projection?: TODO | null | undefined,
-    options?: TODO | null | undefined,
-  ) {
+  find(filter?: any, projection?: any, options?: any): any {
     return this.model.find(filter, projection, options);
   }
 

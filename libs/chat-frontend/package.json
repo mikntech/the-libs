@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/chat-frontend",
-  "version": "1.22.1",
+  "version": "1.22.2",
   "scripts": {
     "update": "npx --yes npm-check-updates -u"
   },
