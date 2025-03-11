@@ -183,14 +183,20 @@ const handleChangeInDBorCahce = async (
                         () => {
                           mongoPubSubInstance.publish(
                             'mr.cache.',
-                            String(Math.random()),
+                            'mr.cache.' +
+                              (event as ChangeStreamUpdateDocument).ns.coll +
+                              '.' +
+                              fieldName,
                           );
                           mongoPubSubInstance.publish(
                             'mr.cache.' +
                               (event as ChangeStreamUpdateDocument).ns.coll +
                               '.' +
                               fieldName,
-                            String(Math.random()),
+                            'mr.cache.' +
+                              (event as ChangeStreamUpdateDocument).ns.coll +
+                              '.' +
+                              fieldName,
                           );
                         },
                       ),
@@ -216,16 +222,25 @@ const handleChangeInDBorCahce = async (
                       fieldName,
                       cacheChange,
                       computedFields[fieldName],
-                      () =>
+                      () => {
                         mongoPubSubInstance.publish(
+                          'mr.cache.',
                           'mr.cache.' +
-                            '-' +
-                            cacheChange +
-                            '-' +
+                            (event as ChangeStreamUpdateDocument).ns.coll +
                             '.' +
                             fieldName,
-                          String(Math.random()),
-                        ),
+                        );
+                        mongoPubSubInstance.publish(
+                          'mr.cache.' +
+                            (event as ChangeStreamUpdateDocument).ns.coll +
+                            '.' +
+                            fieldName,
+                          'mr.cache.' +
+                            (event as ChangeStreamUpdateDocument).ns.coll +
+                            '.' +
+                            fieldName,
+                        );
+                      },
                     ),
                   ),
                 ),
