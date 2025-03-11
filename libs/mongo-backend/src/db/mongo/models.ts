@@ -238,7 +238,7 @@ const handleChangeInDBorCahce = async (
   );
 };
 
-mongoPubSubInstance.psubscribe('*.cache.*', (channel) =>
+mongoPubSubInstance.subscribe('mr.cache.', (channel) =>
   handleChangeInDBorCahce(undefined, channel),
 );
 
