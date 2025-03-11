@@ -180,14 +180,19 @@ const handleChangeInDBorCahce = async (
                         fieldName,
                         '',
                         computedFields[fieldName],
-                        () =>
+                        () => {
+                          mongoPubSubInstance.publish(
+                            'mr.cache.',
+                            String(Math.random()),
+                          );
                           mongoPubSubInstance.publish(
                             'mr.cache.' +
                               (event as ChangeStreamUpdateDocument).ns.coll +
                               '.' +
                               fieldName,
                             String(Math.random()),
-                          ),
+                          );
+                        },
                       ),
                   ),
                 ),
