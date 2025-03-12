@@ -225,20 +225,11 @@ const handleChangeInDBorCahce = async (
                       () => {
                         mongoPubSubInstance.publish(
                           'mr.cache.',
-                          'mr.cache.' +
-                            (event as ChangeStreamUpdateDocument).ns.coll +
-                            '.' +
-                            fieldName,
+                          'mr.cache.' + cacheChange + '.' + fieldName,
                         );
                         mongoPubSubInstance.publish(
-                          'mr.cache.' +
-                            (event as ChangeStreamUpdateDocument).ns.coll +
-                            '.' +
-                            fieldName,
-                          'mr.cache.' +
-                            (event as ChangeStreamUpdateDocument).ns.coll +
-                            '.' +
-                            fieldName,
+                          'mr.cache.' + cacheChange + '.' + fieldName,
+                          'mr.cache.' + cacheChange + '.' + fieldName,
                         );
                       },
                     ),
