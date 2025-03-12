@@ -244,7 +244,7 @@ export const refreshCacheIfNeeded = async <
   } catch {}
 
   const shouldInvalidate =
-    changedDoc &&
+    (changedDoc || pubSubEvent) &&
     (await invalidate!(
       String(myDoc._id),
       changedColl ?? '',
