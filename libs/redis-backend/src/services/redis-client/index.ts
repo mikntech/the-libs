@@ -6,16 +6,10 @@ import { redisSettings } from '../..';
 
 export type RedisType = TRedis;
 
-// Singleton Redis instances for general, pub, and sub use cases
 let defaultRedisInstance: RedisType | null = null;
 let pubRedisInstance: RedisType | null = null;
 let subRedisInstance: RedisType | null = null;
 
-/**
- * Creates a Redis instance with error handling and separate instances for pub/sub.
- * @param instanceType - 'default' | 'pub' | 'sub'
- * @param forceNew - Force a new connection even if a singleton exists.
- */
 export const createRedisInstance = async (
   instanceType: 'default' | 'pub' | 'sub' = 'default',
   forceNew = false,
@@ -39,36 +33,64 @@ export const createRedisInstance = async (
 
   const newInstance = new Redis({
     ...redisSettings.uri,
-    retryStrategy: (times: number): number => Math.min(times * 50, 2000),
-    reconnectOnError: (err: Error): boolean => true,
+    retryStrategy: (times: number): number | null => {
+      if (times > 10) return null; // Stop retrying after 10 attempts
+      return Math.min(50 * 2 ** times, 5000); // Exponential backoff up to 5s
+    },
+    reconnectOnError: (err: Error): boolean => {
+      const message = err.message.toLowerCase();
+      if (
+        message.includes('econnreset') ||
+        message.includes('etimedout') ||
+        message.includes('socket closed')
+      ) {
+        console.error(
+          `🔄 Redis ${instanceType} Reconnecting due to error:`,
+          err.message,
+        );
+        return true;
+      }
+      return false;
+    },
     socket: {
       reconnectStrategy: (retries: number): number =>
-        Math.min(retries * 50, 1000),
+        Math.min(retries * 50, 3000),
       keepAlive: true,
-      connectTimeout: 10000,
+      connectTimeout: 15000, // Increased timeout for better stability
     },
   });
 
   newInstance.on('ready', (): void => {
-    // console.log(`✅ Redis ${instanceType} Connected Successfully`);
+    console.log(`✅ Redis ${instanceType} Connected Successfully`);
   });
 
   newInstance.on('error', (err: Error): void => {
     console.error(`❌ Redis ${instanceType} Error:`, err.message);
     if (err.message.includes('ECONNRESET')) {
-      console.error(`❗️ Redis ${instanceType} Connection Reset`);
+      console.error(
+        `❗️ Redis ${instanceType} Connection Reset - Attempting Reconnect`,
+      );
     }
   });
 
-  newInstance.on('end', (): void => {
+  newInstance.on('end', async (): Promise<void> => {
     console.warn(`⚠️ Redis ${instanceType} Connection Closed`);
     if (instanceType === 'default') defaultRedisInstance = null;
     if (instanceType === 'pub') pubRedisInstance = null;
     if (instanceType === 'sub') subRedisInstance = null;
+
+    setTimeout(async () => {
+      console.log(`♻️ Attempting to reconnect Redis ${instanceType}...`);
+      try {
+        await createRedisInstance(instanceType, true);
+      } catch (err) {
+        console.error(`❌ Redis ${instanceType} Reconnection Failed`, err);
+      }
+    }, 5000);
   });
 
   try {
-    await newInstance.ping(); // Ensure connection works
+    await newInstance.ping();
     if (instanceType === 'default') defaultRedisInstance = newInstance;
     if (instanceType === 'pub') pubRedisInstance = newInstance;
     if (instanceType === 'sub') subRedisInstance = newInstance;
