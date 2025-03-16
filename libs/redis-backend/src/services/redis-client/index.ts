@@ -38,30 +38,8 @@ export const createRedisInstance = async (
   }
 
   const newInstance = new Redis(redisUrl, {
-    retryStrategy: (times: number): number | null => {
-      if (times > 10) return null; // Stop retrying after 10 attempts
-      return Math.min(50 * 2 ** times, 5000); // Exponential backoff up to 5s
-    },
-    reconnectOnError: (err: Error): boolean => {
-      const message = err.message.toLowerCase();
-      if (
-        message.includes('econnreset') ||
-        message.includes('etimedout') ||
-        message.includes('socket closed')
-      ) {
-        console.error(
-          `🔄 Redis ${instanceType} Reconnecting due to error:`,
-          err.message,
-        );
-        return true;
-      }
-      return false;
-    },
     socket: {
-      keepAlive: true, // Keep TCP connection alive
-      reconnectStrategy: (retries: number): number =>
-        Math.min(retries * 50, 5000),
-      connectTimeout: 20000, // Increased timeout to avoid drops
+      keepAlive: true,
     },
   });
 
