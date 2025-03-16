@@ -1,15 +1,14 @@
-import type { Redis as TRedis } from 'ioredis';
 import { createRequire } from 'module';
+
 const require = createRequire(import.meta.url);
-const { Redis } = require('ioredis');
+const { GlideClient } = require('@valkey/valkey-glide');
 import { redisSettings } from '../..';
 
-export type RedisType = TRedis;
+export type RedisType = InstanceType<typeof GlideClient>;
 
 let defaultRedisInstance: RedisType | null = null;
 let pubRedisInstance: RedisType | null = null;
 let subRedisInstance: RedisType | null = null;
-let loggedConnected = false;
 
 export const createRedisInstance = async (
   instanceType: 'default' | 'pub' | 'sub' = 'default',
@@ -32,81 +31,51 @@ export const createRedisInstance = async (
     return instance;
   }
 
-  const newInstance = new Redis({
-    ...redisSettings.uri,
-    retryStrategy: (times: number): number | null => {
-      if (times > 10) return null; // Stop retrying after 10 attempts
-      return Math.min(50 * 2 ** times, 5000); // Exponential backoff up to 5s
-    },
-    reconnectOnError: (err: Error): boolean => {
-      const message = err.message.toLowerCase();
-      if (
-        message.includes('econnreset') ||
-        message.includes('etimedout') ||
-        message.includes('socket closed')
-      ) {
-        loggedConnected = false;
-        console.error(
-          `🔄 Redis ${instanceType} Reconnecting due to error:`,
-          err.message,
-        );
-        return true;
-      }
-      return false;
-    },
-    socket: {
-      reconnectStrategy: (retries: number): number =>
-        Math.min(retries * 50, 3000),
-      keepAlive: true,
-      connectTimeout: 15000, // Increased timeout for better stability
-    },
-  });
-
-  newInstance.on('ready', (): void => {
-    if (!loggedConnected) {
-      console.log(`✅ Redis ${instanceType} Connected Successfully`);
-      loggedConnected = true;
-    }
-  });
-
-  newInstance.on('error', (err: Error): void => {
-    loggedConnected = false;
-    console.error(`❌ Redis ${instanceType} Error:`, err.message);
-    if (err.message.includes('ECONNRESET')) {
-      loggedConnected = false;
-      console.error(
-        `❗️ Redis ${instanceType} Connection Reset - Attempting Reconnect`,
-      );
-    }
-  });
-
-  newInstance.on('end', async (): Promise<void> => {
-    loggedConnected = false;
-    console.warn(`⚠️ Redis ${instanceType} Connection Closed`);
-    if (instanceType === 'default') defaultRedisInstance = null;
-    if (instanceType === 'pub') pubRedisInstance = null;
-    if (instanceType === 'sub') subRedisInstance = null;
-
-    setTimeout(async () => {
-      loggedConnected = false;
-      console.log(`♻️ Attempting to reconnect Redis ${instanceType}...`);
-      try {
-        await createRedisInstance(instanceType, true);
-      } catch (err) {
-        loggedConnected = false;
-        console.error(`❌ Redis ${instanceType} Reconnection Failed`, err);
-      }
-    }, 5000);
-  });
-
   try {
-    await newInstance.ping();
+    const newInstance = await GlideClient.createClient({
+      url: redisSettings.uri, // Use Redis URL from config
+      socket: {
+        keepAlive: true, // Enable TCP Keep-Alive
+        reconnectStrategy: (retries: number) => Math.min(retries * 50, 5000),
+        connectTimeout: 15000, // Allow longer connection time
+      },
+    });
+
+    newInstance.on('ready', (): void => {
+      console.log(`✅ Redis ${instanceType} Connected Successfully`);
+    });
+
+    newInstance.on('error', (err: Error): void => {
+      console.error(`❌ Redis ${instanceType} Error:`, err.message);
+      if (err.message.includes('ECONNRESET')) {
+        console.error(
+          `❗️ Redis ${instanceType} Connection Reset - Attempting Reconnect`,
+        );
+      }
+    });
+
+    newInstance.on('end', async (): Promise<void> => {
+      console.warn(`⚠️ Redis ${instanceType} Connection Closed`);
+
+      const delay = Math.random() * 10000 + 5000; // Wait 5-15s before retrying
+      setTimeout(async () => {
+        console.log(`♻️ Attempting to reconnect Redis ${instanceType}...`);
+        try {
+          await createRedisInstance(instanceType, true);
+        } catch (err) {
+          console.error(`❌ Redis ${instanceType} Reconnection Failed`, err);
+        }
+      }, delay);
+    });
+
+    await newInstance.ping(); // Ensure connection works
+
     if (instanceType === 'default') defaultRedisInstance = newInstance;
     if (instanceType === 'pub') pubRedisInstance = newInstance;
     if (instanceType === 'sub') subRedisInstance = newInstance;
+
     return newInstance;
   } catch (error) {
-    loggedConnected = false;
     console.error(`❌ Redis ${instanceType} Initialization Failed:`, error);
     throw error;
   }
