@@ -6,10 +6,10 @@
   },
   "dependencies": {
     "dotenv": "^16.4.7",
-    "@the-libs/base-shared": "^1.21.159",
-    "@the-libs/express-backend": "^1.21.159",
-    "@the-libs/auth-backend": "^1.21.159",
-    "axios": "^1.8.2"
+    "@the-libs/base-shared": "^1.22.22",
+    "@the-libs/express-backend": "^1.22.22",
+    "@the-libs/auth-backend": "^1.22.22",
+    "axios": "^1.8.3"
   },
   "type": "module",
   "main": "./index.js",
