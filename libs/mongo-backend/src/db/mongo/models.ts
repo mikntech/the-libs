@@ -20,7 +20,7 @@ import {
   refreshCacheIfNeeded,
   SchemaComputers,
 } from './computedFields';
-import { ChangeStreamDocument, ChangeStreamUpdateDocument } from 'mongodb';
+import { ChangeStreamUpdateDocument } from 'mongodb';
 import {
   createRedisInstance,
   PubSub,
@@ -39,8 +39,8 @@ const sub = await createRedisInstance('sub');
 export const mongoPubSubInstance = new PubSub(pub, sub);
 
 interface Reg {
-  model: Model<any>;
-  computedFields: SchemaComputers<any, any, any>;
+  model: Model<TODO>;
+  computedFields: SchemaComputers<TODO, TODO, TODO>;
 }
 const allComputedFields: Reg[] = [];
 
@@ -94,11 +94,11 @@ const initModel = <DBPart extends Document>(
 
 export interface Optional<DBPart extends Document, ComputedPart> {
   chainToSchema?: { name: TODO; params: TODO[] }[];
-  wrapSchema?: Function[];
+  wrapSchema?: ((schema: Schema) => Schema)[];
   extraIndexes?: { fields: IndexDefinition; options?: IndexOptions }[];
   pres?: ((schema: Schema) => (model: Model<DBPart>) => Schema)[];
   logMongoToConsole?: boolean;
-  computedFields?: SchemaComputers<ComputedPart, DBPart, any>;
+  computedFields?: SchemaComputers<ComputedPart, DBPart, TODO>;
   prepareCache?: boolean;
 }
 
@@ -128,7 +128,7 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
     return this.model.findOne(...args);
   }
 
-  find(filter?: any, projection?: any, options?: any): any {
+  find(filter?: TODO, projection?: TODO, options?: TODO): TODO {
     return this.model.find(filter, projection, options);
   }
 
@@ -140,113 +140,97 @@ export class ExtendedModel<DocI extends Document, ComputedPart = false> {
   }
 
   limit(
-    ...args: Parameters<QueryWithHelpers<any, DocI>['limit']>
+    ...args: Parameters<QueryWithHelpers<TODO, DocI>['limit']>
   ): Query<DocI[], DocI> {
     return this.model.find().limit(...args);
   }
 }
 
-const handleChangeInDBorCahce = async (
-  event?: ChangeStreamDocument,
-  cacheChange?: string,
+const MAX_CHANNEL_LENGTH = 4000;
+const MAX_REFRESH_DEPTH = 100; // Limit recursion depth
+
+const safeChannel = (channel: string) =>
+  channel.length > MAX_CHANNEL_LENGTH
+    ? channel.slice(0, MAX_CHANNEL_LENGTH)
+    : channel;
+
+/**
+ * Refreshes computed fields and publishes updates
+ */
+const refreshComputedFields = async (
+  event: ChangeStreamUpdateDocument,
+  cacheChange: string,
+  depth = 0,
 ) => {
+  if (depth >= MAX_REFRESH_DEPTH) return; // Prevent infinite recursion
+
+  for (const { model, computedFields } of allComputedFields) {
+    const documents = event?.documentKey?._id
+      ? await model.find({ _id: event.documentKey._id }) // Fetch only relevant docs
+      : await model.find({}, '_id'); // Fetch only IDs if refreshing cache
+
+    for (const fieldName of Object.keys(computedFields)) {
+      for (const doc of documents) {
+        await refreshCacheIfNeeded(
+          doc,
+          event?.documentKey?._id?.toString() ?? '',
+          event?.ns?.coll ?? '',
+          fieldName,
+          cacheChange ?? '',
+          computedFields[fieldName],
+          () => {
+            const topic = `mr.cache.${event?.ns?.coll ?? cacheChange}.${fieldName}`;
+            mongoPubSubInstance.publish(safeChannel(topic), 'update');
+          },
+        );
+      }
+    }
+  }
+};
+
+/**
+ * Handles changes in database or cache updates
+ */
+const handleChangeInDBorCache = async (
+  event?: ChangeStreamUpdateDocument,
+  cacheChange?: string,
+  depth = 0,
+) => {
+  if (depth >= MAX_REFRESH_DEPTH) return; // Prevent infinite recursion
+
+  const lockKey = event
+    ? `refreshCacheIfNeeded_${event.documentKey?._id ?? Math.random()}`
+    : `refreshCacheIfNeeded_${cacheChange}`;
+
   runTaskWithLock(
     await createRedisInstance(),
-    'refreshCacheIfNeeded_' + JSON.stringify(event ?? cacheChange),
+    lockKey,
     Number.MAX_SAFE_INTEGER,
     async () => {
-      if (event) {
-        mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
-        if ((event as ChangeStreamUpdateDocument).ns?.coll)
-          mongoPubSubInstance.publish(
-            'mr.db.' + (event as ChangeStreamUpdateDocument).ns.coll,
-            String(Math.random()),
-          );
-        await Promise.all(
-          allComputedFields.map(async ({ model, computedFields }) =>
-            Promise.all(
-              Object.keys(computedFields).map(async (fieldName) =>
-                Promise.all(
-                  (await model.find()).map(
-                    async (doc) =>
-                      (event as ChangeStreamUpdateDocument)?.documentKey?._id &&
-                      (event as ChangeStreamUpdateDocument).ns &&
-                      refreshCacheIfNeeded(
-                        doc,
-                        String(
-                          (event as ChangeStreamUpdateDocument).documentKey._id,
-                        ),
-                        (event as ChangeStreamUpdateDocument).ns.coll,
-                        fieldName,
-                        '',
-                        computedFields[fieldName],
-                        () => {
-                          mongoPubSubInstance.publish(
-                            'mr.cache.',
-                            'mr.cache.' +
-                              (event as ChangeStreamUpdateDocument).ns.coll +
-                              '.' +
-                              fieldName,
-                          );
-                          mongoPubSubInstance.publish(
-                            'mr.cache.' +
-                              (event as ChangeStreamUpdateDocument).ns.coll +
-                              '.' +
-                              fieldName,
-                            'mr.cache.' +
-                              (event as ChangeStreamUpdateDocument).ns.coll +
-                              '.' +
-                              fieldName,
-                          );
-                        },
-                      ),
-                  ),
-                ),
-              ),
-            ),
-          ),
+      mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
+
+      if (event?.ns?.coll) {
+        mongoPubSubInstance.publish(
+          safeChannel(`mr.db.${event.ns.coll}`),
+          String(Math.random()),
         );
       }
-      if (cacheChange) {
-        mongoPubSubInstance.publish('mr.allDB', String(Math.random()));
-        await Promise.all(
-          allComputedFields.map(async ({ model, computedFields }) =>
-            Promise.all(
-              Object.keys(computedFields).map(async (fieldName) =>
-                Promise.all(
-                  (await model.find()).map(async (doc) =>
-                    refreshCacheIfNeeded(
-                      doc,
-                      '',
-                      '',
-                      fieldName,
-                      cacheChange,
-                      computedFields[fieldName],
-                      () => {
-                        mongoPubSubInstance.publish(
-                          'mr.cache.',
-                          'mr.cache.' + cacheChange + '.' + fieldName,
-                        );
-                        mongoPubSubInstance.publish(
-                          'mr.cache.' + cacheChange + '.' + fieldName,
-                          'mr.cache.' + cacheChange + '.' + fieldName,
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      }
+
+      await refreshComputedFields(
+        event as ChangeStreamUpdateDocument,
+        cacheChange as string,
+        depth + 1,
+      );
     },
   );
 };
 
-mongoPubSubInstance.subscribe('mr.cache.', (channel) =>
-  handleChangeInDBorCahce(undefined, channel),
-);
+// Prevent infinite loops by avoiding re-triggering on same cache topic
+mongoPubSubInstance.subscribe('mr.cache.', (channel) => {
+  if (channel.startsWith('mr.cache.') && channel.length > MAX_CHANNEL_LENGTH)
+    return;
+  handleChangeInDBorCache(undefined, channel, 1).then(); // Start at depth=1
+});
 
 export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
   name: string,
@@ -269,18 +253,15 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
   wrapSchema?.forEach((wrapper) => {
     schema = wrapper(schema);
   });
-  type CHAINABLE = unknown;
-  chainToSchema?.forEach(({ name, params }) =>
-    (schema as CHAINABLE as TODO)[name](...params),
-  );
+  chainToSchema?.forEach(({ name, params }) => schema[name](...params));
   extraIndexes?.forEach((extraIndex) =>
     schema.index(extraIndex.fields, extraIndex.options),
   );
 
-  const funcs = pres?.map((fnc) => fnc(schema));
+  const functions = pres?.map((fnc) => fnc(schema));
 
-  if (mongoose.models[name]) {
-    model = connection.instance!.model<DBPart>(name);
+  if (mongoose.models[name] && connection.instance) {
+    model = connection.instance.model<DBPart>(name);
   } else {
     model = initModel<DBPart>(connection, name, schema);
     if (computedFields) registerComputedFields({ model, computedFields });
@@ -288,18 +269,18 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
       await WatchDB.cancelWholeDBWatch();
       WatchDB.addToWholeDB(
         connection.instance.db,
-        async (event: ChangeStreamDocument) => {
-          await handleChangeInDBorCahce(event);
+        async (event: ChangeStreamUpdateDocument) => {
+          await handleChangeInDBorCache(event);
         },
       );
     }
   }
 
-  funcs?.map((fnc) => {
+  functions?.map((fnc) => {
     model = initModel<DBPart>(connection, name, fnc(model));
   });
 
-  const getCachedParent: any = {
+  const getCachedParent: TODO = {
     getCached: false,
   };
   if (computedFields)
@@ -334,7 +315,7 @@ export const autoSignS3URIs = (schema: Schema) => {
 };
 
 // MongoDB Error Listener
-mongoose.connection.on('error', (err: any) => {
+mongoose.connection.on('error', (err: TODO) => {
   console.error('❌ MongoDB Error:', err.message);
   if (err.message.includes('ECONNRESET')) {
     console.error('❗️ MongoDB connection was reset.');
