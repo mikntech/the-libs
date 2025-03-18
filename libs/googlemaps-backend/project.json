@@ -28,9 +28,7 @@
             "output": "."
           }
         ],
-        "external": [
-
-        ]
+        "external": ["axios", "dotenv"]
       },
       "dependsOn": [
         {

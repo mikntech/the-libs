@@ -5,7 +5,8 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-
+    "axios": "1.8.3",
+    "dotenv": "^16.4.7"
   },
   "type": "module",
   "main": "./index.js",
