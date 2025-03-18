@@ -98,7 +98,7 @@ export const getListOfNClosestToAddress = async ({
     ];
     const searchTypes = types.length > 0 ? types : defaultTypes;
 
-    let results: {
+    const results: {
       name: string;
       address: string;
       distance: string;
