@@ -58,6 +58,7 @@ export const getListOfNClosestToAddress = async ({
   types = [], // Empty array means fetch all types
   radius = 2000, // Default search radius: 2 km
   limit = 5, // Max results per type
+  language = 'en', // Default language
 }: {
   lat?: number;
   lng?: number;
@@ -65,6 +66,7 @@ export const getListOfNClosestToAddress = async ({
   types?: string[]; // List of specific place types (optional)
   radius?: number;
   limit?: number;
+  language?: string;
 }): Promise<
   {
     name: string;
@@ -108,7 +110,7 @@ export const getListOfNClosestToAddress = async ({
 
     // Fetch places for each type
     for (const type of searchTypes) {
-      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${googlemapsSettings.googleGeoCoding}`;
+      const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&language=${language}&key=${googlemapsSettings.googleGeoCoding}`;
       const response = await axios.get(url);
       const { results: places } = response.data;
 
