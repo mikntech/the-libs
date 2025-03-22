@@ -267,12 +267,11 @@ export const getModel = async <DBPart extends DBDoc, ComputedPart = never>(
     if (computedFields) registerComputedFields({ model, computedFields });
     if (connection.instance?.db) {
       await WatchDB.cancelWholeDBWatch();
-      WatchDB.addToWholeDB(
-        connection.instance.db,
-        async (event: ChangeStreamUpdateDocument) => {
+      connection.instance.db
+        .watch()
+        .on('change', async (event: ChangeStreamUpdateDocument) => {
           await handleChangeInDBorCache(event);
-        },
-      );
+        });
     }
   }
 
