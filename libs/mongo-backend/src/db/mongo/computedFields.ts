@@ -189,6 +189,7 @@ export const getCached = async <
 >(
   fullDoc: DBFullDoc,
   computers: SchemaComputers<ComputedPartOfSchema, DBFullDoc, any>,
+  forceRefresh = false,
 ): Promise<ComputedPartOfSchema> => {
   const order = getComputationOrder(computers);
   const finalValues: Partial<ComputedPartOfSchema> = {};
@@ -199,6 +200,7 @@ export const getCached = async <
       fullDoc,
       computers[field as keyof ComputedPartOfSchema].compute,
       computers[field as keyof ComputedPartOfSchema].global ?? false,
+      forceRefresh,
     );
     mongoPubSubInstance.publish(
       'mr.cache.' + '-' + 'getCached' + '-' + '.' + field,
