@@ -100,6 +100,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
   compute: Compute<FieldType, DBFullDoc>,
   global: boolean,
   forceRefresh = false,
+  customTTLinSec = 60,
 ) => {
   const docKey = `${String(fullDoc._id)}:${fieldName}`;
   const redisInstance = await createRedisInstance('default');
@@ -130,6 +131,7 @@ const cacheField = async <FieldType, DBFullDoc extends MDocument>(
       redisInstance,
       'mikache_' + JSON.stringify({ _id: String(fullDoc._id), key: fieldName }),
       async () => JSON.stringify(value),
+      customTTLinSec,
     );
     return value;
   } finally {
