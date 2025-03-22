@@ -10,6 +10,9 @@ export interface PaymentsSettings {
   syncIntervalInSeconds: number;
   stripeApiKey: string;
   stripeApiVersion: string;
+  ppbaseURL: string;
+  ppclientId: string;
+  ppclientSecret: string;
 }
 
 export const paymentsSettings: PaymentsSettings = {
@@ -18,6 +21,9 @@ export const paymentsSettings: PaymentsSettings = {
   ),
   stripeApiKey: process.env['STRIPE_API_KEY'] || '',
   stripeApiVersion: process.env['STRIPE_API_VERSION'] || '',
+  ppbaseURL: process.env['PAYPAL_API'] ?? '',
+  ppclientId: process.env['PAYPAL_CLIENT_ID'] ?? '',
+  ppclientSecret: process.env['PAYPAL_CLIENT_SECRET'] ?? '',
 };
 
 if (paymentsSettings.syncIntervalInSeconds < 5)
