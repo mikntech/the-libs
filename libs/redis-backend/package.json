@@ -5,12 +5,12 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.22.22",
-    "@bull-board/express": "^6.7.10",
+    "@the-libs/base-shared": "^1.22.40",
+    "@bull-board/express": "^6.9.6",
     "redlock": "^5.0.0-beta.2",
     "bull": "^4.16.5",
-    "dotenv": "^16.4.7",
-    "ioredis": "^5.6.0",
+    "dotenv": "^16.5.0",
+    "ioredis": "^5.6.1",
     "pubsub-js": "^1.9.5"
   },
   "type": "module",

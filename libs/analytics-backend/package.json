@@ -5,12 +5,12 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.22.22",
-    "@the-libs/express-backend": "^1.22.22",
-    "@the-libs/mongo-backend": "^1.22.22",
-    "zod": "^3.24.2",
-    "@trpc/server": "^10.45.2",
-    "express": "^4.21.2"
+    "@the-libs/base-shared": "^1.22.39",
+    "@the-libs/express-backend": "^1.22.39",
+    "@the-libs/mongo-backend": "^1.22.39",
+    "zod": "^3.24.4",
+    "@trpc/server": "^11.1.2",
+    "express": "^5.1.0"
   },
   "type": "module",
   "main": "./index.js",
