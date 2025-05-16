@@ -1,11 +1,12 @@
 import type { Redis as TRedis } from 'ioredis';
 import { createRequire } from 'module';
+import { MemoryRedis } from './memory-redis';
 
 const require = createRequire(import.meta.url);
 const { Redis } = require('ioredis');
 import { redisSettings } from '../..';
 
-export type RedisType = TRedis;
+export type RedisType = TRedis | MemoryRedis;
 
 let defaultRedisInstance: RedisType | null = null;
 let pubRedisInstance: RedisType | null = null;
@@ -37,40 +38,40 @@ export const createRedisInstance = async (
     throw new Error('❌ Redis connection failed: No Redis URL provided');
   }
 
-  const newInstance = new Redis(redisUrl, {
-    socket: {
-      keepAlive: true,
-    },
-  });
-
-  newInstance.on('ready', (): void => {
-    console.log(`✅ Redis ${instanceType} Connected Successfully`);
-  });
-
-  newInstance.on('error', (err: Error): void => {
-    console.error(`❌ Redis ${instanceType} Error:`, err.message);
-    if (err.message.includes('ECONNRESET')) {
-      console.error(
-        `❗️ Redis ${instanceType} Connection Reset - Attempting Reconnect`,
-      );
-    }
-  });
-
-  newInstance.on('end', async (): Promise<void> => {
-    console.warn(`⚠️ Redis ${instanceType} Connection Closed`);
-
-    const delay = Math.random() * 10000 + 5000; // Random 5-15s delay before retrying
-    setTimeout(async () => {
-      console.log(`♻️ Attempting to reconnect Redis ${instanceType}...`);
-      try {
-        await createRedisInstance(instanceType, true);
-      } catch (err) {
-        console.error(`❌ Redis ${instanceType} Reconnection Failed`, err);
-      }
-    }, delay);
-  });
-
   try {
+    const newInstance = new Redis(redisUrl, {
+      socket: {
+        keepAlive: true,
+      },
+    });
+
+    newInstance.on('ready', (): void => {
+      console.log(`✅ Redis ${instanceType} Connected Successfully`);
+    });
+
+    newInstance.on('error', (err: Error): void => {
+      console.error(`❌ Redis ${instanceType} Error:`, err.message);
+      if (err.message.includes('ECONNRESET')) {
+        console.error(
+          `❗️ Redis ${instanceType} Connection Reset - Attempting Reconnect`,
+        );
+      }
+    });
+
+    newInstance.on('end', async (): Promise<void> => {
+      console.warn(`⚠️ Redis ${instanceType} Connection Closed`);
+
+      const delay = Math.random() * 10000 + 5000; // Random 5-15s delay before retrying
+      setTimeout(async () => {
+        console.log(`♻️ Attempting to reconnect Redis ${instanceType}...`);
+        try {
+          await createRedisInstance(instanceType, true);
+        } catch (err) {
+          console.error(`❌ Redis ${instanceType} Reconnection Failed`, err);
+        }
+      }, delay);
+    });
+
     await newInstance.ping(); // Ensure connection is stable
 
     if (instanceType === 'default') defaultRedisInstance = newInstance;
@@ -79,7 +80,13 @@ export const createRedisInstance = async (
 
     return newInstance;
   } catch (error) {
-    console.error(`❌ Redis ${instanceType} Initialization Failed:`, error);
-    throw error;
+    console.warn(`⚠️ Redis ${instanceType} Connection Failed - Falling back to in-memory implementation`);
+    const memoryInstance = new MemoryRedis();
+    
+    if (instanceType === 'default') defaultRedisInstance = memoryInstance;
+    if (instanceType === 'pub') pubRedisInstance = memoryInstance;
+    if (instanceType === 'sub') subRedisInstance = memoryInstance;
+    
+    return memoryInstance;
   }
 };
