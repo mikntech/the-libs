@@ -1,4 +1,4 @@
-import { Button, Grid2, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import ConversationView from './components/ConversationView';
 import { ChatContextCreator, ConversationButton } from '../../../';
@@ -95,7 +95,7 @@ export const ChatsPage = <
       customComponents={customComponents}
     />
   ) : (
-    <Grid2
+    <Grid
       width={'auto'}
       height="100%"
       marginX="10px"
@@ -115,7 +115,7 @@ export const ChatsPage = <
       )}
 
       {!selectedConversation && (
-        <Grid2
+        <Grid
           // width={wide ? '100%' : totalUnReadCounter !== 0 ? '70px' : '50px'}
           height="100%"
           container
@@ -128,7 +128,7 @@ export const ChatsPage = <
         >
           {conversations.length > 0 ? (
             conversations.map((conversation, i) => (
-              <Grid2 key={conversation._id?.toString()}>
+              <Grid key={conversation._id?.toString()}>
                 <br />
                 <ConversationButton
                   key={conversation._id?.toString()}
@@ -139,16 +139,16 @@ export const ChatsPage = <
                   unReadNumber={unReadNumbers[i]}
                   disableDarkMode
                 />
-              </Grid2>
+              </Grid>
             ))
           ) : (
             <PrimaryText padded fontSize="80%">
               You don't have conversations yet
             </PrimaryText>
           )}
-        </Grid2>
+        </Grid>
       )}
-      <Grid2 height="100%" overflow="scroll" flexGrow={1}>
+      <Grid height="100%" overflow="scroll" flexGrow={1}>
         {selectedConversation && (
           <ConversationView
             VITE_STAGING_ENV={VITE_STAGING_ENV}
@@ -158,7 +158,7 @@ export const ChatsPage = <
             tenum={tenum}
           />
         )}
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 };

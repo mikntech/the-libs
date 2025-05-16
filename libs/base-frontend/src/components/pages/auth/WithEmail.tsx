@@ -1,4 +1,4 @@
-import { Box, Grid2, LinearProgress, TextField, Tooltip } from '@mui/material';
+import { Box, Grid, LinearProgress, TextField, Tooltip } from '@mui/material';
 import { Flag } from '@mui/icons-material';
 import {
   AuthContext,
@@ -344,42 +344,42 @@ export const WithEmail = <UserType,>({
     }
 
     return (
-      <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
-        <Grid2
+      <Grid container direction="column" alignItems="center" rowSpacing={2}>
+        <Grid
           container
           justifyContent="center"
           alignItems="center"
           width="100%"
         >
-          <Grid2 width="100%">
+          <Grid width="100%">
             <customComponents.Btn fullWidth onClick={mainButton.clickHandler}>
               {mainButton.label}
             </customComponents.Btn>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
         {(navigateButton.exists || resetButton.exists) && (
-          <Grid2 container columnSpacing={2}>
+          <Grid container columnSpacing={2}>
             {navigateButton.exists && (
-              <Grid2>
+              <Grid>
                 <customComponents.PrimaryText
                   onClick={navigateButton.clickHandler}
                 >
                   {navigateButton.label}
                 </customComponents.PrimaryText>
-              </Grid2>
+              </Grid>
             )}
             {resetButton.exists && (
-              <Grid2>
+              <Grid>
                 <customComponents.PrimaryText
                   onClick={resetButton.clickHandler}
                 >
                   {resetButton.label}
                 </customComponents.PrimaryText>
-              </Grid2>
+              </Grid>
             )}
-          </Grid2>
+          </Grid>
         )}
-      </Grid2>
+      </Grid>
     );
   };
 
@@ -387,13 +387,13 @@ export const WithEmail = <UserType,>({
 
   return (
     <Box sx={{ padding: '20px' }}>
-      <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
-        <Grid2>
+      <Grid container direction="column" alignItems="center" rowSpacing={2}>
+        <Grid>
           <customComponents.PrimaryText variant="h5">
             Welcome to
           </customComponents.PrimaryText>
-        </Grid2>
-        <Grid2>
+        </Grid>
+        <Grid>
           <Tooltip title={server?.version} placement="right-start">
             <customComponents.Img
               src={isNight ? nightLogoTextOnly : dayLogoTextOnly}
@@ -401,15 +401,15 @@ export const WithEmail = <UserType,>({
               height="100%"
             />
           </Tooltip>
-        </Grid2>
+        </Grid>
         {client !== clientTypesEnum[defaultMainClient] && (
-          <Grid2>
+          <Grid>
             <customComponents.PrimaryText variant="h6">
               for {client}s
             </customComponents.PrimaryText>
-          </Grid2>
+          </Grid>
         )}
-        <Grid2>
+        <Grid>
           {step === Step.checkEmail ? (
             <customComponents.PrimaryText
               textAlign="center"
@@ -508,16 +508,16 @@ export const WithEmail = <UserType,>({
                           left={`${(minPassStrength / 4) * 100 - 5}%`}
                           top={0}
                         >
-                          <Grid2 container>
-                            <Grid2>
+                          <Grid container>
+                            <Grid>
                               <Flag />
-                            </Grid2>
-                            <Grid2>
+                            </Grid>
+                            <Grid>
                               <customComponents.PrimaryText>
                                 Min
                               </customComponents.PrimaryText>
-                            </Grid2>
-                          </Grid2>
+                            </Grid>
+                          </Grid>
                         </Box>
                       </Box>
                     ))}
@@ -544,13 +544,13 @@ export const WithEmail = <UserType,>({
               )}
             </>
           )}
-        </Grid2>
+        </Grid>
         {LABELS[buttonLabel][step] && (
-          <Grid2>
+          <Grid>
             <Box mt={2}>{renderButtons()}</Box>
-          </Grid2>
+          </Grid>
         )}
-      </Grid2>
+      </Grid>
     </Box>
   );
 };

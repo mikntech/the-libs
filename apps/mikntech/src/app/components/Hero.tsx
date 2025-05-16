@@ -1,4 +1,4 @@
-import { Grid2, Stack, Typography } from '@mui/material';
+import { Grid, Stack, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -69,8 +69,8 @@ export default function Hero() {
           >
             We don’t sell dreams—we provide the tools to build them!
           </Typography>
-          <Grid2 container direction="column" rowSpacing={2}>
-            <Grid2 width="100%">
+          <Grid container direction="column" rowSpacing={2}>
+            <Grid width="100%">
               <Box sx={{ boxShadow: 3, p: 3, borderRadius: 2 }}>
                 <Typography variant="h6" textAlign="center">
                   @the-libs
@@ -80,8 +80,8 @@ export default function Hero() {
                   for you to use.
                 </Typography>
               </Box>
-            </Grid2>
-            <Grid2 width="100%">
+            </Grid>
+            <Grid width="100%">
               <Box sx={{ boxShadow: 3, p: 3, borderRadius: 2 }}>
                 <Typography variant="h6" textAlign="center">
                   MikNTech
@@ -92,8 +92,8 @@ export default function Hero() {
                   solutions.
                 </Typography>
               </Box>
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
 
           <Stack
             direction={{ xs: 'column', sm: 'row' }}

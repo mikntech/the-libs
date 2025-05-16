@@ -1,4 +1,4 @@
-import { Button, Grid2, Modal, Typography } from '@mui/material';
+import { Button, Grid, Modal, Typography } from '@mui/material';
 import { ReactNode, useContext, useState } from 'react';
 import { ServerContext } from '../../context';
 import toast from 'react-hot-toast';
@@ -55,7 +55,7 @@ export const ActionModal = <B = TODO,>({
 
   return (
     <Modal open>
-      <Grid2
+      <Grid
         container
         height="100%"
         bgcolor={(theme) => theme.palette.background.default}
@@ -64,27 +64,27 @@ export const ActionModal = <B = TODO,>({
         alignItems="center"
         rowSpacing={2}
       >
-        <Grid2>
+        <Grid>
           <PrimaryText variant="h4">Are you sure?</PrimaryText>
-        </Grid2>
-        <Grid2
+        </Grid>
+        <Grid
           container
           justifyContent="center"
           alignItems="center"
           columnSpacing={2}
         >
-          <Grid2>
+          <Grid>
             {deleting ? (
               <Btn disabled>{doingName}</Btn>
             ) : (
               <Btn onClick={handleAction}>{name}</Btn>
             )}
-          </Grid2>
-          <Grid2>
+          </Grid>
+          <Grid>
             <Btn onClick={() => closeModal()}>cancel</Btn>
-          </Grid2>
-        </Grid2>
-      </Grid2>
+          </Grid>
+        </Grid>
+      </Grid>
     </Modal>
   );
 };

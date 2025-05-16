@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import type { ChangeEvent } from 'react';
-import { Grid2, IconButton, TextField, Typography } from '@mui/material';
+import { Grid, IconButton, TextField, Typography } from '@mui/material';
 import { Add, Edit, Save } from '@mui/icons-material';
 import { ActionHandler } from '../../types';
 import { TODO } from '@the-libs/base-shared';
@@ -27,11 +27,11 @@ export const EditableField = <R,>({
   const [editing, setEditing] = useState<string>();
 
   return editing !== undefined ? (
-    <Grid2 container columnSpacing={2} alignItems="center">
-      <Grid2>
+    <Grid container columnSpacing={2} alignItems="center">
+      <Grid>
         <PrimaryText>{plus ? '+' : ''}</PrimaryText>
-      </Grid2>
-      <Grid2>
+      </Grid>
+      <Grid>
         <TextField
           variant="outlined"
           label={name}
@@ -41,8 +41,8 @@ export const EditableField = <R,>({
             setEditing(target.value);
           }}
         />
-      </Grid2>
-      <Grid2>
+      </Grid>
+      <Grid>
         <IconButton
           onClick={() =>
             action('', editing)
@@ -57,21 +57,21 @@ export const EditableField = <R,>({
             <Save />
           </IconColorer>
         </IconButton>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   ) : (
-    <Grid2 container alignItems="center" columnSpacing={2}>
-      <Grid2>
+    <Grid container alignItems="center" columnSpacing={2}>
+      <Grid>
         <PrimaryText variant="subtitle1" gutterBottom>
           <strong>{name}: </strong> {plus ? '+' : ''}
           {value}
         </PrimaryText>
-      </Grid2>
-      <Grid2>
+      </Grid>
+      <Grid>
         <IconButton onClick={() => setEditing(value || '')}>
           <IconColorer>{value ? <Edit /> : <Add />}</IconColorer>
         </IconButton>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 };

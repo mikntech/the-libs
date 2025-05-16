@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  Grid2,
+  Grid,
   IconButton,
   TextField,
   Typography,
@@ -169,7 +169,7 @@ export const ConversationView = <
 
   return (
     <>
-      <Grid2
+      <Grid
         width="100%"
         height="50px"
         container
@@ -179,39 +179,39 @@ export const ConversationView = <
         position="fixed"
         boxShadow={'0 6px 3px rgba(0, 0, 0, 0.2)'}
       >
-        <Grid2>
+        <Grid>
           <IconButton onClick={() => setSelectedConversation(undefined)}>
             <ArrowBackIosOutlined />
           </IconButton>
-        </Grid2>
-        <Grid2>
+        </Grid>
+        <Grid>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Avatar>{extactNameInitials(conversation.title)} </Avatar>
             <Typography color="primary.contrastText" fontWeight={700}>
               {conversation.title}
             </Typography>
           </Box>
-        </Grid2>
-        <Grid2></Grid2>
-      </Grid2>
-      <Grid2
+        </Grid>
+        <Grid></Grid>
+      </Grid>
+      <Grid
         container
         width="100%"
         height="calc(100% - 60px)"
         justifyContent="space-between"
         marginTop={'3rem'}
       >
-        <Grid2 width="100%" height="calc(100% - 80px)" overflow="scroll">
+        <Grid width="100%" height="calc(100% - 80px)" overflow="scroll">
           {renderMessages()}
-        </Grid2>
-        <Grid2
+        </Grid>
+        <Grid
           container
           justifyContent="space-between"
           alignItems="center"
           width="100%"
           height="80px"
         >
-          <Grid2 width="80%">
+          <Grid width="80%">
             <TextField
               onKeyDown={handleKeyDown}
               value={message}
@@ -220,14 +220,14 @@ export const ConversationView = <
               fullWidth
               placeholder="Type a message..."
             />
-          </Grid2>
-          <Grid2>
+          </Grid>
+          <Grid>
             <Btn onClick={handleSendMessage}>
               <Send />
             </Btn>
-          </Grid2>
-        </Grid2>
-      </Grid2>
+          </Grid>
+        </Grid>
+      </Grid>
     </>
   );
 };

@@ -2,7 +2,7 @@ import {
   Box,
   CardActions,
   Container,
-  Grid2,
+  Grid,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -62,7 +62,7 @@ const CardComponent = ({ tier, theme }: TODO) => (
           justifyContent: 'center',
         }}
       >
-        <Grid2
+        <Grid
           container
           direction="column"
           justifyContent="center"
@@ -70,17 +70,17 @@ const CardComponent = ({ tier, theme }: TODO) => (
           height="100px"
           marginBottom="-50px"
         >
-          <Grid2 height="50%">
+          <Grid height="50%">
             <Typography component="h3" variant="h5">
               {tier.hours} hours/month:
             </Typography>
-          </Grid2>
-          <Grid2 height="50%">
+          </Grid>
+          <Grid height="50%">
             <Typography component="h3" variant="h4">
               {tier.price} ₪/h
             </Typography>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </Box>
     </CardContent>
 
@@ -184,17 +184,17 @@ export default function Pricing() {
         </Typography>
       </Box>
 
-      <Grid2
+      <Grid
         container
         spacing={3}
         sx={{ alignItems: 'center', justifyContent: 'center', width: '100%' }}
       >
         {tiers.map((tier) => (
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }} key={tier.title + tier.hours}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={tier.title + tier.hours}>
             <CardComponent tier={tier} theme={theme} />
-          </Grid2>
+          </Grid>
         ))}
-      </Grid2>
+      </Grid>
 
       {/* @the-libs and Flexible Model Section */}
       <Box

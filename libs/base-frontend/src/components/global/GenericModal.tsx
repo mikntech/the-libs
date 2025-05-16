@@ -1,13 +1,13 @@
 import { FC, useState } from 'react';
-import { Button, Grid2, SxProps, Modal } from '@mui/material';
+import { Button, Grid, SxProps, Modal } from '@mui/material';
 
 export type ForClose = (f: false) => void;
 export const CloseButton = (forClose: ForClose) => (
-  <Grid2>
+  <Grid>
     <Button variant="contained" color="error" onClick={() => forClose(false)}>
       X
     </Button>
-  </Grid2>
+  </Grid>
 );
 
 export const containerSx = (
@@ -32,7 +32,7 @@ interface TheModalProps {
 
 const TheModal = ({ forClose, HighOrderComponent }: TheModalProps) => {
   return (
-    <Grid2
+    <Grid
       container
       direction="column"
       rowSpacing={4}
@@ -46,7 +46,7 @@ const TheModal = ({ forClose, HighOrderComponent }: TheModalProps) => {
           forClose(false);
         }}
       />
-    </Grid2>
+    </Grid>
   );
 };
 

@@ -1,7 +1,7 @@
 import { useResponsiveness } from '@the-libs/base-frontend';
 import styled from '@emotion/styled';
 import { ReactNode } from 'react';
-import { Box, Grid2, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { TODO } from '@the-libs/base-shared';
 
 const MobileContainer = styled(Box)`
@@ -38,17 +38,17 @@ export const MobilzerWrapper = ({
   return isMobile ? (
     children
   ) : (
-    <Grid2 container justifyContent="center" columnSpacing={8} wrap="nowrap">
-      <Grid2>
+    <Grid container justifyContent="center" columnSpacing={8} wrap="nowrap">
+      <Grid>
         <MobileContainer>{children}</MobileContainer>
-      </Grid2>
-      <Grid2>
+      </Grid>
+      <Grid>
         <DesktopMessage>
           <PrimaryText variant="h5">
             For the best experience please use {name} app on a mobile device
           </PrimaryText>
         </DesktopMessage>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 };

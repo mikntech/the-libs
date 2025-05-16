@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { Grid2, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { TODO } from '@the-libs/base-shared';
 import { AuthContext, ServerContext } from '../../../context';
 import { axiosErrorToaster } from '../../../utils';
@@ -59,14 +59,14 @@ export const WithGoogle = ({
   }, [GOOGLE_CLIENT_ID, onLoginSuccess, onLoginFailure]);
 
   return (
-    <Grid2 container direction="column" alignItems="center" rowSpacing={2}>
-      <Grid2>
+    <Grid container direction="column" alignItems="center" rowSpacing={2}>
+      <Grid>
         <Typography>Or: </Typography>
-      </Grid2>
-      <Grid2>
+      </Grid>
+      <Grid>
         <div id="google-sign-in-btn">Sign in with Google</div>
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Box, Button, Grid2, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
 
 import { TODO } from '@the-libs/base-shared';
 import { useResponsiveness } from '@the-libs/base-frontend';
@@ -49,7 +49,7 @@ export const AuthPage = <UserType,>({
   );
 
   return (
-    <Grid2
+    <Grid
       container
       justifyContent="center"
       alignItems="center"
@@ -57,7 +57,7 @@ export const AuthPage = <UserType,>({
       height="100vh"
       direction="column"
     >
-      <Grid2
+      <Grid
         width={
           isMobileOrTabl || client === 'guest' || client === 'host'
             ? '100%'
@@ -75,8 +75,8 @@ export const AuthPage = <UserType,>({
           disableDarkMode={disableDarkMode}
           authRoute={authRoute}
         />
-      </Grid2>
-      <Grid2
+      </Grid>
+      <Grid
         width={
           isMobileOrTabl || client === 'guest' || client === 'host'
             ? '100%'
@@ -85,12 +85,12 @@ export const AuthPage = <UserType,>({
         justifyContent="center"
       >
         <WithGoogle {...withGoogleProps} authRoute={authRoute}></WithGoogle>
-      </Grid2>
+      </Grid>
       {backgroundPicture && client === 'host' && !isMobileOrTabl && (
-        <Grid2 width="60%" height="100%">
+        <Grid width="60%" height="100%">
           <newWithEmailCustomComponents.Img src={backgroundPicture} bg />
-        </Grid2>
+        </Grid>
       )}
-    </Grid2>
+    </Grid>
   );
 };

@@ -1,4 +1,4 @@
-import { Grid2, Typography, TypographyProps } from '@mui/material';
+import { Grid, Typography, TypographyProps } from '@mui/material';
 import { useResponsiveness } from '../../hooks';
 
 export interface PrimaryTextProps extends TypographyProps {
@@ -26,17 +26,17 @@ export const PrimaryText = ({ padded, ...rest }: PrimaryTextProps) => {
 };
 
 export const MainMessage = ({ text }: { text: string }) => (
-  <Grid2
+  <Grid
     height="100%"
     width="100%"
     container
     justifyContent="center"
     alignItems="center"
   >
-    <Grid2>
+    <Grid>
       <PrimaryText fontWeight="bold" fontSize="150%" textAlign="center">
         {text}
       </PrimaryText>
-    </Grid2>
-  </Grid2>
+    </Grid>
+  </Grid>
 );
