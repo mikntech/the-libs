@@ -35,10 +35,28 @@ export const createRedisInstance = async (
 
   const redisUrl = redisSettings.uri;
   if (!redisUrl) {
-    throw new Error('❌ Redis connection failed: No Redis URL provided');
+    console.warn('⚠️ No Redis URL provided - Using in-memory implementation');
+    const memoryInstance = new MemoryRedis();
+    if (instanceType === 'default') defaultRedisInstance = memoryInstance;
+    if (instanceType === 'pub') pubRedisInstance = memoryInstance;
+    if (instanceType === 'sub') subRedisInstance = memoryInstance;
+    return memoryInstance;
   }
 
+  // Check if Redis is available before attempting to connect
   try {
+    const testConnection = new Redis(redisUrl, {
+      socket: {
+        connectTimeout: 2000, // 2 second timeout
+        keepAlive: true,
+      },
+      maxRetriesPerRequest: 1, // Only try once
+    });
+
+    await testConnection.ping();
+    await testConnection.quit();
+
+    // If we get here, Redis is available, proceed with normal connection
     const newInstance = new Redis(redisUrl, {
       socket: {
         keepAlive: true,
@@ -60,19 +78,12 @@ export const createRedisInstance = async (
 
     newInstance.on('end', async (): Promise<void> => {
       console.warn(`⚠️ Redis ${instanceType} Connection Closed`);
-
-      const delay = Math.random() * 10000 + 5000; // Random 5-15s delay before retrying
-      setTimeout(async () => {
-        console.log(`♻️ Attempting to reconnect Redis ${instanceType}...`);
-        try {
-          await createRedisInstance(instanceType, true);
-        } catch (err) {
-          console.error(`❌ Redis ${instanceType} Reconnection Failed`, err);
-        }
-      }, delay);
+      // Instead of trying to reconnect, fall back to in-memory
+      const memoryInstance = new MemoryRedis();
+      if (instanceType === 'default') defaultRedisInstance = memoryInstance;
+      if (instanceType === 'pub') pubRedisInstance = memoryInstance;
+      if (instanceType === 'sub') subRedisInstance = memoryInstance;
     });
-
-    await newInstance.ping(); // Ensure connection is stable
 
     if (instanceType === 'default') defaultRedisInstance = newInstance;
     if (instanceType === 'pub') pubRedisInstance = newInstance;
@@ -80,7 +91,7 @@ export const createRedisInstance = async (
 
     return newInstance;
   } catch (error) {
-    console.warn(`⚠️ Redis ${instanceType} Connection Failed - Falling back to in-memory implementation`);
+    console.warn(`⚠️ Redis ${instanceType} not available - Using in-memory implementation`);
     const memoryInstance = new MemoryRedis();
     
     if (instanceType === 'default') defaultRedisInstance = memoryInstance;
