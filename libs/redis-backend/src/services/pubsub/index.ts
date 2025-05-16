@@ -74,8 +74,8 @@ export class PubSub {
 
   publish(channel: string, message: string) {
     if (this.redisPublisher) {
-      this.redisPublisher.publish(channel, message, (err: any) => {
-        if (err) console.error('Redis publish failed:', err);
+      this.redisPublisher.publish(channel, message).catch(err => {
+        console.error('Redis publish failed:', err);
       });
     } else {
       this.fallback.publish(channel, message);

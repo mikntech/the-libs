@@ -62,4 +62,15 @@ export class MemoryRedis extends EventEmitter {
     this.pubsub.clear();
     this.emit('end');
   }
+
+  async keys(pattern: string): Promise<string[]> {
+    const regex = new RegExp(pattern.replace('*', '.*'));
+    return Array.from(this.store.keys()).filter(key => regex.test(key));
+  }
+
+  async del(key: string): Promise<number> {
+    const exists = this.store.has(key);
+    this.store.delete(key);
+    return exists ? 1 : 0;
+  }
 } 
