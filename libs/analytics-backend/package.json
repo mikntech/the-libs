@@ -5,9 +5,9 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/base-shared": "^1.22.39",
-    "@the-libs/express-backend": "^1.22.39",
-    "@the-libs/mongo-backend": "^1.22.39",
+    "@the-libs/base-shared": "^1.22.42",
+    "@the-libs/express-backend": "^1.22.42",
+    "@the-libs/mongo-backend": "^1.22.42",
     "zod": "^3.24.4",
     "@trpc/server": "^11.1.2",
     "express": "^5.1.0"

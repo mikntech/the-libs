@@ -5,10 +5,10 @@
     "update": "npx --yes npm-check-updates -u"
   },
   "dependencies": {
-    "@the-libs/auth-shared": "^1.22.40",
-    "@the-libs/base-shared": "^1.22.39",
-    "@the-libs/email-backend": "^1.22.39",
-    "@the-libs/s3-backend": "^1.22.39",
+    "@the-libs/auth-shared": "^1.22.42",
+    "@the-libs/base-shared": "^1.22.42",
+    "@the-libs/email-backend": "^1.22.42",
+    "@the-libs/s3-backend": "^1.22.42",
     "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
