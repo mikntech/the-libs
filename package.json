@@ -1,6 +1,6 @@
 {
   "name": "@the-libs/source",
-  "version": "1.22.40",
+  "version": "1.22.41",
   "license": "MIT",
   "description": "Good unbranded code by Michael Nusair - https://mikntech.com - https://linkedin.com/in/mik-n - https://github.com/MNPCMW6444 - https://the-libs.com - https://michael-nusair.com",
   "type": "module",
@@ -125,7 +125,7 @@
     "openai": "4.87.3",
     "prettier": "3.5.3",
     "prisma": "^6.5.0",
-    "pubsub-js": "1.9.5",
+    "pubsub-js": "^1.9.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-hot-toast": "2.5.2",
@@ -148,8 +148,7 @@
     "web-push": "3.6.7",
     "zod": "3.24.2",
     "zxcvbn": "4.4.2",
-    "posthog-js": "^1.231.0",
-    "pubsub-js": "^1.9.5"
+    "posthog-js": "^1.231.0"
   },
   "dependencies": {}
 }
